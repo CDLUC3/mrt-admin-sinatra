@@ -1,6 +1,6 @@
 # Merritt Admin Sinatra
 
-This microservice is part of the [Merritt Preservation System](https://github.com/CDLUC3/mrt-doc). 
+This lambda is part of the [Merritt Preservation System](https://github.com/CDLUC3/mrt-doc). 
 
 ## Purpose
 
