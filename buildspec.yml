@@ -1,0 +1,30 @@
+version: 0.2
+
+phases:
+  pre_build:
+    on-failure: ABORT
+    commands:
+    - COMMIT=`git rev-parse --short HEAD`
+    - TAG=`git describe --tags --exact-match 2> /dev/null || echo ''`
+    - |
+      if [[ "$MODE" == "OnPush" ]]
+      then
+        BRANCHTAG=`git describe --tags --exact-match 2> /dev/null || git symbolic-ref -q --short HEAD || git name-rev $(git rev-parse --short HEAD) | cut -d' ' -f2 || git rev-parse --short HEAD`
+      else
+        BRANCHTAG=$BRANCHNAME
+      fi
+    - DOCKTAG=$BRANCHTAG
+    - COMMITDATE=`git --no-pager log -1 --pretty='format:%cd' --date='format:%Y-%m-%d %H:%M:%S'`
+    - echo "Branchtag ${BRANCHTAG}; COMMITDATE=${COMMITDATE}; REPONAME=${REPONAME}; BRANCHNAME=${BRANCHNAME}"
+
+  post_build:
+    on-failure: CONTINUE
+    commands:
+    - bundle install
+    - zip -r mrt-admin-sinatra.zip vendor app *.rb
+    - aws s3 cp mrt-admin-sinatra.zip s3://${S3PRIVBUCKET}/deploy/
+    - |
+      aws lambda update-function-code \
+        --function-name mrt-admin-sinatra \
+        --s3-bucket ${S3PRIVBUCKET} \
+        --s3-key deploy/mrt-admin-sinatra.zip --no-cli-pager
