@@ -5,3 +5,9 @@ This lambda is part of the [Merritt Preservation System](https://github.com/CDLU
 ## Purpose
 
 Sinatra based admin tool for the new Merritt AWS account
+
+## Local Testing
+
+```
+bundle exec puma app/config.ru
+```
