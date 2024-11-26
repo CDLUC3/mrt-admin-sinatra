@@ -64,6 +64,9 @@ def handler(event:, context:)
       body_content += item.to_s
     end
 
+    isBase64Encoded = headers.fetch('content-type', '').start_with?('image/')
+    Base64.strict_encode64(File.binread('app/public/favicon.ico'))
+
     puts "TBTB1 #{headers}"
     puts "TBTB2 #{body_content}"
     puts "TBTB3"
@@ -73,8 +76,8 @@ def handler(event:, context:)
     response = {
       statusCode: status,
       headers: headers,
-      body: body_content,
-      isBase64Encoded: headers.fetch('content-type', '').start_with?('image/')
+      body: isBase64Encoded ? Base64.strict_encode64(body_content) : body_content,
+      isBase64Encoded: isBase64Encoded
     }
   rescue Exception => exception
     # If there is _any_ exception, we return a 500 error with an error message
