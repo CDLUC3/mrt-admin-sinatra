@@ -65,11 +65,6 @@ def handler(event:, context:)
     end
 
     isBase64Encoded = headers.fetch('content-type', '').start_with?('image/')
-    Base64.strict_encode64(File.binread('app/public/favicon.ico'))
-
-    puts "TBTB1 #{headers}"
-    puts "TBTB2 #{body_content}"
-    puts "TBTB3"
 
     # We return the structure required by AWS API Gateway since we integrate with it
     # https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html
@@ -81,7 +76,6 @@ def handler(event:, context:)
     }
   rescue Exception => exception
     # If there is _any_ exception, we return a 500 error with an error message
-    puts "TBTB4 #{exception}"
 
     response = {
       'statusCode' => 500,
