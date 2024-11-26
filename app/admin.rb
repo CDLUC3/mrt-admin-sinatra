@@ -16,10 +16,10 @@ end
 
 get "/favicon.ico" do
   content_type 'image/x-icon'
-  Base64.strict_encode64(File.binread('public/favicon.ico'))
+  Base64.strict_encode64(File.binread('app/public/favicon.ico'))
 end
 
 get "/merritt_logo.jpg" do
   content_type 'image/jpeg'
-  Base64.strict_encode64(File.binread('public/merritt_logo.jpg'))
+  Base64.strict_encode64(File.binread('app/public/merritt_logo.jpg'))
 end
