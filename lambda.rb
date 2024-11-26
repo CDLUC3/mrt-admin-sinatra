@@ -64,12 +64,15 @@ def handler(event:, context:)
       body_content += item.to_s
     end
 
+    puts "TBTB #{headers}"
+
     # We return the structure required by AWS API Gateway since we integrate with it
     # https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html
     response = {
       'statusCode' => status,
       'headers' => headers,
-      'body' => body_content
+      'body' => body_content,
+      'isBase64Encoded' => true
     }
   rescue Exception => exception
     # If there is _any_ exception, we return a 500 error with an error message
