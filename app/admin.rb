@@ -15,11 +15,11 @@ get "/foo" do
 end
 
 get "/favicon.ico" do
-  #content_type: 'image/x-icon'
+  content_type 'image/x-icon'
   Base64.strict_encode64(File.binread('public/favicon.ico'))
 end
 
 get "/merritt_logo.jpg" do
-  #content_type: 'image/jpeg'
+  content_type 'image/jpeg'
   Base64.strict_encode64(File.binread('public/merritt_logo.jpg'))
 end
