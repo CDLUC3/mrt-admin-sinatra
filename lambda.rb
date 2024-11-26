@@ -66,17 +66,20 @@ def handler(event:, context:)
 
     puts "TBTB1 #{headers}"
     puts "TBTB2 #{body_content}"
+    puts "TBTB3"
 
     # We return the structure required by AWS API Gateway since we integrate with it
     # https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html
     response = {
-      'statusCode' => status,
-      'headers' => headers,
-      'body' => body_content,
-      'isBase64Encoded' => headers.fetch('Content-Type', '').start_with?('image/')
+      statusCode: status,
+      headers: headers,
+      body: body_content,
+      isBase64Encoded: headers.fetch('content-type', '').start_with?('image/')
     }
   rescue Exception => exception
     # If there is _any_ exception, we return a 500 error with an error message
+    puts "TBTB4 #{exception}"
+
     response = {
       'statusCode' => 500,
       'body' => exception.message
