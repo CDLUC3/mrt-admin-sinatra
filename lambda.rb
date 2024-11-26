@@ -64,8 +64,8 @@ def handler(event:, context:)
       body_content += item.to_s
     end
 
-    puts "TBTB #{headers}"
-    puts "TBTB #{body_content}"
+    puts "TBTB1 #{headers}"
+    puts "TBTB2 #{body_content}"
 
     # We return the structure required by AWS API Gateway since we integrate with it
     # https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html
