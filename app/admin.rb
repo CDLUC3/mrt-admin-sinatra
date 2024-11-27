@@ -1,5 +1,6 @@
 require 'sinatra'
 require 'sinatra/base'
+require_relative 'lib/git.rb'
 
 set :bind, '0.0.0.0'
 
@@ -9,7 +10,6 @@ get "/" do
   erb :index
 end
 
-get "/foo" do
-  status 200
-  'Hello foo!'
+get "/git/*" do |repo|
+  erb :git, :locals => {git: Github.new(repo)}
 end
