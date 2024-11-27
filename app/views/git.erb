@@ -8,7 +8,21 @@
       <div><a href="/">Home</a></div>
       <hr/>
       <div>
-        <h2><%= git.tags %></h2>
+        <table>
+          <thead>
+            <tr>
+              <th>tag</th>
+              <th>semantic</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% git.tags.values.each do |tag|%>
+            <tr>
+              <td><%=tag[:name]%></td>
+              <td><%=tag[:semantic]%></td>
+            </tr>
+            <% end %>
+          </tbody>  
       </div>
     </div>
   </body>
