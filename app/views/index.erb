@@ -7,6 +7,11 @@
       <h1>Merritt Admin Tool - UC3 Account</h1>
       <div>
         <h2>Sample Data</h2>
+        <ul>
+          <% repos.each do |repo|%>
+          <li><a href="/git/<%=repo%>"><%=repo%></a></li>
+          <% end%>
+        </ul>
       </div>
     </div>
   </body>
