@@ -13,6 +13,7 @@
             <tr>
               <th>tag</th>
               <th>semantic</th>
+              <th>sha</th>
             </tr>
           </thead>
           <tbody>
@@ -20,7 +21,7 @@
             <tr>
               <td><%=tag[:name]%></td>
               <td><%=tag[:semantic]%></td>
-              <td><%=tag[:data]%></td>
+              <td><a href="<%=tag[:url%>"><%=tag[:sha]%></a></td>
             </tr>
             <% end %>
           </tbody>  
