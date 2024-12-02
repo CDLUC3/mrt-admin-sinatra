@@ -21,7 +21,7 @@ class Github
       @tags[tag.name] = {
         name: tag.name, 
         semantic: !(tag.name =~ /^\d+\.\d+\.\d+$/).nil?,
-        data: tag.commit
+        data: "#{tag.commit.to_s}; #{tag.methods}"
       }
     end
   end
