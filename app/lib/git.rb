@@ -16,11 +16,12 @@ class Github
     @tags = {}
     @repo = repo
     @client.tags(owner: 'cdluc3', name: repo).each do |tag|
+
       next if tag.name =~ /^sprint-/
       @tags[tag.name] = {
         name: tag.name, 
         semantic: !(tag.name =~ /^\d+\.\d+\.\d+$/).nil?,
-        data: tag.to_json
+        data: tag.methods.to_s
       }
     end
   end
