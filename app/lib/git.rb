@@ -20,7 +20,7 @@ class Github
       @tags[tag.name] = {
         name: tag.name, 
         semantic: !(tag.name =~ /^\d+\.\d+\.\d+$/).nil?,
-        data: tag.to_s
+        data: tag.to_json
       }
     end
   end
