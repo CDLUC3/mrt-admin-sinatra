@@ -19,7 +19,8 @@ class Github
       next if tag.name =~ /^sprint-/
       @tags[tag.name] = {
         name: tag.name, 
-        semantic: !(tag.name =~ /^\d+\.\d+\.\d+$/).nil?
+        semantic: !(tag.name =~ /^\d+\.\d+\.\d+$/).nil?,
+        data: tag.to_s
       }
     end
   end
