@@ -1,6 +1,15 @@
 <html>
   <head>
     <link rel="icon" href="/favicon.ico" />
+    <style type="text/css">
+    table {
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid black !important;
+      padding: 2px;
+    }
+    </style>
   </head>
   <body>
     <div>
@@ -21,7 +30,7 @@
             <tr>
               <td><%=tag[:name]%></td>
               <td><%=tag[:semantic]%></td>
-              <td><a href="<%=tag[:url%>"><%=tag[:sha]%></a></td>
+              <td><a href="<%=tag[:url]%>"><%=tag[:sha]%></a></td>
             </tr>
             <% end %>
           </tbody>  
