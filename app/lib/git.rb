@@ -19,6 +19,7 @@ class Github
     i=0
     @client.commits("cdluc3/#{repo}").each do |commit|
       i+=1
+      break if i > 10
       s=i.to_s
       @tags[s] = {
         name: s, 
