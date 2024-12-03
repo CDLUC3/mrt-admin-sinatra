@@ -14,7 +14,19 @@ class Github
     puts @token
     @client = Octokit::Client.new({access_token: @token})
     @tags = {}
+    @commits = {}
     @repo = repo
+    i=0
+    @client.commits(owner: 'cdluc3', name: repo).each do |commit|
+      i+=1
+      s=i.to_s
+      @tags[s] = {
+        name: s, 
+        semantic: false,
+        sha: commit.to_h.to_s,
+        url: ""
+      }
+    end
     @client.tags(owner: 'cdluc3', name: repo).each do |tag|
 
       next if tag.name =~ /^sprint-/
@@ -27,5 +39,5 @@ class Github
     end
   end
 
-  attr_accessor :repo, :tags
+  attr_accessor :repo, :tags, :commits
 end
