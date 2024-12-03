@@ -17,7 +17,7 @@ class Github
     @commits = {}
     @repo = repo
     i=0
-    @client.commits(yser: 'cdluc3', repo: repo).each do |commit|
+    @client.commits(user: 'cdluc3', repo: repo).each do |commit|
       i+=1
       s=i.to_s
       @tags[s] = {
