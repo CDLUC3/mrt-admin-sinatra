@@ -24,7 +24,7 @@ class Github
       @tags[s] = {
         name: s, 
         semantic: false,
-        sha: commit.to_h.to_s,
+        sha: "#{commit.committer.date} #{commit.committer.name} #{commit.message}",
         url: ""
       }
     end
