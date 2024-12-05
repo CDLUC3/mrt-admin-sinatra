@@ -14,9 +14,9 @@ class Github
     @client = Octokit::Client.new({access_token: @token})
     @tags = {}
     @commits = {}
+    @releases = {}
     @repo = repo
     since = Time.now - 2 * 365 * 24 * 60 * 60
-    puts since
     @client.commits_since("cdluc3/#{repo}", since).each do |commit|
       @commits[commit.sha] = {
         sha: commit.sha,
@@ -26,12 +26,22 @@ class Github
       }
     end
 
-    @client.tags(owner: 'cdluc3', name: repo).each do |tag|
+    @client.releases("cdluc3/#{repo}").each do |rel|
+      @releases[rel.tag_name] = {
+        tag: rel.tag_name,
+        name: rel.name,
+        url: rel.html_url,
+        draft: rel.draft
+      }      
+    end
+
+    @client.tags("cdluc3/#{repo}").each do |tag|
 
       next if tag.name =~ /^sprint-/
 
       commit = @commits.fetch(tag.commit.sha, {})
       semantic = !(tag.name =~ /^\d+\.\d+\.\d+$/).nil?
+      release = @releases.fetch(tag.name, {})
 
       next if commit.empty?
 
@@ -42,7 +52,10 @@ class Github
         url: tag.commit.html_url,
         message: commit.fetch(:message, ''),
         date: commit.fetch(:date, ''),
-        author: commit.fetch(:author, '')
+        author: commit.fetch(:author, ''),
+        release_name: release.fetch(:name, ''),
+        release_url: release.fetch(:url, ''),
+        release_draft: release.fetch(:draft, false)
       }
     end
   end

@@ -34,6 +34,7 @@
               <th class='message'>message</th>
               <th class='author'>author</th>
               <th class='date'>date</th>
+              <th class='release'>release</th>
             </tr>
           </thead>
           <tbody>
@@ -44,6 +45,15 @@
               <td class='message'><%=tag[:message]%></td>
               <td class='author'><%=tag[:author]%></td>
               <td class='date'><%=tag[:date]%></td>
+              <td class='release'>
+                <% if !tag[:release_url].empty? %>
+                <a href="<%= tag[:release_url] %>">
+                <% end %>
+                  <%= tag[:release_name] %>
+                <% if !tag[:release_url].empty? %>
+                </a>
+                <% end %>
+              </td>
             </tr>
             <% end %>
           </tbody>  
