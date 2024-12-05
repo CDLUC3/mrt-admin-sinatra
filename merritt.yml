@@ -1,0 +1,27 @@
+repos:
+  admin:
+    repo: CDLUC3/mrt-admin-lambda
+    artifacts:
+  ui:
+    repo: CDLUC3/mrt-dashboard
+    artifacts:
+  store:
+    repo: CDLUC3/mrt-store
+    artifacts:
+    - org.cdlib.mrt:mrt-storewar
+  ingest:
+    repo: CDLUC3/mrt-ingest
+    artifacts:
+    - org.cdlib.mrt:mrt-ingestwar
+  inventory:
+    repo: CDLUC3/mrt-inventory
+    artifacts:
+    - org.cdlib.mrt:mrt-invwar
+  audit:
+    repo: CDLUC3/mrt-audit
+    artifacts:
+    - org.cdlib.mrt:mrtaudit
+  replic:
+    repo: CDLUC3/mrt-replic
+    artifacts:
+    - org.cdlib.mrt:mrt-replicationwar

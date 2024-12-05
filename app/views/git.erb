@@ -1,24 +1,7 @@
 <html>
   <head>
     <link rel="icon" href="/favicon.ico" />
-    <style type="text/css">
-    table {
-      border-collapse: collapse;
-    }
-    th, td {
-      border: 1px solid black !important;
-      padding: 2px;
-    }
-    th.message, td.message {
-      width: 200px;
-    }
-    th.date, td.date {
-      width: 180px;
-    }
-    tr.semantic th, tr.semantic td {
-      background-color: yellow;
-    }
-    </style>
+    <link rel="stylesheet" type="text/css" href="/merritt.css" />
   </head>
   <body>
     <div>
@@ -30,10 +13,8 @@
           <thead>
             <tr>
               <th class='tag'>tag</th>
-              <th class='sha'>sha</th>
-              <th class='message'>message</th>
-              <th class='author'>author</th>
               <th class='date'>date</th>
+              <th class='sha'>sha</th>
               <th class='release'>documented release</th>
               <th class='artifacts'>artifacts</th>
               <th class='images'>images</th>
@@ -44,18 +25,16 @@
             <% git.tags.values.each do |tag|%>
             <tr class="<%=tag[:semantic] ? 'semantic' : 'other'%>">
               <td class='tag'><%=tag[:name]%></td>
-              <td class='sha'><a href="<%=tag[:url]%>"><%=tag[:sha]%></a></td>
-              <td class='message'><%=tag[:message]%></td>
-              <td class='author'><%=tag[:author]%></td>
               <td class='date'><%=tag[:date]%></td>
+              <td class='sha'>
+                <a href="<%=tag[:url]%>"><%=tag[:sha]%></a>
+                <br><span><%=tag[:message]%></span>
+                <br><span><%=tag[:author]%></span>
+              </td>
               <td class='release'>
-                <% if !tag[:release_url].empty? %>
-                <a href="<%= tag[:release_url] %>">
-                <% end %>
+                <a class="<%= tag[:release_class] %>" href="<%= tag[:release_url] %>">
                   <%= tag[:release_name] %>
-                <% if !tag[:release_url].empty? %>
                 </a>
-                <% end %>
               </td>
               <td class='artifacts'>tbd</td>
               <td class='images'>tbd</td>

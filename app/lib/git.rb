@@ -8,16 +8,16 @@ Octokit.configure do |c|
 end
 
 class Github
-  def initialize(repo)
+  def initialize(repohash)
+    @repo = repohash.fetch(:repo, '')
     @ssm = Aws::SSM::Client.new(region: ENV.fetch('AWS_REGION', 'us-west-2'))
     @token = @ssm.get_parameter(name: '/uc3/mrt/dev/github/readonly', with_decryption: true)[:parameter][:value]
     @client = Octokit::Client.new({access_token: @token})
     @tags = {}
     @commits = {}
     @releases = {}
-    @repo = repo
     since = Time.now - 2 * 365 * 24 * 60 * 60
-    @client.commits_since("cdluc3/#{repo}", since).each do |commit|
+    @client.commits_since(@repo, since).each do |commit|
       @commits[commit.sha] = {
         sha: commit.sha,
         message: commit.commit.message,
@@ -27,7 +27,7 @@ class Github
       }
     end
 
-    @client.releases("cdluc3/#{repo}").each do |rel|
+    @client.releases(@repo).each do |rel|
       @releases[rel.tag_name] = {
         tag: rel.tag_name,
         name: rel.name,
@@ -36,7 +36,7 @@ class Github
       }      
     end
 
-    @client.tags("cdluc3/#{repo}").each do |tag|
+    @client.tags(@repo).each do |tag|
 
       next if tag.name =~ /^sprint-/
 
@@ -46,6 +46,7 @@ class Github
 
       next if commit.empty?
 
+      has_release = !release.empty?
       @tags[tag.name] = {
         name: tag.name,
         semantic: semantic,
@@ -55,10 +56,16 @@ class Github
         date: commit.fetch(:date, ''),
         author: commit.fetch(:author, ''),
         has_release: !release.empty?,
-        release_name: release.fetch(:name, '+'),
-        release_url: release.fetch(:url, "https://github.com/CDLUC3/#{repo}/releases/new?tag=#{tag.name}"),
-        release_draft: release.fetch(:draft, false)
+        release_name: release.fetch(:name, ''),
+        release_url: release.fetch(:url, ''),
+        release_draft: release.fetch(:draft, false),
+        release_class: 'data'
       }
+      if !has_release
+        @tags[tag.name][:release_name] = 'Create'
+        @tags[tag.name][:release_url] = "https://github.com/#{repo}/releases/new?tag=#{tag.name}"
+        @tags[tag.name][:release_class] = 'button'
+      end
     end
   end
 

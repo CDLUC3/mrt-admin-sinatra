@@ -10,6 +10,7 @@ gem 'rack-contrib'
 gem 'rubysl-base64'
 gem 'octokit'
 gem 'puma'
+gem 'yaml'
 
 # These are the dependencies that are used only for unit tests.
 group :test do

@@ -1,0 +1,39 @@
+table {
+  border-collapse: collapse;
+  margin: 0 auto;
+}
+th, td {
+  border: 1px solid black !important;
+  padding: 5px;
+}
+th.message, 
+td.message {
+  width: 200px;
+}
+th.release,
+td.release {
+  width: 200px;
+  text-align: center;
+}
+th.date, td.date {
+  width: 180px;
+}
+tr.other th, tr.other td {
+  color: navy;
+}
+thead tr {
+  background-color: #E19D5F;
+}
+tbody tr:nth-child(odd) {
+  background-color: #ffc10729;
+}
+a.button {
+  background-color: #879C5D;
+  border: none;
+  color: white;
+  padding: 5px 10px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+}
