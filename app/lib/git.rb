@@ -11,34 +11,49 @@ class Github
   def initialize(repo)
     @ssm = Aws::SSM::Client.new(region: ENV.fetch('AWS_REGION', 'us-west-2'))
     @token = @ssm.get_parameter(name: '/uc3/mrt/dev/github/readonly', with_decryption: true)[:parameter][:value]
-    puts @token
     @client = Octokit::Client.new({access_token: @token})
     @tags = {}
     @commits = {}
     @repo = repo
-    i=0
-    @client.commits("cdluc3/#{repo}").each do |commit|
-      i+=1
-      break if i > 10
-      s=i.to_s
-      @tags[s] = {
-        name: s, 
-        semantic: false,
-        sha: "#{commit.committer.login} #{commit.commit.message}",
-        url: ""
+    since = Time.now - 2 * 365 * 24 * 60 * 60
+    puts since
+    @client.commits_since("cdluc3/#{repo}", since).each do |commit|
+      @commits[commit.sha] = {
+        sha: commit.sha,
+        message: commit.commit.message,
+        author: commit.commit.author.name,
+        date: commit.commit.author.date
       }
     end
+
     @client.tags(owner: 'cdluc3', name: repo).each do |tag|
 
       next if tag.name =~ /^sprint-/
+
+      commit = @commits.fetch(tag.commit.sha, {})
+      semantic = !(tag.name =~ /^\d+\.\d+\.\d+$/).nil?
+
+      next if commit.empty?
+
       @tags[tag.name] = {
         name: tag.name, 
-        semantic: !(tag.name =~ /^\d+\.\d+\.\d+$/).nil?,
+        semantic: semantic,
         sha: tag.commit.sha,
-        url: tag.commit.url
+        url: tag.commit.html_url,
+        message: commit.fetch(:message, ''),
+        date: commit.fetch(:date, ''),
+        author: commit.fetch(:author, '')
       }
     end
   end
 
-  attr_accessor :repo, :tags, :commits
+  def tags
+    begin
+      @tags.sort_by { |k, v| v[:date] }.reverse.to_h
+    rescue
+      @tags.sort_by { |k, v| k }.reverse.to_h
+    end
+  end
+
+  attr_accessor :repo, :commits
 end

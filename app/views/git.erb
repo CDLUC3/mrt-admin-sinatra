@@ -9,6 +9,15 @@
       border: 1px solid black !important;
       padding: 2px;
     }
+    th.message, td.message {
+      width: 200px;
+    }
+    th.date, td.date {
+      width: 180px;
+    }
+    tr.semantic th, tr.semantic td {
+      background-color: yellow;
+    }
     </style>
   </head>
   <body>
@@ -20,17 +29,21 @@
         <table>
           <thead>
             <tr>
-              <th>tag</th>
-              <th>semantic</th>
-              <th>sha</th>
+              <th class='tag'>tag</th>
+              <th class='sha'>sha</th>
+              <th class='message'>message</th>
+              <th class='author'>author</th>
+              <th class='date'>date</th>
             </tr>
           </thead>
           <tbody>
             <% git.tags.values.each do |tag|%>
-            <tr>
-              <td><%=tag[:name]%></td>
-              <td><%=tag[:semantic]%></td>
-              <td><a href="<%=tag[:url]%>"><%=tag[:sha]%></a></td>
+            <tr class="<%=tag[:semantic] ? 'semantic' : 'other'%>">
+              <td class='tag'><%=tag[:name]%></td>
+              <td class='sha'><a href="<%=tag[:url]%>"><%=tag[:sha]%></a></td>
+              <td class='message'><%=tag[:message]%></td>
+              <td class='author'><%=tag[:author]%></td>
+              <td class='date'><%=tag[:date]%></td>
             </tr>
             <% end %>
           </tbody>  
