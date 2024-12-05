@@ -34,7 +34,10 @@
               <th class='message'>message</th>
               <th class='author'>author</th>
               <th class='date'>date</th>
-              <th class='release'>release</th>
+              <th class='release'>documented release</th>
+              <th class='artifacts'>artifacts</th>
+              <th class='images'>images</th>
+              <th class='actions'>actions</th>
             </tr>
           </thead>
           <tbody>
@@ -52,6 +55,13 @@
                   <%= tag[:release_name] %>
                 <% if !tag[:release_url].empty? %>
                 </a>
+                <% end %>
+              </td>
+              <td class='artifacts'>tbd</td>
+              <td class='images'>tbd</td>
+              <td class='actions'>
+                <% if !tag[:has_release] %>
+                <button>TBD</button>
                 <% end %>
               </td>
             </tr>

@@ -53,6 +53,7 @@ class Github
         message: commit.fetch(:message, ''),
         date: commit.fetch(:date, ''),
         author: commit.fetch(:author, ''),
+        has_release: !release.empty?,
         release_name: release.fetch(:name, '+'),
         release_url: release.fetch(:url, "https://github.com/CDLUC3/#{repo}/releases/new?tag=#{tag.name}"),
         release_draft: release.fetch(:draft, false)
