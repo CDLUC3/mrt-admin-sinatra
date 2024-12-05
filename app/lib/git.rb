@@ -22,7 +22,8 @@ class Github
         sha: commit.sha,
         message: commit.commit.message,
         author: commit.commit.author.name,
-        date: commit.commit.author.date
+        date: commit.commit.author.date,
+        url: commit.html_url
       }
     end
 
@@ -49,7 +50,7 @@ class Github
         name: tag.name,
         semantic: semantic,
         sha: tag.commit.sha,
-        url: tag.commit.html_url,
+        url: commit.fetch(:url, ''),
         message: commit.fetch(:message, ''),
         date: commit.fetch(:date, ''),
         author: commit.fetch(:author, ''),
