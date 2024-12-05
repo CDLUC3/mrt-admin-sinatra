@@ -46,15 +46,15 @@ class Github
       next if commit.empty?
 
       @tags[tag.name] = {
-        name: tag.name, 
+        name: tag.name,
         semantic: semantic,
         sha: tag.commit.sha,
         url: tag.commit.html_url,
         message: commit.fetch(:message, ''),
         date: commit.fetch(:date, ''),
         author: commit.fetch(:author, ''),
-        release_name: release.fetch(:name, ''),
-        release_url: release.fetch(:url, ''),
+        release_name: release.fetch(:name, '+'),
+        release_url: release.fetch(:url, "https://github.com/CDLUC3/#{repo}/releases/new?tag=#{tag.name}"),
         release_draft: release.fetch(:draft, false)
       }
     end
