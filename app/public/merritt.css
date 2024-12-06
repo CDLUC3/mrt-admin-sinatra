@@ -42,3 +42,8 @@ div.breadcrumb {
   margin-bottom: 10px;
   padding-bottom: 3px;
 }
+div#controls {
+  padding: 4px;
+  margin: 8px;
+  border: 1px solid #879C5D;
+}

@@ -1,5 +1,6 @@
 require 'json'
 require 'yaml'
+require_relative 'git.rb'
 
 class Merritt
   def initialize
@@ -10,6 +11,8 @@ class Merritt
   attr_accessor :repos
 
   def repo(repo)
-    @repos.fetch(repo.to_sym, {})
+    repodata = @repos.fetch(repo.to_sym, {})
+    return nil if repodata.empty?
+    Github.new(repodata)
   end
 end
