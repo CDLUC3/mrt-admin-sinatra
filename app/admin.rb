@@ -14,8 +14,7 @@ get "/" do
     :layout => :page_layout, 
     :locals => {
       context: Context.new('Merritt Admin Tool - UC3 Account', top_page: true),
-      repos: merritt.repos.keys,
-      testing: merritt.testing
+      repos: merritt.repos.keys
     }
 end
 
