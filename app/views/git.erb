@@ -2,7 +2,7 @@
   <div id="controls">
     <input type="checkbox" id="semantic"/><label for="semantic">Semantic Tags Only</label>
   </div>
-  <table>
+  <table class="data">
     <thead>
       <tr>
         <th class='tag'>Tag</th>
@@ -16,7 +16,7 @@
     </thead>
     <tbody>
       <% git.tags.values.each do |tag|%>
-      <tr class="<%=tag[:semantic] ? 'semantic' : 'other'%>">
+      <tr class="data <%=tag[:semantic] ? 'semantic' : 'other'%>">
         <th class='tag'><%=tag[:name]%></th>
         <td class='date'><%=tag[:date]%></td>
         <td class='sha'>
@@ -33,9 +33,9 @@
         <td class='images'>tbd</td>
         <td class='actions'>
           <% if !tag[:has_release] %>
-          <a class='button'>Delete assets</a>
+          <a class='button-disabled'>Delete assets</a>
           <% else %>
-          <a class='button'>Dev deploy</a>
+          <a class='button-disabled'>Dev deploy</a>
           <% end %>
         </td>
       </tr>

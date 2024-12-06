@@ -29,8 +29,18 @@ tbody tr:nth-child(odd) {
 }
 a.button {
   background-color: #879C5D;
-  border: none;
+  border: thin solid #879C5D;
   color: white;
+  padding: 5px 10px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+}
+a.button-disabled {
+  background-color: #b9c89a;
+  border: thin solid #879C5D;
+  color: gray;
   padding: 5px 10px;
   text-align: center;
   text-decoration: none;

@@ -1,5 +1,8 @@
 $(document).ready(function() {
   $("#semantic").on("click", function() {
-    $("#semantic:checked").is("*") ? $("tr.other").hide() : $("tr.other").show();
+    $("table.data tr.data").show();
+    if ($("#semantic:checked").is("*")) {
+      $("table.data tr.other").hide();
+    } 
   });
 });
