@@ -22,7 +22,7 @@ class FilterTable
     s += "<thead>"
     s += "<tr class='header'>"
     @columns.each do |col|
-      s += "<th class='#{@classname}'>#{col.header}</th>"
+      s += "<th class='#{col.cssclass}'>#{col.header}</th>"
     end
     s += "</tr>"
     s += "</thead>"
@@ -59,17 +59,18 @@ class Row
 end
 
 class Column 
-  def initialize(sym, cssclass: '', header: '')
+  def initialize(sym, cssclass: '', header: '', spanclass: 'val')
     @sym = sym
     @cssclass = cssclass
     @header = header.empty? ? sym.to_s : header
+    @spanclass = spanclass
   end
 
   def render(v)
     if (v.is_a?(Array))
       s = ""
       v.each do |vv|
-        s += "<span class='val'>#{render(vv)}</span>"
+        s += "<span class='#{spanclass}'>#{render(vv)}</span>"
       end
       s.to_s
     elsif v.is_a?(Hash)
@@ -95,6 +96,6 @@ class Column
     "<a href='#{href}' class='#{cssclass}'>#{val}</a>"
   end
 
-  attr_accessor :sym, :cssclass, :header
+  attr_accessor :sym, :cssclass, :header, :spanclass
 
 end

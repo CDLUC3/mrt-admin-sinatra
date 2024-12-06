@@ -27,7 +27,7 @@ class Github
         Column.new(:release_name, header: 'Documented Release', cssclass: 'release'),
         Column.new(:artifacts, header: 'Artifacts', cssclass: 'artifacts'),
         Column.new(:images, header: 'ECR Images', cssclass: 'images'),
-        Column.new(:actions, header: 'Actions', cssclass: 'actions')
+        Column.new(:actions, header: 'Actions', cssclass: 'actions', spanclass: '')
       ]
     )
 
