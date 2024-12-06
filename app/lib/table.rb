@@ -18,20 +18,26 @@ class FilterTable
   end
 
   def render
-    s = "<table class='data'>"
-    s += "<thead>"
-    s += "<tr class='header'>"
+    s = %{
+    <table class='data'>
+    <thead>
+    <tr class='header'>
+    }
     @columns.each do |col|
       s += "<th class='#{col.cssclass}'>#{col.header}</th>"
     end
-    s += "</tr>"
-    s += "</thead>"
-    s += "<tbody>"
+    s += %{
+    </tr>
+    </thead>
+    <tbody>
+    }
     @rows.each do |row|
       s += row.render(@columns)
     end
-    s += "</tbody>"
-    s += "</table>"
+    s += %{
+    </tbody>
+    </table>
+    }
     s
   end
 
@@ -67,7 +73,7 @@ class Row
 end
 
 class Column 
-  def initialize(sym, cssclass: '', header: '', spanclass: 'val')
+  def initialize(sym, cssclass: 'data', header: '', spanclass: 'val')
     @sym = sym
     @cssclass = cssclass
     @header = header.empty? ? sym.to_s : header

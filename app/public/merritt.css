@@ -1,14 +1,25 @@
 table {
   border-collapse: collapse;
   margin: 0 auto;
+  width: 80%;
 }
 th, td {
-  border: 1px solid black !important;
+  border: 1px solid black;
   padding: 6px;
 }
-th.message, 
-td.message {
-  width: 200px;
+
+th.data,
+td.data {
+  width: 150px;
+}
+
+th.sha, 
+td.sha {
+  width: 300px;
+}
+th.tag, 
+td.tag {
+  width: 100px;
 }
 th.release,
 td.release {
@@ -20,7 +31,8 @@ td.actions {
   width: 250px;
   text-align: center;
 }
-th.date, td.date {
+th.date, 
+td.date {
   width: 180px;
 }
 tr.other th.tag, tr.other td.tag {
