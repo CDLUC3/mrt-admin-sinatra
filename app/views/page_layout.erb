@@ -2,13 +2,15 @@
   <head>
     <link rel="icon" href="/favicon.ico" />
     <link rel="stylesheet" type="text/css" href="/merritt.css" />
-    <title><%= title %></title>
+    <title><%= context.title %></title>
   </head>
   <body>
-    <h1><%= title %></h1>
+    <h1><%= context.title %></h1>
     <div class="breadcrumb">
+      <% unless context.top_page %>
       <a href="/">Home</a>
-      <span>/ <%= title %></span>
+      <% end %>
+      <span>/ <%= context.title %></span>
     </div>
     <div class="main">
     <%= yield %>

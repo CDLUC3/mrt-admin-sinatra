@@ -2,6 +2,7 @@ require 'sinatra'
 require 'sinatra/base'
 require_relative 'lib/merritt.rb'
 require_relative 'lib/git.rb'
+require_relative 'lib/context.rb'
 
 set :bind, '0.0.0.0'
 
@@ -13,7 +14,7 @@ get "/" do
   erb :index, 
     :layout => :page_layout, 
     :locals => {
-      title: 'Merritt Admin Tool - UC3 Account',
+      context: Context.new('Merritt Admin Tool - UC3 Account', top_page: true),
       repos: merritt.repos.keys
     }
 end
@@ -23,7 +24,7 @@ get "/git/*" do |repo|
   erb :git, 
     :layout => :page_layout, 
     :locals => {
-      title: "Repo Tags: #{repodata.fetch(:repo, repo)}",
+      context: Context.new("Repo Tags: #{repodata.fetch(:repo, repo)}"),
       git: Github.new(repodata)
     }
 end
