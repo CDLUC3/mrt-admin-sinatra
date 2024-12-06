@@ -1,52 +1,42 @@
-<html>
-  <head>
-    <link rel="icon" href="/favicon.ico" />
-    <link rel="stylesheet" type="text/css" href="/merritt.css" />
-  </head>
-  <body>
-    <div>
-      <h1>Git: <%= git.repo %></h1>
-      <div><a href="/">Home</a></div>
-      <hr/>
-      <div>
-        <table>
-          <thead>
-            <tr>
-              <th class='tag'>tag</th>
-              <th class='date'>date</th>
-              <th class='sha'>sha</th>
-              <th class='release'>documented release</th>
-              <th class='artifacts'>artifacts</th>
-              <th class='images'>images</th>
-              <th class='actions'>actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% git.tags.values.each do |tag|%>
-            <tr class="<%=tag[:semantic] ? 'semantic' : 'other'%>">
-              <td class='tag'><%=tag[:name]%></td>
-              <td class='date'><%=tag[:date]%></td>
-              <td class='sha'>
-                <a href="<%=tag[:url]%>"><%=tag[:sha]%></a>
-                <br><span><%=tag[:message]%></span>
-                <br><span><%=tag[:author]%></span>
-              </td>
-              <td class='release'>
-                <a class="<%= tag[:release_class] %>" href="<%= tag[:release_url] %>">
-                  <%= tag[:release_name] %>
-                </a>
-              </td>
-              <td class='artifacts'>tbd</td>
-              <td class='images'>tbd</td>
-              <td class='actions'>
-                <% if !tag[:has_release] %>
-                <button>TBD</button>
-                <% end %>
-              </td>
-            </tr>
-            <% end %>
-          </tbody>  
-      </div>
-    </div>
-  </body>
-</html>
+<div>
+  <table>
+    <thead>
+      <tr>
+        <th class='tag'>Tag</th>
+        <th class='date'>Date</th>
+        <th class='sha'>Commit Sha</th>
+        <th class='release'>Documented Release</th>
+        <th class='artifacts'>Artifacts</th>
+        <th class='images'>ECR Images</th>
+        <th class='actions'>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% git.tags.values.each do |tag|%>
+      <tr class="<%=tag[:semantic] ? 'semantic' : 'other'%>">
+        <th class='tag'><%=tag[:name]%></th>
+        <td class='date'><%=tag[:date]%></td>
+        <td class='sha'>
+          <a href="<%=tag[:url]%>"><%=tag[:sha]%></a>
+          <br><span><%=tag[:message]%></span>
+          <br><span><%=tag[:author]%></span>
+        </td>
+        <td class='release'>
+          <a class="<%= tag[:release_class] %>" href="<%= tag[:release_url] %>">
+            <%= tag[:release_name] %>
+          </a>
+        </td>
+        <td class='artifacts'>tbd</td>
+        <td class='images'>tbd</td>
+        <td class='actions'>
+          <% if !tag[:has_release] %>
+          <a class='button'>Delete assets</a>
+          <% else %>
+          <a class='button'>Dev deploy</a>
+          <% end %>
+        </td>
+      </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

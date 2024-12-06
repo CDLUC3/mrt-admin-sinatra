@@ -1,18 +1,8 @@
-<html>
-  <head>
-    <link rel="icon" href="/favicon.ico" />
-  </head>
-  <body>
-    <div>
-      <h1>Merritt Admin Tool - UC3 Account</h1>
-      <div>
-        <h2>Sample Data</h2>
-        <ul>
-          <% repos.each do |repo|%>
-          <li><a href="/git/<%=repo%>"><%=repo%></a></li>
-          <% end%>
-        </ul>
-      </div>
-    </div>
-  </body>
-</html>
+<div>
+  <h2>Production Services</h2>
+  <ul>
+    <% repos.each do |repo|%>
+    <li><a href="/git/<%=repo%>"><%=repo%></a></li>
+    <% end%>
+  </ul>
+</div>

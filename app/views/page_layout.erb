@@ -1,0 +1,17 @@
+<html>
+  <head>
+    <link rel="icon" href="/favicon.ico" />
+    <link rel="stylesheet" type="text/css" href="/merritt.css" />
+    <title><%= title %></title>
+  </head>
+  <body>
+    <h1><%= title %></h1>
+    <div class="breadcrumb">
+      <a href="/">Home</a>
+      <span>/ <%= title %></span>
+    </div>
+    <div class="main">
+    <%= yield %>
+    </div>
+  </body>
+</html>

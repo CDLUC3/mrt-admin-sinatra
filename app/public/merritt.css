@@ -4,7 +4,7 @@ table {
 }
 th, td {
   border: 1px solid black !important;
-  padding: 5px;
+  padding: 6px;
 }
 th.message, 
 td.message {
@@ -18,8 +18,8 @@ td.release {
 th.date, td.date {
   width: 180px;
 }
-tr.other th, tr.other td {
-  color: navy;
+tr.other th.tag, tr.other td.tag {
+  color: red;
 }
 thead tr {
   background-color: #E19D5F;
@@ -36,4 +36,9 @@ a.button {
   text-decoration: none;
   display: inline-block;
   font-size: 16px;
+}
+div.breadcrumb {
+  border-bottom: 2px solid #879C5D;
+  margin-bottom: 10px;
+  padding-bottom: 3px;
 }

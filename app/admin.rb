@@ -10,9 +10,20 @@ merritt = Merritt.new
 get "/" do
   status 200
 
-  erb :index, :locals => {repos: merritt.repos.keys}
+  erb :index, 
+    :layout => :page_layout, 
+    :locals => {
+      title: 'Merritt Admin Tool - UC3 Account',
+      repos: merritt.repos.keys
+    }
 end
 
 get "/git/*" do |repo|
-  erb :git, :locals => {git: Github.new(merritt.repo(repo))}
+  repodata = merritt.repo(repo)
+  erb :git, 
+    :layout => :page_layout, 
+    :locals => {
+      title: "Repo Tags: #{repodata.fetch(:repo, repo)}",
+      git: Github.new(repodata)
+    }
 end
