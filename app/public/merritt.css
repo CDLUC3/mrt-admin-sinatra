@@ -57,3 +57,6 @@ div#controls {
   margin: 8px;
   border: 1px solid #879C5D;
 }
+span.val {
+  display: block;
+}

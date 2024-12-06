@@ -14,7 +14,8 @@ get "/" do
     :layout => :page_layout, 
     :locals => {
       context: Context.new('Merritt Admin Tool - UC3 Account', top_page: true),
-      repos: merritt.repos.keys
+      repos: merritt.repos.keys,
+      testing: merritt.testing
     }
 end
 
@@ -24,6 +25,7 @@ get "/git/*" do |repo|
     :layout => :page_layout, 
     :locals => {
       context: Context.new("Repo Tags: #{repodata.repo}"),
-      git: repodata
+      git: repodata,
+      table: repodata.table
     }
 end

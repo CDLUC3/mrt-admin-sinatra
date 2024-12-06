@@ -2,44 +2,5 @@
   <div id="controls">
     <input type="checkbox" id="semantic"/><label for="semantic">Semantic Tags Only</label>
   </div>
-  <table class="data">
-    <thead>
-      <tr>
-        <th class='tag'>Tag</th>
-        <th class='date'>Date</th>
-        <th class='sha'>Commit Sha</th>
-        <th class='release'>Documented Release</th>
-        <th class='artifacts'>Artifacts</th>
-        <th class='images'>ECR Images</th>
-        <th class='actions'>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% git.tags.values.each do |tag|%>
-      <tr class="data <%=tag[:semantic] ? 'semantic' : 'other'%>">
-        <th class='tag'><%=tag[:name]%></th>
-        <td class='date'><%=tag[:date]%></td>
-        <td class='sha'>
-          <a href="<%=tag[:url]%>"><%=tag[:sha]%></a>
-          <br><span><%=tag[:message]%></span>
-          <br><span><%=tag[:author]%></span>
-        </td>
-        <td class='release'>
-          <a class="<%= tag[:release_class] %>" href="<%= tag[:release_url] %>">
-            <%= tag[:release_name] %>
-          </a>
-        </td>
-        <td class='artifacts'>tbd</td>
-        <td class='images'>tbd</td>
-        <td class='actions'>
-          <% if !tag[:has_release] %>
-          <a class='button-disabled'>Delete assets</a>
-          <% else %>
-          <a class='button-disabled'>Dev deploy</a>
-          <% end %>
-        </td>
-      </tr>
-      <% end %>
-    </tbody>
-  </table>
+  <%= table.render %>
 </div>

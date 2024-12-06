@@ -1,5 +1,6 @@
 require 'octokit'
 require 'aws-sdk-ssm'
+require_relative 'table'
 
 # export GHTOKEN=pull from SSM /uc3/mrt/dev/github/readonly
 
@@ -16,6 +17,20 @@ class Github
     @tags = {}
     @commits = {}
     @releases = {}
+
+    @table = FilterTable.new(
+      # Tag	Date	Commit Sha	Documented Release	Artifacts	ECR Images	Actions
+      columns: [
+        Column.new(:tag, header: 'Tag', cssclass: 'tag'),
+        Column.new(:date, header: 'Date', cssclass: 'date'),
+        Column.new(:sha, header: 'Commit Sha', cssclass: 'sha'),
+        Column.new(:release_name, header: 'Documented Release', cssclass: 'release'),
+        Column.new(:artifacts, header: 'Artifacts', cssclass: 'artifacts'),
+        Column.new(:images, header: 'ECR Images', cssclass: 'images'),
+        Column.new(:actions, header: 'Actions', cssclass: 'actions')
+      ]
+    )
+
     since = Time.now - 2 * 365 * 24 * 60 * 60
     @client.commits_since(@repo, since).each do |commit|
       @commits[commit.sha] = {
@@ -48,24 +63,56 @@ class Github
 
       has_release = !release.empty?
       @tags[tag.name] = {
-        name: tag.name,
-        semantic: semantic,
-        sha: tag.commit.sha,
-        url: commit.fetch(:url, ''),
-        message: commit.fetch(:message, ''),
+        cssclass: "data #{semantic ? 'semantic' : 'other'}",
+        tag: tag.name,
         date: commit.fetch(:date, ''),
-        author: commit.fetch(:author, ''),
-        has_release: !release.empty?,
-        release_name: release.fetch(:name, ''),
-        release_url: release.fetch(:url, ''),
-        release_draft: release.fetch(:draft, false),
-        release_class: 'data'
+        sha: [
+          {
+            value: tag.commit.sha,
+            href: commit.fetch(:url, '')
+          },
+          commit.fetch(:message, ''),
+          commit.fetch(:author, '')
+        ],
+        release:{
+          value: has_release ? release.fetch(:name, '') : 'Create',
+          href: has_release ? release.fetch(:url, '') : "https://github.com/#{repo}/releases/new?tag=#{tag.name}",
+          cssclass: has_release ? (release.fetch(:draft, false) ? 'draft' : '') : 'button'
+        },
+        artifacts: 'tbd',
+        images: 'tbd',
+        actions: [
+          {
+            value: 'Deploy Dev',
+            href: "#foo",
+            cssclass: 'button-disabled',
+            disabled: true
+          },
+          {
+            value: 'Delete Artifacts',
+            href: "#foo",
+            cssclass: 'button-disabled',
+            disabled: true
+          }
+        ]
       }
-      if !has_release
-        @tags[tag.name][:release_name] = 'Create'
-        @tags[tag.name][:release_url] = "https://github.com/#{repo}/releases/new?tag=#{tag.name}"
-        @tags[tag.name][:release_class] = 'button'
-      end
+    end
+
+    @tags.each do |tag, data|
+      @table.add_row(
+        Row.new(
+          [
+            data[:tag],
+            data[:date],
+            data[:sha],
+            data[:release],
+            data[:artifacts],
+            data[:images],
+            data[:actions]
+          ],
+          cssclass: data[:cssclass]
+        )
+      )
     end
   end
 
@@ -77,5 +124,5 @@ class Github
     end
   end
 
-  attr_accessor :repo, :commits
+  attr_accessor :repo, :commits, :table
 end
