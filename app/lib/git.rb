@@ -28,6 +28,10 @@ class Github
         Column.new(:artifacts, header: 'Artifacts', cssclass: 'artifacts'),
         Column.new(:images, header: 'ECR Images', cssclass: 'images'),
         Column.new(:actions, header: 'Actions', cssclass: 'actions', spanclass: '')
+      ],
+      filters: [
+        Filter.new('Semantic Tags Only', 'other'),
+        Filter.new('Has Releases', 'no-release')
       ]
     )
 
@@ -62,8 +66,15 @@ class Github
       next if commit.empty?
 
       has_release = !release.empty?
+
+      @cssclasses = [
+        'data', 
+        semantic ? 'semantic' : 'other'
+      ]
+      @cssclasses << 'no-release' unless has_release
+
       @tags[tag.name] = {
-        cssclass: "data #{semantic ? 'semantic' : 'other'}",
+        cssclass: @cssclasses.join(' '),
         tag: tag.name,
         date: commit.fetch(:date, ''),
         sha: [
@@ -98,7 +109,7 @@ class Github
       }
     end
 
-    @tags.each do |tag, data|
+    tags.each do |tag, data|
       @table.add_row(
         Row.new(
           [

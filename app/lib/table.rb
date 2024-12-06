@@ -35,6 +35,14 @@ class FilterTable
     s
   end
 
+  def render_filters
+    s = ""
+    @filters.each do |filter|
+      s += filter.render
+    end
+    s
+  end
+
   attr_accessor :columns, :data, :filters
 end
 
@@ -98,4 +106,22 @@ class Column
 
   attr_accessor :sym, :cssclass, :header, :spanclass
 
+end
+
+class Filter
+  def initialize(label, value)
+    @label = label
+    @value = value
+  end
+
+  def render
+    %{
+    <span class='filter'>
+      <input class='filter' type='checkbox' id='filter-#{@value}' value='#{@value}'/>
+      <label for='semantic'>#{label}</label>
+    </span>
+    }
+  end
+
+  attr_accessor :label, :value
 end
