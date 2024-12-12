@@ -1,7 +1,7 @@
 require 'sinatra'
 require 'sinatra/base'
-require_relative 'lib/merritt.rb'
-require_relative 'lib/context.rb'
+require_relative 'lib/config/merritt.rb'
+require_relative 'lib/ui/context.rb'
 
 set :bind, '0.0.0.0'
 

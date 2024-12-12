@@ -1,6 +1,6 @@
 require 'octokit'
 require 'aws-sdk-ssm'
-require_relative 'table'
+require_relative '../ui/table'
 
 # export GHTOKEN=pull from SSM /uc3/mrt/dev/github/readonly
 
