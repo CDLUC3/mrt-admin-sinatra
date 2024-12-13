@@ -1,6 +1,8 @@
 require 'aws-sdk-ecr'
 
-class ECRImages
+module UC3
+
+class ECRImagesClient
   def initialize(repohash)
     @client = Aws::ECR::Client.new(region: 'us-west-2')
     @images = repohash.fetch(:image_repos, [])
@@ -21,4 +23,6 @@ class ECRImages
     end
     res
   end
+end
+
 end

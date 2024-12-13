@@ -15,19 +15,19 @@ class MerrittConfig
   def repo(repo, artifacts: {}, ecrimages: {})
     repodata = @repos.fetch(repo.to_sym, {})
     return nil if repodata.empty?
-    gitdata = Github.new(repodata, artifacts: artifacts, ecrimages: ecrimages)
+    gitdata = UC3::GithubClient.new(repodata, artifacts: artifacts, ecrimages: ecrimages)
     gitdata
   end
 
   def codeartifact(repo)
     repodata = @repos.fetch(repo.to_sym, {})
     return nil if repodata.empty?
-    CodeArtifact.new(repodata)
+    UC3::CodeArtifactClient.new(repodata)
   end
 
   def ecrimages(repo)
     repodata = @repos.fetch(repo.to_sym, {})
     return nil if repodata.empty?
-    ECRImages.new(repodata)
+    UC3::ECRImagesClient.new(repodata)
   end
 end

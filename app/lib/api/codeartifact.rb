@@ -1,6 +1,8 @@
 require 'aws-sdk-codeartifact'
 
-class CodeArtifact
+module UC3
+
+class CodeArtifactClient
   def initialize(repohash)
     @client = Aws::CodeArtifact::Client.new(region: 'us-west-2')
     @artifacts = repohash.fetch(:artifacts, [])
@@ -23,4 +25,6 @@ class CodeArtifact
     end
     res
   end
+end
+
 end

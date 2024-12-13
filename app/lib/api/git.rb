@@ -4,11 +4,13 @@ require_relative '../ui/table'
 
 # export GHTOKEN=pull from SSM /uc3/mrt/dev/github/readonly
 
+module UC3
+
 Octokit.configure do |c|
   c.auto_paginate = true
 end
 
-class Github
+class GithubClient
   NOACT='javascript:alert("Not yet implemented");'
   def initialize(repohash, artifacts: {}, ecrimages: {})
     @repo = repohash.fetch(:repo, '')
@@ -155,4 +157,6 @@ class Github
   end
 
   attr_accessor :repo, :commits, :table
+end
+
 end
