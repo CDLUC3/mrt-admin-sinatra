@@ -5,7 +5,7 @@ require_relative 'lib/ui/context.rb'
 
 set :bind, '0.0.0.0'
 
-merritt = Merritt.new
+merritt = MerrittConfig.new
 
 get "/" do
   status 200
@@ -19,7 +19,9 @@ get "/" do
 end
 
 get "/git/*" do |repo|
-  repodata = merritt.repo(repo)
+  artifacts = merritt.codeartifact(repo).list_package_versions
+  ecrimages = merritt.ecrimages(repo).list_image_tags
+  repodata = merritt.repo(repo, artifacts: artifacts, ecrimages: ecrimages)
   erb :git, 
     :layout => :page_layout, 
     :locals => {

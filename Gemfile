@@ -2,6 +2,8 @@ source 'http://rubygems.org'
 ruby '~> 3.2'
 
 gem 'aws-sdk-ssm'
+gem 'aws-sdk-codeartifact'
+gem 'aws-sdk-ecr'
 gem 'sinatra'
 gem 'json'
 gem 'rack'

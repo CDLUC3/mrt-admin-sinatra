@@ -9,7 +9,8 @@ Octokit.configure do |c|
 end
 
 class Github
-  def initialize(repohash)
+  NOACT='javascript:alert("Not yet implemented");'
+  def initialize(repohash, artifacts: {}, ecrimages: {})
     @repo = repohash.fetch(:repo, '')
     @ssm = Aws::SSM::Client.new(region: ENV.fetch('AWS_REGION', 'us-west-2'))
     @token = @ssm.get_parameter(name: '/uc3/mrt/dev/github/readonly', with_decryption: true)[:parameter][:value]
@@ -31,7 +32,9 @@ class Github
       ],
       filters: [
         Filter.new('Semantic Tags Only', 'other'),
-        Filter.new('Has Releases', 'no-release')
+        Filter.new('Has Release', 'no-release'),
+        Filter.new('Has Artifact', 'no-artifact'),
+        Filter.new('Has Image', 'no-image')
       ]
     )
 
@@ -66,12 +69,41 @@ class Github
       next if commit.empty?
 
       has_release = !release.empty?
+      has_artifact = artifacts.key?(tag.name)
+      has_image = ecrimages.key?(tag.name)
 
       @cssclasses = [
         'data', 
         semantic ? 'semantic' : 'other'
       ]
       @cssclasses << 'no-release' unless has_release
+      @cssclasses << 'no-artifact' unless has_artifact
+      @cssclasses << 'no-image' unless has_image
+
+      actions = []
+      actions << {
+        value: 'Deploy Dev',
+        href: NOACT,
+        cssclass: 'button-disabled',
+        disabled: true
+      }
+      if has_artifact
+        actions << {
+          value: 'Delete Artifacts',
+          href: NOACT,
+          cssclass: 'buttontbd',
+          disabled: false
+        }
+      end
+
+      if has_image
+        actions << {
+          value: 'Delete Images',
+          href: NOACT,
+          cssclass: 'buttontbd',
+          disabled: false
+        }
+      end
 
       @tags[tag.name] = {
         cssclass: @cssclasses.join(' '),
@@ -90,22 +122,9 @@ class Github
           href: has_release ? release.fetch(:url, '') : "https://github.com/#{repo}/releases/new?tag=#{tag.name}",
           cssclass: has_release ? (release.fetch(:draft, false) ? 'draft' : '') : 'button'
         },
-        artifacts: 'tbd',
-        images: 'tbd',
-        actions: [
-          {
-            value: 'Deploy Dev',
-            href: "#foo",
-            cssclass: 'button-disabled',
-            disabled: true
-          },
-          {
-            value: 'Delete Artifacts',
-            href: "#foo",
-            cssclass: 'button-disabled',
-            disabled: true
-          }
-        ]
+        artifacts: has_artifact ? artifacts.fetch(tag.name, []) : '',
+        images: has_image ? ecrimages.fetch(tag.name, []) : '',
+        actions: actions
       }
     end
 

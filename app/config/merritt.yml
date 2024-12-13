@@ -1,27 +1,38 @@
 repos:
   admin:
     repo: CDLUC3/mrt-admin-lambda
-    artifacts:
+    image_repos:
+    - uc3-mrt-admin-lambda
+    - uc3-mrt-colladmin-lambda
   ui:
     repo: CDLUC3/mrt-dashboard
-    artifacts:
   store:
     repo: CDLUC3/mrt-store
     artifacts:
-    - org.cdlib.mrt:mrt-storewar
+    - mrt-storewar
+    image_repos:
+    - mrt-store
   ingest:
     repo: CDLUC3/mrt-ingest
     artifacts:
-    - org.cdlib.mrt:mrt-ingestwar
+    - mrt-ingestwar
+    image_repos:
+    - mrt-ingest
   inventory:
     repo: CDLUC3/mrt-inventory
     artifacts:
-    - org.cdlib.mrt:mrt-invwar
+    - mrt-invwar
+    image_repos:
+    - mrt-inventory
   audit:
     repo: CDLUC3/mrt-audit
     artifacts:
-    - org.cdlib.mrt:mrtaudit
+    - mrtaudit
+    image_repos:
+    - mrt-audit
   replic:
     repo: CDLUC3/mrt-replic
     artifacts:
-    - org.cdlib.mrt:mrt-replicationwar
+    - mrt-replicationwar
+    image_repos:
+    - mrt-replic

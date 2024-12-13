@@ -48,12 +48,17 @@ a.button {
   background-color: #879C5D;
   color: white;
 }
+a.buttontbd {
+  background-color: #879C5D;  
+  color: yellow;
+}
 a.button-disabled {
   background-color: #b9c89a;
   border: thin solid #879C5D;
   color: gray;
 }
 a.button,
+a.buttontbd,
 a.button-disabled {
   padding: 5px 10px;
   margin: 3px;
@@ -75,4 +80,13 @@ div#controls {
 }
 span.val {
   display: block;
+}
+td.artifacts,
+td.images {
+  width: 240px;
+  padding-left: 20px;
+}
+td.artifacts span.val,
+td.images span.val {
+  display: list-item;
 }
