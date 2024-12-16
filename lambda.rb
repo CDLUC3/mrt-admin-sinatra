@@ -14,11 +14,12 @@ ENV['RACK_ENV'] ||= 'production'
 # def handler(event:, context:)
 def handler(event:)
   # Check if the body is base64 encoded. If it is, try to decode it
-  body = if event['isBase64Encoded']
-           Base64.decode64 event['body']
-         else
-           event['body']
-         end || ''
+  body =
+    if event['isBase64Encoded']
+      Base64.decode64 event['body']
+    else
+      event['body']
+    end || ''
 
   # Rack expects the querystring in plain text, not a hash
   headers = event.fetch 'headers', {}
@@ -46,12 +47,13 @@ def handler(event:)
   headers.each_pair do |key, value|
     # Content-Type and Content-Length are handled specially per the Rack SPEC linked above.
     name = key.upcase.gsub '-', '_'
-    header = case name
-             when 'CONTENT_TYPE', 'CONTENT_LENGTH'
-               name
-             else
-               "HTTP_#{name}"
-             end
+    header =
+      case name
+      when 'CONTENT_TYPE', 'CONTENT_LENGTH'
+        name
+      else
+        "HTTP_#{name}"
+      end
     env[header] = value.to_s
   end
 
