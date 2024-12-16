@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
 require 'aws-sdk-codeartifact'
-require_relative 'uc3_client'
+require_relative '../uc3_client'
 
 # Scope custom code for UC3 to distinguish from 3rd party classes
-module UC3
+module UC3Code
   # Query for repository artifacts by code
-  class CodeArtifactClient < UC3Client
+  class CodeArtifactClient < UC3::UC3Client
     def initialize
       super
       @client = Aws::CodeArtifact::Client.new(region: 'us-west-2')

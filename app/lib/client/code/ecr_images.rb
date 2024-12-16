@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
 require 'aws-sdk-ecr'
-require_relative 'uc3_client'
+require_relative '../uc3_client'
 
 # Scope custom code for UC3 to distinguish from 3rd party classes
-module UC3
+module UC3Code
   # Query for repository images by tag
-  class ECRImagesClient < UC3Client
+  class ECRImagesClient < UC3::UC3Client
     def initialize
       super
       @client = Aws::ECR::Client.new(region: 'us-west-2')

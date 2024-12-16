@@ -12,7 +12,7 @@ $app ||= Rack::Builder.parse_file("#{__dir__}/app/config.ru")
 ENV['RACK_ENV'] ||= 'production'
 
 def handler(event:, context:)
-  # context is required when running as a lambda app
+  # context is required when running as a lambda app, this line makes rubocop happy
   context.nil?
 
   # Check if the body is base64 encoded. If it is, try to decode it

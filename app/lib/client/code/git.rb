@@ -2,19 +2,19 @@
 
 require 'octokit'
 require 'aws-sdk-ssm'
-require_relative '../ui/table'
-require_relative 'uc3_client'
+require_relative '../../ui/table'
+require_relative '../uc3_client'
 
 # export GHTOKEN=pull from SSM /uc3/mrt/dev/github/readonly
 
 # Scope custom code for UC3 to distinguish from 3rd party classes
-module UC3
+module UC3Code
   Octokit.configure do |c|
     c.auto_paginate = true
   end
 
   # Query for github repository tags
-  class GithubClient < UC3Client
+  class GithubClient < UC3::UC3Client
     NOACT = 'javascript:alert("Not yet implemented");'
     def initialize
       super
@@ -41,22 +41,22 @@ module UC3
     def list_tags(repohash: {}, artifacts: {}, ecrimages: {})
       repo = repohash.fetch(:repo, '')
 
-      table = FilterTable.new(
+      table = AdminUI::FilterTable.new(
         # Tag	Date	Commit Sha	Documented Release	Artifacts	ECR Images	Actions
         columns: [
-          Column.new(:tag, header: 'Tag', cssclass: 'tag'),
-          Column.new(:date, header: 'Date', cssclass: 'date'),
-          Column.new(:sha, header: 'Commit Sha', cssclass: 'sha'),
-          Column.new(:release_name, header: 'Documented Release', cssclass: 'release'),
-          Column.new(:artifacts, header: 'Artifacts', cssclass: 'artifacts'),
-          Column.new(:images, header: 'ECR Images', cssclass: 'images'),
-          Column.new(:actions, header: 'Actions', cssclass: 'actions', spanclass: '')
+          AdminUI::Column.new(:tag, header: 'Tag', cssclass: 'tag'),
+          AdminUI::Column.new(:date, header: 'Date', cssclass: 'date'),
+          AdminUI::Column.new(:sha, header: 'Commit Sha', cssclass: 'sha'),
+          AdminUI::Column.new(:release_name, header: 'Documented Release', cssclass: 'release'),
+          AdminUI::Column.new(:artifacts, header: 'Artifacts', cssclass: 'artifacts'),
+          AdminUI::Column.new(:images, header: 'ECR Images', cssclass: 'images'),
+          AdminUI::Column.new(:actions, header: 'Actions', cssclass: 'actions', spanclass: '')
         ],
         filters: [
-          Filter.new('Semantic Tags Only', 'other'),
-          Filter.new('Has Release', 'no-release'),
-          Filter.new('Has Artifact', 'no-artifact'),
-          Filter.new('Has Image', 'no-image')
+          AdminUI::Filter.new('Semantic Tags Only', 'other'),
+          AdminUI::Filter.new('Has Release', 'no-release'),
+          AdminUI::Filter.new('Has Artifact', 'no-artifact'),
+          AdminUI::Filter.new('Has Image', 'no-image')
         ]
       )
 
@@ -154,7 +154,7 @@ module UC3
 
       tags.each_value do |data|
         table.add_row(
-          Row.new(
+          AdminUI::Row.new(
             [
               data[:tag],
               data[:date],

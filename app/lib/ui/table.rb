@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# admin ui components
+module AdminUI
 # Table rendering classes
 class FilterTable
   def initialize(columns: [], data: [], filters: [])
@@ -134,4 +136,5 @@ class Filter
   end
 
   attr_accessor :label, :value
+end
 end
