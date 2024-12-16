@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
+# Table rendering classes
 class FilterTable
   def initialize(columns: [], data: [], filters: [])
     @columns = columns
-    @rows = []
+    @rows = data
     @filters = filters
   end
 
@@ -54,6 +55,7 @@ class FilterTable
   attr_accessor :columns, :data, :filters
 end
 
+# Table rendering classes
 class Row
   def initialize(data, cssclass: '')
     @cssclass = cssclass
@@ -73,6 +75,7 @@ class Row
   attr_accessor :cols, :cssclass
 end
 
+# Table rendering classes
 class Column
   def initialize(sym, cssclass: 'data', header: '', spanclass: 'val')
     @sym = sym
@@ -81,30 +84,30 @@ class Column
     @spanclass = spanclass
   end
 
-  def render(v)
-    if v.is_a?(Array)
+  def render(cellval)
+    if cellval.is_a?(Array)
       s = ''
-      v.each do |vv|
+      cellval.each do |vv|
         s += "<span class='#{spanclass}'>#{render(vv)}</span>"
       end
       s.to_s
-    elsif v.is_a?(Hash)
-      val = v.fetch(:value, '')
+    elsif cellval.is_a?(Hash)
+      val = cellval.fetch(:value, '')
       if val.empty?
         render_string('')
-      elsif v.key?(:href)
-        href = v.fetch(:href, '')
-        render_link(val, href, cssclass: v.fetch(:cssclass, ''))
+      elsif cellval.key?(:href)
+        href = cellval.fetch(:href, '')
+        render_link(val, href, cssclass: cellval.fetch(:cssclass, ''))
       else
-        v.fetch(:value, '').to_s
+        cellval.fetch(:value, '').to_s
       end
     else
-      render_string(v.to_s)
+      render_string(cellval.to_s)
     end
   end
 
-  def render_string(v)
-    v
+  def render_string(val)
+    val
   end
 
   def render_link(val, href, cssclass: '')
@@ -114,6 +117,7 @@ class Column
   attr_accessor :sym, :cssclass, :header, :spanclass
 end
 
+# Table rendering classes
 class Filter
   def initialize(label, value)
     @label = label

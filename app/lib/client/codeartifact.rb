@@ -3,9 +3,12 @@
 require 'aws-sdk-codeartifact'
 require_relative 'uc3_client'
 
+# Scope custom code for UC3 to distinguish from 3rd party classes
 module UC3
+  # Query for repository artifacts by code
   class CodeArtifactClient < UC3Client
     def initialize
+      super
       @client = Aws::CodeArtifact::Client.new(region: 'us-west-2')
     rescue StandardError => e
       puts e

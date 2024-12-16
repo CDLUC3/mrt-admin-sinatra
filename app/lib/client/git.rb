@@ -7,14 +7,17 @@ require_relative 'uc3_client'
 
 # export GHTOKEN=pull from SSM /uc3/mrt/dev/github/readonly
 
+# Scope custom code for UC3 to distinguish from 3rd party classes
 module UC3
   Octokit.configure do |c|
     c.auto_paginate = true
   end
 
+  # Query for github repository tags
   class GithubClient < UC3Client
     NOACT = 'javascript:alert("Not yet implemented");'
     def initialize
+      super
       token = '' # TBD
       opts = {}
       opts[:access_token] = token unless token.empty?

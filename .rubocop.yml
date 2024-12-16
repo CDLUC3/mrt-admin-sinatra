@@ -46,3 +46,6 @@ Style/HashSyntax:
 AllCops:
   NewCops: enable
   SuggestExtensions: false
+
+Style/GlobalVars:
+  Enabled: false

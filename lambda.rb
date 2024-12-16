@@ -11,7 +11,8 @@ $app ||= Rack::Builder.parse_file("#{__dir__}/app/config.ru")
 
 ENV['RACK_ENV'] ||= 'production'
 
-def handler(event:, context:)
+# def handler(event:, context:)
+def handler(event:)
   # Check if the body is base64 encoded. If it is, try to decode it
   body = if event['isBase64Encoded']
            Base64.decode64 event['body']
@@ -64,17 +65,17 @@ def handler(event:, context:)
       body_content += item.to_s
     end
 
-    isBase64Encoded = headers.fetch('content-type', '').start_with?('image/')
+    is_base64_encoded = headers.fetch('content-type', '').start_with?('image/')
 
     # We return the structure required by AWS API Gateway since we integrate with it
     # https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html
     response = {
       statusCode: status,
       headers: headers,
-      body: isBase64Encoded ? Base64.strict_encode64(body_content) : body_content,
-      isBase64Encoded: isBase64Encoded
+      body: is_base64_encoded ? Base64.strict_encode64(body_content) : body_content,
+      is_base64_encoded: is_base64_encoded
     }
-  rescue Exception => e
+  rescue StandardError => e
     # If there is _any_ exception, we return a 500 error with an error message
 
     response = {

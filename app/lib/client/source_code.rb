@@ -7,9 +7,12 @@ require_relative 'codeartifact'
 require_relative 'ecr_images'
 require_relative 'uc3_client'
 
+# Scope custom code for UC3 to distinguish from 3rd party classes
 module UC3
+  # Load clients for retrieving source code information
   class SourceCodeClient < UC3Client
     def initialize
+      super
       config = YAML.safe_load_file('app/config/source_code.yml', aliases: true)
       @repos = JSON.parse(config.to_json, symbolize_names: true).fetch(:repos, {})
       @github = UC3::GithubClient.new
