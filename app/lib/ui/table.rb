@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class FilterTable
   def initialize(columns: [], data: [], filters: [])
     @columns = columns
@@ -18,31 +20,31 @@ class FilterTable
   end
 
   def render
-    s = %{
+    s = %(
     <table class='data'>
     <thead>
     <tr class='header'>
-    }
+    )
     @columns.each do |col|
       s += "<th class='#{col.cssclass}'>#{col.header}</th>"
     end
-    s += %{
+    s += %(
     </tr>
     </thead>
     <tbody>
-    }
+    )
     @rows.each do |row|
       s += row.render(@columns)
     end
-    s += %{
+    s += %(
     </tbody>
     </table>
-    }
+    )
     s
   end
 
   def render_filters
-    s = ""
+    s = ''
     @filters.each do |filter|
       s += filter.render
     end
@@ -52,7 +54,7 @@ class FilterTable
   attr_accessor :columns, :data, :filters
 end
 
-class Row 
+class Row
   def initialize(data, cssclass: '')
     @cssclass = cssclass
     @cols = data
@@ -61,18 +63,17 @@ class Row
   def render(coldefs)
     s = "<tr class='#{@cssclass}'>"
     coldefs.each_with_index do |coldef, i|
-      tag = i == 0 ? 'th' : 'td'
+      tag = i.zero? ? 'th' : 'td'
       s += "<#{tag} class='#{coldef.cssclass}'>#{coldef.render(@cols[i])}</#{tag}>"
     end
-    s += "</tr>"
+    s += '</tr>'
     s
   end
 
   attr_accessor :cols, :cssclass
-
 end
 
-class Column 
+class Column
   def initialize(sym, cssclass: 'data', header: '', spanclass: 'val')
     @sym = sym
     @cssclass = cssclass
@@ -81,8 +82,8 @@ class Column
   end
 
   def render(v)
-    if (v.is_a?(Array))
-      s = ""
+    if v.is_a?(Array)
+      s = ''
       v.each do |vv|
         s += "<span class='#{spanclass}'>#{render(vv)}</span>"
       end
@@ -90,9 +91,9 @@ class Column
     elsif v.is_a?(Hash)
       val = v.fetch(:value, '')
       if val.empty?
-        render_string("")
-      elsif v.has_key?(:href)
-        href = v.fetch(:href, '') 
+        render_string('')
+      elsif v.key?(:href)
+        href = v.fetch(:href, '')
         render_link(val, href, cssclass: v.fetch(:cssclass, ''))
       else
         v.fetch(:value, '').to_s
@@ -105,13 +106,12 @@ class Column
   def render_string(v)
     v
   end
-  
+
   def render_link(val, href, cssclass: '')
     "<a href='#{href}' class='#{cssclass}'>#{val}</a>"
   end
 
   attr_accessor :sym, :cssclass, :header, :spanclass
-
 end
 
 class Filter
@@ -121,12 +121,12 @@ class Filter
   end
 
   def render
-    %{
+    %(
     <span class='filter'>
       <input class='filter' type='checkbox' id='filter-#{@value}' value='#{@value}'/>
       <label for='semantic'>#{label}</label>
     </span>
-    }
+    )
   end
 
   attr_accessor :label, :value

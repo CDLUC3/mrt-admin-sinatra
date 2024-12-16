@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 require 'rack'
 require 'rack/contrib'
-require_relative './admin'
+require_relative 'admin'
 
 set :root, File.dirname(__FILE__)
-set :views, Proc.new { File.join(root, "views") }
+set :views, proc { File.join(root, 'views') }
 
 run Sinatra::Application
