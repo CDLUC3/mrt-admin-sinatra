@@ -1,6 +1,7 @@
 require 'octokit'
 require 'aws-sdk-ssm'
 require_relative '../ui/table'
+require_relative 'uc3_client.rb'
 
 # export GHTOKEN=pull from SSM /uc3/mrt/dev/github/readonly
 
@@ -10,18 +11,33 @@ Octokit.configure do |c|
   c.auto_paginate = true
 end
 
-class GithubClient
+class GithubClient < UC3Client
   NOACT='javascript:alert("Not yet implemented");'
-  def initialize(repohash, artifacts: {}, ecrimages: {})
-    @repo = repohash.fetch(:repo, '')
-    @ssm = Aws::SSM::Client.new(region: ENV.fetch('AWS_REGION', 'us-west-2'))
-    @token = @ssm.get_parameter(name: '/uc3/mrt/dev/github/readonly', with_decryption: true)[:parameter][:value]
-    @client = Octokit::Client.new({access_token: @token})
+  def initialize
+    token = '' #TBD
+    opts = {}
+    opts[:access_token] = token unless token.empty?
+    begin
+      @client = Octokit::Client.new(opts)
+    rescue StandardError => e
+      puts e
+    end
     @tags = {}
     @commits = {}
     @releases = {}
+    @since = Time.now - 2 * 365 * 24 * 60 * 60
+  end
 
-    @table = FilterTable.new(
+  def enabled
+    !@client.nil?
+  end
+
+  attr_accessor :repo, :commits, :table
+
+  def list_tags(repohash: {}, artifacts: {}, ecrimages: {})
+    repo = repohash.fetch(:repo, '')
+
+    table = FilterTable.new(
       # Tag	Date	Commit Sha	Documented Release	Artifacts	ECR Images	Actions
       columns: [
         Column.new(:tag, header: 'Tag', cssclass: 'tag'),
@@ -40,8 +56,7 @@ class GithubClient
       ]
     )
 
-    since = Time.now - 2 * 365 * 24 * 60 * 60
-    @client.commits_since(@repo, since).each do |commit|
+    @client.commits_since(repo, @since).each do |commit|
       @commits[commit.sha] = {
         sha: commit.sha,
         message: commit.commit.message,
@@ -51,7 +66,7 @@ class GithubClient
       }
     end
 
-    @client.releases(@repo).each do |rel|
+    @client.releases(repo).each do |rel|
       @releases[rel.tag_name] = {
         tag: rel.tag_name,
         name: rel.name,
@@ -60,7 +75,7 @@ class GithubClient
       }      
     end
 
-    @client.tags(@repo).each do |tag|
+    @client.tags(repo).each do |tag|
 
       next if tag.name =~ /^sprint-/
 
@@ -131,7 +146,7 @@ class GithubClient
     end
 
     tags.each do |tag, data|
-      @table.add_row(
+      table.add_row(
         Row.new(
           [
             data[:tag],
@@ -146,6 +161,7 @@ class GithubClient
         )
       )
     end
+    table
   end
 
   def tags
@@ -156,7 +172,6 @@ class GithubClient
     end
   end
 
-  attr_accessor :repo, :commits, :table
 end
 
 end
