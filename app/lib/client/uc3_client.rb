@@ -17,7 +17,8 @@ module UC3
         ]
       )
       ENV.each do |key, value|
-        table.add_row(AdminUI::Row.make_row(table.columns, {key: key, value: value}))
+        v = key =~ /(KEY|TOKEN|SECRET) ? '***' : value
+        table.add_row(AdminUI::Row.make_row(table.columns, {key: key, value: v}))
       end
       table
     end
