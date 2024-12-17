@@ -14,6 +14,10 @@ ENV['RACK_ENV'] ||= 'production'
 def handler(event:, context:)
   ENV['LAMBDA_CONTEXT_FUNCTION_NAME']=context.function_name
   ENV['LAMBDA_CONTEXT_FUNCTION_VERSION']=context.function_version
+  ENV['LAMBDA_CONTEXT_FUNCTION_VERSION']=context.function_version
+  ENV['LAMBDA_CONTEXT_FUNCTION_ARN']=context.invoked_function_arn
+  ENV['LAMBDA_CONTEXT_MEMORY_LIMIT_IN_MB']=context.memory_limit_in_mb
+  ENV['LAMBDA_CONTEXT_TIMEOUT_MS']=context.deadline_ms - context.clock_diff
 
   # Check if the body is base64 encoded. If it is, try to decode it
   body =
