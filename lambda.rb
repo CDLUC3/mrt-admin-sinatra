@@ -57,8 +57,9 @@ def handler(event:, context:)
 
   begin
     # Response from Rack must have status, headers and body
-    env['LAMBDA_CONTEXT'] = context.pretty_inspect
-    status, headers, body = $app.call env
+    puts context.methods
+    puts context.pretty_inspect
+    status, headers, body = $app.call env context
 
     # body is an array. We combine all the items to a single string
     body_content = ''
