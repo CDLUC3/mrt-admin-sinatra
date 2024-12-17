@@ -21,7 +21,7 @@ module UC3
         table.add_row(AdminUI::Row.make_row(table.columns, {key: key, value: v}))
       end
       if $context
-        table.add_row(AdminUI::Row.make_row(table.columns, {key: 'Context', value: $context.pretty_inspect}))
+        table.add_row(AdminUI::Row.make_row(table.columns, {key: 'Context', value: $context}))
       end
       table
     end

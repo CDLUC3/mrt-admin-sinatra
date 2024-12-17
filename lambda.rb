@@ -12,7 +12,7 @@ $app ||= Rack::Builder.parse_file("#{__dir__}/app/config.ru")
 ENV['RACK_ENV'] ||= 'production'
 
 def handler(event:, context:)
-  $context = context
+  $context = context.pretty_inspect
 
   # Check if the body is base64 encoded. If it is, try to decode it
   body =
