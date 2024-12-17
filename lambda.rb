@@ -59,7 +59,7 @@ def handler(event:, context:)
     # Response from Rack must have status, headers and body
     puts "env: #{env}"
     puts "event: #{event}"
-    puts "context: #{context.to_h.to_s}"
+    puts "context: #{context.methods}"
     status, headers, body = $app.call env
 
     # body is an array. We combine all the items to a single string
