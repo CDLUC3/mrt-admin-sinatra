@@ -5,6 +5,11 @@ require_relative '../ui/table'
 module UC3
   # Base class for UC3 client classes
   class UC3Client
+    @@clients = {}
+    def initialize(penabled = true) 
+      @@clients[self.class.to_s] = penabled
+    end
+
     def enabled
       false
     end
@@ -19,6 +24,19 @@ module UC3
       ENV.sort.each do |key, value|
         v = key =~ /(KEY|TOKEN|SECRET)/ ? '***' : value
         table.add_row(AdminUI::Row.make_row(table.columns, {key: key, value: v}))
+      end
+      table
+    end
+
+    def clients
+      table = AdminUI::FilterTable.new(
+        columns: [
+          AdminUI::Column.new(:client, header: 'Client'),
+          AdminUI::Column.new(:enabled, header: 'Enabled')
+        ]
+      )
+      @@clients.sort.each do |key, value|
+        table.add_row(AdminUI::Row.make_row(table.columns, {client: key, enabled: value}))
       end
       table
     end

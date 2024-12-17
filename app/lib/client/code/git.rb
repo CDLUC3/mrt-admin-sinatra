@@ -17,7 +17,6 @@ module UC3Code
   class GithubClient < UC3::UC3Client
     NOACT = 'javascript:alert("Not yet implemented");'
     def initialize
-      super
       token = '' # TBD
       opts = {}
       opts[:access_token] = token unless token.empty?
@@ -28,6 +27,7 @@ module UC3Code
       end
       @tags = {}
       @since = Time.now - (2 * 365 * 24 * 60 * 60)
+      super(enabled)
     end
 
     def enabled

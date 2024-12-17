@@ -7,11 +7,18 @@ require_relative '../uc3_client'
 module UC3Code
   # Query for repository artifacts by code
   class CodeArtifactClient < UC3::UC3Client
+    ARTDOMAIN='cdlib-uc3-mrt'
+    ARTREPOSITORY='uc3-mrt-java'
+    ARTFORMAT='maven'
+    ARTNAMESPACE='org.cdlib.mrt'
+
     def initialize
-      super
       @client = Aws::CodeArtifact::Client.new(region: 'us-west-2')
+      @client.describe_domain(domain: ARTDOMAIN)
+      super(enabled)
     rescue StandardError => e
       puts e
+      super(false)
     end
 
     def enabled
@@ -25,11 +32,11 @@ module UC3Code
       repohash.fetch(:artifacts, []).each do |artifact|
         begin
           pv = @client.list_package_versions(
-            domain: 'cdlib-uc3-mrt',
-            repository: 'uc3-mrt-java',
+            domain: ARTDOMAIN,
+            repository: ARTREPOSITORY,
             package: artifact,
-            format: 'maven',
-            namespace: 'org.cdlib.mrt'
+            format: ARTFORMAT,
+            namespace: ARTNAMESPACE
           )
         rescue StandardError => e
           puts "Client ERR: #{e}: #{@client}"

@@ -16,3 +16,12 @@ get '/context' do
       table: UC3::UC3Client.new.context
     }
 end
+
+get '/clients' do
+  erb :table,
+    :layout => :page_layout,
+    :locals => {
+      context: AdminUI::Context.new("Admin Tool Clients"),
+      table: UC3::UC3Client.new.clients
+    }
+end

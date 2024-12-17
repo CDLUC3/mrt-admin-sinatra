@@ -12,12 +12,12 @@ module UC3Code
   # Load clients for retrieving source code information
   class SourceCodeClient < UC3::UC3Client
     def initialize
-      super
       config = YAML.safe_load_file('app/config/source_code.yml', aliases: true)
       @repos = JSON.parse(config.to_json, symbolize_names: true).fetch(:repos, {})
       @github = UC3Code::GithubClient.new
       @codeartifact = UC3Code::CodeArtifactClient.new
       @ecrimages = UC3Code::ECRImagesClient.new
+      super
     end
 
     attr_accessor :repos
