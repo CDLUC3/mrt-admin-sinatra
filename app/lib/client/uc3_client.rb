@@ -16,7 +16,7 @@ module UC3
           AdminUI::Column.new(:value, header: 'Value')
         ]
       )
-      ENV.each do |key, value|
+      ENV.sort.each do |key, value|
         v = key =~ /(KEY|TOKEN|SECRET)/ ? '***' : value
         table.add_row(AdminUI::Row.make_row(table.columns, {key: key, value: v}))
       end

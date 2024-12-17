@@ -57,6 +57,7 @@ def handler(event:, context:)
 
   begin
     # Response from Rack must have status, headers and body
+    puts context.to_json
     env['LAMBDA_CONTEXT'] = context.to_json
     status, headers, body = $app.call env
 
