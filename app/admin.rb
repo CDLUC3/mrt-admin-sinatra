@@ -11,14 +11,17 @@ puts "ENV: #{ENV}"
 # sinatra routes
 module Sinatra
   # modularize route handling by specific clients
-  include UC3CodeRoutes
+  class Server < Sinatra::Base
+    include UC3CodeRoutes
 
-  get '/context' do |repo|
-    erb :table,
-      :layout => :page_layout,
-      :locals => {
-        context: AdminUI::Context.new("Admin Tool Context"),
-        table: srccode.repo_tags(repo)
-      }
+    get '/context' do |repo|
+      erb :table,
+        :layout => :page_layout,
+        :locals => {
+          context: AdminUI::Context.new("Admin Tool Context"),
+          table: srccode.repo_tags(repo)
+        }
+      end
+    end
   end
 end
