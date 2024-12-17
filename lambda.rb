@@ -38,11 +38,7 @@ def handler(event:, context:)
     # 'rack.version' => Rack::VERSION,
     'rack.url_scheme' => headers.fetch('CloudFront-Forwarded-Proto') { headers.fetch('X-Forwarded-Proto', 'https') },
     'rack.input' => StringIO.new(body),
-    'rack.errors' => $stderr,
-    # Get S3 bucket name from api-gateway "stageVarialbes"
-    'BUCKET_NAME' => ENV.fetch('bucket_name', 'na'),
-    'SSM_CREDENTIALS_PATH' => ENV.fetch('ssm_credentials_path', 'na'),
-    'BASE_URL' => ENV.fetch('base_url', 'na')
+    'rack.errors' => $stderr
   }
 
   # Pass request headers to Rack if they are available
@@ -61,6 +57,9 @@ def handler(event:, context:)
 
   begin
     # Response from Rack must have status, headers and body
+    puts "env: #{env}"
+    puts "event: #{event}"
+    puts "context: #{context}"
     status, headers, body = $app.call env
 
     # body is an array. We combine all the items to a single string
