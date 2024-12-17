@@ -6,22 +6,13 @@ require_relative 'lib/routes/code'
 
 set :bind, '0.0.0.0'
 
-puts "ENV: #{ENV}"
+include Sinatra::UC3CodeRoutes
 
-# sinatra routes
-module Sinatra
-  # modularize route handling by specific clients
-  class Server < Sinatra::Base
-    include UC3CodeRoutes
-
-    get '/context' do |repo|
-      erb :table,
-        :layout => :page_layout,
-        :locals => {
-          context: AdminUI::Context.new("Admin Tool Context"),
-          table: srccode.repo_tags(repo)
-        }
-      end
-    end
-  end
+get '/context' do
+  erb :table,
+    :layout => :page_layout,
+    :locals => {
+      context: AdminUI::Context.new("Admin Tool Context"),
+      table: UC3::UC3Client.new.context
+    }
 end

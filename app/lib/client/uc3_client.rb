@@ -17,7 +17,7 @@ module UC3
         ]
       )
       ENV.each do |key, value|
-        table.add_row(AdminUI::Row.new(key: key, value: value))
+        table.add_row(AdminUI::Row.make_row(table.columns, {key: key, value: value}))
       end
       table
     end
