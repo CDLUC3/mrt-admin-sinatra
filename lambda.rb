@@ -12,7 +12,8 @@ $app ||= Rack::Builder.parse_file("#{__dir__}/app/config.ru")
 ENV['RACK_ENV'] ||= 'production'
 
 def handler(event:, context:)
-  ENV['LAMBDA_CONTEXT']=context.pretty_inspect
+  ENV['LAMBDA_CONTEXT_FUNCTION_NAME']=context.function_name
+  ENV['LAMBDA_CONTEXT_FUNCTION_VERSION']=context.function_version
 
   # Check if the body is base64 encoded. If it is, try to decode it
   body =
