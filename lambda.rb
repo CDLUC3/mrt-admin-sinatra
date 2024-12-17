@@ -13,6 +13,8 @@ ENV['RACK_ENV'] ||= 'production'
 
 def handler(event:, context:)
   $context = context.pretty_inspect
+  puts $context
+  puts $context.class
 
   # Check if the body is base64 encoded. If it is, try to decode it
   body =
