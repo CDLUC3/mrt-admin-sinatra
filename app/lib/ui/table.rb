@@ -64,6 +64,12 @@ module AdminUI
       @cols = data
     end
 
+    def self.make_row(cols, datahash)
+      cssclass = datahash.fetch(:cssclass, '')
+      data = cols.map { |col| datahash.fetch(col.sym, col.defval) }
+      new(data, cssclass: cssclass)
+    end
+
     def render(coldefs)
       s = "<tr class='#{@cssclass}'>"
       coldefs.each_with_index do |coldef, i|
@@ -79,12 +85,15 @@ module AdminUI
 
   # Table rendering classes
   class Column
-    def initialize(sym, cssclass: 'data', header: '', spanclass: 'val')
+    def initialize(sym, cssclass: 'data', header: '', spanclass: 'val', defval: '')
       @sym = sym
       @cssclass = cssclass
       @header = header.empty? ? sym.to_s : header
       @spanclass = spanclass
+      @defval = defval
     end
+
+    attr_accessor :sym, :cssclass, :header, :spanclass, :defval
 
     def render(cellval)
       if cellval.is_a?(Array)
@@ -115,8 +124,6 @@ module AdminUI
     def render_link(val, href, cssclass: '')
       "<a href='#{href}' class='#{cssclass}'>#{val}</a>"
     end
-
-    attr_accessor :sym, :cssclass, :header, :spanclass
   end
 
   # Table rendering classes
