@@ -12,8 +12,7 @@ $app ||= Rack::Builder.parse_file("#{__dir__}/app/config.ru")
 ENV['RACK_ENV'] ||= 'production'
 
 def handler(event:, context:)
-  # context is required when running as a lambda app, this line makes rubocop happy
-  context.nil?
+  $context = context
 
   # Check if the body is base64 encoded. If it is, try to decode it
   body =
@@ -57,9 +56,7 @@ def handler(event:, context:)
 
   begin
     # Response from Rack must have status, headers and body
-    puts context.methods
-    puts context.pretty_inspect
-    status, headers, body = $app.call env context
+    status, headers, body = $app.call env
 
     # body is an array. We combine all the items to a single string
     body_content = ''

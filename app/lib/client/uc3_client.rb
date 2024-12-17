@@ -20,6 +20,9 @@ module UC3
         v = key =~ /(KEY|TOKEN|SECRET)/ ? '***' : value
         table.add_row(AdminUI::Row.make_row(table.columns, {key: key, value: v}))
       end
+      if $context
+        table.add_row(AdminUI::Row.make_row(table.columns, {key: 'Context', value: $context.pretty_inspect}))
+      end
       table
     end
   end
