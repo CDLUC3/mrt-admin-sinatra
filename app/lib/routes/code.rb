@@ -23,7 +23,7 @@ module Sinatra
       end
 
       app.get '/git/*' do |repo|
-        erb :git,
+        erb :table,
           :layout => :page_layout,
           :locals => {
             context: AdminUI::Context.new("Repo Tags: #{srccode.reponame(repo)}"),
