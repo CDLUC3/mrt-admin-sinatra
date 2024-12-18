@@ -11,7 +11,7 @@ module UC3Resources
       @client = Aws::SSM::Client.new(
         region: UC3::UC3Client::region
       )
-      @client.get_parameters_by_path(path: '/foo/bar')
+      @client.get_parameters_by_path(path: '/uc3/foo/bar')
       super(enabled)
     rescue StandardError => e
       puts "Parameters INIT ERR: #{e}: #{@client}"
