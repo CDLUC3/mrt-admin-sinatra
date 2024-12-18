@@ -3,6 +3,8 @@
 require 'sinatra/base'
 require_relative '../client/resources/instances'
 require_relative '../client/resources/parameters'
+require_relative '../client/resources/buckets'
+require_relative '../client/resources/functions'
 require_relative '../ui/context'
 
 # custom sinatra routes
@@ -29,6 +31,26 @@ module Sinatra
           :locals => {
             context: AdminUI::Context.new(request.path),
             table: UC3Resources::ParametersClient.new.list_parameters
+          }
+      end
+
+      AdminUI::Context.add_menu_item(AdminUI::MENU_RESOURCES, 'UC3 Buckets', '/buckets')
+      app.get '/buckets' do
+        erb :table,
+          :layout => :page_layout,
+          :locals => {
+            context: AdminUI::Context.new(request.path),
+            table: UC3Resources::BucketsClient.new.list_buckets
+          }
+      end
+
+      AdminUI::Context.add_menu_item(AdminUI::MENU_RESOURCES, 'UC3 Lambda Functions', '/functions')
+      app.get '/functions' do
+        erb :table,
+          :layout => :page_layout,
+          :locals => {
+            context: AdminUI::Context.new(request.path),
+            table: UC3Resources::FunctionsClient.new.list_functions
           }
       end
     end

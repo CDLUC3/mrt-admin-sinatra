@@ -20,6 +20,16 @@ GEM
     aws-sdk-ecr (1.88.0)
       aws-sdk-core (~> 3, >= 3.210.0)
       aws-sigv4 (~> 1.5)
+    aws-sdk-kms (1.96.0)
+      aws-sdk-core (~> 3, >= 3.210.0)
+      aws-sigv4 (~> 1.5)
+    aws-sdk-lambda (1.144.0)
+      aws-sdk-core (~> 3, >= 3.210.0)
+      aws-sigv4 (~> 1.5)
+    aws-sdk-s3 (1.176.1)
+      aws-sdk-core (~> 3, >= 3.210.0)
+      aws-sdk-kms (~> 1)
+      aws-sigv4 (~> 1.5)
     aws-sdk-ssm (1.186.0)
       aws-sdk-core (~> 3, >= 3.210.0)
       aws-sigv4 (~> 1.5)
@@ -122,6 +132,8 @@ DEPENDENCIES
   aws-sdk-codeartifact
   aws-sdk-ec2
   aws-sdk-ecr
+  aws-sdk-lambda
+  aws-sdk-s3
   aws-sdk-ssm
   json
   nokogiri

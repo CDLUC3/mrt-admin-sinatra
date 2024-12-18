@@ -41,6 +41,7 @@ module UC3Resources
           AdminUI::Column.new(:env, header: 'Environment'),
           AdminUI::Column.new(:type, header: 'Type'),
           AdminUI::Column.new(:state, header: 'State'),
+          AdminUI::Column.new(:launch, header: 'Launch'),
           AdminUI::Column.new(:az, header: 'AZ')
         ],
         filters: [
@@ -59,6 +60,7 @@ module UC3Resources
             subservice: inst.tags.find { |t| t.key == 'Subservice' }&.value,
             env: inst.tags.find { |t| t.key == 'Environment' }&.value,
             type: inst.instance_type,
+            launch: inst.launch_time,
             state: inst.state.name,
             az: inst.placement.availability_zone,
             cssclass: "data #{inst.state.name}"

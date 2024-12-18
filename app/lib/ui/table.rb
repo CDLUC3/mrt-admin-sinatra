@@ -24,7 +24,7 @@ module AdminUI
 
     def render
       s = %(
-    <table class='data'>
+    <table class='data sortable'>
     <caption>
       #{render_filters}
     </caption>
