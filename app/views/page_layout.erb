@@ -6,15 +6,16 @@
     <link rel="stylesheet" type="text/css" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/themes/smoothness/jquery-ui.css"></link>
     <link rel="icon" href="/favicon.ico" />
     <link rel="stylesheet" type="text/css" href="/merritt.css" />
+    <link rel="stylesheet" type="text/css" href="/navmenu.css" />
     <script src="/merritt.js"></script>
     <title><%= context.title %></title>
   </head>
   <body>
+    <div class="menu">
+      <%= AdminUI::Context.render_menu %>
+    </div>
     <h1><%= context.title %></h1>
     <div class="breadcrumb">
-      <% unless context.top_page %>
-      <a href="/">Home</a>
-      <% end %>
       <% context.breadcrumbs.each do |bc| %>
       <span>/ <a href="<%= bc[:url] %>"><%= bc[:title] %></a></span>
       <% end %>

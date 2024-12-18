@@ -10,29 +10,23 @@ module Sinatra
   module UC3CodeRoutes
     def self.registered(app)
 
+      AdminUI::Context.add_menu_item(AdminUI::MENU_SOURCE, 'Source Code Repos', '/source')
       app.get '/source' do
-        status 200
-
         erb :source,
           :layout => :page_layout,
           :locals => {
-            context: AdminUI::Context.new('Merritt Admin Tool - UC3 Account'),
+            context: AdminUI::Context.new(request.path),
             repos: UC3Code::SourceCodeClient.new.repos.keys
           }
       end
 
-      app.get '/git/*' do |repo|
+      app.get '/source/*' do |repo|
         srccode = UC3Code::SourceCodeClient.new
 
         erb :table,
           :layout => :page_layout,
           :locals => {
-            context: AdminUI::Context.new(
-              "Repo Tags: #{srccode.reponame(repo)}",
-              breadcrumbs: [
-                { title: 'Source', url: '/source' }
-              ]
-            ),
+            context: AdminUI::Context.new(request.path, title: "Repo Tags: #{srccode.reponame(repo)}"),
             table: srccode.repo_tags(repo)
           }
       end
