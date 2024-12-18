@@ -6,8 +6,8 @@ module UC3
   # Base class for UC3 client classes
   class UC3Client
     @@clients = {}
-    def initialize(penabled = true) 
-      @@clients[self.class.to_s] = penabled
+    def initialize(penabled = true, message: '') 
+      @@clients[self.class.to_s] = {name: self.class.to_s, enabled: penabled, message: message}      
     end
 
     def self.region
@@ -35,12 +35,13 @@ module UC3
     def clients
       table = AdminUI::FilterTable.new(
         columns: [
-          AdminUI::Column.new(:client, header: 'Client'),
-          AdminUI::Column.new(:enabled, header: 'Enabled')
+          AdminUI::Column.new(:name, header: 'Client'),
+          AdminUI::Column.new(:enabled, header: 'Enabled'),
+          AdminUI::Column.new(:message, header: 'Message')
         ]
       )
       @@clients.sort.each do |key, value|
-        table.add_row(AdminUI::Row.new([key, value]))
+        table.add_row(AdminUI::Row.make_row(table.columns, value))
       end
       table
     end

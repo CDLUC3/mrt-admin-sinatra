@@ -9,7 +9,6 @@ module Sinatra
   # client specific routes
   module UC3CodeRoutes
     def self.registered(app)
-      srccode = UC3Code::SourceCodeClient.new
 
       app.get '/source' do
         status 200
@@ -18,11 +17,13 @@ module Sinatra
           :layout => :page_layout,
           :locals => {
             context: AdminUI::Context.new('Merritt Admin Tool - UC3 Account'),
-            repos: srccode.repos.keys
+            repos: UC3Code::SourceCodeClient.new.repos.keys
           }
       end
 
       app.get '/git/*' do |repo|
+        srccode = UC3Code::SourceCodeClient.new
+
         erb :table,
           :layout => :page_layout,
           :locals => {

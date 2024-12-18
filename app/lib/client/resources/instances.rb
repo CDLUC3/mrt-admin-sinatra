@@ -14,8 +14,7 @@ module UC3Resources
       @client.describe_instances(filters: [{name: 'tag:foo', values: ['bar']}])
       super(enabled)
     rescue StandardError => e
-      puts "Instances INIT ERR: #{e}: #{@client}"
-      super(false)
+      super(false, message: e.to_s)
     end
 
     def enabled

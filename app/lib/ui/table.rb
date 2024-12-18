@@ -25,6 +25,9 @@ module AdminUI
     def render
       s = %(
     <table class='data'>
+    <caption>
+      #{render_filters}
+    </caption>
     <thead>
     <tr class='header'>
     )
@@ -47,11 +50,12 @@ module AdminUI
     end
 
     def render_filters
-      return 'No filters' if @filters.empty?
-      s = ''
+      return '' if @filters.empty?
+      s = '<div id="controls">'
       @filters.each do |filter|
         s += filter.render
       end
+      s += '</div>'
       s
     end
 

@@ -14,8 +14,7 @@ module UC3Resources
       @client.get_parameters_by_path(path: '/uc3/foo/bar')
       super(enabled)
     rescue StandardError => e
-      puts "Parameters INIT ERR: #{e}: #{@client}"
-      super(false)
+      super(false, message: e.to_s)
     end
 
     def enabled

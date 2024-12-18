@@ -30,6 +30,10 @@ get '/context' do
 end
 
 get '/clients' do
+  UC3Code::SourceCodeClient.new
+  UC3Resources::InstancesClient.new
+  UC3Resources::ParametersClient.new
+
   erb :table,
     :layout => :page_layout,
     :locals => {

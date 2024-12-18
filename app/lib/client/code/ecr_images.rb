@@ -12,8 +12,7 @@ module UC3Code
       @client.describe_registry
       super(enabled)
     rescue StandardError => e
-      puts "Images INIT ERR: #{e}: #{@client}"
-      super(false)
+      super(false, message: e.to_s)
     end
 
     def enabled

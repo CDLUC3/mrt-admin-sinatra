@@ -17,8 +17,7 @@ module UC3Code
       @client.describe_domain(domain: ARTDOMAIN)
       super(enabled)
     rescue StandardError => e
-      puts e
-      super(false)
+      super(false, message: e.to_s)
     end
 
     def enabled
