@@ -19,7 +19,7 @@ def handler(event:, context:)
   ENV['LAMBDA_CONTEXT_MEMORY_LIMIT_IN_MB']=context.memory_limit_in_mb.to_s
   ENV['LAMBDA_CONTEXT_TIMEOUT_MS']=context.methods.to_s
 
-  # Check if the body is base64 encoded. If it is, try to decode it
+  # Check if the body is base64 encoded. If it is, try to decode it 
   body =
     if event['isBase64Encoded']
       Base64.decode64 event['body']
