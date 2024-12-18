@@ -50,9 +50,7 @@ module UC3Resources
       )
       return table unless enabled
       instances = {}
-      data = @client.describe_instances(filters: filters)
-
-      data.reservations.each do |res|
+      @client.describe_instances(filters: filters).reservations.each do |res|
         res.instances.each do |inst|
           name = inst.tags.find { |t| t.key == 'Name' }&.value
           instances[name] = {

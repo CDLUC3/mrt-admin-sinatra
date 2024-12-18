@@ -2,6 +2,7 @@
 
 require 'sinatra/base'
 require_relative '../client/resources/instances'
+require_relative '../client/resources/parameters'
 require_relative '../ui/context'
 
 # custom sinatra routes
@@ -15,6 +16,15 @@ module Sinatra
           :locals => {
             context: AdminUI::Context.new("UC3 Instances"),
             table: UC3Resources::InstancesClient.new.list_instances
+          }
+      end
+
+      app.get '/parameters' do
+        erb :table,
+          :layout => :page_layout,
+          :locals => {
+            context: AdminUI::Context.new("UC3 SSM Parameters"),
+            table: UC3Resources::ParametersClient.new.list_parameters
           }
       end
     end
