@@ -10,6 +10,10 @@ module UC3
       @@clients[self.class.to_s] = penabled
     end
 
+    def self.region
+      ENV['AWS_REGION'] || 'us-west-2'
+    end
+
     def enabled
       false
     end
@@ -22,8 +26,8 @@ module UC3
         ]
       )
       ENV.sort.each do |key, value|
-        v = key =~ /(KEY|TOKEN|SECRET)/ ? '***' : value
-        table.add_row(AdminUI::Row.make_row(table.columns, {key: key, value: v}))
+         v = key =~ /(KEY|TOKEN|SECRET)/ ? '***' : value
+        table.add_row(AdminUI::Row.new([key, v]))
       end
       table
     end
@@ -36,7 +40,7 @@ module UC3
         ]
       )
       @@clients.sort.each do |key, value|
-        table.add_row(AdminUI::Row.make_row(table.columns, {client: key, enabled: value}))
+        table.add_row(AdminUI::Row.new([key, value]))
       end
       table
     end

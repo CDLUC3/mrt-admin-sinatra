@@ -13,7 +13,7 @@ module UC3Code
     ARTNAMESPACE='org.cdlib.mrt'
 
     def initialize
-      @client = Aws::CodeArtifact::Client.new(region: 'us-west-2')
+      @client = Aws::CodeArtifact::Client.new(region: UC3::UC3Client::region)
       @client.describe_domain(domain: ARTDOMAIN)
       super(enabled)
     rescue StandardError => e

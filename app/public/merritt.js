@@ -7,9 +7,17 @@ $(document).ready(function() {
   });
 
   $("input.filter:checkbox").on("click", function() {
-    $("table.data tr.data").show();
-    $("input.filter:checkbox:checked").each(function() {
-      $("table.data tr." + $(this).val()).hide();
-    }); 
+    if ($(this).attr('match') == 'true') {
+      $("table.data tr.data").show();
+      $("input.filter:checkbox:checked").each(function() {
+        $("table.data tr.data").hide();
+        $("table.data tr." + $(this).val()).show();
+      });   
+    } else {
+      $("table.data tr.data").show();
+      $("input.filter:checkbox:checked").each(function() {
+        $("table.data tr." + $(this).val()).hide();
+      });   
+    }
   });
 });

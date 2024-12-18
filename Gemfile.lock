@@ -14,6 +14,9 @@ GEM
       aws-partitions (~> 1, >= 1.992.0)
       aws-sigv4 (~> 1.9)
       jmespath (~> 1, >= 1.6.1)
+    aws-sdk-ec2 (1.498.0)
+      aws-sdk-core (~> 3, >= 3.210.0)
+      aws-sigv4 (~> 1.5)
     aws-sdk-ecr (1.88.0)
       aws-sdk-core (~> 3, >= 3.210.0)
       aws-sigv4 (~> 1.5)
@@ -39,6 +42,8 @@ GEM
     net-http (0.5.0)
       uri
     nio4r (2.7.3)
+    nokogiri (1.17.2-arm64-darwin)
+      racc (~> 1.4)
     octokit (9.2.0)
       faraday (>= 1, < 3)
       sawyer (~> 0.9)
@@ -115,9 +120,11 @@ PLATFORMS
 
 DEPENDENCIES
   aws-sdk-codeartifact
+  aws-sdk-ec2
   aws-sdk-ecr
   aws-sdk-ssm
   json
+  nokogiri
   octokit
   puma
   rack

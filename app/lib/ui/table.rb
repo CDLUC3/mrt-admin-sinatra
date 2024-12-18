@@ -47,6 +47,7 @@ module AdminUI
     end
 
     def render_filters
+      return 'No filters' if @filters.empty?
       s = ''
       @filters.each do |filter|
         s += filter.render
@@ -65,7 +66,7 @@ module AdminUI
     end
 
     def self.make_row(cols, datahash)
-      cssclass = datahash.fetch(:cssclass, '')
+      cssclass = datahash.fetch(:cssclass, 'data')
       data = cols.map { |col| datahash.fetch(col.sym, col.defval) }
       new(data, cssclass: cssclass)
     end
@@ -128,15 +129,16 @@ module AdminUI
 
   # Table rendering classes
   class Filter
-    def initialize(label, value)
+    def initialize(label, value, match: false)
       @label = label
       @value = value
+      @match = match
     end
 
     def render
       %(
     <span class='filter'>
-      <input class='filter' type='checkbox' id='filter-#{@value}' value='#{@value}'/>
+      <input class='filter' type='checkbox' id='filter-#{@value}' value='#{@value}' match='#{@match}'/>
       <label for='semantic'>#{label}</label>
     </span>
     )

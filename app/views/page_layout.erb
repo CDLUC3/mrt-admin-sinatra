@@ -15,6 +15,9 @@
       <% unless context.top_page %>
       <a href="/">Home</a>
       <% end %>
+      <% context.breadcrumbs.each do |bc| %>
+      <span>/ <a href="<%= bc[:url] %>"><%= bc[:title] %></a></span>
+      <% end %>
       <span>/ <%= context.title %></span>
     </div>
     <div class="main">
