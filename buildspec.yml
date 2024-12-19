@@ -16,6 +16,7 @@ phases:
     - DOCKTAG=$BRANCHTAG
     - COMMITDATE=`git --no-pager log -1 --pretty='format:%cd' --date='format:%Y-%m-%d %H:%M:%S'`
     - echo "Branchtag ${BRANCHTAG}; COMMITDATE=${COMMITDATE}; REPONAME=${REPONAME}; BRANCHNAME=${BRANCHNAME}"
+    - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin ${ECR_REGISTRY}
 
   post_build:
     on-failure: CONTINUE
@@ -28,3 +29,7 @@ phases:
         --function-name mrt-admin-sinatra \
         --s3-bucket ${S3PRIVBUCKET} \
         --s3-key deploy/mrt-admin-sinatra.zip --no-cli-pager
+    - |
+      docker build --quiet --push \
+        --build-arg ECR_REGISTRY=${ECR_REGISTRY} \
+        -t ${ECR_REGISTRY}/mrt-admin-sinatra .
