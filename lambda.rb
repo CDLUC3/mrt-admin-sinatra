@@ -92,3 +92,12 @@ def handler(event:, context:)
   # By default, the response serializer will call #to_json for us
   response
 end
+
+module LambdaFunctions
+  # Lambda entry point for the Admin Tool
+  class Handler < LambdaBase
+    def self.process(event:, context:)
+      handler(event: event, context: context)
+    end
+  end
+end
