@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'mysql2'
+# require 'mysql2'
 require_relative '../uc3_client'
 
 # Scope custom code for UC3 to distinguish from 3rd party classes
@@ -17,9 +17,8 @@ module UC3Resources
         encoding: 'utf8mb4',
         collation: 'utf8mb4_unicode_ci'
       }
-      @client = Mysql2::Client.new(
-        dbconf
-      )
+      @client = nil
+      # @client = Mysql2::Client.new(dbconf)
       super(enabled)
     rescue StandardError => e
       super(false, message: e.to_s)
