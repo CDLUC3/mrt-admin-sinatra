@@ -15,15 +15,13 @@ module LambdaFunctions
   # Lambda entry point for the Admin Tool
   class Handler
     def self.process(event:, context:)
-      puts event
-      puts context
-      unless context.nil?
-        ENV['LAMBDA_CONTEXT_FUNCTION_NAME']=context.function_name
-        ENV['LAMBDA_CONTEXT_FUNCTION_VERSION']=context.function_version
-        ENV['LAMBDA_CONTEXT_FUNCTION_ARN']=context.invoked_function_arn
-        ENV['LAMBDA_CONTEXT_MEMORY_LIMIT_IN_MB']=context.memory_limit_in_mb.to_s
-        ENV['LAMBDA_CONTEXT_TIMEOUT_MS']=context.get_remaining_time_in_millis.to_s
-      end
+      #unless context.nil?
+      #  ENV['LAMBDA_CONTEXT_FUNCTION_NAME']=context.function_name
+      #  ENV['LAMBDA_CONTEXT_FUNCTION_VERSION']=context.function_version
+      #  ENV['LAMBDA_CONTEXT_FUNCTION_ARN']=context.invoked_function_arn
+      #  ENV['LAMBDA_CONTEXT_MEMORY_LIMIT_IN_MB']=context.memory_limit_in_mb.to_s
+      #  ENV['LAMBDA_CONTEXT_TIMEOUT_MS']=context.get_remaining_time_in_millis.to_s
+      #end
     
       # Check if the body is base64 encoded. If it is, try to decode it
       body =
@@ -66,8 +64,9 @@ module LambdaFunctions
       end
     
       begin
-        puts "Calling Rack with env: #{env}"
         # Response from Rack must have status, headers and body
+        puts "$app: #{$app}"
+
         status, headers, body = $app.call env
 
         puts "status: #{status}"
