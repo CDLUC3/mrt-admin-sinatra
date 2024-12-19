@@ -7,6 +7,7 @@ module AdminUI
   MENU_HOME = '/home'
   MENU_SOURCE = '/source'
   MENU_RESOURCES = '/resources'
+  MENU_QUERY = '/query'
 
   # Web context for the UI
   class Context
