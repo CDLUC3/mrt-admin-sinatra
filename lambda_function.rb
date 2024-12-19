@@ -66,8 +66,11 @@ module LambdaFunctions
       end
     
       begin
+        puts "Calling Rack with env: #{env}"
         # Response from Rack must have status, headers and body
         status, headers, body = $app.call env
+
+        puts "status: #{status}"
     
         # body is an array. We combine all the items to a single string
         body_content = ''
