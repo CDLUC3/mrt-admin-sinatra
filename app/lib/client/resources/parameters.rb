@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'aws-sdk-ec2'
+require 'aws-sdk-ssm'
 require_relative '../uc3_client'
 
 # Scope custom code for UC3 to distinguish from 3rd party classes

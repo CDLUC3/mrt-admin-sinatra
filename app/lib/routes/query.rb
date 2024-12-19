@@ -13,5 +13,5 @@ module Sinatra
       AdminUI::Context.add_menu_item(AdminUI::MENU_QUERY, 'Query')
     end
   end
-  register UC3ResourcesRoutes
+  register UC3QueryRoutes
 end

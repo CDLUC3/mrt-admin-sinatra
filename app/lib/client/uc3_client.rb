@@ -1,4 +1,7 @@
 # frozen_string_literal: true
+require 'aws-sdk-ssm'
+require 'mustache'
+require 'yaml'
 require_relative '../ui/table'
 
 # Scope custom code for UC3 to distinguish from 3rd party classes
@@ -44,6 +47,33 @@ module UC3
         table.add_row(AdminUI::Row.make_row(table.columns, value))
       end
       table
+    end
+
+    def lookup_map(filename)
+      ssm = Aws::SSM::Client.new(
+        region: UC3::UC3Client::region
+      )
+      map = YAML.safe_load(File.read(filename))
+      map.each do |key, value|
+        if value.key?('ssm')
+          resp = ssm.get_parameter(name: value['ssm'], with_decryption: true)
+          map[key] = resp.parameter.value
+        elsif value.key?('env')
+          map[key] = ENV.fetch(value['env'], value.fetch('default', ''))
+        end
+
+        case value.fetch('type', 'string')
+        when 'int'
+          map[key] = map[key].to_i
+        when 'float'
+          map[key] = map[key].to_f
+        end
+      end
+      map
+    end
+
+    def resolve_lookup(filename, map)
+      YAML.safe_load(Mustache.render(File.read(filename), map))
     end
   end
 end

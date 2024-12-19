@@ -1,0 +1,11 @@
+host: 
+  ssm: /uc3/mrt/dev/billing/db-host
+database: 
+  ssm: /uc3/mrt/dev/billing/db-name
+username: 
+  ssm: /uc3/mrt/dev/billing/readwrite/db-user
+password: 
+  ssm: /uc3/mrt/dev/billing/readwrite/db-password
+base_url:
+  env: base_url
+  
