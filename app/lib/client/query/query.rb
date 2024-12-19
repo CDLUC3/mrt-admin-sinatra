@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'mysql2'
+# require 'mysql2'
 require 'yaml'
 require_relative '../uc3_client'
 
@@ -12,7 +12,8 @@ module UC3Resources
       map = lookup_map('app/config/query.lookup.yml')
       config = resolve_lookup('app/config/query.template.yml', map)
       dbconf = config.fetch('dbconf', {})
-      @client = Mysql2::Client.new(dbconf)
+      @client = nil
+      # @client = Mysql2::Client.new(dbconf)
       super(enabled)
     rescue StandardError => e
       super(false, message: e.to_s)
