@@ -97,6 +97,8 @@ module LambdaFunctions
   # Lambda entry point for the Admin Tool
   class Handler
     def self.process(event:, context:)
+      puts event
+      puts context
       handler(event: event, context: context)
     end
   end
