@@ -36,19 +36,18 @@ module UC3Resources
       table = AdminUI::FilterTable.new(
         columns: [
           AdminUI::Column.new(:name, header: 'Name'),
-          AdminUI::Column.new(:runtime, header: 'Runtime'),
+          AdminUI::Column.new(:runtime, header: 'Runtime', filterable: true),
           AdminUI::Column.new(:timeout, header: 'Timeout'),
           AdminUI::Column.new(:memory, header: 'Memory'),
           AdminUI::Column.new(:last_modified, header: 'Last Modified'),
           AdminUI::Column.new(:package_type, header: 'Package Type'),
-          AdminUI::Column.new(:program, header: 'Program'),
-          AdminUI::Column.new(:service, header: 'Service')
+          AdminUI::Column.new(:program, header: 'Program', filterable: true),
+          AdminUI::Column.new(:service, header: 'Service', filterable: true)
         ]
       )
       return table unless enabled
       @functions.sort.each do |key, value|
         tags = @client.list_tags(resource: value[:arn]).tags.to_h
-        puts tags
         value[:program] = tags.fetch('Program', '')
         value[:service] = tags.fetch('Service', '')
         table.add_row(AdminUI::Row.make_row(table.columns, value))

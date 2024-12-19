@@ -8,6 +8,10 @@ module AdminUI
       @columns = columns
       @rows = data
       @filters = filters
+      @filterable = false
+      for col in @columns
+        @filterable = true if col.filterable
+      end
     end
 
     def add_filter(filter)
@@ -20,6 +24,37 @@ module AdminUI
 
     def add_column(column)
       @columns.push(column)
+      @filterable = true if column.filterable
+    end
+
+    def render_column_headers
+      s = ''
+      @columns.each do |col|
+        s += "<th class='#{col.cssclass}'>#{col.header}</th>"
+      end
+      s
+    end
+
+    def render_column_filters
+      s = ''
+      if filterable
+        s += %(<tr class='filters'>)
+        @columns.each_with_index do |col, i|
+          s += %(<th class='#{col.cssclass}'>)
+          if i == 0
+            s += %(<button class='filter' title='remove filters to make table sortable'>Clear</button>)
+          elsif col.filterable
+            s += %(
+            <select data='#{col.cssclass}' class='filter'>
+              <option value='ALLVALS'>All</option>
+            </select>
+            )
+          end
+          s += %(</th>)
+        end
+        s += '</tr>'
+      end
+      s
     end
 
     def render
@@ -30,12 +65,9 @@ module AdminUI
     </caption>
     <thead>
     <tr class='header'>
-    )
-      @columns.each do |col|
-        s += "<th class='#{col.cssclass}'>#{col.header}</th>"
-      end
-      s += %(
+      #{render_column_headers}
     </tr>
+    #{render_column_filters}
     </thead>
     <tbody>
     )
@@ -59,7 +91,7 @@ module AdminUI
       s
     end
 
-    attr_accessor :columns, :data, :filters
+    attr_accessor :columns, :data, :filters, :filterable
   end
 
   # Table rendering classes
@@ -90,15 +122,16 @@ module AdminUI
 
   # Table rendering classes
   class Column
-    def initialize(sym, cssclass: 'data', header: '', spanclass: 'val', defval: '')
+    def initialize(sym, cssclass: '', header: '', spanclass: 'val', defval: '', filterable: false)
       @sym = sym
-      @cssclass = cssclass
+      @cssclass = cssclass.empty? ? sym.to_s : cssclass
       @header = header.empty? ? sym.to_s : header
       @spanclass = spanclass
       @defval = defval
+      @filterable = filterable
     end
 
-    attr_accessor :sym, :cssclass, :header, :spanclass, :defval
+    attr_accessor :sym, :cssclass, :header, :spanclass, :defval, :filterable
 
     def render(cellval)
       if cellval.is_a?(Array)

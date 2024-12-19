@@ -35,7 +35,7 @@ module UC3Resources
       table = AdminUI::FilterTable.new(
         columns: [
           AdminUI::Column.new(:path, header: 'Path'),
-          AdminUI::Column.new(:type, header: 'Type'),
+          AdminUI::Column.new(:type, header: 'Type', filterable: true),
           AdminUI::Column.new(:value, header: 'Value'),
           AdminUI::Column.new(:modified, header: 'Modified'),
           AdminUI::Column.new(:version, header: 'Version')

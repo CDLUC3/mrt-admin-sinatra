@@ -36,17 +36,18 @@ module UC3Resources
         columns: [
           AdminUI::Column.new(:name, header: 'Name'),
           AdminUI::Column.new(:id, header: 'ID'),
-          AdminUI::Column.new(:service, header: 'Service'),
-          AdminUI::Column.new(:subservice, header: 'Susbervice'),
-          AdminUI::Column.new(:env, header: 'Environment'),
-          AdminUI::Column.new(:type, header: 'Type'),
-          AdminUI::Column.new(:state, header: 'State'),
+          AdminUI::Column.new(:service, header: 'Service', filterable: true),
+          AdminUI::Column.new(:subservice, header: 'Susbervice', filterable: true),
+          AdminUI::Column.new(:env, header: 'Environment', filterable: true),
+          AdminUI::Column.new(:type, header: 'Type', filterable: true),
+          AdminUI::Column.new(:state, header: 'State', filterable: true),
           AdminUI::Column.new(:launch, header: 'Launch'),
-          AdminUI::Column.new(:az, header: 'AZ')
-        ],
-        filters: [
-          AdminUI::Filter.new('Running', 'running', match: true)
+          AdminUI::Column.new(:az, header: 'AZ', filterable: true)
         ]
+        #,
+        #filters: [
+        #  AdminUI::Filter.new('Running', 'running', match: true)
+        #]
       )
       return table unless enabled
       instances = {}
