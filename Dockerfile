@@ -12,4 +12,4 @@ COPY . /var/task/
 
 # Bundle dependencies
 RUN bundle install
-CMD [ "lambda_function.Lambda::handler" ]
+CMD [ "lambda::handler" ]
