@@ -97,6 +97,7 @@ module LambdaFunctions
         }
       end
     
+      puts "Response: #{response}"
       # By default, the response serializer will call #to_json for us
       response
     end
