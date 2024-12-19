@@ -11,4 +11,5 @@ RUN yum -y update && yum clean all
 COPY . /var/task/
 
 # Bundle dependencies
-RUN bundle install 
+RUN bundle install
+CMD [ "lambda_function.Lambda::handler" ]
