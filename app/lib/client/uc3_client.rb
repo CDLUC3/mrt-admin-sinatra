@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'aws-sdk-ssm'
 require 'mustache'
 require 'yaml'
@@ -8,9 +9,13 @@ require_relative '../ui/table'
 module UC3
   # Base class for UC3 client classes
   class UC3Client
-    @@clients = {}
-    def initialize(penabled = true, message: '') 
-      @@clients[self.class.to_s] = {name: self.class.to_s, enabled: penabled, message: message}      
+    @clients = {}
+    class << self
+      attr_accessor :instances
+    end
+
+    def initialize(enabled: true, message: '')
+      UC3Client.clients[self.class.to_s] = { name: self.class.to_s, enabled: enabled, message: message }
     end
 
     def self.region
@@ -29,13 +34,17 @@ module UC3
         ]
       )
       ENV.sort.each do |key, value|
-         v = key =~ /(KEY|TOKEN|SECRET)/ ? '***' : value
+        v = key =~ /(KEY|TOKEN|SECRET)/ ? '***' : value
         table.add_row(AdminUI::Row.new([key, v]))
       end
       table
     end
 
-    def clients
+    class << self
+      attr_reader :clients
+    end
+
+    def client_list
       table = AdminUI::FilterTable.new(
         columns: [
           AdminUI::Column.new(:name, header: 'Client'),
@@ -43,17 +52,22 @@ module UC3
           AdminUI::Column.new(:message, header: 'Message')
         ]
       )
-      @@clients.sort.each do |key, value|
+      self.class.clients.sort.each do |_key, value|
         table.add_row(AdminUI::Row.make_row(table.columns, value))
       end
       table
     end
 
+    def load_config(filename)
+      config = YAML.safe_load_file(filename, aliases: true)
+      JSON.parse(config.to_json, symbolize_names: true)
+    end
+
     def lookup_map(filename)
       ssm = Aws::SSM::Client.new(
-        region: UC3::UC3Client::region
+        region: UC3::UC3Client.region
       )
-      map = YAML.safe_load(File.read(filename))
+      map = YAML.safe_load_file(filename)
       map.each do |key, value|
         if value.key?('ssm')
           resp = ssm.get_parameter(name: value['ssm'], with_decryption: true)

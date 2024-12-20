@@ -9,12 +9,12 @@ module UC3Resources
   class FunctionsClient < UC3::UC3Client
     def initialize
       @client = Aws::Lambda::Client.new(
-        region: UC3::UC3Client::region
+        region: UC3::UC3Client.region
       )
       @functions = {}
       @client.list_functions.functions.each do |function|
         @functions[function.function_name] = {
-          name: function.function_name, 
+          name: function.function_name,
           runtime: function.runtime,
           timeout: function.timeout,
           memory: function.memory_size,
@@ -23,9 +23,9 @@ module UC3Resources
           arn: function.function_arn
         }
       end
-      super(enabled)
+      super(enabled: enabled)
     rescue StandardError => e
-      super(false, message: e.to_s)
+      super(enabled: false, message: e.to_s)
     end
 
     def enabled
@@ -46,6 +46,7 @@ module UC3Resources
         ]
       )
       return table unless enabled
+
       @functions.sort.each do |key, value|
         tags = @client.list_tags(resource: value[:arn]).tags.to_h
         value[:program] = tags.fetch('Program', '')

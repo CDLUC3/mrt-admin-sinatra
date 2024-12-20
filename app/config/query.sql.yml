@@ -1,0 +1,45 @@
+queries:
+- route: /queries/collections
+  name: List collections 1
+  description: TBD1
+  menuitems:
+  - menupath: /queries
+    name: List collections 1
+    description: TBD1
+  - menupath: /queries
+    name: List collections 2
+    description: TBD2
+    path: /queries/collections?foo=bar
+  sql: |
+    select
+      distinct
+      ogroup,
+      inv_collection_id,
+      mnemonic,
+      collection_name
+    from
+      owner_collections
+    order by
+      ogroup,
+      mnemonic
+- route: /queries/owners
+  name: List owners
+  description: TBD
+  menuitems:
+  - menupath: /queries
+  sql: |
+    select
+        ogroup,
+        inv_owner_id as owner_id,
+        own_name,
+        sum(count_files) files,
+        sum(billable_size) size
+      from
+        owner_coll_mime_use_details
+      group by
+        ogroup,
+        owner_id,
+        own_name
+      order by
+        ogroup,
+        own_name

@@ -9,12 +9,12 @@ module UC3Resources
   class ParametersClient < UC3::UC3Client
     def initialize
       @client = Aws::SSM::Client.new(
-        region: UC3::UC3Client::region
+        region: UC3::UC3Client.region
       )
       @client.get_parameters_by_path(path: '/uc3/foo/bar')
-      super(enabled)
+      super(enabled: enabled)
     rescue StandardError => e
-      super(false, message: e.to_s)
+      super(enabled: false, message: e.to_s)
     end
 
     def enabled
@@ -42,10 +42,11 @@ module UC3Resources
         ]
       )
       return table unless enabled
+
       params = {}
 
       next_token = 'na'
-      opt = {path: '/uc3', recursive: true}
+      opt = { path: '/uc3', recursive: true }
       while next_token
         res = @client.get_parameters_by_path(opt)
         res.parameters.each do |param|
@@ -64,7 +65,7 @@ module UC3Resources
       params.sort.each do |key, value|
         table.add_row(AdminUI::Row.make_row(table.columns, value))
       end
-    table
+      table
     end
   end
 end

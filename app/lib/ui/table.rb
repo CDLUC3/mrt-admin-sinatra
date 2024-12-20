@@ -4,12 +4,21 @@
 module AdminUI
   # Table rendering classes
   class FilterTable
+    def self.empty(message = '')
+      FilterTable.new(
+        columns: [
+          AdminUI::Column.new(:name, header: 'Message')
+        ],
+        data: [AdminUI::Row.new([message])]
+      )
+    end
+
     def initialize(columns: [], data: [], filters: [])
       @columns = columns
       @rows = data
       @filters = filters
       @filterable = false
-      for col in @columns
+      @columns.each do |col|
         @filterable = true if col.filterable
       end
     end
@@ -83,6 +92,7 @@ module AdminUI
 
     def render_filters
       return '' if @filters.empty?
+
       s = '<div id="controls">'
       @filters.each do |filter|
         s += filter.render

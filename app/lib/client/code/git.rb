@@ -27,7 +27,7 @@ module UC3Code
       end
       @tags = {}
       @since = Time.now - (2 * 365 * 24 * 60 * 60)
-      super(enabled)
+      super(enabled: enabled)
     end
 
     def enabled

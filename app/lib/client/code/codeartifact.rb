@@ -7,17 +7,17 @@ require_relative '../uc3_client'
 module UC3Code
   # Query for repository artifacts by code
   class CodeArtifactClient < UC3::UC3Client
-    ARTDOMAIN='cdlib-uc3-mrt'
-    ARTREPOSITORY='uc3-mrt-java'
-    ARTFORMAT='maven'
-    ARTNAMESPACE='org.cdlib.mrt'
+    ARTDOMAIN = 'cdlib-uc3-mrt'
+    ARTREPOSITORY = 'uc3-mrt-java'
+    ARTFORMAT = 'maven'
+    ARTNAMESPACE = 'org.cdlib.mrt'
 
     def initialize
-      @client = Aws::CodeArtifact::Client.new(region: UC3::UC3Client::region)
+      @client = Aws::CodeArtifact::Client.new(region: UC3::UC3Client.region)
       @client.describe_domain(domain: ARTDOMAIN)
-      super(enabled)
+      super(enabled: enabled)
     rescue StandardError => e
-      super(false, message: e.to_s)
+      super(enabled: false, message: e.to_s)
     end
 
     def enabled

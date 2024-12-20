@@ -9,12 +9,12 @@ module UC3Resources
   class InstancesClient < UC3::UC3Client
     def initialize
       @client = Aws::EC2::Client.new(
-        region: UC3::UC3Client::region
+        region: UC3::UC3Client.region
       )
-      @client.describe_instances(filters: [{name: 'tag:foo', values: ['bar']}])
-      super(enabled)
+      @client.describe_instances(filters: [{ name: 'tag:foo', values: ['bar'] }])
+      super(enabled: enabled)
     rescue StandardError => e
-      super(false, message: e.to_s)
+      super(enabled: false, message: e.to_s)
     end
 
     def enabled
@@ -44,12 +44,13 @@ module UC3Resources
           AdminUI::Column.new(:launch, header: 'Launch'),
           AdminUI::Column.new(:az, header: 'AZ', filterable: true)
         ]
-        #,
-        #filters: [
+        # ,
+        # filters: [
         #  AdminUI::Filter.new('Running', 'running', match: true)
-        #]
+        # ]
       )
       return table unless enabled
+
       instances = {}
       @client.describe_instances(filters: filters).reservations.each do |res|
         res.instances.each do |inst|
@@ -65,13 +66,13 @@ module UC3Resources
             state: inst.state.name,
             az: inst.placement.availability_zone,
             cssclass: "data #{inst.state.name}"
-          } 
+          }
         end
       end
       instances.sort.each do |key, value|
         table.add_row(AdminUI::Row.make_row(table.columns, value))
       end
-    table
+      table
     end
   end
 end

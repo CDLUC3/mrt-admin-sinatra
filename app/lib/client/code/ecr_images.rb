@@ -8,11 +8,11 @@ module UC3Code
   # Query for repository images by tag
   class ECRImagesClient < UC3::UC3Client
     def initialize
-      @client = Aws::ECR::Client.new(region: UC3::UC3Client::region)
+      @client = Aws::ECR::Client.new(region: UC3::UC3Client.region)
       @client.describe_registry
-      super(enabled)
+      super(enabled: enabled)
     rescue StandardError => e
-      super(false, message: e.to_s)
+      super(enabled: false, message: e.to_s)
     end
 
     def enabled

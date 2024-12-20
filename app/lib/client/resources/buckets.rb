@@ -9,15 +9,15 @@ module UC3Resources
   class BucketsClient < UC3::UC3Client
     def initialize
       @client = Aws::S3::Client.new(
-        region: UC3::UC3Client::region
+        region: UC3::UC3Client.region
       )
       @buckets = {}
       @client.list_buckets.buckets.each do |bucket|
-        @buckets[bucket.name] = {name: bucket.name, created: bucket.creation_date}
+        @buckets[bucket.name] = { name: bucket.name, created: bucket.creation_date }
       end
-      super(enabled)
+      super(enabled: enabled)
     rescue StandardError => e
-      super(false, message: e.to_s)
+      super(enabled: false, message: e.to_s)
     end
 
     def enabled
@@ -32,6 +32,7 @@ module UC3Resources
         ]
       )
       return table unless enabled
+
       @buckets.sort.each do |key, value|
         table.add_row(AdminUI::Row.make_row(table.columns, value))
       end
