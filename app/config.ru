@@ -7,6 +7,6 @@ require_relative 'admin'
 set :root, File.dirname(__FILE__)
 set :views, proc { File.join(root, 'views') }
 
-set :host_authorization => []
+set :host_authorization => {permitted_hosts: []}
 
 run Sinatra::Application
