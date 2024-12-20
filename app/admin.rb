@@ -6,15 +6,11 @@ require_relative 'lib/routes/code'
 require_relative 'lib/routes/resources'
 require_relative 'lib/routes/query'
 
-puts "aaaa"
-
 set :bind, '0.0.0.0'
 
 include Sinatra::UC3CodeRoutes
 include Sinatra::UC3ResourcesRoutes
 include Sinatra::UC3QueryRoutes
-
-puts "bbbb"
 
 AdminUI::Context.add_menu_item(AdminUI::MENU_HOME, 'Home')
 AdminUI::Context.add_menu_item(AdminUI::MENU_HOME, 'Admin Tool Home', AdminUI::MENU_ROOT)

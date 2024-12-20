@@ -92,7 +92,8 @@ module LambdaFunctions
     
         response = {
           'statusCode' => 500,
-          'body' => e.message
+          'body' => e.message,
+          'stack' => e.backtrace
         }
       end
     
