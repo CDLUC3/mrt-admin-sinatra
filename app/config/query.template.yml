@@ -7,6 +7,7 @@ dbconf:
   port: 3306
   username: {{username}}
   password: {{password}}
+  connect_timeout: 5
 dbconfZZ: 
   adapter: mysql2
   encoding: utf8mb4
