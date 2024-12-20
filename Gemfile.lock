@@ -155,7 +155,6 @@ DEPENDENCIES
   rubocop
   rubysl-base64
   sinatra
-  webrick
   yaml
 
 RUBY VERSION

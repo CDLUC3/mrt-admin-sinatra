@@ -65,12 +65,8 @@ module LambdaFunctions
     
       begin
         # Response from Rack must have status, headers and body
-        puts "$app: #{$app}"
-
         status, headers, body = $app.call env
 
-        puts "status: #{status}"
-    
         # body is an array. We combine all the items to a single string
         body_content = ''
         body.each do |item|
@@ -97,7 +93,6 @@ module LambdaFunctions
         }
       end
     
-      puts "Response: #{response}"
       # By default, the response serializer will call #to_json for us
       response
     end

@@ -22,7 +22,6 @@ gem 'rackup'
 gem 'rubocop'
 gem 'rubysl-base64'
 gem 'sinatra'
-gem 'webrick'
 gem 'yaml'
 
 # These are the dependencies that are used only for unit tests.
