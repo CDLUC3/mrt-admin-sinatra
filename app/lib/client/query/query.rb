@@ -49,6 +49,8 @@ module UC3Query
       sql = query.fetch(:sql, '')
       return table if sql.empty?
 
+      return AdminUI::FilterTable.empty("No DB support for: #{sql}") unless enabled
+
       stmt = @client.prepare(sql)
       cols = stmt.fields.map do |field|
         AdminUI::Column.new(field, header: field)
