@@ -7,4 +7,4 @@ dbconf:
   port: 3306
   username: {{username}}
   password: {{password}}
-  connect_timeout: 5
+  connect_timeout: 1

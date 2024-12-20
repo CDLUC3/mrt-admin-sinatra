@@ -39,6 +39,7 @@ get '/clients' do
   UC3Resources::ParametersClient.new
   UC3Resources::BucketsClient.new
   UC3Resources::FunctionsClient.new
+  UC3Resources::LoadBalancerClient.new
   UC3Query::QueryClient.client
 
   erb :table,

@@ -44,10 +44,6 @@ module UC3Resources
           AdminUI::Column.new(:launch, header: 'Launch'),
           AdminUI::Column.new(:az, header: 'AZ', filterable: true)
         ]
-        # ,
-        # filters: [
-        #  AdminUI::Filter.new('Running', 'running', match: true)
-        # ]
       )
       return table unless enabled
 

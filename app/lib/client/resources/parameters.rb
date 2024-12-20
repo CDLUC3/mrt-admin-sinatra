@@ -21,16 +21,6 @@ module UC3Resources
       !@client.nil?
     end
 
-    # filters: [
-    # {
-    #   name: 'tag:Program',
-    #   values: ['uc3']
-    # },
-    # {
-    #   name: 'tag:Environment',
-    #   values: ['dev']
-    # }
-    # ]
     def list_parameters(filters: {})
       table = AdminUI::FilterTable.new(
         columns: [
