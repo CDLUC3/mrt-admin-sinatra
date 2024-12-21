@@ -20,7 +20,8 @@ module UC3Resources
           dns: lb.dns_name,
           type: lb.type,
           scheme: lb.scheme,
-          tgname: []
+          tgname: [],
+          listener: []
         }
         @arns[lb.load_balancer_arn] = lb.load_balancer_name
       end
@@ -43,6 +44,7 @@ module UC3Resources
           AdminUI::Column.new(:service, header: 'Service', filterable: true),
           AdminUI::Column.new(:subservice, header: 'Subservice', filterable: true),
           AdminUI::Column.new(:tgname, header: 'TG Name'),
+          AdminUI::Column.new(:listener, header: 'Listener')
         ]
       )
       unless @arns.empty?
@@ -60,7 +62,12 @@ module UC3Resources
           end
         end
       end
-      @elbs.sort.each do |key, value|        
+      @elbs.sort.each do |key, value|
+        @client.describe_listeners(load_balancer_arn: value[:arn]).listeners.each do |listener|
+          listener.default_actions.each do |action|
+            value[:listener] << action.type
+          end
+        end
         table.add_row(AdminUI::Row.make_row(table.columns, value))
       end
     table
