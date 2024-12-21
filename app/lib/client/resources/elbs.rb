@@ -21,6 +21,7 @@ module UC3Resources
           type: lb.type,
           scheme: lb.scheme
         }
+        puts "LB: #{lb.load_balancer_name} ARN: #{lb.load_balancer_arn}"
         @arns[lb.load_balancer_arn] = lb.load_balancer_name
       end
       super(enabled: enabled)
@@ -43,11 +44,11 @@ module UC3Resources
           AdminUI::Column.new(:subservice, header: 'Subservice', filterable: true)
         ]
       )
-      #@client.describe_tags(resource_arns: @arns.keys).tag_descriptions.each do |tagdesc|
-      #  arn = tagdesc.resource_arn
-      #  @elbs[@arns[arn]][:service] = tagdesc.tags.find { |t| t.key == 'Service' }&.value
-      #  @elbs[@arns[arn]][:subservice] = tagdesc.tags.find { |t| t.key == 'Subservice' }&.value
-      #end
+      @client.describe_tags(resource_arns: @arns.keys).tag_descriptions.each do |tagdesc|
+        arn = tagdesc.resource_arn
+        @elbs[@arns[arn]][:service] = tagdesc.tags.find { |t| t.key == 'Service' }&.value
+        @elbs[@arns[arn]][:subservice] = tagdesc.tags.find { |t| t.key == 'Subservice' }&.value
+      end
       @elbs.sort.each do |key, value|        
         table.add_row(AdminUI::Row.make_row(table.columns, value))
       end
