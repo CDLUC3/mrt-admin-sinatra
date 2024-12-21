@@ -19,7 +19,8 @@ module UC3Resources
           name: lb.load_balancer_name,
           dns: lb.dns_name,
           type: lb.type,
-          scheme: lb.scheme
+          scheme: lb.scheme,
+          tgname: []
         }
         @arns[lb.load_balancer_arn] = lb.load_balancer_name
       end
@@ -40,7 +41,8 @@ module UC3Resources
           AdminUI::Column.new(:type, header: 'Type', filterable: true),
           AdminUI::Column.new(:scheme, header: 'Scheme', filterable: true),
           AdminUI::Column.new(:service, header: 'Service', filterable: true),
-          AdminUI::Column.new(:subservice, header: 'Subservice', filterable: true)
+          AdminUI::Column.new(:subservice, header: 'Subservice', filterable: true),
+          AdminUI::Column.new(:tgname, header: 'TG Name'),
         ]
       )
       unless @arns.empty?
@@ -48,6 +50,14 @@ module UC3Resources
           arn = tagdesc.resource_arn
           @elbs[@arns[arn]][:service] = tagdesc.tags.find { |t| t.key == 'Service' }&.value
           @elbs[@arns[arn]][:subservice] = tagdesc.tags.find { |t| t.key == 'Subservice' }&.value
+        end
+        @client.describe_target_groups.target_groups.each do |tg|
+          tg.load_balancer_arns.each do |arn|
+            lb = @arns.fetch(arn, '')
+            next if lb.empty?
+
+            @elbs[lb][:tgname] << "#{tg.target_type}: #{tg.target_group_name}"
+          end
         end
       end
       @elbs.sort.each do |key, value|        
