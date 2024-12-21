@@ -9,7 +9,7 @@ module UC3Resources
   class LoadBalancerClient < UC3::UC3Client
     def initialize
       @client = Aws::ElasticLoadBalancingV2::Client.new(
-        region: UC3::UC3Client::region
+        region: UC3::UC3Client.region
       )
       @elbs = {}
       @arns = {}
