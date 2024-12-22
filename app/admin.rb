@@ -13,7 +13,19 @@ include Sinatra::UC3ResourcesRoutes
 include Sinatra::UC3QueryRoutes
 
 menu_home = AdminUI::Context.topmenu.add_submenu(AdminUI::MENU_HOME, 'Home')
+
 menu_home.add_menu_item(AdminUI::MENU_ROOT, 'Admin Tool Home')
+
+AdminUI::Context.topmenu.create_menu_for_path('/test', 'Test')
+AdminUI::Context.topmenu.create_menu_for_path('/test/aaa', 'AAA')
+AdminUI::Context.topmenu.create_menu_item_for_path('/test/aaa', '/test?aaa', 'Test AAA')
+AdminUI::Context.topmenu.create_menu_item_for_path('/test/bbb', '/test?bbb', 'Test BBB')
+AdminUI::Context.topmenu.create_menu_item_for_path('/test/ccc', '/test?ccc', 'Test DDD')
+
+(1..40).each do |i|
+  AdminUI::Context.topmenu.create_menu_item_for_path('/test/ccc', "/test?ccc#{i}", "Test DDD #{i}")
+end
+
 get '/' do
   erb :index,
     :layout => :page_layout,
