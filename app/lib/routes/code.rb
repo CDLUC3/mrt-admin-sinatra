@@ -9,8 +9,8 @@ module Sinatra
   # client specific routes
   module UC3CodeRoutes
     def self.registered(app)
-
-      AdminUI::Context.add_menu_item(AdminUI::MENU_SOURCE, 'Source Code Repos', '/source')
+      menu_code = AdminUI::Context.topmenu.add_submenu(AdminUI::MENU_SOURCE, 'Source Code')
+      menu_code.add_menu_item('/source', 'Source Code Repos')
       app.get '/source' do
         erb :source,
           :layout => :page_layout,

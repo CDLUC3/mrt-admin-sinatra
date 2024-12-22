@@ -13,9 +13,8 @@ module Sinatra
   # client specific routes
   module UC3ResourcesRoutes
     def self.registered(app)
-
-      AdminUI::Context.add_menu_item(AdminUI::MENU_RESOURCES, 'Resources')
-      AdminUI::Context.add_menu_item(AdminUI::MENU_RESOURCES, 'UC3 Instances', '/instances')
+      menu_resources = AdminUI::Context.topmenu.add_submenu(AdminUI::MENU_RESOURCES, 'Resources')
+      menu_resources.add_menu_item('/instances', 'UC3 Instances')
       app.get '/instances' do
         erb :table,
           :layout => :page_layout,
@@ -25,7 +24,7 @@ module Sinatra
           }
       end
 
-      AdminUI::Context.add_menu_item(AdminUI::MENU_RESOURCES, 'UC3 SSM Parameters', '/parameters')
+      menu_resources.add_menu_item('/parameters', 'UC3 SSM Parameters')
       app.get '/parameters' do
         erb :table,
           :layout => :page_layout,
@@ -35,7 +34,7 @@ module Sinatra
           }
       end
 
-      AdminUI::Context.add_menu_item(AdminUI::MENU_RESOURCES, 'UC3 Buckets', '/buckets')
+      menu_resources.add_menu_item('/buckets', 'UC3 Buckets')
       app.get '/buckets' do
         erb :table,
           :layout => :page_layout,
@@ -45,7 +44,7 @@ module Sinatra
           }
       end
 
-      AdminUI::Context.add_menu_item(AdminUI::MENU_RESOURCES, 'UC3 Lambda Functions', '/functions')
+      menu_resources.add_menu_item('/functions', 'UC3 Lambda Functions')
       app.get '/functions' do
         erb :table,
           :layout => :page_layout,
@@ -55,7 +54,7 @@ module Sinatra
           }
       end
 
-      AdminUI::Context.add_menu_item(AdminUI::MENU_RESOURCES, 'Load Balancers', '/elbs')
+      menu_resources.add_menu_item('/elbs', 'Load Balancers')
       app.get '/elbs' do
         erb :table,
           :layout => :page_layout,

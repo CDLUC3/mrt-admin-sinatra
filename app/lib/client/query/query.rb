@@ -28,7 +28,7 @@ module UC3Query
     end
 
     def create_menu_items
-      AdminUI::Context.add_menu_item(AdminUI::MENU_QUERY, 'Queries')
+      menu_queries = AdminUI::Context.topmenu.add_submenu(AdminUI::MENU_QUERY, 'Queries')
       @queries.each do |query|
         path = query.fetch(:route, '')
         name = query.fetch(:name, '')
@@ -36,7 +36,7 @@ module UC3Query
           mp = menuitem.fetch(:menupath, '')
           next if mp.empty?
 
-          AdminUI::Context.add_menu_item(mp, menuitem.fetch(:name, name), menuitem.fetch(:path, path))
+          menu_queries.add_menu_item(menuitem.fetch(:path, path), menuitem.fetch(:name, name))
         end
       end
     end

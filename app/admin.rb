@@ -12,8 +12,8 @@ include Sinatra::UC3CodeRoutes
 include Sinatra::UC3ResourcesRoutes
 include Sinatra::UC3QueryRoutes
 
-AdminUI::Context.add_menu_item(AdminUI::MENU_HOME, 'Home')
-AdminUI::Context.add_menu_item(AdminUI::MENU_HOME, 'Admin Tool Home', AdminUI::MENU_ROOT)
+menu_home = AdminUI::Context.topmenu.add_submenu(AdminUI::MENU_HOME, 'Home')
+menu_home.add_menu_item(AdminUI::MENU_ROOT, 'Admin Tool Home')
 get '/' do
   erb :index,
     :layout => :page_layout,
@@ -22,7 +22,7 @@ get '/' do
     }
 end
 
-AdminUI::Context.add_menu_item(AdminUI::MENU_HOME, 'Admin Tool Context', '/context')
+menu_home.add_menu_item('/context', 'Admin Tool Context')
 get '/context' do
   erb :table,
     :layout => :page_layout,
@@ -32,7 +32,7 @@ get '/context' do
     }
 end
 
-AdminUI::Context.add_menu_item(AdminUI::MENU_HOME, 'Admin Tool Clients', '/clients')
+menu_home.add_menu_item('/clients', 'Admin Tool Clients')
 get '/clients' do
   UC3Code::SourceCodeClient.new
   UC3Resources::InstancesClient.new
