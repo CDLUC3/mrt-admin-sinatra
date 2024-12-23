@@ -1,92 +1,100 @@
 /*
- * https://www.w3schools.com/howto/howto_css_dropdown_navbar.asp
+ * https://stackoverflow.com/questions/9100344/pure-css-multi-level-drop-down-menu
  */
 
-.navbar {
-  overflow: hidden;
-  background-color: #F68D2E;
-}
-
-.navbar a {
-  float: left;
-  font-size: 16px;
-  color: black;
-  text-align: center;
-  padding: 14px 16px;
-  text-decoration: none;
-}
-
-.dropdown {
-  float: left;
-  overflow: hidden;
-}
-
-.dropdown .dropbtn {
-  font-size: 16px;
-  border: none;
-  outline: none;
-  color: beige;
-  padding: 14px 16px;
-  background-color: inherit;
-  font-family: inherit;
-  margin: 0;
-}
-
-.navbar a:hover,
-.dropdown:hover .dropbtn {
-  background-color: #77913B;
-}
-
-.dropdown-content {
-  display: none;
-  position: absolute;
-  background-color: beige;
-  min-width: 160px;
-  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-  z-index: 1;
-}
-
-.dropdown-content a, .dropdown-content div.dropdown {
-  float: none;
-  color: black;
-  padding: 12px 16px;
-  text-decoration: none;
-  display: block;
-  text-align: left;
-}
-
-.dropdown-content a:hover {
-  background-color: #ddd;
-}
-
-.dropdown:hover .dropdown-content {
-  display: block;
-}
-
-.nav_section {
-  display: none;
-}
-
-div.nav_section h2 {
-  border-bottom: solid #77913B 3px;
-}
-
-span.breadpath {
-  display: none;
-}
-
-span.breadpath.breadpath_home {
-  display: inline;
-}
-
-span.bp_title {
-  font-weight: bold;
-}
-
-a.submenu {
-  margin-left: 20px;
-}
-
-#alertmsg {
-  display: none;
-}
+ .fourth-level-menu
+ {
+     position: absolute;
+     top: 0;
+     right: -150px;
+     width: 150px;
+     list-style: none;
+     padding: 0;
+     margin: 0;
+     display: none;
+ }
+ 
+ .fourth-level-menu > li
+ {
+     height: 30px;
+     background: #999999;
+ }
+ .fourth-level-menu > li:hover { background: #CCCCCC; }
+ 
+ .third-level-menu
+ {
+     position: absolute;
+     top: 0;
+     right: -150px;
+     width: 150px;
+     list-style: none;
+     padding: 0;
+     margin: 0;
+     display: none;
+ }
+ 
+ .third-level-menu > li
+ {
+     height: 30px;
+     background: #999999;
+ }
+ .third-level-menu > li:hover { background: #CCCCCC; }
+ 
+ .second-level-menu
+ {
+     position: absolute;
+     top: 30px;
+     left: 0;
+     width: 150px;
+     list-style: none;
+     padding: 0;
+     margin: 0;
+     display: none;
+ }
+ 
+ .second-level-menu > li
+ {
+     position: relative;
+     height: 30px;
+     background: #999999;
+ }
+ .second-level-menu > li:hover { background: #CCCCCC; }
+ 
+ .top-level-menu
+ {
+     list-style: none;
+     padding: 0;
+     margin: 0;
+ }
+ 
+ .top-level-menu > li
+ {
+     position: relative;
+     float: left;
+     height: 30px;
+     width: 150px;
+     background: #999999;
+ }
+ .top-level-menu > li:hover { background: #CCCCCC; }
+ 
+ .top-level-menu li:hover > ul
+ {
+     /* On hover, display the next level's menu */
+     display: inline;
+ }
+ 
+ 
+ /* Menu Link Styles */
+ 
+ .top-level-menu a /* Apply to all links inside the multi-level menu */
+ {
+     font: bold 14px Arial, Helvetica, sans-serif;
+     color: #FFFFFF;
+     text-decoration: none;
+     padding: 0 0 0 10px;
+ 
+     /* Make the link cover the entire list item-container */
+     display: block;
+     line-height: 30px;
+ }
+ .top-level-menu a:hover { color: #000000; }

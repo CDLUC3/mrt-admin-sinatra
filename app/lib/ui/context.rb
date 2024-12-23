@@ -14,12 +14,13 @@ module AdminUI
       @path = path
       @title = title
       @parent = parent
+      @depth = parent.nil? ? 1 : parent.depth + 1
       @top = parent.nil? ? self : parent.top
       @top.paths[path] = self
       @children = []
     end
 
-    attr_accessor :title, :parent, :top, :children, :path
+    attr_accessor :title, :parent, :top, :children, :path, :depth
 
     def full_path
       paths = []
@@ -44,24 +45,28 @@ module AdminUI
       mi
     end
 
-    # https://www.w3schools.com/howto/howto_css_dropdown_navbar.asp
-    def render
-      s = %(
-        <!-- Menu #{@path} -->
-        <div class="dropdown">
-          <button class="dropbtn">
-            <span>#{title}</span>
-            <i class="fa fa-caret-down"></i>
-          </button>
-      )
-      unless children.empty?
-        s += %(<div class="dropdown-content">)
-        children.each do |item|
-          s += item.render
-        end
-        s += %(</div>)
+    def class_name
+      case @depth
+      when 1
+        'top-level-menu'
+      when 2
+        'second-level-menu'
+      when 3
+        'third-level-menu'
+      else
+        'fourth-level-menu'
       end
-      s += %(</div>)
+    end
+
+    def render
+      s = ''
+      s += %(<li><a href="#">#{title}</a>) unless title.empty?
+      s += %(<ul class="#{class_name}">)
+      children.each do |item|
+        s += item.render
+      end
+      s += %(</ul>)
+      s += %(</li>) unless title.empty?
       s
     end
   end
@@ -71,7 +76,7 @@ module AdminUI
   # contains a hash of normalized routes to page names and descriptions
   class TopMenu < Menu
     def create_menu_for_path(path, title)
-      parpath = File.dirname(path)
+      parpath = path
       if @paths.key?(parpath)
         @paths[parpath].add_submenu(path, title)
       else
@@ -82,7 +87,7 @@ module AdminUI
     end
 
     def create_menu_item_for_path(path, route, title, description: '')
-      parpath = File.dirname(path)
+      parpath = path
       if @paths.key?(parpath)
         @paths[parpath].add_menu_item(route, title, description: description)
       else
@@ -95,7 +100,7 @@ module AdminUI
     def initialize
       @paths = {}
       @route_names = {}
-      super('/', '/', parent: nil)
+      super('/', '', parent: nil)
     end
 
     attr_accessor :paths, :route_names
@@ -107,21 +112,6 @@ module AdminUI
         breadcrumbs << { title: @route_names[route][:title], url: route } if @route_names.key?(route)
       end
       breadcrumbs.reverse
-    end
-
-    def render
-      s = %(
-        <header>
-          <div class="navbar">
-      )
-      children.reverse.each do |item|
-        s += item.render
-      end
-      s += %(
-          </div>
-        </header>
-      )
-      s
     end
   end
 
@@ -142,19 +132,30 @@ module AdminUI
     end
 
     def render
-      %(<a href="#{route}">#{title}</a>)
+      %(<li><a href="#{route}">#{title}</a></li>)
     end
   end
 
   # Web context for the UI
   class Context
     def self.topmenu
-      @topmenu ||= TopMenu.new
+      unless @topmenu
+        @topmenu = TopMenu.new
+        @topmenu.add_submenu(MENU_HOME, 'Home')
+        @topmenu.add_submenu(MENU_SOURCE, 'Source')
+        @topmenu.add_submenu(MENU_RESOURCES, 'Resources')
+        @topmenu.add_submenu(MENU_QUERY, 'Queries')
+        @topmenu.add_submenu('/test', 'Test')
+      end
+      @topmenu
     end
 
     def initialize(route, title: nil)
       @route = route
-      @title = Context.topmenu.route_names[route][:title] || title || route
+      page = Context.topmenu.route_names[route]
+      deftitle = title || route
+      @title = page ? page.fetch(:title, deftitle) : deftitle
+      @breadcrumbs = breadcrumbs
       # Breadcrumbs are an array of hashes with keys :title and :url
     end
 
