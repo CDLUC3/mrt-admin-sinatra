@@ -45,28 +45,18 @@ module AdminUI
       mi
     end
 
-    def class_name
-      case @depth
-      when 1
-        'top-level-menu'
-      when 2
-        'second-level-menu'
-      when 3
-        'third-level-menu'
-      else
-        'fourth-level-menu'
-      end
-    end
-
     def render
-      s = ''
-      s += %(<li><a href="#">#{title}</a>) unless title.empty?
-      s += %(<ul class="#{class_name}">)
+      s = %(
+      <li><a href="#" title="#{title}">#{title}</a>
+      <ul class="submenu">
+      )
       children.each do |item|
         s += item.render
       end
-      s += %(</ul>)
-      s += %(</li>) unless title.empty?
+      s += %(
+      </ul>
+      </li>
+      )
       s
     end
   end
@@ -101,7 +91,7 @@ module AdminUI
           @paths[parpath].add_submenu(path, title)
         else
           @paths[parpath].add_submenu(path, path)
-          create_menu_for_item_path(path, title).add_menu_item(route, title, description: description)
+          create_menu_item_for_path(path, route, title, description: description)
         end
       end
     end
@@ -122,6 +112,21 @@ module AdminUI
       end
       breadcrumbs.reverse
     end
+
+    def render
+      s = %(
+      <nav>
+      <ul class="menu">
+      )
+      children.each do |item|
+        s += item.render
+      end
+      s += %(
+      </ul>
+      </nav>
+      )
+      s
+    end
   end
 
   ## Menu item (hash of title, description and full route (path and query string)
@@ -141,7 +146,7 @@ module AdminUI
     end
 
     def render
-      %(<li><a href="#{route}">#{title}</a></li>)
+      %(<li><a href="#{route}" title="#{title}">#{title}</a></li>)
     end
   end
 

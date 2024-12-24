@@ -28,6 +28,36 @@ module Sinatra
         '/test?ccc',
         'Test DDD'
       )
+      AdminUI::TopMenu.instance.create_menu_item_for_path(
+        '/test/bbb',
+        '',
+        'BBB'
+      )
+      AdminUI::TopMenu.instance.create_menu_item_for_path(
+        '/test/bbb',
+        '/test?aaa',
+        'Test BBB'
+      )
+      AdminUI::TopMenu.instance.create_menu_item_for_path(
+        '/test/aaa/ccc',
+        '',
+        'Test CCC'
+      )
+      AdminUI::TopMenu.instance.create_menu_item_for_path(
+        '/test/bbb',
+        '/test?aaa',
+        'Test DDD'
+      )
+      AdminUI::TopMenu.instance.create_menu_item_for_path(
+        '/test/aaa/ccc',
+        '/test?aaa',
+        'Test EEE'
+      )
+      AdminUI::TopMenu.instance.create_menu_item_for_path(
+        '/test/aaa/ccc',
+        '/test?aaa',
+        'Test FFF'
+      )
       (1..40).each do |i|
         AdminUI::TopMenu.instance.create_menu_item_for_path(
           '/test',
