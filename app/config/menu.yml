@@ -1,0 +1,34 @@
+menu:
+  path: about
+  items:
+  - title: Home
+    route: /
+  - title: Consistency Reports
+    route: /reports/consistency
+  - title: Batches
+    route: /queue/batches
+  - title: Jobs
+    route: /queue/jobs-by-collection
+  - menu:
+    title: About
+    items:
+    - title: Admin Tool Context
+      route: /context
+    - title: Admin Tool Clients
+      route: /clients
+    - title: Help
+      route: /help
+
+
+
+
+
+
+
+
+
+
+
+
+
+;]

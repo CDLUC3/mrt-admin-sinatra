@@ -19,6 +19,11 @@ module Sinatra
         'Test AAA'
       )
       AdminUI::TopMenu.instance.create_menu_item_for_path(
+        '/test/aaa/ccc',
+        '',
+        'Test CCC'
+      )
+      AdminUI::TopMenu.instance.create_menu_item_for_path(
         '/test/aaa',
         '/test?bbb',
         'Test BBB'
@@ -37,11 +42,6 @@ module Sinatra
         '/test/bbb',
         '/test?aaa',
         'Test BBB'
-      )
-      AdminUI::TopMenu.instance.create_menu_item_for_path(
-        '/test/aaa/ccc',
-        '',
-        'Test CCC'
       )
       AdminUI::TopMenu.instance.create_menu_item_for_path(
         '/test/bbb',
