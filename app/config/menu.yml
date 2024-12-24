@@ -1,5 +1,5 @@
 menu:
-  path: about
+  path: Home
   items:
   - title: Home
     route: /
@@ -18,17 +18,3 @@ menu:
       route: /clients
     - title: Help
       route: /help
-
-
-
-
-
-
-
-
-
-
-
-
-
-;]
