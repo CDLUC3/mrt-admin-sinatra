@@ -1,26 +1,8 @@
 /*
  * https://stackoverflow.com/questions/9100344/pure-css-multi-level-drop-down-menu
- */
-
- .fourth-level-menu
- {
-     position: absolute;
-     top: 0;
-     right: -150px;
-     width: 150px;
-     list-style: none;
-     padding: 0;
-     margin: 0;
-     display: none;
- }
+ */ 
  
- .fourth-level-menu > li
- {
-     height: 30px;
-     background: #999999;
- }
- .fourth-level-menu > li:hover { background: #CCCCCC; }
- 
+ .fourth-level-menu,
  .third-level-menu
  {
      position: absolute;
@@ -33,12 +15,19 @@
      display: none;
  }
  
+ .second-level-menu > li,
+ .fourth-level-menu > li,
  .third-level-menu > li
  {
      height: 30px;
      background: #999999;
  }
- .third-level-menu > li:hover { background: #CCCCCC; }
+ 
+ .second-level-menu > li:hover, 
+ .fourth-level-menu > li:hover,
+ .third-level-menu > li:hover { 
+    background: #CCCCCC; 
+}
  
  .second-level-menu
  {
@@ -51,14 +40,7 @@
      margin: 0;
      display: none;
  }
- 
- .second-level-menu > li
- {
-     position: relative;
-     height: 30px;
-     background: #999999;
- }
- .second-level-menu > li:hover { background: #CCCCCC; }
+
  
  .top-level-menu
  {

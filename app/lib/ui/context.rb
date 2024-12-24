@@ -75,25 +75,34 @@ module AdminUI
   # contains a hash of menu paths to menus
   # contains a hash of normalized routes to page names and descriptions
   class TopMenu < Menu
-    def create_menu_for_path(path, title)
-      parpath = path
-      if @paths.key?(parpath)
-        @paths[parpath].add_submenu(path, title)
-      else
-        parpath = File.dirname(path) until @paths.key?(parpath)
-        @paths[parpath].add_submenu(path, path)
-        create_menu_for_path(path, title)
+    def self.instance
+      unless @instance
+        @instance = TopMenu.new
+        @instance.add_submenu(MENU_HOME, 'Home')
+        @instance.add_submenu(MENU_SOURCE, 'Source')
+        @instance.add_submenu(MENU_RESOURCES, 'Resources')
+        @instance.add_submenu(MENU_QUERY, 'Queries')
+        @instance.add_submenu('/test', 'Test')
       end
+      @instance
     end
 
     def create_menu_item_for_path(path, route, title, description: '')
       parpath = path
       if @paths.key?(parpath)
-        @paths[parpath].add_menu_item(route, title, description: description)
+        if route.empty?
+          @paths[parpath].add_submenu(path, title)
+        else
+          @paths[parpath].add_menu_item(route, title, description: description)
+        end
       else
         parpath = File.dirname(path) until @paths.key?(parpath)
-        @paths[parpath].add_submenu(path, path)
-        create_menu_for_path(path, title).add_menu_item(route, title, description: description)
+        if route.empty?
+          @paths[parpath].add_submenu(path, title)
+        else
+          @paths[parpath].add_submenu(path, path)
+          create_menu_for_item_path(path, title).add_menu_item(route, title, description: description)
+        end
       end
     end
 
@@ -138,21 +147,9 @@ module AdminUI
 
   # Web context for the UI
   class Context
-    def self.topmenu
-      unless @topmenu
-        @topmenu = TopMenu.new
-        @topmenu.add_submenu(MENU_HOME, 'Home')
-        @topmenu.add_submenu(MENU_SOURCE, 'Source')
-        @topmenu.add_submenu(MENU_RESOURCES, 'Resources')
-        @topmenu.add_submenu(MENU_QUERY, 'Queries')
-        @topmenu.add_submenu('/test', 'Test')
-      end
-      @topmenu
-    end
-
     def initialize(route, title: nil)
       @route = route
-      page = Context.topmenu.route_names[route]
+      page = TopMenu.instance.route_names[route]
       deftitle = title || route
       @title = page ? page.fetch(:title, deftitle) : deftitle
       @breadcrumbs = breadcrumbs
@@ -160,7 +157,7 @@ module AdminUI
     end
 
     def breadcrumbs
-      Context.topmenu.breadcrumbs_for_route(@route)
+      TopMenu.instance.breadcrumbs_for_route(@route)
     end
 
     attr_accessor :title, :route
