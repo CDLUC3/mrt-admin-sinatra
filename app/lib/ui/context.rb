@@ -47,8 +47,8 @@ module AdminUI
 
     def render
       s = %(
-      <li><a href="#" title="#{title}">#{title}</a>
-      <ul class="submenu">
+      <li><a aria-haspopup="true" href="#" title="#{title}">#{title}</a>
+      <ul class="submenu" aria-hidden="true" aria-expanded="false" aria-label="#{title} submenu">
       )
       children.each do |item|
         s += item.render
@@ -68,11 +68,6 @@ module AdminUI
     def self.instance
       unless @instance
         @instance = TopMenu.new
-        @instance.add_submenu(MENU_HOME, 'Home')
-        @instance.add_submenu(MENU_SOURCE, 'Source')
-        @instance.add_submenu(MENU_RESOURCES, 'Resources')
-        @instance.add_submenu(MENU_QUERY, 'Queries')
-        @instance.add_submenu('/test', 'Test')
       end
       @instance
     end
@@ -146,7 +141,8 @@ module AdminUI
     end
 
     def render
-      %(<li><a href="#{route}" title="#{title}">#{title}</a></li>)
+      lclass = route == '/tbd' ? 'tbd' : '' 
+      %(<li><a class="#{lclass}" href="#{route}" title="#{title}">#{title}</a></li>)
     end
   end
 

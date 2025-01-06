@@ -13,11 +13,6 @@ module Sinatra
   # client specific routes
   module UC3ResourcesRoutes
     def self.registered(app)
-      AdminUI::TopMenu.instance.create_menu_item_for_path(
-        AdminUI::MENU_RESOURCES,
-        '/instances',
-        'UC3 Instances'
-      )
       app.get '/instances' do
         erb :table,
           :layout => :page_layout,
@@ -27,11 +22,6 @@ module Sinatra
           }
       end
 
-      AdminUI::TopMenu.instance.create_menu_item_for_path(
-        AdminUI::MENU_RESOURCES,
-        '/parameters',
-        'UC3 SSM Parameters'
-      )
       app.get '/parameters' do
         erb :table,
           :layout => :page_layout,
@@ -41,11 +31,6 @@ module Sinatra
           }
       end
 
-      AdminUI::TopMenu.instance.create_menu_item_for_path(
-        AdminUI::MENU_RESOURCES,
-        '/buckets',
-        'UC3 Buckets'
-      )
       app.get '/buckets' do
         erb :table,
           :layout => :page_layout,
@@ -55,11 +40,6 @@ module Sinatra
           }
       end
 
-      AdminUI::TopMenu.instance.create_menu_item_for_path(
-        AdminUI::MENU_RESOURCES,
-        '/functions',
-        'UC3 Lambda Functions'
-      )
       app.get '/functions' do
         erb :table,
           :layout => :page_layout,
@@ -69,11 +49,6 @@ module Sinatra
           }
       end
 
-      AdminUI::TopMenu.instance.create_menu_item_for_path(
-        AdminUI::MENU_RESOURCES,
-        '/elbs',
-        'Load Balancers'
-      )
       app.get '/elbs' do
         erb :table,
           :layout => :page_layout,

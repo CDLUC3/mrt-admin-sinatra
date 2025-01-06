@@ -58,12 +58,12 @@ module UC3
       table
     end
 
-    def load_config(filename)
+    def self.load_config(filename)
       config = YAML.safe_load_file(filename, aliases: true)
       JSON.parse(config.to_json, symbolize_names: true)
     end
 
-    def lookup_map(filename)
+    def self.lookup_map(filename)
       ssm = Aws::SSM::Client.new(
         region: UC3::UC3Client.region
       )
@@ -86,7 +86,7 @@ module UC3
       map
     end
 
-    def resolve_lookup(filename, map)
+    def self.resolve_lookup(filename, map)
       YAML.safe_load(Mustache.render(File.read(filename), map))
     end
   end

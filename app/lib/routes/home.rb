@@ -2,69 +2,36 @@
 
 require 'sinatra/base'
 require_relative '../ui/context'
+require_relative '../client/uc3_client'
 
 # custom sinatra routes
 module Sinatra
   # client specific routes
   module UC3HomeRoutes
-    def self.registered(app)
+    def self.add_menu_item(paths, item)
+      np = paths.clone
+      leaf = item.fetch(:path, '')
+      title = item.fetch(:title, '')
+      route = item.fetch(:route, '')
+      np.append(leaf) unless leaf.empty?
       AdminUI::TopMenu.instance.create_menu_item_for_path(
-        '/test/aaa',
-        '',
-        'AAA'
+        np.join('/'),
+        route,
+        title
       )
-      AdminUI::TopMenu.instance.create_menu_item_for_path(
-        '/test/aaa',
-        '/test?aaa',
-        'Test AAA'
-      )
-      AdminUI::TopMenu.instance.create_menu_item_for_path(
-        '/test/aaa/ccc',
-        '',
-        'Test CCC'
-      )
-      AdminUI::TopMenu.instance.create_menu_item_for_path(
-        '/test/aaa',
-        '/test?bbb',
-        'Test BBB'
-      )
-      AdminUI::TopMenu.instance.create_menu_item_for_path(
-        '/test/aaa',
-        '/test?ccc',
-        'Test DDD'
-      )
-      AdminUI::TopMenu.instance.create_menu_item_for_path(
-        '/test/bbb',
-        '',
-        'BBB'
-      )
-      AdminUI::TopMenu.instance.create_menu_item_for_path(
-        '/test/bbb',
-        '/test?aaa',
-        'Test BBB'
-      )
-      AdminUI::TopMenu.instance.create_menu_item_for_path(
-        '/test/bbb',
-        '/test?aaa',
-        'Test DDD'
-      )
-      AdminUI::TopMenu.instance.create_menu_item_for_path(
-        '/test/aaa/ccc',
-        '/test?aaa',
-        'Test EEE'
-      )
-      AdminUI::TopMenu.instance.create_menu_item_for_path(
-        '/test/aaa/ccc',
-        '/test?aaa',
-        'Test FFF'
-      )
-      (1..40).each do |i|
-        AdminUI::TopMenu.instance.create_menu_item_for_path(
-          '/test',
-          "/test?ccc#{i}",
-          "Test DDD #{i}"
-        )
+      item.fetch(:items, []).each do |citem|
+        self.add_menu_item(np, citem)
       end
+    end
+
+    def self.load_menu_file
+      UC3::UC3Client.load_config('app/config/menu.yml').fetch(:items, {}).each do |menu|
+        self.add_menu_item([''], menu)
+      end
+    end
+
+    def self.registered(app)
+      self.load_menu_file
     end
   end
   register UC3HomeRoutes

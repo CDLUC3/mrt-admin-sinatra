@@ -14,9 +14,9 @@ module UC3Query
     end
 
     def initialize
-      @queries = load_config('app/config/query.sql.yml').fetch(:queries, [])
-      map = lookup_map('app/config/query.lookup.yml')
-      config = resolve_lookup('app/config/query.template.yml', map)
+      @queries = UC3::UC3Client.load_config('app/config/query.sql.yml').fetch(:queries, [])
+      map = UC3::UC3Client.lookup_map('app/config/query.lookup.yml')
+      config = UC3::UC3Client.resolve_lookup('app/config/query.template.yml', map)
       dbconf = config.fetch('dbconf', {})
       @client = Mysql2::Client.new(dbconf)
       super(enabled: enabled)

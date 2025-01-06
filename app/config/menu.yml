@@ -1,15 +1,16 @@
-menu:
-  path: Home
+items:
+- path: home
+  title: AdminTool
   items:
   - title: Home
     route: /
   - title: Consistency Reports
-    route: /reports/consistency
+    route: /tbd
   - title: Batches
-    route: /queue/batches
+    route: /tbd
   - title: Jobs
-    route: /queue/jobs-by-collection
-  - menu:
+    route: /tbd
+  - path: about
     title: About
     items:
     - title: Admin Tool Context
@@ -18,3 +19,192 @@ menu:
       route: /clients
     - title: Help
       route: /help
+- path: source
+  title: Source
+  items:
+  - title: Source Code Repo
+    route: /source
+- path: reports
+  title: Reports
+  items:
+  - path: repository
+    title: Repository
+    items:
+    - title: Collection Reports
+      route: /tbd
+    - title: Owner Reports
+      route: /tbd
+    - title: Campus Invoices
+      route: /tbd
+    - title: Mime Type
+      route: /tbd
+    - title: Ingests over Time
+      route: /tbd
+  - path: consistency
+    title: Consistency
+    items:
+    - title: Object Replication
+      route: /tbd
+    - title: File Replication
+      route: /tbd
+    - title: Version Clobber
+      route: /tbd
+    - title: Objects no local id
+      route: /tbd
+    - title: Local id no Ark
+      route: /tbd
+    - title: Objects linked to multiple Collections
+      route: /tbd
+  - path: use-cases
+    title: Use Cases
+    items:
+    - title: Largest Objects
+      route: /tbd
+    - title: Objects with most files
+      route: /tbd
+    - title: Objects with largest individual files
+      route: /tbd
+- path: Operations
+  title: Operations
+  items:
+  - path: ingest-queue
+    title: Ingest Queue
+    items:
+    - title: Pause
+      route: /tbd
+    - title: Unpause
+      route: /tbd
+    - title: Ingest Batches
+      route: /tbd
+    - title: Jobs by Collection
+      route: /tbd
+    - title: Cleanup Queue
+      route: /tbd
+    - title: Recent Ingests
+      route: /tbd
+    - title: Ingest Folders
+      route: /tbd
+  - path: access-queue
+    title: Access Queue
+    items:
+    - title: Pause
+      route: /tbd
+    - title: Unpause
+      route: /tbd
+    - title: View Queue
+      route: /tbd
+    - title: Cleanup Queue
+      route: /tbd
+  - path: replication-queue
+    title: Replication Queue
+    items:
+    - title: Queued
+      route: /tbd
+    - title: In Progress
+      route: /tbd
+    - title: Failed
+      route: /tbd
+    - title: Recent Performance
+      route: /tbd
+  - path: audit-queue
+    title: Audit Queue
+    items:
+    - title: Oldest Audit Check
+      route: /tbd
+    - title: Recent Performance
+      route: /tbd
+    - title: Active Batches
+      route: /tbd
+    - title: Counts by State
+      route: /tbd
+  - path: object-locks
+    title: Object Locks
+  - path: Collections
+    title: Collections
+    items:
+    - title: Profiles
+      route: /tbd
+    - title: Collection Config
+      route: /tbd
+    - title: Storage Node Config
+      route: /tbd
+    - title: Non standard primary config
+      route: /tbd
+    - title: Non standard secondary config
+      route: /tbd
+    - title: Node cleanup needed
+      route: /tbd
+    - title: Collection Locks
+      route: /tbd
+  - path: storage
+    title: Storage
+    items:
+    - title: Storage Nodes
+      route: /tbd
+    - title: Test Storage Nodes
+      route: /tbd
+    - title: Storage Scans
+      route: /tbd
+- path: Internals
+  title: Internals
+  items: 
+  - path: zookeeper
+    title: ZooKeeper
+    items:
+    - title: Node Names
+      route: /tbd
+    - title: Node Data
+      route: /tbd
+    - title: Locks
+      route: /tbd
+    - title: Orphan Report
+      route: /tbd
+  - path: ldap
+    title: LDAP
+    items:
+    - title: Users
+      route: /tbd
+    - title: Groups
+      route: /tbd
+    - title: Collections
+      route: /tbd
+  - title: LDAP Certs
+    route: /tbd
+  - title: Merritt Server State
+    route: /tbd
+  - title: Merritt Deployment State
+    route: /tbd
+  - title: SSM Usage
+    route: /tbd
+  - title: OpenSearch Usage
+    route: /tbd
+- path: search 
+  title: Search
+  items:
+  - title: Ark
+    route: /tbd
+  - title: Id
+    route: /tbd
+  - title: LocalId
+    route: /tbd
+  - title: Metadata
+    route: /tbd
+  - title: Filename
+    route: /tbd
+  - title: Container Name
+    route: /tbd
+  - title: Collection
+    route: /tbd
+- path: resources
+  title: AWS
+  items:
+  - title: UC3 Instances
+    route: /instances
+  - title: UC3 SSM Parameters
+    route: /parameters
+  - title: UC3 Buckets
+    route: /buckets
+  - title: UC3 Lambda Functions
+    route: /functions
+  - title: UC3 Load Balancers
+    route: /elbs
