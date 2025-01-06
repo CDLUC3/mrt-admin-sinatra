@@ -3,6 +3,7 @@
 require 'mysql2'
 require 'yaml'
 require_relative '../uc3_client'
+require_relative '../../ui/context'
 
 # Scope custom code for UC3 to distinguish from 3rd party classes
 module UC3Query
@@ -28,7 +29,6 @@ module UC3Query
     end
 
     def create_menu_items
-      AdminUI::Context.add_menu_item(AdminUI::MENU_QUERY, 'Queries')
       @queries.each do |query|
         path = query.fetch(:route, '')
         name = query.fetch(:name, '')
@@ -36,7 +36,11 @@ module UC3Query
           mp = menuitem.fetch(:menupath, '')
           next if mp.empty?
 
-          AdminUI::Context.add_menu_item(mp, menuitem.fetch(:name, name), menuitem.fetch(:path, path))
+          AdminUI::TopMenu.instance.create_menu_item_for_path(
+            AdminUI::MENU_QUERY,
+            menuitem.fetch(:path, path),
+            menuitem.fetch(:name, name)
+          )
         end
       end
     end

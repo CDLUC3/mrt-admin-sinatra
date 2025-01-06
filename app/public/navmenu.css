@@ -1,88 +1,68 @@
-.navbar {
-  overflow: hidden;
-  background-color: #F68D2E;
+body {
+    font-family: Arial, sans-serif;
 }
 
-.navbar a {
-  float: left;
-  font-size: 16px;
-  color: black;
-  text-align: center;
-  padding: 14px 16px;
-  text-decoration: none;
+nav {
+    background-color: #333;
 }
 
-.dropdown {
-  float: left;
-  overflow: hidden;
+.menu, .submenu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
 }
 
-.dropdown .dropbtn {
-  font-size: 16px;
-  border: none;
-  outline: none;
-  color: beige;
-  padding: 14px 16px;
-  background-color: inherit;
-  font-family: inherit;
-  margin: 0;
+.menu > li {
+    position: relative;
+    display: inline-block;
 }
 
-.navbar a:hover,
-.dropdown:hover .dropbtn {
-  background-color: #77913B;
+.menu > li > a {
+    display: block;
+    padding: 15px 20px;
+    color: white;
+    text-decoration: none;
 }
 
-.dropdown-content {
-  display: none;
-  position: absolute;
-  background-color: beige;
-  min-width: 160px;
-  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-  z-index: 1;
+.menu > li > a:hover {
+    background-color: #575757;
 }
 
-.dropdown-content a {
-  float: none;
-  color: black;
-  padding: 12px 16px;
-  text-decoration: none;
-  display: block;
-  text-align: left;
+.submenu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #333;
 }
 
-.dropdown-content a:hover {
-  background-color: #ddd;
+.submenu > li > a {
+    padding: 10px 20px;
+    color: white;
+    text-decoration: none;
+    display: block;
 }
 
-.dropdown:hover .dropdown-content {
-  display: block;
+.submenu > li > a:hover {
+    background-color: #575757;
 }
 
-.nav_section {
-  display: none;
+.submenu > li:hover > .submenu,
+.menu > li:hover > .submenu {
+    display: block;
 }
 
-div.nav_section h2 {
-  border-bottom: solid #77913B 3px;
+.submenu .submenu {
+    top: 0;
+    left: 100%;
 }
 
-span.breadpath {
-  display: none;
+.submenu .submenu .submenu {
+    position: relative;
+    top: 100%;
+    left: 100%;
 }
 
-span.breadpath.breadpath_home {
-  display: inline;
-}
-
-span.bp_title {
-  font-weight: bold;
-}
-
-a.submenu {
-  margin-left: 20px;
-}
-
-#alertmsg {
-  display: none;
+nav ul {
+    min-width: 200px;
 }

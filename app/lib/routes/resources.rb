@@ -13,9 +13,11 @@ module Sinatra
   # client specific routes
   module UC3ResourcesRoutes
     def self.registered(app)
-
-      AdminUI::Context.add_menu_item(AdminUI::MENU_RESOURCES, 'Resources')
-      AdminUI::Context.add_menu_item(AdminUI::MENU_RESOURCES, 'UC3 Instances', '/instances')
+      AdminUI::TopMenu.instance.create_menu_item_for_path(
+        AdminUI::MENU_RESOURCES,
+        '/instances',
+        'UC3 Instances'
+      )
       app.get '/instances' do
         erb :table,
           :layout => :page_layout,
@@ -25,7 +27,11 @@ module Sinatra
           }
       end
 
-      AdminUI::Context.add_menu_item(AdminUI::MENU_RESOURCES, 'UC3 SSM Parameters', '/parameters')
+      AdminUI::TopMenu.instance.create_menu_item_for_path(
+        AdminUI::MENU_RESOURCES,
+        '/parameters',
+        'UC3 SSM Parameters'
+      )
       app.get '/parameters' do
         erb :table,
           :layout => :page_layout,
@@ -35,7 +41,11 @@ module Sinatra
           }
       end
 
-      AdminUI::Context.add_menu_item(AdminUI::MENU_RESOURCES, 'UC3 Buckets', '/buckets')
+      AdminUI::TopMenu.instance.create_menu_item_for_path(
+        AdminUI::MENU_RESOURCES,
+        '/buckets',
+        'UC3 Buckets'
+      )
       app.get '/buckets' do
         erb :table,
           :layout => :page_layout,
@@ -45,7 +55,11 @@ module Sinatra
           }
       end
 
-      AdminUI::Context.add_menu_item(AdminUI::MENU_RESOURCES, 'UC3 Lambda Functions', '/functions')
+      AdminUI::TopMenu.instance.create_menu_item_for_path(
+        AdminUI::MENU_RESOURCES,
+        '/functions',
+        'UC3 Lambda Functions'
+      )
       app.get '/functions' do
         erb :table,
           :layout => :page_layout,
@@ -55,7 +69,11 @@ module Sinatra
           }
       end
 
-      AdminUI::Context.add_menu_item(AdminUI::MENU_RESOURCES, 'Load Balancers', '/elbs')
+      AdminUI::TopMenu.instance.create_menu_item_for_path(
+        AdminUI::MENU_RESOURCES,
+        '/elbs',
+        'Load Balancers'
+      )
       app.get '/elbs' do
         erb :table,
           :layout => :page_layout,

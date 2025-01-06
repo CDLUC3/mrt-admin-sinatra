@@ -1,0 +1,93 @@
+# Menu
+
+- Home
+  - Home
+  - Consistency Reports
+  - Ingest Batches
+  - Jobs by Collection
+  - Recent Ingests
+  - About
+    - Admin Tool Context
+    - Admin Tool Clients
+  - Help
+- Reports
+  - Repository
+    - Collection Reports
+    - Owner Reports
+    - Campus Invoices
+    - Mime Type
+    - Ingests over Time
+  - Consistency
+    - Object Replication
+    - File Replication
+    - Version Clobber
+    - Objects no local id
+    - Local id no Ark
+    - Objects linked to multiple Collections
+  - Admin Objects
+    - Obsolete
+    - Special cases?
+    - 
+  - Use cases
+    - Largest objects
+    - Objects with most files
+    - Objects with largest individual files
+- Operations
+  - Ingest Queue
+    - Pause
+    - Unpause
+    - Ingest Batches
+    - Jobs by Collection
+    - Cleanup Queue
+    - Recent Ingests
+    - Ingest Folders
+  - Access Queue
+    - Pause
+    - Unpause
+    - View Queue
+    - Cleanup Queue
+  - Replication Queue
+    - Queued
+    - In Progress
+    - Failed
+    - Recent performance
+  - Audit Queue
+    - Oldest Audit Check
+    - Recent performance
+    - Active Batches
+    - Counts by State
+  - Object Locks
+  - Collections
+    - Profiles
+    - Collection Config
+    - Storage Node Config
+    - Non standard primary config
+    - Non standard secondary config
+    - Node cleanup needed
+    - Collection Locks
+  - Storage
+    - Storage Nodes
+    - Test Storage Nodes
+    - Storage Scans
+- Internals
+  - ZooKeeper
+    - Node Names
+    - Node Data
+    - Locks
+    - Orphan Report
+  - LDAP
+    - Users
+    - Groups
+    - Collections
+  - LDAP Certs
+  - Merritt Server State
+  - Merritt Deployment State
+  - SSM Usage
+  - OpenSearch Usage?
+Search
+  - Ark
+  - Id
+  - LocalId
+  - Metadata
+  - Filename
+  - Container Name

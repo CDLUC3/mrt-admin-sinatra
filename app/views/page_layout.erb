@@ -13,8 +13,9 @@
   </head>
   <body>
     <div class="menu">
-      <%= AdminUI::Context.render_menu %>
+      <%= AdminUI::TopMenu.instance.render %>
     </div>
+    <div style="clear:both"></div>
     <h1><%= context.title %></h1>
     <div class="breadcrumb">
       <% context.breadcrumbs.each do |bc| %>
