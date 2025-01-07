@@ -1,5 +1,10 @@
 /* General styles */
 
+nav {
+    width: 90%;
+    background-color: #E19D5F;
+}
+
 nav ul {
     list-style: none;
     padding: 0;
@@ -17,12 +22,15 @@ nav a {
     background-color: #E19D5F;
     color: white;
     border: thin solid #E19D5F;
+    opacity: unset;
 }
 
 nav li.search {
     background-color: #E19D5F;
     color: white;
     padding: 0px 10px;
+    position: absolute;
+    right: 15%;
 }
 
 nav span.search select, nav span.search input {
