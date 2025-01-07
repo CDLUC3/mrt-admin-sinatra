@@ -16,6 +16,22 @@ nav a {
     display: block;
     background-color: #E19D5F;
     color: white;
+    border: thin solid #E19D5F;
+}
+
+nav li.search {
+    background-color: #E19D5F;
+    color: white;
+    padding: 0px 10px;
+}
+
+nav span.search select, nav span.search input {
+    text-decoration: none;
+    margin: 5px 0px;
+    padding: 5px 0px;
+    background-color: #E19D5F;
+    color: white;
+    border: thin solid white;
 }
 
 nav a:hover {

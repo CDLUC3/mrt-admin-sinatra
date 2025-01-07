@@ -3,10 +3,10 @@ queries:
   name: List collections 1
   description: TBD1
   menuitems:
-  - menupath: /queries
+  - menupath: /reports/repository
     name: List collections 1
     description: TBD1
-  - menupath: /queries
+  - menupath: /reports/repository
     name: List collections 2
     description: TBD2
     path: /queries/collections?foo=bar
@@ -26,7 +26,7 @@ queries:
   name: List owners
   description: TBD
   menuitems:
-  - menupath: /queries
+  - menupath: /reports/repository
   sql: |
     select
         ogroup,

@@ -153,10 +153,10 @@ items:
     - title: Counts by State
       route: /audit/counts-by-state
       tbd: true
-  - path: object-locks
-    title: Object Locks
+  - title: Object Locks
     route: /objects/locks
-  - path: Collections
+    tbd: true
+  - path: collections
     title: Collections
     items:
     - title: Profiles
@@ -237,27 +237,6 @@ items:
   - title: OpenSearch Usage
     route: /infra/opensearch-usage
     tbd: true
-- path: search 
-  title: Search
-  items:
-  - title: Ark
-    route: /search/ark
-    tbd: true
-  - title: Id
-    route: /search/id
-    tbd: true
-  - title: LocalId
-    route: /search/localid
-    tbd: true
-  - title: Metadata
-    route: /search/metadata
-    tbd: true
-  - title: Filename
-    route: /search/filename
-    tbd: true
-  - title: Container Name
-    route: /search/container
-    tbd: true
 - path: resources
   title: AWS
   items:
@@ -266,6 +245,11 @@ items:
     breadcrumb: true
     description: |
       ## Reports on the AWS infrastructure
+      - [Instances](/infra/instances)
+      - [SSM Parameters](/infra/parameters)
+      - [Buckets](/infra/buckets)
+      - [Lambda Functions](/infra/functions)
+      - [Load Balancers](/infra/elbs)
   - title: UC3 Instances
     route: /infra/instances
   - title: UC3 SSM Parameters

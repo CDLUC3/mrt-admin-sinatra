@@ -37,7 +37,7 @@ module UC3Query
           next if mp.empty?
 
           AdminUI::TopMenu.instance.create_menu_item_for_path(
-            AdminUI::MENU_QUERY,
+            mp,
             menuitem.fetch(:path, path),
             menuitem.fetch(:name, name),
             description: menuitem.fetch(:description, '')

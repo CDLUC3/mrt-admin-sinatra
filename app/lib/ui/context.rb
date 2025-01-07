@@ -123,6 +123,22 @@ module AdminUI
         s += item.render
       end
       s += %(
+      <li class="search">
+        <span class="search">
+        <label for="search">Search: </label>
+        <select class="search" id="search-type">
+          <option value="ark">Ark</option>
+          <option value="inv_object_id">inv_object_id</option>
+          <option value="localid">Local Id</option>
+          <option value="erc_what">erc_what</option>
+          <option value="erc_who">erc_who</option>
+          <option value="erc_when">erc_when</option>
+          <option value="filename">filename</option>
+          <option value="container">container</option>
+        </select>
+        <input class="search" id="search" type="text" width="25" value="tbd" disabled/>
+        </span>
+      </li>
       </ul>
       </nav>
       )
