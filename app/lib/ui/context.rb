@@ -39,8 +39,8 @@ module AdminUI
       child
     end
 
-    def add_menu_item(route, title, description: '')
-      mi = MenuItem.new(self, route, title, description: description)
+    def add_menu_item(route, title, description: '', tbd: false, breadcrumb: false)
+      mi = MenuItem.new(self, route, title, description: description, tbd: tbd, breadcrumb: breadcrumb)
       @children << mi
       mi
     end
@@ -72,13 +72,13 @@ module AdminUI
       @instance
     end
 
-    def create_menu_item_for_path(path, route, title, description: '')
+    def create_menu_item_for_path(path, route, title, description: '', tbd: false, breadcrumb: false)
       parpath = path
       if @paths.key?(parpath)
         if route.empty?
           @paths[parpath].add_submenu(path, title)
         else
-          @paths[parpath].add_menu_item(route, title, description: description)
+          @paths[parpath].add_menu_item(route, title, description: description, tbd: tbd, breadcrumb: breadcrumb)
         end
       else
         parpath = File.dirname(path) until @paths.key?(parpath)
@@ -86,7 +86,7 @@ module AdminUI
           @paths[parpath].add_submenu(path, title)
         else
           @paths[parpath].add_submenu(path, path)
-          create_menu_item_for_path(path, route, title, description: description)
+          create_menu_item_for_path(path, route, title, description: description, tbd: tbd, breadcrumb: breadcrumb)
         end
       end
     end
@@ -108,6 +108,11 @@ module AdminUI
       breadcrumbs.reverse
     end
 
+    def description_for_route(route)
+      return @route_names[route][:description] if @route_names.key?(route)
+      ''
+    end
+
     def render
       s = %(
       <nav>
@@ -126,22 +131,25 @@ module AdminUI
 
   ## Menu item (hash of title, description and full route (path and query string)
   class MenuItem
-    def initialize(parent, route, title, description: '')
+    def initialize(parent, route, title, description: '', tbd: false, breadcrumb: false)
       @parent = parent
       @title = title
       @route = route
+      @tbd = tbd
+      @breadcrumb = breadcrumb
       @description = description
       @parent.top.route_names[route_normalized] = { title: title, description: description }
     end
 
-    attr_accessor :title, :route, :description
+    attr_accessor :title, :route, :description, :tbd, :breadcrumb
 
     def route_normalized
       @route
     end
 
     def render
-      lclass = route == '/tbd' ? 'tbd' : '' 
+      return '' if @breadcrumb
+      lclass = @tbd ? 'tbd' : '' 
       %(<li><a class="#{lclass}" href="#{route}" title="#{title}">#{title}</a></li>)
     end
   end
@@ -153,6 +161,7 @@ module AdminUI
       page = TopMenu.instance.route_names[route]
       deftitle = title || route
       @title = page ? page.fetch(:title, deftitle) : deftitle
+      @description = TopMenu.instance.description_for_route(@route)
       @breadcrumbs = breadcrumbs
       # Breadcrumbs are an array of hashes with keys :title and :url
     end
@@ -161,6 +170,6 @@ module AdminUI
       TopMenu.instance.breadcrumbs_for_route(@route)
     end
 
-    attr_accessor :title, :route
+    attr_accessor :title, :route, :description
   end
 end

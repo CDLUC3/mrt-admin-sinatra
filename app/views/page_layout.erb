@@ -24,7 +24,10 @@
       <span>/ <%= context.title %></span>
     </div>
     <div class="main">
-    <%= yield %>
+      <div class="description">
+        <%= context.description %>
+      </div>
+      <%= yield %>
     </div>
   </body>
 </html>

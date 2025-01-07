@@ -13,7 +13,7 @@ module Sinatra
   # client specific routes
   module UC3ResourcesRoutes
     def self.registered(app)
-      app.get '/instances' do
+      app.get '/infra/instances' do
         erb :table,
           :layout => :page_layout,
           :locals => {
@@ -22,7 +22,7 @@ module Sinatra
           }
       end
 
-      app.get '/parameters' do
+      app.get '/infra/parameters' do
         erb :table,
           :layout => :page_layout,
           :locals => {
@@ -31,7 +31,7 @@ module Sinatra
           }
       end
 
-      app.get '/buckets' do
+      app.get '/infra/buckets' do
         erb :table,
           :layout => :page_layout,
           :locals => {
@@ -40,7 +40,7 @@ module Sinatra
           }
       end
 
-      app.get '/functions' do
+      app.get '/infra/functions' do
         erb :table,
           :layout => :page_layout,
           :locals => {
@@ -49,7 +49,7 @@ module Sinatra
           }
       end
 
-      app.get '/elbs' do
+      app.get '/infra/elbs' do
         erb :table,
           :layout => :page_layout,
           :locals => {

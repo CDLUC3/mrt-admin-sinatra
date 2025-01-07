@@ -39,7 +39,8 @@ module UC3Query
           AdminUI::TopMenu.instance.create_menu_item_for_path(
             AdminUI::MENU_QUERY,
             menuitem.fetch(:path, path),
-            menuitem.fetch(:name, name)
+            menuitem.fetch(:name, name),
+            description: menuitem.fetch(:description, '')
           )
         end
       end

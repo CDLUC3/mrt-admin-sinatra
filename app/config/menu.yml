@@ -5,11 +5,14 @@ items:
   - title: Home
     route: /
   - title: Consistency Reports
-    route: /tbd
+    route: /consistency
+    tbd: true
   - title: Batches
-    route: /tbd
+    route: /queue/batches
+    tbd: true
   - title: Jobs
-    route: /tbd
+    route: /queue/jobs-by-collection
+    tbd: true
   - path: about
     title: About
     items:
@@ -31,39 +34,53 @@ items:
     title: Repository
     items:
     - title: Collection Reports
-      route: /tbd
+      route: /repository/collections
+      tbd: true
     - title: Owner Reports
-      route: /tbd
+      route: /repository/owners
+      tbd: true
     - title: Campus Invoices
-      route: /tbd
+      route: /repository/invoices
+      tbd: true
     - title: Mime Type
-      route: /tbd
+      route: /repository/mime-types
+      tbd: true
     - title: Ingests over Time
-      route: /tbd
+      route: /ingest/ingests-over-time
+      tbd: true
   - path: consistency
     title: Consistency
     items:
     - title: Object Replication
-      route: /tbd
+      route: /consistency/objects
+      tbd: true
     - title: File Replication
-      route: /tbd
+      route: /consistency/files
+      tbd: true
     - title: Version Clobber
-      route: /tbd
+      route: /consistency/version-clobber
+      tbd: true
     - title: Objects no local id
-      route: /tbd
+      route: /consistency/objects-no-local-id
+      tbd: true
     - title: Local id no Ark
-      route: /tbd
+      route: /consistency/local-id-no-ark
+      tbd: true
     - title: Objects linked to multiple Collections
-      route: /tbd
+      route: /consistency/objects-linked-to-multiple-collections
+      tbd: true
   - path: use-cases
     title: Use Cases
     items:
     - title: Largest Objects
-      route: /tbd
+      route: /use-cases/largest-objects
+      tbd: true
     - title: Objects with most files
-      route: /tbd
+      route: /use-cases/most-files
+      tbd: true
     - title: Objects with largest individual files
-      route: /tbd
+      route: /use-cases/largest-files
+      tbd: true
 - path: Operations
   title: Operations
   items:
@@ -71,80 +88,110 @@ items:
     title: Ingest Queue
     items:
     - title: Pause
-      route: /tbd
+      route: /ingest/pause
+      tbd: true
     - title: Unpause
-      route: /tbd
+      route: /ingest/unpuse
+      tbd: true
     - title: Ingest Batches
-      route: /tbd
+      route: /ingest/batches
+      tbd: true
     - title: Jobs by Collection
-      route: /tbd
+      route: /ingest/jobs-by-collection
+      tbd: true
     - title: Cleanup Queue
-      route: /tbd
+      route: /ingest/cleanup-queue
+      tbd: true
     - title: Recent Ingests
-      route: /tbd
+      route: /ingest/recent-ingests
+      tbd: true
     - title: Ingest Folders
-      route: /tbd
+      route: /ingest/folders
+      tbd: true
   - path: access-queue
     title: Access Queue
     items:
     - title: Pause
-      route: /tbd
+      route: /access/pause
+      tbd: true
     - title: Unpause
-      route: /tbd
+      route: /access/unpause
+      tbd: true
     - title: View Queue
-      route: /tbd
+      route: /access/jobs
+      tbd: true
     - title: Cleanup Queue
-      route: /tbd
+      route: /access/cleanup-queue
+      tbd: true
   - path: replication-queue
     title: Replication Queue
     items:
     - title: Queued
-      route: /tbd
+      route: /replication/queued
+      tbd: true
     - title: In Progress
-      route: /tbd
+      route: /replication/in-progress
+      tbd: true
     - title: Failed
-      route: /tbd
+      route: /replication/failed
+      tbd: true
     - title: Recent Performance
-      route: /tbd
+      route: /replication/recent-performance
+      tbd: true
   - path: audit-queue
     title: Audit Queue
     items:
     - title: Oldest Audit Check
-      route: /tbd
+      route: /audit/oldest-audit-check
+      tbd: true
     - title: Recent Performance
-      route: /tbd
+      route: /audit/recent-performance
+      tbd: true
     - title: Active Batches
-      route: /tbd
+      route: /audit/active-batches
+      tbd: true
     - title: Counts by State
-      route: /tbd
+      route: /audit/counts-by-state
+      tbd: true
   - path: object-locks
     title: Object Locks
+    route: /objects/locks
   - path: Collections
     title: Collections
     items:
     - title: Profiles
-      route: /tbd
+      route: /collections/profiles
+      tbd: true
     - title: Collection Config
-      route: /tbd
+      route: /collections/config
+      tbd: true
     - title: Storage Node Config
-      route: /tbd
+      route: /collections/storage-node-config
+      tbd: true
     - title: Non standard primary config
-      route: /tbd
+      route: /collections/primary-config
+      tbd: true
     - title: Non standard secondary config
-      route: /tbd
+      route: /collections/secondary-config
+      tbd: true
     - title: Node cleanup needed
-      route: /tbd
+      route: /collections/node-cleanup-needed
+      tbd: true
     - title: Collection Locks
-      route: /tbd
+      route: /collections/locks
+      tbd: true
   - path: storage
     title: Storage
     items:
     - title: Storage Nodes
-      route: /tbd
+      route: /storage/nodes
+      tbd: true
     - title: Test Storage Nodes
-      route: /tbd
+      route: /storage/test-nodes
+      tbd: true
     - title: Storage Scans
-      route: /tbd
+      route: /storage/scans
+      tbd: true
 - path: Internals
   title: Internals
   items: 
@@ -152,59 +199,80 @@ items:
     title: ZooKeeper
     items:
     - title: Node Names
-      route: /tbd
+      route: /zk/node-names
+      tbd: true
     - title: Node Data
-      route: /tbd
+      route: /zk/node-data
+      tbd: true
     - title: Locks
-      route: /tbd
+      route: /zk/locks
+      tbd: true
     - title: Orphan Report
-      route: /tbd
+      route: /zk/orphan-report
+      tbd: true
   - path: ldap
     title: LDAP
     items:
     - title: Users
-      route: /tbd
+      route: /ldap/users
+      tbd: true
     - title: Groups
-      route: /tbd
+      route: /ldap/groups
+      tbd: true
     - title: Collections
-      route: /tbd
+      route: /ldap/collections
+      tbd: true
   - title: LDAP Certs
-    route: /tbd
+    route: /infra/certs
+    tbd: true
   - title: Merritt Server State
-    route: /tbd
+    route: /services/state
+    tbd: true
   - title: Merritt Deployment State
-    route: /tbd
+    route: /services/deployment
+    tbd: true
   - title: SSM Usage
-    route: /tbd
+    route: /infra/ssm-usage
+    tbd: true
   - title: OpenSearch Usage
-    route: /tbd
+    route: /infra/opensearch-usage
+    tbd: true
 - path: search 
   title: Search
   items:
   - title: Ark
-    route: /tbd
+    route: /search/ark
+    tbd: true
   - title: Id
-    route: /tbd
+    route: /search/id
+    tbd: true
   - title: LocalId
-    route: /tbd
+    route: /search/localid
+    tbd: true
   - title: Metadata
-    route: /tbd
+    route: /search/metadata
+    tbd: true
   - title: Filename
-    route: /tbd
+    route: /search/filename
+    tbd: true
   - title: Container Name
-    route: /tbd
-  - title: Collection
-    route: /tbd
+    route: /search/container
+    tbd: true
 - path: resources
   title: AWS
   items:
+  - title: Infrastructure Reports
+    route: /infra
+    breadcrumb: true
+    description: |
+      Reports on the AWS infrastructure
   - title: UC3 Instances
-    route: /instances
+    route: /infra/instances
   - title: UC3 SSM Parameters
-    route: /parameters
+    route: /infra/parameters
   - title: UC3 Buckets
-    route: /buckets
+    route: /infra/buckets
   - title: UC3 Lambda Functions
-    route: /functions
+    route: /infra/functions
   - title: UC3 Load Balancers
-    route: /elbs
+    route: /infra/elbs

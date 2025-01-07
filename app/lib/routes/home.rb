@@ -17,7 +17,10 @@ module Sinatra
       AdminUI::TopMenu.instance.create_menu_item_for_path(
         np.join('/'),
         route,
-        title
+        title,
+        description: item.fetch(:description, ''),
+        tbd: item.fetch(:tbd, false),
+        breadcrumb: item.fetch(:breadcrumb, false)
       )
       item.fetch(:items, []).each do |citem|
         self.add_menu_item(np, citem)

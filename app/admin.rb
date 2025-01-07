@@ -47,3 +47,11 @@ get '/clients' do
       table: UC3::UC3Client.new.client_list
     }
 end
+
+get '/**' do
+  erb :none,
+    :layout => :page_layout,
+    :locals => {
+      context: AdminUI::Context.new(request.path)
+    }
+end
