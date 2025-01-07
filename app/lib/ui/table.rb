@@ -13,11 +13,12 @@ module AdminUI
       )
     end
 
-    def initialize(columns: [], data: [], filters: [])
+    def initialize(columns: [], data: [], filters: [], totals: false)
       @columns = columns
       @rows = data
       @filters = filters
       @filterable = false
+      @totals = totals
       @columns.each do |col|
         @filterable = true if col.filterable
       end
@@ -82,10 +83,17 @@ module AdminUI
       @rows.each do |row|
         s += row.render(@columns)
       end
-      s += %(
-    </tbody>
-    </table>
-    )
+      s += %(</tbody>)
+      if @totals
+        s += %(<tfoot><tr class='totals'>)
+        @columns.each_with_index do |col, i|
+          s += %(<th class='#{col.cssclass}'>)
+          s += i.zero? ? 'Total' : ''
+          s += %(</th>)
+        end
+        s += %(</tr></tfoot>)
+      end
+      s += %(</table>)
       s
     end
 
@@ -100,7 +108,7 @@ module AdminUI
       s
     end
 
-    attr_accessor :columns, :data, :filters, :filterable
+    attr_accessor :columns, :data, :filters, :filterable, :totals
   end
 
   # Table rendering classes

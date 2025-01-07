@@ -33,12 +33,17 @@ items:
   - path: repository
     title: Repository
     items:
-    - title: Collection Reports
-      route: /repository/collections
-      tbd: true
-    - title: Owner Reports
-      route: /repository/owners
-      tbd: true
+    - title: Repository Queries
+      route: /queries/repository
+      breadcrumb: true
+      description: |
+        ## Reports on the repository
+        - [Campus Files/Bytes](/queries/repository/campus)
+        - [Campus Objects](/queries/repository/campus-objects)
+        - [Collections Files/Bytes](/queries/repository/collections)
+        - [Collections Objects](/queries/repository/collections-objects)
+        - [Owner Files/Bytes](/queries/repository/owners)
+        - [Mime Types](/queries/repository/mimes)
     - title: Campus Invoices
       route: /repository/invoices
       tbd: true

@@ -1,4 +1,5 @@
 $(document).ready(function() {
+  showTotals();
   // Allow links to be disabled in table displays
   $("table.data a").on("click", function() {
     if ($(this).hasClass('button-disabled')) {
@@ -19,6 +20,7 @@ $(document).ready(function() {
         $("table.data tr." + $(this).val()).hide();
       });   
     }
+    showTotals();
   });
 
   $("select.filter").each(function() {
@@ -47,6 +49,7 @@ $(document).ready(function() {
           $(this).hide();
         }
       });
+      showTotals();
     });
   });
 
@@ -56,3 +59,23 @@ $(document).ready(function() {
     sorttable.makeSortable($("table.sortable")[0]);
   });
 });
+
+function showTotals() {
+  var test = ['files', 'size', 'num_colls', 'num_objs'];
+    $("tfoot tr.totals").find("th").each(function() {
+    var b = false;
+    for (var i = 0; i < test.length; i++) {
+      if ($(this).hasClass(test[i])) {
+        b = true;
+        break;
+      }
+    }
+    if (b) {
+      var total = 0;
+      $("td."+$(this).attr('class')+":visible").each(function() {
+        total += parseInt($(this).text().replace(/,/g, ''));
+      });
+      $(this).text(total.toLocaleString());
+    }
+  });
+}

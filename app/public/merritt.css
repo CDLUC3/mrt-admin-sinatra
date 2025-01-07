@@ -95,6 +95,14 @@ td.artifacts span.val,
 td.images span.val {
   display: list-item;
 }
-td.files, td.size {
+
+td.num_colls, th.num_colls,
+td.num_objs, th.num_objs,
+td.files, th.files,
+td.size, th.size {
   text-align: right;
+}
+tfoot tr {
+  background-color: #879C5D;
+  color: white;
 }

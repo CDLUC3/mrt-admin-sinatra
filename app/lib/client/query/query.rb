@@ -58,11 +58,12 @@ module UC3Query
 
       stmt = @client.prepare(sql)
       cols = stmt.fields.map do |field|
-        filterable = %w[ogroup].include?(field)
+        filterable = %w[ogroup mime_group mime_type mnemonic_filter].include?(field)
         AdminUI::Column.new(field, header: field, filterable: filterable)
       end
       table = AdminUI::FilterTable.new(
-        columns: cols
+        columns: cols,
+        totals: query.fetch(:totals, false)
       )
       stmt.execute.each do |row|
         table.add_row(AdminUI::Row.make_row(table.columns, row))

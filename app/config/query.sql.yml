@@ -1,8 +1,9 @@
 queries:
-- route: /queries/campus
-  name: Campus Counts
+- route: /queries/repository/campus
+  name: Campus Files/Bytes
   menuitems:
   - menupath: /reports/repository
+  totals: true
   sql: |
     select
       distinct
@@ -11,15 +12,33 @@ queries:
       sum(count_files) files,
       sum(billable_size) size
     from
-      owner_coll_mime_use_details
+      owner_coll_mime_use_details ocmud
     group by
       ogroup
     order by
       ogroup
-- route: /queries/collections
-  name: List Collections with Counts
+- route: /queries/repository/campus-objects
+  name: Campus Objects
   menuitems:
   - menupath: /reports/repository
+  totals: true
+  sql: |
+    select
+      distinct
+      ogroup as campus,
+      count(distinct inv_collection_id) num_colls,
+      sum(count_objects) num_objs
+    from
+      owner_collections_objects
+    group by
+      ogroup
+    order by
+      ogroup
+- route: /queries/repository/collections
+  name: Collections Files/Bytes
+  menuitems:
+  - menupath: /reports/repository
+  totals: true
   sql: |
     select
       distinct
@@ -39,10 +58,34 @@ queries:
     order by
       ogroup,
       mnemonic
-- route: /queries/owners
-  name: Owner Counts
+- route: /queries/repository/collections-objects
+  name: Collections Objects
   menuitems:
   - menupath: /reports/repository
+  totals: true
+  sql: |
+    select
+      distinct
+      ogroup,
+      inv_collection_id,
+      (select mnemonic from inv.inv_collections where id=inv_collection_id) mnemonic,
+      collection_name,
+      sum(count_objects) num_objs
+    from
+      owner_collections_objects
+    group by
+      ogroup,
+      inv_collection_id,
+      mnemonic,
+      collection_name
+    order by
+      ogroup,
+      mnemonic
+- route: /queries/repository/owners
+  name: Owner Files/Bytes
+  menuitems:
+  - menupath: /reports/repository
+  totals: true
   sql: |
     select
         ogroup,
@@ -59,3 +102,31 @@ queries:
       order by
         ogroup,
         own_name
+- route: /queries/repository/mimes
+  name: Mime Type Usage
+  menuitems:
+  - menupath: /reports/repository
+  totals: true
+  sql: |
+    select
+      distinct
+      ogroup,
+      inv_collection_id,
+      mnemonic as mnemonic_filter,
+      collection_name,
+      mime_group,
+      mime_type,
+      sum(count_files) files,
+      sum(billable_size) size
+    from
+      owner_coll_mime_use_details
+    group by
+      ogroup,
+      inv_collection_id,
+      mnemonic,
+      collection_name,
+      mime_group,
+      mime_type
+    order by
+      ogroup,
+      mnemonic
