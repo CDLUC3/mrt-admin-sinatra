@@ -95,3 +95,6 @@ td.artifacts span.val,
 td.images span.val {
   display: list-item;
 }
+td.files, td.size {
+  text-align: right;
+}

@@ -58,7 +58,8 @@ module UC3Query
 
       stmt = @client.prepare(sql)
       cols = stmt.fields.map do |field|
-        AdminUI::Column.new(field, header: field)
+        filterable = %w[ogroup].include?(field)
+        AdminUI::Column.new(field, header: field, filterable: filterable)
       end
       table = AdminUI::FilterTable.new(
         columns: cols

@@ -1,30 +1,46 @@
 queries:
-- route: /queries/collections
-  name: List collections 1
-  description: TBD1
+- route: /queries/campus
+  name: Campus Counts
   menuitems:
   - menupath: /reports/repository
-    name: List collections 1
-    description: TBD1
+  sql: |
+    select
+      distinct
+      ogroup as campus,
+      count(distinct inv_collection_id) num_colls,
+      sum(count_files) files,
+      sum(billable_size) size
+    from
+      owner_coll_mime_use_details
+    group by
+      ogroup
+    order by
+      ogroup
+- route: /queries/collections
+  name: List Collections with Counts
+  menuitems:
   - menupath: /reports/repository
-    name: List collections 2
-    description: TBD2
-    path: /queries/collections?foo=bar
   sql: |
     select
       distinct
       ogroup,
       inv_collection_id,
       mnemonic,
-      collection_name
+      collection_name,
+      sum(count_files) files,
+      sum(billable_size) size
     from
-      owner_collections
+      owner_coll_mime_use_details
+    group by
+      ogroup,
+      inv_collection_id,
+      mnemonic,
+      collection_name
     order by
       ogroup,
       mnemonic
 - route: /queries/owners
-  name: List owners
-  description: TBD
+  name: Owner Counts
   menuitems:
   - menupath: /reports/repository
   sql: |

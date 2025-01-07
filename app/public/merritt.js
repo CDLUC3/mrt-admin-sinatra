@@ -25,7 +25,7 @@ $(document).ready(function() {
     var sel = $(this);
     var v = $(this).attr('data');
     vals = {}
-    $("td."+v).each(function() {
+    $("td."+v+",th."+v).each(function() {
       var value = $(this).text();
       vals[value] = value in vals ? vals[value] + 1 : 1;
     });
@@ -43,7 +43,7 @@ $(document).ready(function() {
       $("select.filter").attr('disabled', true);
       $(this).attr('disabled', false);
       $("table.data tr.data").each(function() {
-        if ($(this).find("td."+v).text() != val) {
+        if ($(this).find("td."+v+",th."+v).text() != val) {
           $(this).hide();
         }
       });

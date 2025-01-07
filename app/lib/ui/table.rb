@@ -50,9 +50,8 @@ module AdminUI
         s += %(<tr class='filters'>)
         @columns.each_with_index do |col, i|
           s += %(<th class='#{col.cssclass}'>)
-          if i == 0
-            s += %(<button class='filter' title='remove filters to make table sortable'>Clear</button>)
-          elsif col.filterable
+          s += %(<button class='filter' title='remove filters to make table sortable'>Clear</button>) if i == 0
+          if col.filterable
             s += %(
             <select data='#{col.cssclass}' class='filter'>
               <option value='ALLVALS'>All</option>
@@ -113,7 +112,12 @@ module AdminUI
 
     def self.make_row(cols, datahash)
       cssclass = datahash.fetch(:cssclass, 'data')
-      data = cols.map { |col| datahash.fetch(col.sym, col.defval) }
+      data = []
+      cols.each do |col|
+        v = datahash.fetch(col.sym, col.defval)
+        v = v.to_i.to_s.reverse.gsub(/(\d{3})(?=\d)/, '\\1,').reverse if v.is_a?(BigDecimal)
+        data << v
+      end
       new(data, cssclass: cssclass)
     end
 
