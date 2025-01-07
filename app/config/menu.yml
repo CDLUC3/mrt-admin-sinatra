@@ -265,7 +265,7 @@ items:
     route: /infra
     breadcrumb: true
     description: |
-      Reports on the AWS infrastructure
+      ## Reports on the AWS infrastructure
   - title: UC3 Instances
     route: /infra/instances
   - title: UC3 SSM Parameters

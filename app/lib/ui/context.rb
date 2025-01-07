@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require 'redcarpet'
 
 # admin ui components
 module AdminUI
@@ -170,6 +171,10 @@ module AdminUI
       TopMenu.instance.breadcrumbs_for_route(@route)
     end
 
-    attr_accessor :title, :route, :description
+    def description
+      Redcarpet::Markdown.new(Redcarpet::Render::HTML.new).render(@description)
+    end
+
+    attr_accessor :title, :route
   end
 end
