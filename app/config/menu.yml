@@ -5,8 +5,20 @@ items:
   - title: Home
     route: /
   - title: Consistency Reports
-    route: /consistency
-    tbd: true
+    route: /queries/consistency
+    breadcrumb: true
+    description: |
+      ## Consistency Reports
+      - [Object Replication - Only 2 Copies](/queries/consistency/replication-objects-2)
+      - [Object Replication - Only 1 Copy](/queries/consistency/replication-objects-1)
+      - [Object Replication - 4 Copies](/queries/consistency/replication-objects-4)
+      - [File Replication - Only 2 Copies](/queries/consistency/replication-files-2)
+      - [File Replication - Only 1 Copy](/queries/consistency/replication-files-1)
+      - [File Replication - 4 Copies](/queries/consistency/replication-files-4)
+      - [Version Clobber](/queries/consistency/version-clobber)
+      - [Objects no local id](/queries/consistency/objects-no-local-id)
+      - [Local id no Ark](/queries/consistency/local-id-no-ark)
+      - [Objects linked to multiple Collections](/queries/consistency/objects-linked-to-multiple-collections)
   - title: Batches
     route: /queue/batches
     tbd: true
@@ -44,11 +56,21 @@ items:
         - [Collections Objects](/queries/repository/collections-objects)
         - [Owner Files/Bytes](/queries/repository/owners)
         - [Mime Types](/queries/repository/mimes)
+        - Invoices
+    - title: Campus Files/Bytes
+      route: /queries/repository/campus
+    - title: Campus Objects
+      route: /queries/repository/campus-objects
+    - title: Collections Files/Bytes
+      route: /queries/repository/collections
+    - title: Collections Objects
+      route: /queries/repository/collections-objects
+    - title: Owner Files/Bytes
+      route: /queries/repository/owners
+    - title: Mime Types
+      route: /queries/repository/mimes
     - title: Campus Invoices
       route: /repository/invoices
-      tbd: true
-    - title: Mime Type
-      route: /repository/mime-types
       tbd: true
     - title: Ingests over Time
       route: /ingest/ingests-over-time
@@ -56,24 +78,34 @@ items:
   - path: consistency
     title: Consistency
     items:
-    - title: Object Replication
-      route: /consistency/objects
+    - title: Object Replication - Only 2 Copies
+      route: /queries/consistency/replication-objects-2
+    - title: Object Replication - Only 1 Copy
+      route: /queries/consistency/replication-objects-1
+    - title: Object Replication - 4 Copies
+      route: /queries/consistency/replication-objects-4
       tbd: true
-    - title: File Replication
-      route: /consistency/files
+    - title: File Replication - Only 2 Copies
+      route: /queries/consistency/replication-files-2
+      tbd: true
+    - title: File Replication - Only 1 Copy
+      route: /queries/consistency/replication-files-1
+      tbd: true
+    - title: File Replication - 4 Copies
+      route: /queries/consistency/replication-files-4
       tbd: true
     - title: Version Clobber
-      route: /consistency/version-clobber
+      route: /queries/consistency/version-clobber
       tbd: true
     - title: Objects no local id
-      route: /consistency/objects-no-local-id
+      route: /queries/consistency/objects-no-local-id
       tbd: true
     - title: Local id no Ark
-      route: /consistency/local-id-no-ark
+      route: /queries/consistency/local-id-no-ark
       tbd: true
     - title: Objects linked to multiple Collections
-      route: /consistency/objects-linked-to-multiple-collections
-      tbd: true
+      route: /queries/consistency/objects-linked-to-multiple-collections
+      tbd: true  
   - path: use-cases
     title: Use Cases
     items:

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'redcarpet'
 
 # admin ui components
@@ -67,9 +68,7 @@ module AdminUI
   # contains a hash of normalized routes to page names and descriptions
   class TopMenu < Menu
     def self.instance
-      unless @instance
-        @instance = TopMenu.new
-      end
+      @instance ||= TopMenu.new
       @instance
     end
 
@@ -111,6 +110,7 @@ module AdminUI
 
     def description_for_route(route)
       return @route_names[route][:description] if @route_names.key?(route)
+
       ''
     end
 
@@ -166,7 +166,8 @@ module AdminUI
 
     def render
       return '' if @breadcrumb
-      lclass = @tbd ? 'tbd' : '' 
+
+      lclass = @tbd ? 'tbd' : ''
       %(<li><a class="#{lclass}" href="#{route}" title="#{title}">#{title}</a></li>)
     end
   end

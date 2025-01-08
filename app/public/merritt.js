@@ -61,8 +61,16 @@ $(document).ready(function() {
 });
 
 function showTotals() {
-  var test = ['files', 'size', 'num_colls', 'num_objs'];
-    $("tfoot tr.totals").find("th").each(function() {
+  var test = [
+    'files', 
+    'size',
+    'num_colls',
+    'num_objs',
+    'num_objs_2day',
+    'num_objs_1day',
+    'num_objs_0day'
+  ];
+  $("tfoot tr.totals").find("th").each(function() {
     var b = false;
     for (var i = 0; i < test.length; i++) {
       if ($(this).hasClass(test[i])) {

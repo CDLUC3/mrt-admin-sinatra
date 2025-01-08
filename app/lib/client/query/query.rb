@@ -28,31 +28,17 @@ module UC3Query
       !@client.nil?
     end
 
-    def create_menu_items
-      @queries.each do |query|
-        path = query.fetch(:route, '')
-        name = query.fetch(:name, '')
-        query.fetch(:menuitems, []).each do |menuitem|
-          mp = menuitem.fetch(:menupath, '')
-          next if mp.empty?
-
-          AdminUI::TopMenu.instance.create_menu_item_for_path(
-            mp,
-            menuitem.fetch(:path, path),
-            menuitem.fetch(:name, name),
-            description: menuitem.fetch(:description, '')
-          )
-        end
-      end
-    end
-
     def query(path)
       table = AdminUI::FilterTable.empty(path)
-      query = @queries.find { |q| q.fetch(:route, '') == path }
+      query = @queries.fetch(path.to_sym, {})
       return table if query.nil?
 
       sql = query.fetch(:sql, '')
       return table if sql.empty?
+
+      tparm = query.fetch(:'template-params', {})
+      puts tparm
+      sql = Mustache.render(sql, tparm) unless tparm.empty?
 
       return AdminUI::FilterTable.empty("No DB support for: #{sql}") unless enabled
 

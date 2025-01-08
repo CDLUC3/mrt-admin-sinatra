@@ -1,132 +1,220 @@
 queries:
-- route: /queries/repository/campus
-  name: Campus Files/Bytes
-  menuitems:
-  - menupath: /reports/repository
-  totals: true
-  sql: |
-    select
-      distinct
-      ogroup as campus,
-      count(distinct inv_collection_id) num_colls,
-      sum(count_files) files,
-      sum(billable_size) size
-    from
-      owner_coll_mime_use_details ocmud
-    group by
-      ogroup
-    order by
-      ogroup
-- route: /queries/repository/campus-objects
-  name: Campus Objects
-  menuitems:
-  - menupath: /reports/repository
-  totals: true
-  sql: |
-    select
-      distinct
-      ogroup as campus,
-      count(distinct inv_collection_id) num_colls,
-      sum(count_objects) num_objs
-    from
-      owner_collections_objects
-    group by
-      ogroup
-    order by
-      ogroup
-- route: /queries/repository/collections
-  name: Collections Files/Bytes
-  menuitems:
-  - menupath: /reports/repository
-  totals: true
-  sql: |
-    select
-      distinct
-      ogroup,
-      inv_collection_id,
-      mnemonic,
-      collection_name,
-      sum(count_files) files,
-      sum(billable_size) size
-    from
-      owner_coll_mime_use_details
-    group by
-      ogroup,
-      inv_collection_id,
-      mnemonic,
-      collection_name
-    order by
-      ogroup,
-      mnemonic
-- route: /queries/repository/collections-objects
-  name: Collections Objects
-  menuitems:
-  - menupath: /reports/repository
-  totals: true
-  sql: |
-    select
-      distinct
-      ogroup,
-      inv_collection_id,
-      (select mnemonic from inv.inv_collections where id=inv_collection_id) mnemonic,
-      collection_name,
-      sum(count_objects) num_objs
-    from
-      owner_collections_objects
-    group by
-      ogroup,
-      inv_collection_id,
-      mnemonic,
-      collection_name
-    order by
-      ogroup,
-      mnemonic
-- route: /queries/repository/owners
-  name: Owner Files/Bytes
-  menuitems:
-  - menupath: /reports/repository
-  totals: true
-  sql: |
-    select
+  /queries/repository/campus:
+    totals: true
+    sql: |
+      select
+        distinct
+        ogroup as campus,
+        count(distinct inv_collection_id) num_colls,
+        sum(count_files) files,
+        sum(billable_size) size
+      from
+        owner_coll_mime_use_details ocmud
+      group by
+        ogroup
+      order by
+        ogroup
+  /queries/repository/campus-objects:
+    totals: true
+    sql: |
+      select
+        distinct
+        ogroup as campus,
+        count(distinct inv_collection_id) num_colls,
+        sum(count_objects) num_objs
+      from
+        owner_collections_objects
+      group by
+        ogroup
+      order by
+        ogroup
+  /queries/repository/collections:
+    totals: true
+    sql: |
+      select
+        distinct
         ogroup,
-        inv_owner_id as owner_id,
-        own_name,
+        inv_collection_id,
+        mnemonic,
+        collection_name,
         sum(count_files) files,
         sum(billable_size) size
       from
         owner_coll_mime_use_details
       group by
         ogroup,
-        owner_id,
-        own_name
+        inv_collection_id,
+        mnemonic,
+        collection_name
       order by
         ogroup,
-        own_name
-- route: /queries/repository/mimes
-  name: Mime Type Usage
-  menuitems:
-  - menupath: /reports/repository
-  totals: true
-  sql: |
-    select
-      distinct
-      ogroup,
-      inv_collection_id,
-      mnemonic as mnemonic_filter,
-      collection_name,
-      mime_group,
-      mime_type,
-      sum(count_files) files,
-      sum(billable_size) size
-    from
-      owner_coll_mime_use_details
-    group by
-      ogroup,
-      inv_collection_id,
-      mnemonic,
-      collection_name,
-      mime_group,
-      mime_type
-    order by
-      ogroup,
-      mnemonic
+        mnemonic
+  /queries/repository/collections-objects:
+    totals: true
+    sql: |
+      select
+        distinct
+        ogroup,
+        inv_collection_id,
+        (select mnemonic from inv.inv_collections where id=inv_collection_id) mnemonic,
+        collection_name,
+        sum(count_objects) num_objs
+      from
+        owner_collections_objects
+      group by
+        ogroup,
+        inv_collection_id,
+        mnemonic,
+        collection_name
+      order by
+        ogroup,
+        mnemonic
+  /queries/repository/owners:
+    totals: true
+    sql: |
+      select
+          ogroup,
+          inv_owner_id as owner_id,
+          own_name,
+          sum(count_files) files,
+          sum(billable_size) size
+        from
+          owner_coll_mime_use_details
+        group by
+          ogroup,
+          owner_id,
+          own_name
+        order by
+          ogroup,
+          own_name
+  /queries/repository/mimes:
+    totals: true
+    sql: |
+      select
+        distinct
+        ogroup,
+        inv_collection_id,
+        mnemonic as mnemonic_filter,
+        collection_name,
+        mime_group,
+        mime_type,
+        sum(count_files) files,
+        sum(billable_size) size
+      from
+        owner_coll_mime_use_details
+      group by
+        ogroup,
+        inv_collection_id,
+        mnemonic,
+        collection_name,
+        mime_group,
+        mime_type
+      order by
+        ogroup,
+        mnemonic
+  /queries/consistency/replication-objects-2:
+    template-params:
+      COPIES: 2
+    totals: true
+    sql: &REPSQL |
+      select
+        case
+          when ifnull(c.mnemonic, '') = '' then 'No Mnemonic'
+          when c.name = 'Merritt curatorial classes' then 'Stage Exception'
+          else 'Default'
+        end as category,
+        count(*) as num_objs,
+        ifnull(
+          sum(
+            case
+              when age.init_created < date_add(now(), INTERVAL -2 DAY) then 1
+              else 0
+            end
+          ),
+          0
+        ) as num_objs_2day,
+        ifnull(
+          sum(
+            case
+              when age.init_created < date_add(now(), INTERVAL -2 DAY) then 0
+              when age.init_created < date_add(now(), INTERVAL -1 DAY) then 1
+              else 0
+            end
+          ),
+          0
+        ) as num_objs_1day,
+        ifnull(
+          sum(
+            case
+              when age.init_created < date_add(now(), INTERVAL -2 DAY) then 0
+              when age.init_created < date_add(now(), INTERVAL -1 DAY) then 0
+              else 1
+            end
+          ),
+          0
+        ) as num_objs_0day,
+        case
+          when count(*) = 0 then 'PASS'
+          when {{COPIES}} = 3 then 'PASS'
+          when ifnull(
+            sum(
+              case
+                when age.init_created < date_add(now(), INTERVAL -2 DAY) then 1
+                else 0
+              end
+            ),
+            0
+          ) > 0 then
+            case
+              when c.mnemonic = 'oneshare_dataup' then 'INFO'
+              when c.mnemonic = 'dataone_dash' then 'INFO'
+              when ifnull(c.mnemonic, '') = '' then 'INFO'
+              when {{COPIES}} != 2 then 'FAIL'
+              else 'FAIL'
+            end
+          when ifnull(
+            sum(
+              case
+                when age.init_created < date_add(now(), INTERVAL -2 DAY) then 0
+                when age.init_created < date_add(now(), INTERVAL -1 DAY) then 1
+                else 0
+              end
+            ),
+            0
+          ) > 0 then 'WARN'
+          else 'PASS'
+        end as status
+        from (
+          select
+            inio.inv_object_id,
+            min(created) as init_created
+          from
+            inv.inv_nodes_inv_objects inio
+          inner join (
+            select
+              inv_object_id,
+              count(*)
+            from
+              inv.inv_nodes_inv_objects
+            group by
+              inv_object_id
+            having
+              count(*) = {{COPIES}}
+          ) as copies
+          on copies.inv_object_id = inio.inv_object_id
+          group by
+            inv_object_id
+        ) as age      
+        inner join inv.inv_collections_inv_objects icio
+          on age.inv_object_id = icio.inv_object_id
+        inner join inv.inv_collections c
+          on icio.inv_collection_id = c.id
+        inner join inv.inv_objects o
+          on c.inv_object_id = o.id and o.aggregate_role = 'MRT-collection'
+        group by
+          category
+  /queries/consistency/replication-objects-1:
+    template-params:
+      COPIES: 1
+    totals: true
+    sql: *REPSQL

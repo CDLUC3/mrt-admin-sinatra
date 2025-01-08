@@ -9,9 +9,15 @@ module Sinatra
   # client specific routes
   module UC3QueryRoutes
     def self.registered(app)
-      UC3Query::QueryClient.client.create_menu_items
-
       app.get '/queries/repository' do
+        erb :none,
+          :layout => :page_layout,
+          :locals => {
+            context: AdminUI::Context.new(request.path)
+          }
+      end
+
+      app.get '/queries/consistency' do
         erb :none,
           :layout => :page_layout,
           :locals => {

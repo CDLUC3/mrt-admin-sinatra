@@ -23,18 +23,18 @@ module Sinatra
         breadcrumb: item.fetch(:breadcrumb, false)
       )
       item.fetch(:items, []).each do |citem|
-        self.add_menu_item(np, citem)
+        add_menu_item(np, citem)
       end
     end
 
     def self.load_menu_file
       UC3::UC3Client.load_config('app/config/menu.yml').fetch(:items, {}).each do |menu|
-        self.add_menu_item([''], menu)
+        add_menu_item([''], menu)
       end
     end
 
     def self.registered(app)
-      self.load_menu_file
+      load_menu_file
     end
   end
   register UC3HomeRoutes
