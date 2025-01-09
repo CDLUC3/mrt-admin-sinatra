@@ -174,6 +174,13 @@ module AdminUI
 
   # Web context for the UI
   class Context
+    @css = '/merritt.css'
+    @navcss = '/navmenu.css'
+    class << self
+      attr_accessor :css
+      attr_accessor :navcss
+    end
+
     def initialize(route, title: nil)
       @route = route
       page = TopMenu.instance.route_names[route]

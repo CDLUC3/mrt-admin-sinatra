@@ -10,9 +10,6 @@ module UC3
   # Base class for UC3 client classes
   class UC3Client
     @clients = {}
-    class << self
-      attr_accessor :instances
-    end
 
     def initialize(enabled: true, message: '')
       UC3Client.clients[self.class.to_s] = { name: self.class.to_s, enabled: enabled, message: message }

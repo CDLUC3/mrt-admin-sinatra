@@ -13,6 +13,8 @@ include Sinatra::UC3HomeRoutes
 include Sinatra::UC3ResourcesRoutes
 
 Sinatra::UC3HomeRoutes.load_menu_file('app/config/uc3/menu.yml')
+AdminUI::Context.css = '/uc3.css'
+AdminUI::Context.navcss = '/uc3-navmenu.css'
 
 get '/' do
   erb :index_uc3,
