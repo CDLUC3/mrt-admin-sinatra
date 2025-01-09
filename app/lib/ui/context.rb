@@ -174,11 +174,13 @@ module AdminUI
 
   # Web context for the UI
   class Context
-    @css = '/merritt.css'
-    @navcss = '/navmenu.css'
+    @css = '/uc3.css'
+    @navcss = '/uc3-navmenu.css'
+    @index_md = 'app/markdown/uc3/index.md'
     class << self
       attr_accessor :css
       attr_accessor :navcss
+      attr_accessor :index_md
     end
 
     def initialize(route, title: nil)

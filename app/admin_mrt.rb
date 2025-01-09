@@ -15,6 +15,9 @@ include Sinatra::UC3ResourcesRoutes
 include Sinatra::UC3QueryRoutes
 
 Sinatra::UC3HomeRoutes.load_menu_file('app/config/mrt/menu.yml')
+AdminUI::Context.css = '/mrt/merritt.css'
+AdminUI::Context.navcss = '/mrt/navmenu.css'
+AdminUI::Context.index_md = 'app/markdown/mrt/index.md'
 
 get '/' do
   erb :index,
@@ -51,7 +54,7 @@ get '/clients' do
 end
 
 get '/objects/**' do
-  erb :objects,
+  erb 'mrt/objects'.to_sym,
     :layout => :page_layout,
     :locals => {
       context: AdminUI::Context.new(request.path)
@@ -59,7 +62,7 @@ get '/objects/**' do
 end
 
 get '/collections/**' do
-  erb :collections,
+  erb 'mrt/collections'.to_sym,
     :layout => :page_layout,
     :locals => {
       context: AdminUI::Context.new(request.path)
@@ -67,7 +70,7 @@ get '/collections/**' do
 end
 
 get '/storage_scans' do
-  erb :storage_scans,
+  erb 'mrt/storage_scans'.to_sym,
     :layout => :page_layout,
     :locals => {
       context: AdminUI::Context.new(request.path)

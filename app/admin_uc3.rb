@@ -3,7 +3,6 @@
 require 'sinatra'
 require 'sinatra/base'
 require_relative 'lib/routes/home'
-require_relative 'lib/routes/code'
 require_relative 'lib/routes/resources'
 require_relative 'lib/routes/query'
 
@@ -15,9 +14,10 @@ include Sinatra::UC3ResourcesRoutes
 Sinatra::UC3HomeRoutes.load_menu_file('app/config/uc3/menu.yml')
 AdminUI::Context.css = '/uc3.css'
 AdminUI::Context.navcss = '/uc3-navmenu.css'
+AdminUI::Context.index_md = 'app/markdown/uc3/index.md'
 
 get '/' do
-  erb :index_uc3,
+  erb :index,
     :layout => :page_layout,
     :locals => {
       context: AdminUI::Context.new(request.path)

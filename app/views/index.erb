@@ -1,1 +1,1 @@
-<%= Redcarpet::Markdown.new(Redcarpet::Render::HTML.new).render(File.read('app/markdown/mrt/index.md')) %>
+<%= Redcarpet::Markdown.new(Redcarpet::Render::HTML.new).render(File.read(AdminUI::Context.index_md)) %>
