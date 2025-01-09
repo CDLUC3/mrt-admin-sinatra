@@ -1,7 +1,1 @@
-<div>
-  <h2>Code Repos</h2>
-  <ul>
-    <li><a href="https://github.com/CDLUC3/mrt-admin-sinatra">mrt-admin-sinatra</a></li>
-    <li><a href="https://github.com/CDLUC3/mrt-sceptre/tree/main/mrt-admin-sinatra">Sceptre Resources</a></li>
-  </ul>
-</div>
+<%= Redcarpet::Markdown.new(Redcarpet::Render::HTML.new).render(File.read('app/markdown/index.md')) %>

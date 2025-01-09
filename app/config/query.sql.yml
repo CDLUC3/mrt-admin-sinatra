@@ -218,3 +218,8 @@ queries:
       COPIES: 1
     totals: true
     sql: *REPSQL
+  /queries/consistency/replication-objects-4:
+    template-params:
+      COPIES: 4
+    totals: true
+    sql: *REPSQL

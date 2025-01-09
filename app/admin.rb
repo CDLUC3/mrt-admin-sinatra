@@ -48,6 +48,30 @@ get '/clients' do
     }
 end
 
+get '/objects/**' do
+  erb :objects,
+    :layout => :page_layout,
+    :locals => {
+      context: AdminUI::Context.new(request.path)
+    }
+end
+
+get '/collections/**' do
+  erb :collections,
+    :layout => :page_layout,
+    :locals => {
+      context: AdminUI::Context.new(request.path)
+    }
+end
+
+get '/storage_scans' do
+  erb :storage_scans,
+    :layout => :page_layout,
+    :locals => {
+      context: AdminUI::Context.new(request.path)
+    }
+end
+
 get '/**' do
   erb :none,
     :layout => :page_layout,

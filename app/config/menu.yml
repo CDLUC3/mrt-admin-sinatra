@@ -84,7 +84,6 @@ items:
       route: /queries/consistency/replication-objects-1
     - title: Object Replication - 4 Copies
       route: /queries/consistency/replication-objects-4
-      tbd: true
     - title: File Replication - Only 2 Copies
       route: /queries/consistency/replication-files-2
       tbd: true
