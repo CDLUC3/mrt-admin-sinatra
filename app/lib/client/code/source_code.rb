@@ -12,7 +12,7 @@ module UC3Code
   # Load clients for retrieving source code information
   class SourceCodeClient < UC3::UC3Client
     def initialize
-      @repos = UC3::UC3Client.load_config('app/config/source_code.yml').fetch(:repos, {})
+      @repos = UC3::UC3Client.load_config('app/config/mrt/source_code.yml').fetch(:repos, {})
       @github = UC3Code::GithubClient.new
       @codeartifact = UC3Code::CodeArtifactClient.new
       @ecrimages = UC3Code::ECRImagesClient.new

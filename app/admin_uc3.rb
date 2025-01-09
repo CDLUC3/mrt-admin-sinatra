@@ -10,12 +10,12 @@ require_relative 'lib/routes/query'
 set :bind, '0.0.0.0'
 
 include Sinatra::UC3HomeRoutes
-include Sinatra::UC3CodeRoutes
 include Sinatra::UC3ResourcesRoutes
-include Sinatra::UC3QueryRoutes
+
+Sinatra::UC3HomeRoutes.load_menu_file('app/config/uc3/menu.yml')
 
 get '/' do
-  erb :index,
+  erb :index_uc3,
     :layout => :page_layout,
     :locals => {
       context: AdminUI::Context.new(request.path)
@@ -32,43 +32,17 @@ get '/context' do
 end
 
 get '/clients' do
-  UC3Code::SourceCodeClient.new
   UC3Resources::InstancesClient.new
   UC3Resources::ParametersClient.new
   UC3Resources::BucketsClient.new
   UC3Resources::FunctionsClient.new
   UC3Resources::LoadBalancerClient.new
-  UC3Query::QueryClient.client
 
   erb :table,
     :layout => :page_layout,
     :locals => {
       context: AdminUI::Context.new(request.path),
       table: UC3::UC3Client.new.client_list
-    }
-end
-
-get '/objects/**' do
-  erb :objects,
-    :layout => :page_layout,
-    :locals => {
-      context: AdminUI::Context.new(request.path)
-    }
-end
-
-get '/collections/**' do
-  erb :collections,
-    :layout => :page_layout,
-    :locals => {
-      context: AdminUI::Context.new(request.path)
-    }
-end
-
-get '/storage_scans' do
-  erb :storage_scans,
-    :layout => :page_layout,
-    :locals => {
-      context: AdminUI::Context.new(request.path)
     }
 end
 

@@ -1,0 +1,38 @@
+items:
+- path: home
+  title: AdminTool
+  items:
+  - title: Home
+    route: /
+  - path: about
+    title: About
+    items:
+    - title: Admin Tool Context
+      route: /context
+    - title: Admin Tool Clients
+      route: /clients
+    - title: Help
+      route: /help
+- path: resources
+  title: AWS
+  items:
+  - title: Infrastructure Reports
+    route: /infra
+    breadcrumb: true
+    description: |
+      ## Reports on the AWS infrastructure
+      - [Instances](/infra/instances)
+      - [SSM Parameters](/infra/parameters)
+      - [Buckets](/infra/buckets)
+      - [Lambda Functions](/infra/functions)
+      - [Load Balancers](/infra/elbs)
+  - title: UC3 Instances
+    route: /infra/instances
+  - title: UC3 SSM Parameters
+    route: /infra/parameters
+  - title: UC3 Buckets
+    route: /infra/buckets
+  - title: UC3 Lambda Functions
+    route: /infra/functions
+  - title: UC3 Load Balancers
+    route: /infra/elbs

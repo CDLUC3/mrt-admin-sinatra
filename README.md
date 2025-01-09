@@ -8,9 +8,27 @@ Sinatra based admin tool for the new Merritt AWS account.
 
 ## Local Testing
 
+### Merritt app
 ```
-bundle exec puma app/config.ru
+bundle exec puma app/config_mrt.ru
 ```
+
+Resources for deploying as a lambda
+- https://github.com/CDLUC3/mrt-sceptre/tree/main/mrt-admin-sinatra
+- Because this application uses mysql, it must be packaged as a docker image
+  - this code re-uses https://github.com/CDLUC3/mrt-admin-lambda/blob/main/mysql-ruby-lambda/Dockerfile to build bindary dependencies
+  - this dockerfile assumes the existence of lambda_function.rb containing LambdaFunctionsL::Handler.process
+
+### UC3-focuesed app
+```
+bundle exec puma app/config_uc3.ru
+```
+
+Resources for deploying as a lambda
+- a new sceptre deploy will need to be created to grant a different SSO group access
+- this could be deployed as a zip or as an image
+  - for an image deployment, note how the dokckerfile above sets the entrypoint
+  - for zip deployment, see https://github.com/CDLUC3/mrt-sceptre/blob/sprint-111/mrt-admin-sinatra/templates/lambda.yaml.j2
 
 ## Resources needed
 - GitHub API token with read permission for our repos

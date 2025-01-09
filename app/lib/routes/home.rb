@@ -27,15 +27,13 @@ module Sinatra
       end
     end
 
-    def self.load_menu_file
-      UC3::UC3Client.load_config('app/config/menu.yml').fetch(:items, {}).each do |menu|
+    def self.load_menu_file(menu_file)
+      UC3::UC3Client.load_config(menu_file).fetch(:items, {}).each do |menu|
         add_menu_item([''], menu)
       end
     end
 
-    def self.registered(app)
-      load_menu_file
-    end
+    def self.registered(_app) end
   end
   register UC3HomeRoutes
 end
