@@ -41,25 +41,26 @@ module UC3Resources
           AdminUI::Column.new(:dns, header: 'DNS'),
           AdminUI::Column.new(:type, header: 'Type', filterable: true),
           AdminUI::Column.new(:scheme, header: 'Scheme', filterable: true),
+          AdminUI::Column.new(:program, header: 'Program', filterable: true),
           AdminUI::Column.new(:service, header: 'Service', filterable: true),
           AdminUI::Column.new(:subservice, header: 'Subservice', filterable: true),
           AdminUI::Column.new(:tgname, header: 'TG Name'),
           AdminUI::Column.new(:listener, header: 'Listener')
         ]
       )
-      unless @arns.empty?
-        @client.describe_tags(resource_arns: @arns.keys).tag_descriptions.each do |tagdesc|
-          arn = tagdesc.resource_arn
+      @arns.each_key do |arn|
+        @client.describe_tags(resource_arns: [arn]).tag_descriptions.each do |tagdesc|
+          @elbs[@arns[arn]][:program] = tagdesc.tags.find { |t| t.key == 'Program' }&.value
           @elbs[@arns[arn]][:service] = tagdesc.tags.find { |t| t.key == 'Service' }&.value
           @elbs[@arns[arn]][:subservice] = tagdesc.tags.find { |t| t.key == 'Subservice' }&.value
         end
-        @client.describe_target_groups.target_groups.each do |tg|
-          tg.load_balancer_arns.each do |arn|
-            lb = @arns.fetch(arn, '')
-            next if lb.empty?
+      end
+      @client.describe_target_groups.target_groups.each do |tg|
+        tg.load_balancer_arns.each do |arn|
+          lb = @arns.fetch(arn, '')
+          next if lb.empty?
 
-            @elbs[lb][:tgname] << "#{tg.target_type}: #{tg.target_group_name}"
-          end
+          @elbs[lb][:tgname] << "#{tg.target_type}: #{tg.target_group_name}"
         end
       end
       @elbs.sort.each do |key, value|
@@ -70,7 +71,7 @@ module UC3Resources
         end
         table.add_row(AdminUI::Row.make_row(table.columns, value))
       end
-    table
+      table
     end
   end
 end
