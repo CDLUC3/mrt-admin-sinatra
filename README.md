@@ -28,6 +28,11 @@ Resources for deploying as a lambda
 - this could be deployed as a zip or as an image
 - `ENV RACK_CONFIG=app/config_uc3.ru`
 
+Building on EC2 in the main account... warning, this may break lambda deployment
+```
+bundle config set force_ruby_platform true
+```
+
 ## Resources needed
 - GitHub API token with read permission for our repos
 - https://github.com/CDLUC3/mrt-sceptre/tree/main/mrt-admin-sinatra
