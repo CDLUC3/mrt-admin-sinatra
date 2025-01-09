@@ -26,6 +26,7 @@ module UC3Resources
         columns: [
           AdminUI::Column.new(:path, header: 'Path'),
           AdminUI::Column.new(:type, header: 'Type', filterable: true),
+          AdminUI::Column.new(:key_id, header: 'Key', filterable: true),
           AdminUI::Column.new(:value, header: 'Value'),
           AdminUI::Column.new(:modified, header: 'Modified'),
           AdminUI::Column.new(:version, header: 'Version')
@@ -48,6 +49,20 @@ module UC3Resources
             modified: param.last_modified_date,
             version: param.version
           }
+        end
+        next_token = res.next_token
+        opt[:next_token] = next_token
+      end
+      next_token = 'na'
+      opt = {filters: [{key: 'Type', values: ['SecureString']}]}
+      while next_token
+        res = @client.describe_parameters(opt)
+        res.parameters.each do |param|
+          puts param.name
+          path = param.name
+          next unless params.key?(path)
+
+          params[path][:key_id] = param.key_id
         end
         next_token = res.next_token
         opt[:next_token] = next_token
