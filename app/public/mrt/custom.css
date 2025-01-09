@@ -1,0 +1,53 @@
+thead tr {
+  background-color: #E19D5F;
+}
+a.button {
+  background-color: #879C5D;
+  color: white;
+}
+a.buttontbd {
+  background-color: #879C5D;  
+  color: yellow;
+}
+a.button-disabled {
+  background-color: #b9c89a;
+  border: thin solid #879C5D;
+  color: gray;
+}
+div.breadcrumb {
+  border-bottom: 2px solid #879C5D;
+}
+div#controls {
+  border: 1px solid #879C5D;
+}
+tfoot tr {
+  background-color: #879C5D;
+  color: white;
+}
+nav {
+  background-color: #E19D5F;
+}
+nav a {
+  background-color: #E19D5F;
+  color: white;
+  border: thin solid #E19D5F;
+}
+
+nav li.search {
+  background-color: #E19D5F;
+  color: white;
+}
+
+nav span.search select, nav span.search input {
+  background-color: #E19D5F;
+  color: white;
+  border: thin solid white;
+}
+
+nav a:hover {
+  background-color: #879C5D;
+}
+
+nav ul.submenu {
+  background-color: #E19D5F;
+}

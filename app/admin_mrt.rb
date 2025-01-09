@@ -15,8 +15,7 @@ include Sinatra::UC3ResourcesRoutes
 include Sinatra::UC3QueryRoutes
 
 Sinatra::UC3HomeRoutes.load_menu_file('app/config/mrt/menu.yml')
-AdminUI::Context.css = '/mrt/merritt.css'
-AdminUI::Context.navcss = '/mrt/navmenu.css'
+AdminUI::Context.css = '/mrt/custom.css'
 AdminUI::Context.index_md = 'app/markdown/mrt/index.md'
 
 get '/' do

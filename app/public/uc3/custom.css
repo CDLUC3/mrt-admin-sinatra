@@ -1,0 +1,54 @@
+thead tr {
+  background-color: black;
+}
+
+a.button {
+  background-color: navy;
+  color: white;
+}
+a.buttontbd {
+  background-color: navy;  
+  color: yellow;
+}
+a.button-disabled {
+  background-color: navy;
+  border: thin solid navy;
+  color: gray;
+}
+div.breadcrumb {
+  border-bottom: 2px solid navy;
+}
+div#controls {
+  border: 1px solid #333;
+}
+tfoot tr {
+  background-color: navy;
+  color: white;
+}
+nav {
+  background-color: #333;
+}
+nav a {
+  background-color: #333;
+  color: white;
+  border: thin solid #333;
+}
+
+nav li.search {
+  background-color: #333;
+  color: white;
+}
+
+nav span.search select, nav span.search input {
+  background-color: #333;
+  color: white;
+  border: thin solid white;
+}
+
+nav a:hover {
+  background-color: #555;
+}
+
+nav ul.submenu {
+  background-color: #333;
+}
