@@ -36,6 +36,7 @@ module UC3Resources
         columns: [
           AdminUI::Column.new(:name, header: 'Name'),
           AdminUI::Column.new(:id, header: 'ID'),
+          AdminUI::Column.new(:program, header: 'Program', filterable: true),
           AdminUI::Column.new(:service, header: 'Service', filterable: true),
           AdminUI::Column.new(:subservice, header: 'Susbervice', filterable: true),
           AdminUI::Column.new(:env, header: 'Environment', filterable: true),
@@ -54,6 +55,7 @@ module UC3Resources
           instances[name] = {
             name: name,
             id: inst.instance_id,
+            program: inst.tags.find { |t| t.key == 'Program' }&.value,
             service: inst.tags.find { |t| t.key == 'Service' }&.value,
             subservice: inst.tags.find { |t| t.key == 'Subservice' }&.value,
             env: inst.tags.find { |t| t.key == 'Environment' }&.value,
