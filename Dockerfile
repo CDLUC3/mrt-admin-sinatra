@@ -5,7 +5,7 @@ ARG ECR_REGISTRY=ecr_registry_not_set
 
 FROM ${ECR_REGISTRY}/mysql-ruby-lambda
 
-ENV RACK_CONFIG=app/config_mrt.ru
+ENV RACK_CONFIG=app/config_uc3.ru
 
 RUN yum -y update && yum clean all
 
