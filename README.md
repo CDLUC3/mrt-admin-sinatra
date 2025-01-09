@@ -221,3 +221,4 @@ bundle config set force_ruby_platform true
     - ldap-collection
 - mnemonic
     - profle-name
+- test
