@@ -7,7 +7,7 @@ FROM ${ECR_REGISTRY}/mysql-ruby-lambda
 
 ENV RACK_CONFIG=app/config_mrt.ru
 
-RUN yum -y update && yum clean all
+RUN dnf -y update && dnf clean all
 
 # Add Admin Tool Code to the image
 COPY . /var/task/
