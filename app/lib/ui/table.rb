@@ -5,12 +5,7 @@ module AdminUI
   # Table rendering classes
   class FilterTable
     def self.empty(message = '')
-      FilterTable.new(
-        columns: [
-          AdminUI::Column.new(:name, header: 'Message')
-        ],
-        data: [AdminUI::Row.new([message])]
-      )
+      FilterTable.new
     end
 
     def initialize(columns: [], data: [], filters: [], totals: false)
@@ -124,6 +119,7 @@ module AdminUI
       cols.each do |col|
         v = datahash.fetch(col.sym, col.defval)
         v = v.to_i.to_s.reverse.gsub(/(\d{3})(?=\d)/, '\\1,').reverse if v.is_a?(BigDecimal)
+        v = v.to_i.to_s.reverse.gsub(/(\d{3})(?=\d)/, '\\1,').reverse if v.is_a?(Integer) && !col.is_id?
         data << v
       end
       new(data, cssclass: cssclass)
@@ -154,6 +150,13 @@ module AdminUI
     end
 
     attr_accessor :sym, :cssclass, :header, :spanclass, :defval, :filterable
+
+    def is_id?
+      %w[
+        inv_object_id inv_collection_id inv_owner_id inv_node_id
+        node_number
+      ].include?(@sym)
+    end
 
     def render(cellval)
       if cellval.is_a?(Array)

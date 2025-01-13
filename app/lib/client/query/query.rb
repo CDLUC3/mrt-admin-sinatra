@@ -28,16 +28,29 @@ module UC3Query
       !@client.nil?
     end
 
-    def query(path)
+    def resolve_parameters(qparams, urlparams)
+      vals = []
+      qparams.each do |param|
+        if param.key?(:value)
+          vals << param[:value]
+        elsif param.key?(:name) && param[:type] == 'integer'
+          vals << urlparams.fetch(param[:name], '-1').to_i
+        elsif param.key?(:name)
+          vals << urlparams.fetch(param[:name], '')
+        end
+      end
+      vals
+    end
+
+    def query(path, urlparams, sqlsym: :sql)
       table = AdminUI::FilterTable.empty(path)
       query = @queries.fetch(path.to_sym, {})
       return table if query.nil?
 
-      sql = query.fetch(:sql, '')
+      sql = query.fetch(sqlsym, '')
       return table if sql.empty?
 
       tparm = query.fetch(:'template-params', {})
-      puts tparm
       sql = Mustache.render(sql, tparm) unless tparm.empty?
 
       return AdminUI::FilterTable.empty("No DB support for: #{sql}") unless enabled
@@ -51,7 +64,8 @@ module UC3Query
         columns: cols,
         totals: query.fetch(:totals, false)
       )
-      stmt.execute.each do |row|
+      params = resolve_parameters(query.fetch(:parameters, []), urlparams)
+      stmt.execute(*params).each do |row|
         table.add_row(AdminUI::Row.make_row(table.columns, row))
       end
       table

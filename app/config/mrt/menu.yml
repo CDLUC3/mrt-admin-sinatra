@@ -63,6 +63,16 @@ items:
       route: /queries/repository/campus-objects
     - title: Collections Files/Bytes
       route: /queries/repository/collections
+    - title: Collection Details
+      route: /queries/repository/collection
+      breadcrumb: true
+      description: |
+        ## Collection Details
+    - title: Object Details
+      route: /queries/repository/object
+      breadcrumb: true
+      description: |
+        ## Object Details
     - title: Collections Objects
       route: /queries/repository/collections-objects
     - title: Owner Files/Bytes

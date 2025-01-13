@@ -9,6 +9,8 @@
 - collection mnemonic / ark / `inv_collection_id`
   - collection node configuration
   - profile details
+    - [coll 1](/queries/repository/collection?inv_collection_id=1)
+    - [object 3477515](/queries/repository/object?inv_object_id=3477515)
 - owner ark / `inv_object_id`
 - zk node path
 - ingest batch

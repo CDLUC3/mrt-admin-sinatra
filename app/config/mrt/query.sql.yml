@@ -49,6 +49,116 @@ queries:
       order by
         ogroup,
         mnemonic
+  /queries/repository/collection:
+    sql: |
+      select
+        c.id inv_collection_id,
+        mnemonic,
+        ark collection_ark,
+        name,
+        count(*) num_objs,
+        inio.role as role,
+        n.number as node_number,
+        n.description as node_description
+      from
+        inv.inv_collections c
+      inner join inv.inv_collections_inv_objects icio
+        on c.id = icio.inv_collection_id
+      inner join inv.inv_nodes_inv_objects inio
+        on icio.inv_object_id = inio.inv_object_id
+      inner join inv.inv_nodes n
+        on inio.inv_node_id = n.id
+      where
+        c.id = ?
+      group by
+        inv_node_id
+    parameters:
+    - name: inv_collection_id
+      type: integer
+  /queries/repository/object:
+    sql: |
+      select
+        o.id inv_object_id,
+        o.ark,
+        o.version_number,
+        group_concat(c.mnemonic, ',') as mnemonics,
+        own.name,
+        erc_what,
+        erc_who,
+        erc_when,
+        created
+      from
+        inv.inv_objects o
+      inner join inv.inv_collections_inv_objects icio
+        on o.id = icio.inv_object_id
+      inner join inv.inv_collections c
+        on icio.inv_collection_id = c.id
+      inner join inv.inv_owners own
+        on o.inv_owner_id = own.id
+      where
+        o.id = ?
+    aux_sql: |
+      select
+        o.ark,
+        v.number,
+        (
+          select max(vv.number)
+          from inv.inv_files ff
+          inner join inv.inv_versions vv
+            on ff.inv_version_id = vv.id
+          where
+            ff.inv_object_id = o.id
+          and exists (
+            select 1 where ff.pathname=f.pathname
+          )
+        ) as maxv,
+        f.source,
+        binary f.pathname,
+        f.full_size,
+        f.created,
+        ifnull(group_concat(n.number), '') as nodelist,
+        ifnull(
+          group_concat(
+            case
+              when a.status = 'verified' then null
+              else n.number
+            end
+          ),
+          ''
+        ) as unverified
+      from
+        inv.inv_objects o
+      inner join inv.inv_versions v
+        on o.id = v.inv_object_id
+      inner join inv.inv_files f
+        on o.id = f.inv_object_id
+        and v.id = f.inv_version_id
+      left join inv.inv_audits a
+        on
+          o.id = a.inv_object_id
+        and
+          f.id = a.inv_file_id
+      left join inv.inv_nodes n
+        on a.inv_node_id = n.id
+      where
+        o.id = ?
+      and
+        f.billable_size = f.full_size
+      group by
+        o.ark,
+        v.number,
+        f.source,
+        binary f.pathname,
+        f.full_size,
+        f.created
+      order by
+        f.created desc,
+        source,
+        pathname
+      limit 2000
+    parameters:
+    - name: inv_object_id
+      type: integer
   /queries/repository/collections-objects:
     totals: true
     sql: |
@@ -76,6 +186,7 @@ queries:
           ogroup,
           inv_owner_id as owner_id,
           own_name,
+          (select ark from inv.inv_owners where id=inv_owner_id) owner_ark,
           sum(count_files) files,
           sum(billable_size) size
         from

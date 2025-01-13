@@ -30,7 +30,8 @@ module Sinatra
           layout: :page_layout,
           locals: {
             context: AdminUI::Context.new(request.path),
-            table: UC3Query::QueryClient.client.query(request.path)
+            table: UC3Query::QueryClient.client.query(request.path, request.params),
+            aux_table: UC3Query::QueryClient.client.query(request.path, request.params, sqlsym: :aux_sql)
           }
       end
     end

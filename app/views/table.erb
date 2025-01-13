@@ -1,3 +1,10 @@
 <div>
   <%= table.render %>
 </div>
+
+<div>
+  <% unless aux_table.columns.empty? %>
+  <hr/>
+  <%= aux_table.render %>
+  <% end %>
+</div>
