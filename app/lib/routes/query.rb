@@ -25,13 +25,25 @@ module Sinatra
           }
       end
 
+      app.get '/queries/repository/object' do
+        erb :tables,
+          layout: :page_layout,
+          locals: {
+            context: AdminUI::Context.new(request.path),
+            table: UC3Query::QueryClient.client.query(request.path, request.params),
+            aux_tables: [
+              UC3Query::QueryClient.client.query(request.path, request.params, sqlsym: :repl_sql),
+              UC3Query::QueryClient.client.query(request.path, request.params, sqlsym: :files_sql)
+            ]
+          }
+      end
+
       app.get '/queries/**' do
         erb :table,
           layout: :page_layout,
           locals: {
             context: AdminUI::Context.new(request.path),
-            table: UC3Query::QueryClient.client.query(request.path, request.params),
-            aux_table: UC3Query::QueryClient.client.query(request.path, request.params, sqlsym: :aux_sql)
+            table: UC3Query::QueryClient.client.query(request.path, request.params)
           }
       end
     end

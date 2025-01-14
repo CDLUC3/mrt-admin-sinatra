@@ -106,3 +106,7 @@ tfoot tr {
   background-color: navy;
   color: white;
 }
+
+div.aux-table {
+  padding-top: 40px;
+}

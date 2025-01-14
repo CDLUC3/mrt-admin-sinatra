@@ -97,7 +97,7 @@ queries:
         on o.inv_owner_id = own.id
       where
         o.id = ?
-    aux_sql: |
+    files_sql: |
       select
         o.ark,
         v.number,
@@ -156,6 +156,47 @@ queries:
         source,
         pathname
       limit 2000
+    repl_sql: |
+      select
+        nn.role,
+        nn.node_id,
+        nn.node_number,
+        nn.description,
+        nn.access_mode,
+        nn.created,
+        nn.replicated,
+        (
+          select count(*) from inv.inv_audits a
+          where a.inv_object_id = nn.inv_object_id and a.inv_node_id=nn.node_id and status != 'verified'
+        ) as unverified,
+        (
+          select max(verified) from inv.inv_audits a
+          where a.inv_object_id = nn.inv_object_id and a.inv_node_id=nn.node_id
+        ) as last_verified,
+        nn.inv_object_id,
+        nn.ark,
+        nn.version_number
+      from (
+        select
+          inio.role,
+          n.id node_id,
+          n.number node_number,
+          n.description,
+          n.access_mode,
+          o.created,
+          inio.created as replicated,
+          o.id as inv_object_id,
+          o.ark as ark,
+          o.version_number
+        from
+          inv.inv_objects o
+        inner join inv.inv_nodes_inv_objects inio
+          on o.id = inio.inv_object_id
+        inner join inv.inv_nodes n
+          on inio.inv_node_id = n.id
+        where
+          o.id = ?
+      ) as nn
     parameters:
     - name: inv_object_id
       type: integer

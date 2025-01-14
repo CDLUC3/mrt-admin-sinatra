@@ -1,0 +1,11 @@
+<div>
+  <%= table.render %>
+</div>
+
+<% unless aux_tables.nil? %>
+<% aux_tables.each do |aux_table|%>
+<div class="aux-table">
+  <%= aux_table.render %>
+</div>
+<% end %>
+<% end %>
