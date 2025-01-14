@@ -86,6 +86,10 @@ div#controls {
 span.val {
   display: block;
 }
+span.inline {
+  display: inline;
+}
+
 td.artifacts,
 td.images {
   width: 240px;

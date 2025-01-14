@@ -177,8 +177,7 @@ module AdminUI
     @css = 'empty.css'
     @index_md = 'app/markdown/uc3/index.md'
     class << self
-      attr_accessor :css
-      attr_accessor :index_md
+      attr_accessor :css, :index_md
     end
 
     def initialize(route, title: nil)

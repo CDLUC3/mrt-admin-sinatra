@@ -4,7 +4,14 @@
 module AdminUI
   # Table rendering classes
   class FilterTable
-    def self.empty(message = '')
+    @id_fields = {}
+    @filterable_fields = []
+
+    class << self
+      attr_accessor :id_fields, :filterable_fields
+    end
+
+    def self.empty(_message)
       FilterTable.new
     end
 
@@ -119,7 +126,12 @@ module AdminUI
       cols.each do |col|
         v = datahash.fetch(col.sym, col.defval)
         v = v.to_i.to_s.reverse.gsub(/(\d{3})(?=\d)/, '\\1,').reverse if v.is_a?(BigDecimal)
-        v = v.to_i.to_s.reverse.gsub(/(\d{3})(?=\d)/, '\\1,').reverse if v.is_a?(Integer) && !col.is_id?
+        if AdminUI::FilterTable.id_fields.key?(col.sym.to_sym)
+          pre = AdminUI::FilterTable.id_fields[col.sym.to_sym]
+          v = { value: v, href: "#{pre}#{v}" } unless pre.empty?
+        elsif v.is_a?(Integer)
+          v = v.to_i.to_s.reverse.gsub(/(\d{3})(?=\d)/, '\\1,').reverse
+        end
         data << v
       end
       new(data, cssclass: cssclass)
@@ -151,13 +163,6 @@ module AdminUI
 
     attr_accessor :sym, :cssclass, :header, :spanclass, :defval, :filterable
 
-    def is_id?
-      %w[
-        inv_object_id inv_collection_id inv_owner_id inv_node_id
-        node_number
-      ].include?(@sym)
-    end
-
     def render(cellval)
       if cellval.is_a?(Array)
         s = ''
@@ -167,7 +172,7 @@ module AdminUI
         s.to_s
       elsif cellval.is_a?(Hash)
         val = cellval.fetch(:value, '')
-        if val.empty?
+        if val.to_s.empty?
           render_string('')
         elsif cellval.key?(:href)
           href = cellval.fetch(:href, '')

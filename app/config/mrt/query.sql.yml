@@ -1,3 +1,31 @@
+fragments:
+  COLLQ: |
+    select
+      c.id inv_collection_id,
+      mnemonic,
+      ark collection_ark,
+      name,
+      count(*) num_objs,
+      inio.role as role,
+      n.number as node_number,
+      n.description as node_description
+    from
+      inv.inv_collections c
+    inner join inv.inv_collections_inv_objects icio
+      on c.id = icio.inv_collection_id
+    inner join inv.inv_nodes_inv_objects inio
+      on icio.inv_object_id = inio.inv_object_id
+    inner join inv.inv_nodes n
+      on inio.inv_node_id = n.id
+  COLLQGRP: |
+    group by
+      inv_collection_id,
+      mnemonic,
+      collection_ark,
+      name,
+      role,
+      node_number,
+      node_description
 queries:
   /queries/repository/campus:
     totals: true
@@ -51,30 +79,22 @@ queries:
         mnemonic
   /queries/repository/collection:
     sql: |
-      select
-        c.id inv_collection_id,
-        mnemonic,
-        ark collection_ark,
-        name,
-        count(*) num_objs,
-        inio.role as role,
-        n.number as node_number,
-        n.description as node_description
-      from
-        inv.inv_collections c
-      inner join inv.inv_collections_inv_objects icio
-        on c.id = icio.inv_collection_id
-      inner join inv.inv_nodes_inv_objects inio
-        on icio.inv_object_id = inio.inv_object_id
-      inner join inv.inv_nodes n
-        on inio.inv_node_id = n.id
+      {{COLLQ}}
       where
         c.id = ?
-      group by
-        inv_node_id
+      {{COLLQGRP}}
     parameters:
     - name: inv_collection_id
       type: integer
+  /queries/repository/collection-mnemonic:
+    sql: |
+      {{COLLQ}}
+      where
+        c.mnemonic = ?
+      {{COLLQGRP}}
+    parameters:
+    - name: mnemonic
+      type: string
   /queries/repository/object:
     sql: |
       select
@@ -86,7 +106,9 @@ queries:
         erc_what,
         erc_who,
         erc_when,
-        created
+        created,
+        billable_size,
+        file_count
       from
         inv.inv_objects o
       inner join inv.inv_collections_inv_objects icio
@@ -95,6 +117,8 @@ queries:
         on icio.inv_collection_id = c.id
       inner join inv.inv_owners own
         on o.inv_owner_id = own.id
+      inner join billing.object_size os 
+        on o.id = os.inv_object_id
       where
         o.id = ?
     files_sql: |
@@ -173,8 +197,6 @@ queries:
           select max(verified) from inv.inv_audits a
           where a.inv_object_id = nn.inv_object_id and a.inv_node_id=nn.node_id
         ) as last_verified,
-        nn.inv_object_id,
-        nn.ark,
         nn.version_number
       from (
         select
@@ -246,7 +268,7 @@ queries:
         distinct
         ogroup,
         inv_collection_id,
-        mnemonic as mnemonic_filter,
+        mnemonic,
         collection_name,
         mime_group,
         mime_type,

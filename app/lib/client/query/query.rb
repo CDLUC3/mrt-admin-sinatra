@@ -15,6 +15,7 @@ module UC3Query
 
     def initialize
       @queries = UC3::UC3Client.load_config('app/config/mrt/query.sql.yml').fetch(:queries, [])
+      @fragments = UC3::UC3Client.load_config('app/config/mrt/query.sql.yml').fetch(:fragments, [])
       map = UC3::UC3Client.lookup_map('app/config/mrt/query.lookup.yml')
       config = UC3::UC3Client.resolve_lookup('app/config/mrt/query.template.yml', map)
       dbconf = config.fetch('dbconf', {})
@@ -51,13 +52,13 @@ module UC3Query
       return table if sql.empty?
 
       tparm = query.fetch(:'template-params', {})
-      sql = Mustache.render(sql, tparm) unless tparm.empty?
+      sql = Mustache.render(sql, @fragments.merge(tparm))
 
       return AdminUI::FilterTable.empty("No DB support for: #{sql}") unless enabled
 
       stmt = @client.prepare(sql)
       cols = stmt.fields.map do |field|
-        filterable = %w[ogroup mime_group mime_type mnemonic_filter].include?(field)
+        filterable = AdminUI::FilterTable.filterable_fields.include?(field)
         AdminUI::Column.new(field, header: field, filterable: filterable)
       end
       table = AdminUI::FilterTable.new(
