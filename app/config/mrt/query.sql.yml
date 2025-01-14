@@ -26,6 +26,137 @@ fragments:
       role,
       node_number,
       node_description
+  OBJQ: |
+    select
+      o.id inv_object_id,
+      o.ark,
+      o.version_number,
+      group_concat(c.mnemonic) as mnemonics,
+      own.name,
+      erc_what,
+      erc_who,
+      erc_when,
+      created,
+      billable_size,
+      file_count
+    from
+      inv.inv_objects o
+    inner join inv.inv_collections_inv_objects icio
+      on o.id = icio.inv_object_id
+    inner join inv.inv_collections c
+      on icio.inv_collection_id = c.id
+    inner join inv.inv_owners own
+      on o.inv_owner_id = own.id
+    inner join billing.object_size os 
+      on o.id = os.inv_object_id
+  OBJQ2: |
+    group by
+      inv_object_id,
+      o.ark,
+      o.version_number,
+      own.name,
+      erc_what,
+      erc_who,
+      erc_when,
+      created,
+      billable_size,
+      file_count
+  OBJFILES: |
+    select
+      o.ark,
+      v.number,
+      (
+        select max(vv.number)
+        from inv.inv_files ff
+        inner join inv.inv_versions vv
+          on ff.inv_version_id = vv.id
+        where
+          ff.inv_object_id = o.id
+        and exists (
+          select 1 where ff.pathname=f.pathname
+        )
+      ) as maxv,
+      f.source,
+      binary f.pathname,
+      f.full_size,
+      f.created,
+      ifnull(group_concat(n.number), '') as nodelist,
+      ifnull(
+        group_concat(
+          case
+            when a.status = 'verified' then null
+            else n.number
+          end
+        ),
+        ''
+      ) as unverified
+    from
+      inv.inv_objects o
+    inner join inv.inv_versions v
+      on o.id = v.inv_object_id
+    inner join inv.inv_files f
+      on o.id = f.inv_object_id
+      and v.id = f.inv_version_id
+    left join inv.inv_audits a
+      on
+        o.id = a.inv_object_id
+      and
+        f.id = a.inv_file_id
+    left join inv.inv_nodes n
+      on a.inv_node_id = n.id
+  OBJFILES2: |
+    and
+      f.billable_size = f.full_size
+    group by
+      o.ark,
+      v.number,
+      f.source,
+      binary f.pathname,
+      f.full_size,
+      f.created
+    order by
+      f.created desc,
+      source,
+      pathname
+    limit 2000
+  OBJREPL: |
+    select
+      nn.role,
+      nn.node_id,
+      nn.node_number,
+      nn.description,
+      nn.access_mode,
+      nn.created,
+      nn.replicated,
+      (
+        select count(*) from inv.inv_audits a
+        where a.inv_object_id = nn.inv_object_id and a.inv_node_id=nn.node_id and status != 'verified'
+      ) as unverified,
+      (
+        select max(verified) from inv.inv_audits a
+        where a.inv_object_id = nn.inv_object_id and a.inv_node_id=nn.node_id
+      ) as last_verified,
+      nn.version_number
+    from (
+      select
+        inio.role,
+        n.id node_id,
+        n.number node_number,
+        n.description,
+        n.access_mode,
+        o.created,
+        inio.created as replicated,
+        o.id as inv_object_id,
+        o.ark as ark,
+        o.version_number
+      from
+        inv.inv_objects o
+      inner join inv.inv_nodes_inv_objects inio
+        on o.id = inio.inv_object_id
+      inner join inv.inv_nodes n
+        on inio.inv_node_id = n.id
+  OBJREPL2: |
+    ) as nn
 queries:
   /queries/repository/campus:
     totals: true
@@ -79,149 +210,60 @@ queries:
         mnemonic
   /queries/repository/collection:
     sql: |
-      {{COLLQ}}
+      {{{COLLQ}}}
       where
         c.id = ?
-      {{COLLQGRP}}
+      {{{COLLQGRP}}}
     parameters:
     - name: inv_collection_id
       type: integer
   /queries/repository/collection-mnemonic:
     sql: |
-      {{COLLQ}}
+      {{{COLLQ}}}
       where
         c.mnemonic = ?
-      {{COLLQGRP}}
+      {{{COLLQGRP}}}
     parameters:
     - name: mnemonic
       type: string
   /queries/repository/object:
     sql: |
-      select
-        o.id inv_object_id,
-        o.ark,
-        o.version_number,
-        group_concat(c.mnemonic, ',') as mnemonics,
-        own.name,
-        erc_what,
-        erc_who,
-        erc_when,
-        created,
-        billable_size,
-        file_count
-      from
-        inv.inv_objects o
-      inner join inv.inv_collections_inv_objects icio
-        on o.id = icio.inv_object_id
-      inner join inv.inv_collections c
-        on icio.inv_collection_id = c.id
-      inner join inv.inv_owners own
-        on o.inv_owner_id = own.id
-      inner join billing.object_size os 
-        on o.id = os.inv_object_id
+      {{{OBJQ}}}
       where
         o.id = ?
+      {{{OBJQ2}}}
     files_sql: |
-      select
-        o.ark,
-        v.number,
-        (
-          select max(vv.number)
-          from inv.inv_files ff
-          inner join inv.inv_versions vv
-            on ff.inv_version_id = vv.id
-          where
-            ff.inv_object_id = o.id
-          and exists (
-            select 1 where ff.pathname=f.pathname
-          )
-        ) as maxv,
-        f.source,
-        binary f.pathname,
-        f.full_size,
-        f.created,
-        ifnull(group_concat(n.number), '') as nodelist,
-        ifnull(
-          group_concat(
-            case
-              when a.status = 'verified' then null
-              else n.number
-            end
-          ),
-          ''
-        ) as unverified
-      from
-        inv.inv_objects o
-      inner join inv.inv_versions v
-        on o.id = v.inv_object_id
-      inner join inv.inv_files f
-        on o.id = f.inv_object_id
-        and v.id = f.inv_version_id
-      left join inv.inv_audits a
-        on
-          o.id = a.inv_object_id
-        and
-          f.id = a.inv_file_id
-      left join inv.inv_nodes n
-        on a.inv_node_id = n.id
+      {{{OBJFILES}}}
       where
         o.id = ?
-      and
-        f.billable_size = f.full_size
-      group by
-        o.ark,
-        v.number,
-        f.source,
-        binary f.pathname,
-        f.full_size,
-        f.created
-      order by
-        f.created desc,
-        source,
-        pathname
-      limit 2000
+      {{{OBJFILES2}}}
     repl_sql: |
-      select
-        nn.role,
-        nn.node_id,
-        nn.node_number,
-        nn.description,
-        nn.access_mode,
-        nn.created,
-        nn.replicated,
-        (
-          select count(*) from inv.inv_audits a
-          where a.inv_object_id = nn.inv_object_id and a.inv_node_id=nn.node_id and status != 'verified'
-        ) as unverified,
-        (
-          select max(verified) from inv.inv_audits a
-          where a.inv_object_id = nn.inv_object_id and a.inv_node_id=nn.node_id
-        ) as last_verified,
-        nn.version_number
-      from (
-        select
-          inio.role,
-          n.id node_id,
-          n.number node_number,
-          n.description,
-          n.access_mode,
-          o.created,
-          inio.created as replicated,
-          o.id as inv_object_id,
-          o.ark as ark,
-          o.version_number
-        from
-          inv.inv_objects o
-        inner join inv.inv_nodes_inv_objects inio
-          on o.id = inio.inv_object_id
-        inner join inv.inv_nodes n
-          on inio.inv_node_id = n.id
+      {{{OBJREPL}}}
         where
           o.id = ?
-      ) as nn
+      {{{OBJREPL2}}}
     parameters:
     - name: inv_object_id
       type: integer
+  /queries/repository/object-ark:
+    sql: |
+      {{{OBJQ}}}
+      where
+        o.ark = ?
+      {{{OBJQ2}}}
+    files_sql: |
+      {{{OBJFILES}}}
+      where
+        o.ark = ?
+      {{{OBJFILES2}}}
+    repl_sql: |
+      {{{OBJREPL}}}
+        where
+        o.ark = ?
+      {{{OBJREPL2}}}
+    parameters:
+    - name: ark
+      type: string
   /queries/repository/collections-objects:
     totals: true
     sql: |
@@ -329,7 +371,7 @@ queries:
         ) as num_objs_0day,
         case
           when count(*) = 0 then 'PASS'
-          when {{COPIES}} = 3 then 'PASS'
+          when {{{COPIES}}} = 3 then 'PASS'
           when ifnull(
             sum(
               case
@@ -343,7 +385,7 @@ queries:
               when c.mnemonic = 'oneshare_dataup' then 'INFO'
               when c.mnemonic = 'dataone_dash' then 'INFO'
               when ifnull(c.mnemonic, '') = '' then 'INFO'
-              when {{COPIES}} != 2 then 'FAIL'
+              when {{{COPIES}}} != 2 then 'FAIL'
               else 'FAIL'
             end
           when ifnull(
@@ -373,7 +415,7 @@ queries:
             group by
               inv_object_id
             having
-              count(*) = {{COPIES}}
+              count(*) = {{{COPIES}}}
           ) as copies
           on copies.inv_object_id = inio.inv_object_id
           group by

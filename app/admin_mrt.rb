@@ -24,6 +24,9 @@ AdminUI::FilterTable.id_fields = {
   inv_owner_id: '',
   node_number: ''
 }
+AdminUI::FilterTable.idlist_fields = {
+  mnemonics: '/queries/repository/collection-mnemonic?mnemonic='
+}
 AdminUI::FilterTable.filterable_fields = %w[ogroup mime_group mime_type mnemonic]
 
 get '/' do

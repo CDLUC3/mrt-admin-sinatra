@@ -114,3 +114,8 @@ tfoot tr {
 div.aux-table {
   padding-top: 40px;
 }
+
+form.search {
+  margin: 0px;
+  padding: 0px;
+}

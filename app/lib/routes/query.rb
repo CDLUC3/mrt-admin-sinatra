@@ -25,7 +25,7 @@ module Sinatra
           }
       end
 
-      app.get '/queries/repository/object' do
+      app.get '/queries/repository/object*' do
         erb :tables,
           layout: :page_layout,
           locals: {
@@ -45,6 +45,17 @@ module Sinatra
             context: AdminUI::Context.new(request.path),
             table: UC3Query::QueryClient.client.query(request.path, request.params)
           }
+      end
+
+      app.post '/search' do
+        puts params.inspect
+        case params[:search_type]
+        when 'inv_object_id'
+          redirect "/queries/repository/object?inv_object_id=#{params[:search]}"
+        when 'ark'
+          redirect "/queries/repository/object-ark?ark=#{params[:search]}"
+        end
+        redirect "/queries/#{params[:search_type]}?search=#{params[:search]}"
       end
     end
   end

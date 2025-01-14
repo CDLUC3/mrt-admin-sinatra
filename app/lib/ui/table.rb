@@ -5,10 +5,11 @@ module AdminUI
   # Table rendering classes
   class FilterTable
     @id_fields = {}
+    @idlist_fields = {}
     @filterable_fields = []
 
     class << self
-      attr_accessor :id_fields, :filterable_fields
+      attr_accessor :id_fields, :idlist_fields, :filterable_fields
     end
 
     def self.empty(_message)
@@ -129,6 +130,14 @@ module AdminUI
         if AdminUI::FilterTable.id_fields.key?(col.sym.to_sym)
           pre = AdminUI::FilterTable.id_fields[col.sym.to_sym]
           v = { value: v, href: "#{pre}#{v}" } unless pre.empty?
+        elsif AdminUI::FilterTable.idlist_fields.key?(col.sym.to_sym)
+          pre = AdminUI::FilterTable.idlist_fields[col.sym.to_sym]
+          unless pre.empty?
+            arr = v.split(',').map do |vv|
+              { value: vv, href: "#{pre}#{vv}" }
+            end
+            v = arr
+          end
         elsif v.is_a?(Integer)
           v = v.to_i.to_s.reverse.gsub(/(\d{3})(?=\d)/, '\\1,').reverse
         end

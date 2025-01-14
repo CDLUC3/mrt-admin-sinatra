@@ -125,8 +125,9 @@ module AdminUI
       s += %(
       <li class="search">
         <span class="search">
+        <form action="/search" method="post" class="search">
         <label for="search">Search: </label>
-        <select class="search" id="search-type">
+        <select class="search" name="search_type">
           <option value="ark">Ark</option>
           <option value="inv_object_id">inv_object_id</option>
           <option value="localid">Local Id</option>
@@ -136,7 +137,9 @@ module AdminUI
           <option value="filename">filename</option>
           <option value="container">container</option>
         </select>
-        <input class="search" id="search" type="text" width="25" value="tbd" disabled/>
+        <input class="search" name="search" type="text" width="25" value=""/>
+        <input type="submit" value="Go" />
+        </form>
         </span>
       </li>
       </ul>
