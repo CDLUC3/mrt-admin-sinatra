@@ -65,6 +65,7 @@ module LambdaFunctions
         env[header] = value.to_s
       end
 
+      response = { message: 'About to invoke lambda...' }
       begin
         # Response from Rack must have status, headers and body
         status, headers, body = $app.call env
