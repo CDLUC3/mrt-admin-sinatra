@@ -28,7 +28,7 @@ AdminUI::FilterTable.idlist_fields = {
   mnemonics: '/queries/repository/collection-mnemonic?mnemonic=',
   local_ids: ''
 }
-AdminUI::FilterTable.filterable_fields = %w[ogroup mime_group mime_type mnemonic]
+AdminUI::FilterTable.filterable_fields = %w[ogroup mime_group mime_type mnemonic status]
 
 get '/' do
   erb :index,

@@ -70,6 +70,12 @@ items:
         ## Collection Details
     - title: Recent Objects
       route: /queries/repository/objects
+    - title: Object Details
+      route: /queries/repository/object
+      breadcrumb: true
+    - title: Object Details - Search by Ark
+      route: /queries/repository/object-ark
+      breadcrumb: true
     - title: Objects - Search by erc-what
       route: /queries/repository/objects-erc-what
       breadcrumb: true

@@ -160,6 +160,103 @@ fragments:
         on inio.inv_node_id = n.id
   OBJREPL2: |
     ) as nn
+  REPSQL: |
+    select
+      case
+        when ifnull(c.mnemonic, '') = '' then 'No Mnemonic'
+        when c.name = 'Merritt curatorial classes' then 'Stage Exception'
+        else 'Default'
+      end as category,
+      count(*) as num_objs,
+      ifnull(
+        sum(
+          case
+            when age.init_created < date_add(now(), INTERVAL -2 DAY) then 1
+            else 0
+          end
+        ),
+        0
+      ) as num_objs_2day,
+      ifnull(
+        sum(
+          case
+            when age.init_created < date_add(now(), INTERVAL -2 DAY) then 0
+            when age.init_created < date_add(now(), INTERVAL -1 DAY) then 1
+            else 0
+          end
+        ),
+        0
+      ) as num_objs_1day,
+      ifnull(
+        sum(
+          case
+            when age.init_created < date_add(now(), INTERVAL -2 DAY) then 0
+            when age.init_created < date_add(now(), INTERVAL -1 DAY) then 0
+            else 1
+          end
+        ),
+        0
+      ) as num_objs_0day,
+      case
+        when count(*) = 0 then 'PASS'
+        when {{{COPIES}}} = 3 then 'PASS'
+        when ifnull(
+          sum(
+            case
+              when age.init_created < date_add(now(), INTERVAL -2 DAY) then 1
+              else 0
+            end
+          ),
+          0
+        ) > 0 then
+          case
+            when c.mnemonic = 'oneshare_dataup' then 'INFO'
+            when c.mnemonic = 'dataone_dash' then 'INFO'
+            when ifnull(c.mnemonic, '') = '' then 'INFO'
+            when {{{COPIES}}} != 2 then 'FAIL'
+            else 'FAIL'
+          end
+        when ifnull(
+          sum(
+            case
+              when age.init_created < date_add(now(), INTERVAL -2 DAY) then 0
+              when age.init_created < date_add(now(), INTERVAL -1 DAY) then 1
+              else 0
+            end
+          ),
+          0
+        ) > 0 then 'WARN'
+        else 'PASS'
+      end as status
+      from (
+        select
+          inio.inv_object_id,
+          min(created) as init_created
+        from
+          inv.inv_nodes_inv_objects inio
+        inner join (
+          select
+            inv_object_id,
+            count(*)
+          from
+            inv.inv_nodes_inv_objects
+          group by
+            inv_object_id
+          having
+            count(*) = {{{COPIES}}}
+        ) as copies
+        on copies.inv_object_id = inio.inv_object_id
+        group by
+          inv_object_id
+      ) as age      
+      inner join inv.inv_collections_inv_objects icio
+        on age.inv_object_id = icio.inv_object_id
+      inner join inv.inv_collections c
+        on icio.inv_collection_id = c.id
+      inner join inv.inv_objects o
+        on c.inv_object_id = o.id and o.aggregate_role = 'MRT-collection'
+      group by
+        category
 queries:
   /queries/repository/campus:
     totals: true
@@ -400,110 +497,21 @@ queries:
     template-params:
       COPIES: 2
     totals: true
-    sql: &REPSQL |
-      select
-        case
-          when ifnull(c.mnemonic, '') = '' then 'No Mnemonic'
-          when c.name = 'Merritt curatorial classes' then 'Stage Exception'
-          else 'Default'
-        end as category,
-        count(*) as num_objs,
-        ifnull(
-          sum(
-            case
-              when age.init_created < date_add(now(), INTERVAL -2 DAY) then 1
-              else 0
-            end
-          ),
-          0
-        ) as num_objs_2day,
-        ifnull(
-          sum(
-            case
-              when age.init_created < date_add(now(), INTERVAL -2 DAY) then 0
-              when age.init_created < date_add(now(), INTERVAL -1 DAY) then 1
-              else 0
-            end
-          ),
-          0
-        ) as num_objs_1day,
-        ifnull(
-          sum(
-            case
-              when age.init_created < date_add(now(), INTERVAL -2 DAY) then 0
-              when age.init_created < date_add(now(), INTERVAL -1 DAY) then 0
-              else 1
-            end
-          ),
-          0
-        ) as num_objs_0day,
-        case
-          when count(*) = 0 then 'PASS'
-          when {{{COPIES}}} = 3 then 'PASS'
-          when ifnull(
-            sum(
-              case
-                when age.init_created < date_add(now(), INTERVAL -2 DAY) then 1
-                else 0
-              end
-            ),
-            0
-          ) > 0 then
-            case
-              when c.mnemonic = 'oneshare_dataup' then 'INFO'
-              when c.mnemonic = 'dataone_dash' then 'INFO'
-              when ifnull(c.mnemonic, '') = '' then 'INFO'
-              when {{{COPIES}}} != 2 then 'FAIL'
-              else 'FAIL'
-            end
-          when ifnull(
-            sum(
-              case
-                when age.init_created < date_add(now(), INTERVAL -2 DAY) then 0
-                when age.init_created < date_add(now(), INTERVAL -1 DAY) then 1
-                else 0
-              end
-            ),
-            0
-          ) > 0 then 'WARN'
-          else 'PASS'
-        end as status
-        from (
-          select
-            inio.inv_object_id,
-            min(created) as init_created
-          from
-            inv.inv_nodes_inv_objects inio
-          inner join (
-            select
-              inv_object_id,
-              count(*)
-            from
-              inv.inv_nodes_inv_objects
-            group by
-              inv_object_id
-            having
-              count(*) = {{{COPIES}}}
-          ) as copies
-          on copies.inv_object_id = inio.inv_object_id
-          group by
-            inv_object_id
-        ) as age      
-        inner join inv.inv_collections_inv_objects icio
-          on age.inv_object_id = icio.inv_object_id
-        inner join inv.inv_collections c
-          on icio.inv_collection_id = c.id
-        inner join inv.inv_objects o
-          on c.inv_object_id = o.id and o.aggregate_role = 'MRT-collection'
-        group by
-          category
+    sql: |
+      {{{REPSQL}}}
   /queries/consistency/replication-objects-1:
     template-params:
       COPIES: 1
     totals: true
-    sql: *REPSQL
+    sql: |
+      {{{REPSQL}}}
   /queries/consistency/replication-objects-4:
     template-params:
       COPIES: 4
     totals: true
-    sql: *REPSQL
+    sql: |
+      {{{REPSQL}}}
+  /queries/consistency/mult-colls:
+    totals: true
+    sql: |
+      tbd
