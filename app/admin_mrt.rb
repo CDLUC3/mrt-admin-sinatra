@@ -3,16 +3,20 @@
 require 'sinatra'
 require 'sinatra/base'
 require_relative 'lib/routes/home'
-require_relative 'lib/routes/code'
-require_relative 'lib/routes/resources'
+# require_relative 'lib/routes/code'
+# require_relative 'lib/routes/resources'
 require_relative 'lib/routes/query'
 
 set :bind, '0.0.0.0'
 
+puts 111
 include Sinatra::UC3HomeRoutes
-include Sinatra::UC3CodeRoutes
-include Sinatra::UC3ResourcesRoutes
+puts 222
+# include Sinatra::UC3CodeRoutes
+# include Sinatra::UC3ResourcesRoutes
+puts 333
 include Sinatra::UC3QueryRoutes
+puts 444
 
 Sinatra::UC3HomeRoutes.load_menu_file('app/config/mrt/menu.yml')
 AdminUI::Context.css = '/mrt/custom.css'
