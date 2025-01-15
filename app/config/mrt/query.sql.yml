@@ -36,18 +36,19 @@ fragments:
       erc_what,
       erc_who,
       erc_when,
-      created,
+      (select group_concat(local_id) from inv.inv_localids loc where loc.inv_object_ark = o.ark and loc.inv_owner_ark = own.ark) as local_ids,
+      o.created,
       billable_size,
       file_count
     from
       inv.inv_objects o
-    inner join inv.inv_collections_inv_objects icio
+    left join inv.inv_collections_inv_objects icio
       on o.id = icio.inv_object_id
-    inner join inv.inv_collections c
+    left join inv.inv_collections c
       on icio.inv_collection_id = c.id
-    inner join inv.inv_owners own
+    left join inv.inv_owners own
       on o.inv_owner_id = own.id
-    inner join billing.object_size os 
+    left join billing.object_size os 
       on o.id = os.inv_object_id
   OBJQ2: |
     group by
@@ -61,6 +62,8 @@ fragments:
       created,
       billable_size,
       file_count
+    order by o.id desc
+      limit 10
   OBJFILES: |
     select
       o.ark,
@@ -263,6 +266,31 @@ queries:
       {{{OBJREPL2}}}
     parameters:
     - name: ark
+      type: string
+  /queries/repository/objects:
+    sql: |
+      {{{OBJQ}}}
+      where o.id >= (select max(id)-10 from inv.inv_objects)
+      {{{OBJQ2}}}
+  /queries/repository/objects-localid:
+    sql: |
+      {{{OBJQ}}}
+      where exists (
+        select 1 from inv.inv_localids loc
+        where loc.inv_object_ark = o.ark
+        and loc.local_id = ?
+      )
+      {{{OBJQ2}}}
+    parameters:
+    - name: localid
+      type: string
+  /queries/repository/objects-erc-who:
+    sql: |
+      {{{OBJQ}}}
+      where o.erc_who like ?
+      {{{OBJQ2}}}
+    parameters:
+    - name: term
       type: string
   /queries/repository/collections-objects:
     totals: true

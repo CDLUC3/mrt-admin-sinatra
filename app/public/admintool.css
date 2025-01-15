@@ -95,6 +95,12 @@ td.images {
   width: 240px;
   padding-left: 20px;
 }
+td.local_ids span.val,
+td.mnemonics span.val {
+  display: block;
+  white-space: nowrap;
+  overflow-x: clip;
+}
 td.artifacts span.val,
 td.images span.val {
   display: list-item;

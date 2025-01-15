@@ -126,18 +126,17 @@ module AdminUI
       data = []
       cols.each do |col|
         v = datahash.fetch(col.sym, col.defval)
+        v = '' if v.nil?
         v = v.to_i.to_s.reverse.gsub(/(\d{3})(?=\d)/, '\\1,').reverse if v.is_a?(BigDecimal)
         if AdminUI::FilterTable.id_fields.key?(col.sym.to_sym)
           pre = AdminUI::FilterTable.id_fields[col.sym.to_sym]
           v = { value: v, href: "#{pre}#{v}" } unless pre.empty?
         elsif AdminUI::FilterTable.idlist_fields.key?(col.sym.to_sym)
           pre = AdminUI::FilterTable.idlist_fields[col.sym.to_sym]
-          unless pre.empty?
-            arr = v.split(',').map do |vv|
-              { value: vv, href: "#{pre}#{vv}" }
-            end
-            v = arr
+          arr = v.split(',').map do |vv|
+            (pre.empty? ? vv : { value: vv, href: "#{pre}#{vv}", title: vv })
           end
+          v = arr
         elsif v.is_a?(Integer)
           v = v.to_i.to_s.reverse.gsub(/(\d{3})(?=\d)/, '\\1,').reverse
         end
@@ -176,7 +175,7 @@ module AdminUI
       if cellval.is_a?(Array)
         s = ''
         cellval.each do |vv|
-          s += "<span class='#{spanclass}'>#{render(vv)}</span>"
+          s += "<span class='#{spanclass}' title='#{vv}'>#{render(vv)}</span>"
         end
         s.to_s
       elsif cellval.is_a?(Hash)
@@ -185,7 +184,8 @@ module AdminUI
           render_string('')
         elsif cellval.key?(:href)
           href = cellval.fetch(:href, '')
-          render_link(val, href, cssclass: cellval.fetch(:cssclass, ''))
+          title = cellval.fetch(:title, '')
+          render_link(val, href, cssclass: cellval.fetch(:cssclass, ''), title: title)
         else
           cellval.fetch(:value, '').to_s
         end
@@ -198,8 +198,8 @@ module AdminUI
       val
     end
 
-    def render_link(val, href, cssclass: '')
-      "<a href='#{href}' class='#{cssclass}'>#{val}</a>"
+    def render_link(val, href, cssclass: '', title: '')
+      "<a href='#{href}' class='#{cssclass}' title='#{title}'>#{val}</a>"
     end
   end
 

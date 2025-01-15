@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'sinatra/base'
+require 'uri'
 require_relative '../client/query/query'
 require_relative '../ui/context'
 
@@ -39,6 +40,7 @@ module Sinatra
       end
 
       app.get '/queries/**' do
+        request.params[:term] = URI.decode_www_form_component(request.params[:term]) if request.params.key?(:term)
         erb :table,
           layout: :page_layout,
           locals: {
@@ -48,14 +50,18 @@ module Sinatra
       end
 
       app.post '/search' do
-        puts params.inspect
+        term = URI.encode_www_form_component(params[:search])
         case params[:search_type]
         when 'inv_object_id'
-          redirect "/queries/repository/object?inv_object_id=#{params[:search]}"
+          redirect "/queries/repository/object?inv_object_id=#{term}"
         when 'ark'
-          redirect "/queries/repository/object-ark?ark=#{params[:search]}"
+          redirect "/queries/repository/object-ark?ark=#{term}"
+        when 'localid'
+          redirect "/queries/repository/objects-localid?localid=#{term}"
+        when 'erc_who'
+          redirect "/queries/repository/objects-erc-who?term=#{term}"
         end
-        redirect "/queries/#{params[:search_type]}?search=#{params[:search]}"
+        redirect "/queries/#{params[:search_type]}?search=#{term}"
       end
     end
   end

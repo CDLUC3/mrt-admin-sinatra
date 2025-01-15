@@ -68,6 +68,8 @@ items:
       breadcrumb: true
       description: |
         ## Collection Details
+    - title: Recent Objects
+      route: /queries/repository/objects
     - title: Object Details
       route: /queries/repository/object
       breadcrumb: true
