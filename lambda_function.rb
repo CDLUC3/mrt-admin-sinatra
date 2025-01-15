@@ -65,7 +65,7 @@ module LambdaFunctions
         env[header] = value.to_s
       end
 
-      response = { message: 'About to invoke lambda...' }
+      response = { message: 'About to invoke lambda. This object should be replaced by response.' }
       begin
         # Response from Rack must have status, headers and body
         status, headers, body = $app.call env
@@ -94,17 +94,10 @@ module LambdaFunctions
           'body' => e.message,
           'stack' => e.backtrace
         }
-      rescue Exception => e
-        # If there is _any_ exception, we return a 500 error with an error message
-
-        response = {
-          'statusCode' => 500,
-          'body' => e.message,
-          'stack' => e.backtrace
-        }
       end
 
       # By default, the response serializer will call #to_json for us
+      # Note: if a 502 Gateway error is returned, the operation may have hung and timed out.
       response
     end
   end

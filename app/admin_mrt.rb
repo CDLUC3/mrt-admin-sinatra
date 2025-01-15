@@ -9,14 +9,14 @@ require_relative 'lib/routes/query'
 
 set :bind, '0.0.0.0'
 
-puts 111
+puts "111 Initializing"
 include Sinatra::UC3HomeRoutes
-puts 222
 include Sinatra::UC3CodeRoutes
 include Sinatra::UC3ResourcesRoutes
-puts 333
 include Sinatra::UC3QueryRoutes
-puts 555
+puts "222 Includes Complete"
+%x[curl -s https://www.google.com -o /dev/null]
+puts "333 Curl Complete"
 
 Sinatra::UC3HomeRoutes.load_menu_file('app/config/mrt/menu.yml')
 AdminUI::Context.css = '/mrt/custom.css'
