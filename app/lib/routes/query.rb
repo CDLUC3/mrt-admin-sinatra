@@ -60,8 +60,15 @@ module Sinatra
           redirect "/queries/repository/objects-localid?localid=#{term}"
         when 'erc_who'
           redirect "/queries/repository/objects-erc-who?term=#{term}"
+        when 'erc_what'
+          redirect "/queries/repository/objects-erc-what?term=#{term}"
+        when 'erc_when'
+          redirect "/queries/repository/objects-erc-when?term=#{term}"
+        when 'filename'
+          redirect "/queries/repository/objects-by-filename?term=#{term}"
+        when 'container'
+          redirect "/queries/repository/objects-by-container?term=#{term}"
         end
-        redirect "/queries/#{params[:search_type]}?search=#{term}"
       end
     end
   end

@@ -292,6 +292,46 @@ queries:
     parameters:
     - name: term
       type: string
+  /queries/repository/objects-erc-what:
+    sql: |
+      {{{OBJQ}}}
+      where o.erc_what like ?
+      {{{OBJQ2}}}
+    parameters:
+    - name: term
+      type: string
+  /queries/repository/objects-erc-when:
+    sql: |
+      {{{OBJQ}}}
+      where o.erc_when like ?
+      {{{OBJQ2}}}
+    parameters:
+    - name: term
+      type: string
+  /queries/repository/objects-by-filename:
+    sql: |
+      {{{OBJQ}}}
+      where exists (
+        select 1 from inv.inv_files f
+        where pathname like ?
+        and f.inv_object_id = o.id
+      )
+      {{{OBJQ2}}}
+    parameters:
+    - name: term
+      type: string
+  /queries/repository/objects-by-container:
+    sql: |
+      {{{OBJQ}}}
+      where exists (
+        select 1 from inv.inv_ingests ing
+        where filename = ?
+        and ing.inv_object_id = o.id
+      )
+      {{{OBJQ2}}}
+    parameters:
+    - name: term
+      type: string
   /queries/repository/collections-objects:
     totals: true
     sql: |

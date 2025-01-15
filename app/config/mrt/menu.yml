@@ -70,6 +70,24 @@ items:
         ## Collection Details
     - title: Recent Objects
       route: /queries/repository/objects
+    - title: Objects - Search by erc-what
+      route: /queries/repository/objects-erc-what
+      breadcrumb: true
+    - title: Objects - Search by erc-who
+      route: /queries/repository/objects-erc-who
+      breadcrumb: true
+    - title: Objects - Search by erc-when
+      route: /queries/repository/objects-erc-when
+      breadcrumb: true
+    - title: Objects - Search by filename
+      route: /queries/repository/objects-by-filename
+      breadcrumb: true
+    - title: Objects - Search by Local Id
+      route: /queries/repository/objects-localid
+      breadcrumb: true
+    - title: Objects - Search by Container
+      route: /queries/repository/objects-container
+      breadcrumb: true
     - title: Object Details
       route: /queries/repository/object
       breadcrumb: true

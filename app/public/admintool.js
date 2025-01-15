@@ -1,12 +1,31 @@
 $(document).ready(function() {
   showTotals();
+  applySearchBox();
+  applyButtonDisabled();
+  applyFilterCheckboxes();
+  applyFilters();
+  clearButton();
+});
+
+function applySearchBox() {
+  var type = localStorage.getItem('search_type');
+  type = type ? type : '';
+  $("select[name='search_type']").val(type);
+  $("select[name='search_type']").on("change", function() {
+    localStorage.setItem('search_type', $(this).val());
+  });
+}
+
+function applyButtonDisabled() {
   // Allow links to be disabled in table displays
   $("table.data a").on("click", function() {
     if ($(this).hasClass('button-disabled')) {
       return false;
     }
   });
+}
 
+function applyFilterCheckboxes() {
   $("input.filter:checkbox").on("click", function() {
     if ($(this).attr('match') == 'true') {
       $("table.data tr.data").show();
@@ -22,7 +41,9 @@ $(document).ready(function() {
     }
     showTotals();
   });
+}
 
+function applyFilters() {
   $("select.filter").each(function() {
     var sel = $(this);
     var v = $(this).attr('data');
@@ -52,13 +73,15 @@ $(document).ready(function() {
       showTotals();
     });
   });
+}
 
+function clearButton() {
   $("button.filter").on("click", function() {
     $("table.data tr.data").show();
     $("tr.filters").remove();
     sorttable.makeSortable($("table.sortable")[0]);
   });
-});
+}
 
 function showTotals() {
   var test = [
