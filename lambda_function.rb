@@ -94,6 +94,14 @@ module LambdaFunctions
           'body' => e.message,
           'stack' => e.backtrace
         }
+      rescue Exception => e
+        # If there is _any_ exception, we return a 500 error with an error message
+
+        response = {
+          'statusCode' => 500,
+          'body' => e.message,
+          'stack' => e.backtrace
+        }
       end
 
       # By default, the response serializer will call #to_json for us
