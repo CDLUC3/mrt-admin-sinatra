@@ -257,6 +257,30 @@ fragments:
         on c.inv_object_id = o.id and o.aggregate_role = 'MRT-collection'
       group by
         category
+  MIME:
+    select
+      distinct
+        ogroup,
+        inv_collection_id,
+        mnemonic,
+        collection_name,
+        mime_group,
+        mime_type,
+        sum(count_files) files,
+        sum(billable_size) size
+    from
+      owner_coll_mime_use_details
+    {{{WHERE}}}
+    group by
+      ogroup,
+      inv_collection_id,
+      mnemonic,
+      collection_name,
+      mime_group,
+      mime_type
+    order by
+      ogroup,
+      mnemonic
 queries:
   /queries/repository/campus:
     totals: true
@@ -468,31 +492,6 @@ queries:
         order by
           ogroup,
           own_name
-  /queries/repository/mimes:
-    totals: true
-    sql: |
-      select
-        distinct
-        ogroup,
-        inv_collection_id,
-        mnemonic,
-        collection_name,
-        mime_group,
-        mime_type,
-        sum(count_files) files,
-        sum(billable_size) size
-      from
-        owner_coll_mime_use_details
-      group by
-        ogroup,
-        inv_collection_id,
-        mnemonic,
-        collection_name,
-        mime_group,
-        mime_type
-      order by
-        ogroup,
-        mnemonic
   /queries/consistency/replication-objects-2:
     template-params:
       COPIES: 2
@@ -511,6 +510,84 @@ queries:
     totals: true
     sql: |
       {{{REPSQL}}}
+  /queries/repository/mimes/campus/CDL:
+    template-params:
+      WHERE: where ogroup = CDL
+    totals: true
+    sql: |
+      {{{MIME}}}
+  /queries/repository/mimes/campus/UCB:
+    template-params:
+      WHERE: where ogroup = 'UCB'
+    totals: true
+    sql: |
+      {{{MIME}}}
+  /queries/repository/mimes/campus/UCD:
+    template-params:
+      WHERE: where ogroup = 'UCD'
+    totals: true
+    sql: |
+      {{{MIME}}}
+  /queries/repository/mimes/campus/UCI:
+    template-params:
+      WHERE: where ogroup = 'UCI'
+    totals: true
+    sql: |
+      {{{MIME}}}
+  /queries/repository/mimes/campus/UCLA:
+    template-params:
+      WHERE: where ogroup = 'UCLA'
+    totals: true
+    sql: |
+      {{{MIME}}}
+  /queries/repository/mimes/campus/UCM:
+    template-params:
+      WHERE: where ogroup = 'UCM'
+    totals: true
+    sql: |
+      {{{MIME}}}
+  /queries/repository/mimes/campus/UCSB:
+    template-params:
+      WHERE: where ogroup = 'UCSB'
+    totals: true
+    sql: |
+      {{{MIME}}}
+  /queries/repository/mimes/campus/UCSC:
+    template-params:
+      WHERE: where ogroup = 'UCSC'
+    totals: true
+    sql: |
+      {{{MIME}}}
+  /queries/repository/mimes/campus/UCSD:
+    template-params:
+      WHERE: where ogroup = 'UCSD'
+    totals: true
+    sql: |
+      {{{MIME}}}
+  /queries/repository/mimes/campus/UCSF:
+    template-params:
+      WHERE: where ogroup = 'UCSF'
+    totals: true
+    sql: |
+      {{{MIME}}}
+  /queries/repository/mimes/campus/Other:
+    template-params:
+      WHERE: where ogroup = 'Other'
+    totals: true
+    sql: |
+      {{{MIME}}}
+  /queries/repository/mimes/group/image:
+    template-params:
+      WHERE: where mime_group = 'image'
+    totals: true
+    sql: |
+      {{{MIME}}}
+  /queries/repository/mimes/group/text:
+    template-params:
+      WHERE: where mime_group = 'text'
+    totals: true
+    sql: |
+      {{{MIME}}}
   /queries/consistency/mult-colls:
     totals: true
     sql: |

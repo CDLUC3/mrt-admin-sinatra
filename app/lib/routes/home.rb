@@ -14,15 +14,17 @@ module Sinatra
       title = item.fetch(:title, '')
       route = item.fetch(:route, '')
       np.append(leaf) unless leaf.empty?
+      items = item.fetch(:items, [])
       AdminUI::TopMenu.instance.create_menu_item_for_path(
         np.join('/'),
         route,
         title,
         description: item.fetch(:description, ''),
         tbd: item.fetch(:tbd, false),
-        breadcrumb: item.fetch(:breadcrumb, false)
+        breadcrumb: item.fetch(:breadcrumb, false),
+        menu: route.empty? || !items.empty?
       )
-      item.fetch(:items, []).each do |citem|
+      items.each do |citem|
         add_menu_item(np, citem)
       end
     end

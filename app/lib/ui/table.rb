@@ -12,8 +12,17 @@ module AdminUI
       attr_accessor :id_fields, :idlist_fields, :filterable_fields
     end
 
-    def self.empty(_message)
-      FilterTable.new
+    def self.empty(message = '')
+      return FilterTable.new if message.empty?
+
+      FilterTable.new(
+        columns: [
+          Column.new('message')
+        ],
+        data: [
+          Row.new([message])
+        ]
+      )
     end
 
     def initialize(columns: [], data: [], filters: [], totals: false)
@@ -26,7 +35,7 @@ module AdminUI
         @filterable = true if col.filterable
       end
     end
-
+    []
     def add_filter(filter)
       @filters.push(filter)
     end

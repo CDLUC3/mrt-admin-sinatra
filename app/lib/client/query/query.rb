@@ -44,7 +44,7 @@ module UC3Query
     end
 
     def query(path, urlparams, sqlsym: :sql)
-      table = AdminUI::FilterTable.empty(path)
+      table = AdminUI::FilterTable.empty
       query = @queries.fetch(path.to_sym, {})
       return table if query.nil?
 
@@ -52,9 +52,10 @@ module UC3Query
       return table if sql.empty?
 
       tparm = query.fetch(:'template-params', {})
-      sql = Mustache.render(sql, @fragments.merge(tparm))
+      sql = Mustache.render(sql, @fragments)
+      sql = Mustache.render(sql, tparm)
 
-      return AdminUI::FilterTable.empty("No DB support for: #{sql}") unless enabled
+      return AdminUI::FilterTable.empty(sql) unless enabled
 
       stmt = @client.prepare(sql)
       cols = stmt.fields.map do |field|

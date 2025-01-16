@@ -12,7 +12,7 @@ module AdminUI
 
   ## Menu (array of submenus and menu items)
   class Menu
-    def initialize(path, title, parent: nil)
+    def initialize(path, title, parent: nil, breadroute: nil)
       @path = path
       @title = title
       @parent = parent
@@ -35,8 +35,9 @@ module AdminUI
       paths.reverse.join('/')
     end
 
-    def add_submenu(path, title)
+    def add_submenu(path, title, breadcrumb: false, route: '')
       child = Menu.new(path, title, parent: self)
+      child.top.route_names[route] = { title: title, description: '' } if breadcrumb && !route.empty?
       @children << child
       child
     end
@@ -72,21 +73,22 @@ module AdminUI
       @instance
     end
 
-    def create_menu_item_for_path(path, route, title, description: '', tbd: false, breadcrumb: false)
+    def create_menu_item_for_path(path, route, title, description: '', tbd: false, breadcrumb: false, menu: false)
       parpath = path
       if @paths.key?(parpath)
-        if route.empty?
-          @paths[parpath].add_submenu(path, title)
+        if menu
+          @paths[parpath].add_submenu(path, title, breadcrumb: breadcrumb, route: route)
         else
           @paths[parpath].add_menu_item(route, title, description: description, tbd: tbd, breadcrumb: breadcrumb)
         end
       else
         parpath = File.dirname(path) until @paths.key?(parpath)
-        if route.empty?
-          @paths[parpath].add_submenu(path, title)
+        if menu
+          @paths[parpath].add_submenu(path, title, breadcrumb: breadcrumb, route: route)
         else
-          @paths[parpath].add_submenu(path, path)
-          create_menu_item_for_path(path, route, title, description: description, tbd: tbd, breadcrumb: breadcrumb)
+          @paths[parpath].add_submenu(path, path, breadcrumb: breadcrumb, route: route)
+          create_menu_item_for_path(path, route, title, description: description, tbd: tbd, breadcrumb: breadcrumb,
+            menu: menu)
         end
       end
     end

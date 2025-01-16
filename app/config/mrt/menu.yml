@@ -103,8 +103,53 @@ items:
       route: /queries/repository/collections-objects
     - title: Owner Files/Bytes
       route: /queries/repository/owners
-    - title: Mime Types
+    - path: mimes
+      title: Mime Types
       route: /queries/repository/mimes
+      breadcrumb: true
+      description: |
+        The full mime query will bring back too many results.  
+
+        You must filter by 
+        - campus
+        - mime group
+      items:
+      - path: campus
+        title: By Campus
+        route: /queries/repository/mimes/campus
+        breadcrumb: true
+        items:
+        - title: CDL
+          route: /queries/repository/mimes/campus/CDL
+        - title: UCB
+          route: /queries/repository/mimes/campus/UCB
+        - title: UCD
+          route: /queries/repository/mimes/campus/UCD
+        - title: UCI
+          route: /queries/repository/mimes/campus/UCI
+        - title: UCLA
+          route: /queries/repository/mimes/campus/UCLA
+        - title: UCM
+          route: /queries/repository/mimes/campus/UCM
+        - title: UCSB
+          route: /queries/repository/mimes/campus/UCSB
+        - title: UCSC
+          route: /queries/repository/mimes/campus/UCSC
+        - title: UCSD
+          route: /queries/repository/mimes/campus/UCSD
+        - title: UCSF
+          route: /queries/repository/mimes/campus/UCSF
+        - title: Other
+          route: /queries/repository/mimes/campus/Other
+      - path: group
+        title: By Mime Group
+        route: /queries/repository/mimes/group
+        breadcrumb: true
+        items:
+        - title: image
+          route: /queries/repository/mimes/group/image
+        - title: text
+          route: /queries/repository/mimes/group/text
     - title: Campus Invoices
       route: /repository/invoices
       tbd: true
