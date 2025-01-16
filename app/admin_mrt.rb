@@ -30,8 +30,6 @@ AdminUI::FilterTable.idlist_fields = {
 }
 AdminUI::FilterTable.filterable_fields = %w[ogroup mime_group mime_type mnemonic status]
 
-puts request.path
-
 get '/' do
   erb :index,
     :layout => :page_layout,
@@ -91,6 +89,7 @@ get '/storage_scans' do
 end
 
 get '/**' do
+  puts request.path
   erb :none,
     :layout => :page_layout,
     :locals => {

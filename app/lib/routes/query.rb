@@ -40,6 +40,7 @@ module Sinatra
       end
 
       app.get '/queries/**' do
+        puts request.path
         request.params[:term] = URI.decode_www_form_component(request.params[:term]) if request.params.key?(:term)
         erb :table,
           layout: :page_layout,
