@@ -146,10 +146,26 @@ items:
         route: /queries/repository/mimes/group
         breadcrumb: true
         items:
+        - title: software
+          route: /queries/repository/mimes/group/software
+        - title: audio
+          route: /queries/repository/mimes/group/audio
+        - title: container
+          route: /queries/repository/mimes/group/container
+        - title: data
+          route: /queries/repository/mimes/group/data
+        - title: geo
+          route: /queries/repository/mimes/group/geo
         - title: image
           route: /queries/repository/mimes/group/image
+        - title: software
+          route: /queries/repository/mimes/group/software
         - title: text
           route: /queries/repository/mimes/group/text
+        - title: video
+          route: /queries/repository/mimes/group/video
+        - title: web
+          route: /queries/repository/mimes/group/web
     - title: Campus Invoices
       route: /repository/invoices
       tbd: true

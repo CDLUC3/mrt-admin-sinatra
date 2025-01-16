@@ -576,15 +576,57 @@ queries:
     totals: true
     sql: |
       {{{MIME}}}
+  /queries/repository/mimes/group/audio:
+    template-params:
+      WHERE: where mime_group = 'audio'
+    totals: true
+    sql: |
+      {{{MIME}}}
+  /queries/repository/mimes/group/container:
+    template-params:
+      WHERE: where mime_group = 'container'
+    totals: true
+    sql: |
+      {{{MIME}}}
+  /queries/repository/mimes/group/data:
+    template-params:
+      WHERE: where mime_group = 'data'
+    totals: true
+    sql: |
+      {{{MIME}}}
+  /queries/repository/mimes/group/geo:
+    template-params:
+      WHERE: where mime_group = 'geo'
+    totals: true
+    sql: |
+      {{{MIME}}}
   /queries/repository/mimes/group/image:
     template-params:
       WHERE: where mime_group = 'image'
     totals: true
     sql: |
       {{{MIME}}}
+  /queries/repository/mimes/group/software:
+    template-params:
+      WHERE: where mime_group = 'software'
+    totals: true
+    sql: |
+      {{{MIME}}}
   /queries/repository/mimes/group/text:
     template-params:
-      WHERE: where mime_group = 'text'
+      WHERE: where mime_group = 'textt'
+    totals: true
+    sql: |
+      {{{MIME}}}
+  /queries/repository/mimes/group/video:
+    template-params:
+      WHERE: where mime_group = 'video'
+    totals: true
+    sql: |
+      {{{MIME}}}
+  /queries/repository/mimes/group/web:
+    template-params:
+      WHERE: where mime_group = 'web'
     totals: true
     sql: |
       {{{MIME}}}
