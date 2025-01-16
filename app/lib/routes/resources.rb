@@ -3,9 +3,9 @@
 require 'sinatra/base'
 require_relative '../client/resources/instances'
 require_relative '../client/resources/parameters'
-require_relative '../client/resources/functions'
+# require_relative '../client/resources/functions'
 require_relative '../client/resources/elbs'
-require_relative '../client/resources/buckets'
+# require_relative '../client/resources/buckets'
 require_relative '../ui/context'
 
 # custom sinatra routes
