@@ -10,7 +10,7 @@ $(document).ready(function() {
 function applySearchBox() {
   var type = localStorage.getItem('search_type');
   type = type ? type : '';
-  $("select[name='search_type']").val(type);
+  $("select[name='search_type']").find("option[value='"+type+"']").attr('selected', true);
   $("select[name='search_type']").on("change", function() {
     localStorage.setItem('search_type', $(this).val());
   });
