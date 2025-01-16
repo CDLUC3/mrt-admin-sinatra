@@ -13,7 +13,6 @@ include Sinatra::UC3HomeRoutes
 #include Sinatra::UC3CodeRoutes
 include Sinatra::UC3ResourcesRoutes
 include Sinatra::UC3QueryRoutes
-puts "222 Includes Complete"
 
 Sinatra::UC3HomeRoutes.load_menu_file('app/config/mrt/menu.yml')
 AdminUI::Context.css = '/mrt/custom.css'

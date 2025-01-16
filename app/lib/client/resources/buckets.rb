@@ -8,13 +8,16 @@ module UC3Resources
   # Query for repository images by tag
   class BucketsClient < UC3::UC3Client
     def initialize
+      puts 111
       @client = Aws::S3::Client.new(
         region: UC3::UC3Client.region
       )
+      puts 222
       @buckets = {}
       @client.list_buckets.buckets.each do |bucket|
         @buckets[bucket.name] = { name: bucket.name, created: bucket.creation_date }
       end
+      puts 333
       super(enabled: enabled)
     rescue StandardError => e
       super(enabled: false, message: e.to_s)
