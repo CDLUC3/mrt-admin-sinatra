@@ -22,7 +22,8 @@ AdminUI::FilterTable.id_fields = {
   inv_collection_id: '/queries/repository/collection?inv_collection_id=',
   mnemonic: '/queries/repository/collection-mnemonic?mnemonic=',
   inv_owner_id: '',
-  node_number: ''
+  node_number: '',
+  year: ''
 }
 AdminUI::FilterTable.idlist_fields = {
   mnemonics: '/queries/repository/collection-mnemonic?mnemonic=',

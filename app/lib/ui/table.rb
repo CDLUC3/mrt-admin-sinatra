@@ -25,12 +25,13 @@ module AdminUI
       )
     end
 
-    def initialize(columns: [], data: [], filters: [], totals: false)
+    def initialize(columns: [], data: [], filters: [], totals: false, description: '')
       @columns = columns
       @rows = data
       @filters = filters
       @filterable = false
       @totals = totals
+      @description = description
       @columns.each do |col|
         @filterable = true if col.filterable
       end
@@ -82,6 +83,7 @@ module AdminUI
       s = %(
     <table class='data sortable'>
     <caption>
+      #{render_description}
       #{render_filters}
     </caption>
     <thead>
@@ -118,6 +120,12 @@ module AdminUI
       end
       s += '</div>'
       s
+    end
+
+    def render_description
+      return '' if @description.empty?
+
+      %(<div class='description'>#{Redcarpet::Markdown.new(Redcarpet::Render::HTML.new).render(@description)}</div>)
     end
 
     attr_accessor :columns, :data, :filters, :filterable, :totals

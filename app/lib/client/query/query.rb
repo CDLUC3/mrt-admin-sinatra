@@ -52,8 +52,11 @@ module UC3Query
       return table if sql.empty?
 
       tparm = query.fetch(:'template-params', {})
+      # tparm.each do |key, value|
+      #  tparm[key] = Mustache.render(value, @fragments) if value.is_a?(String)
+      # end
       sql = Mustache.render(sql, @fragments)
-      sql = Mustache.render(sql, tparm)
+      sql = Mustache.render(sql, @fragments.merge(tparm))
 
       return AdminUI::FilterTable.empty(sql) unless enabled
 
@@ -62,9 +65,12 @@ module UC3Query
         filterable = AdminUI::FilterTable.filterable_fields.include?(field)
         AdminUI::Column.new(field, header: field, filterable: filterable)
       end
+
+      description = Mustache.render(query.fetch(:description, ''), tparm)
       table = AdminUI::FilterTable.new(
         columns: cols,
-        totals: query.fetch(:totals, false)
+        totals: query.fetch(:totals, false),
+        description: description
       )
       params = resolve_parameters(query.fetch(:parameters, []), urlparams)
       stmt.execute(*params).each do |row|

@@ -9,12 +9,12 @@ items:
     breadcrumb: true
     description: |
       ## Consistency Reports
-      - [Object Replication - Only 2 Copies](/queries/consistency/replication-objects-2)
-      - [Object Replication - Only 1 Copy](/queries/consistency/replication-objects-1)
-      - [Object Replication - 4 Copies](/queries/consistency/replication-objects-4)
-      - [File Replication - Only 2 Copies](/queries/consistency/replication-files-2)
-      - [File Replication - Only 1 Copy](/queries/consistency/replication-files-1)
-      - [File Replication - 4 Copies](/queries/consistency/replication-files-4)
+      - [Object Replication - Only 2 Copies](/queries/consistency/replication/objects-2)
+      - [Object Replication - Only 1 Copy](/queries/consistency/replication/objects-1)
+      - [Object Replication - 4 Copies](/queries/consistency/replication/objects-4)
+      - [File Replication - Only 2 Copies](/queries/consistency/replication/files-2)
+      - [File Replication - Only 1 Copy](/queries/consistency/replication/files-1)
+      - [File Replication - 4 Copies](/queries/consistency/replication/files-4)
       - [Version Clobber](/queries/consistency/version-clobber)
       - [Objects no local id](/queries/consistency/objects-no-local-id)
       - [Local id no Ark](/queries/consistency/local-id-no-ark)
@@ -179,19 +179,19 @@ items:
       title: Replication
       items:
       - title: Object Replication - Only 2 Copies
-        route: /queries/consistency/replication-objects-2
+        route: /queries/consistency/replication/objects-2
       - title: Object Replication - Only 1 Copy
-        route: /queries/consistency/replication-objects-1
+        route: /queries/consistency/replication/objects-1
       - title: Object Replication - 4 Copies
-        route: /queries/consistency/replication-objects-4
+        route: /queries/consistency/replication/objects-4
       - title: File Replication - Only 2 Copies
-        route: /queries/consistency/replication-files-2
+        route: /queries/consistency/replication/files-2
         tbd: true
       - title: File Replication - Only 1 Copy
-        route: /queries/consistency/replication-files-1
+        route: /queries/consistency/replication/files-1
         tbd: true
       - title: File Replication - 4 Copies
-        route: /queries/consistency/replication-files-4
+        route: /queries/consistency/replication/files-4
         tbd: true
     - path: objects
       title: Object Composition
@@ -206,8 +206,7 @@ items:
         route: /queries/consistency/local-id-no-ark
         tbd: true
       - title: Objects linked to multiple Collections
-        route: /queries/consistency/objects-linked-to-multiple-collections
-        tbd: true  
+        route: /queries/consistency/mult-colls
   - path: use-cases
     title: Use Cases
     items:

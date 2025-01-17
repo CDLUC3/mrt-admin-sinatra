@@ -125,3 +125,10 @@ form.search {
   margin: 0px;
   padding: 0px;
 }
+
+table div.description {
+  text-align: left;
+  padding: 2px;
+  border: thin solid gray;
+  margin: 5px;
+}

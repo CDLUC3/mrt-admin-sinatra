@@ -188,7 +188,7 @@ module AdminUI
     def initialize(route, title: nil)
       @route = route
       page = TopMenu.instance.route_names[route]
-      deftitle = title || route
+      deftitle = title || File.basename(route).capitalize
       @title = page ? page.fetch(:title, deftitle) : deftitle
       @description = TopMenu.instance.description_for_route(@route)
       @breadcrumbs = breadcrumbs

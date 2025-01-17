@@ -87,6 +87,7 @@ function showTotals() {
   var test = [
     'files', 
     'size',
+    'count',
     'num_colls',
     'num_objs',
     'num_objs_2day',

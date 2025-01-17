@@ -33,6 +33,23 @@ Building on EC2 in the main account... warning, this may break lambda deployment
 bundle config set force_ruby_platform true
 ```
 
+## Domains
+- PROD: 
+  - RDS: prod; S3: prod; ZK: prod; ZFS: prod
+  - Stack: prod (includes auto-scaling group services)
+- Stage: 
+  - RDS: stage; S3: prod; ZK: stage; ZFS: stage
+  - Stack: stage (includes auto-scaling group services)
+- Dev: new dev environment - daily deploy - daily CI/CD
+  - RDS: dev; S3: dev; ZK: dev; ZFS: dev
+  - Stack: dev (containers)
+- Dev DB: uses clone of RDS prod
+  - RDS: dev (prod clone); S3: docker volume; ZK: docker volume; ZFS: docker volume
+  - Stack: dev (containers)
+- Docker
+  - RDS: dev docker volume; S3: docker volume; ZK: docker volume; ZFS: docker volume
+  - Stack: dev (containers)
+
 ## Resources needed
 - GitHub API token with read permission for our repos
 - https://github.com/CDLUC3/mrt-sceptre/tree/main/mrt-admin-sinatra

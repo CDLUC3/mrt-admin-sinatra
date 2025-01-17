@@ -17,7 +17,7 @@ fragments:
       on icio.inv_object_id = inio.inv_object_id
     inner join inv.inv_nodes n
       on inio.inv_node_id = n.id
-  COLLQGRP: |
+    {{{WHERE}}}
     group by
       inv_collection_id,
       mnemonic,
@@ -27,6 +27,10 @@ fragments:
       node_number,
       node_description
   OBJQ: |
+    {{{OBJQPRE}}}
+    {{{WHERE}}}
+    {{{OBJQPOST}}} 
+  OBJQPRE: |
     select
       o.id inv_object_id,
       o.ark,
@@ -50,7 +54,7 @@ fragments:
       on o.inv_owner_id = own.id
     left join billing.object_size os 
       on o.id = os.inv_object_id
-  OBJQ2: |
+  OBJQPOST: |
     group by
       inv_object_id,
       o.ark,
@@ -107,7 +111,7 @@ fragments:
         f.id = a.inv_file_id
     left join inv.inv_nodes n
       on a.inv_node_id = n.id
-  OBJFILES2: |
+    {{{WHERE}}}
     and
       f.billable_size = f.full_size
     group by
@@ -158,7 +162,7 @@ fragments:
         on o.id = inio.inv_object_id
       inner join inv.inv_nodes n
         on inio.inv_node_id = n.id
-  OBJREPL2: |
+      {{{WHERE}}}
     ) as nn
   REPSQL: |
     select
@@ -257,6 +261,36 @@ fragments:
         on c.inv_object_id = o.id and o.aggregate_role = 'MRT-collection'
       group by
         category
+  REPSQLOBJ: |
+    where exists (
+      select
+        1
+      from (
+        select
+          inio.inv_object_id,
+          min(created) as init_created
+        from
+          inv.inv_nodes_inv_objects inio
+        inner join (
+          select
+            inv_object_id,
+            count(*)
+          from
+            inv.inv_nodes_inv_objects
+          group by
+            inv_object_id
+          having
+            count(*) = {{{COPIES}}}
+        ) as copies
+        on copies.inv_object_id = inio.inv_object_id
+        group by
+          inv_object_id
+      ) as age      
+      where
+        age.init_created < date_add(now(), INTERVAL -? DAY)
+      and 
+        age.inv_object_id = o.id
+    )
   MIME:
     select
       distinct
@@ -281,6 +315,32 @@ fragments:
     order by
       ogroup,
       mnemonic
+  MULTCOLL:
+    where o.id in (
+      select
+        inv_object_id
+      from
+        inv.inv_collections_inv_objects
+      group by
+        inv_object_id
+      having
+        count(*) > 1
+    )
+    and
+      o.aggregate_role = 'MRT-none'
+  MULTCOLLQ:
+    select
+      year(o.created) as year,
+      count(*) as count,
+      case
+        when year(now()) - year(o.created) <= 1 then 'WARN'
+        else 'SKIP'
+      end as status
+    from
+      inv.inv_objects o
+    {{{MULTCOLL}}}
+    group by
+      year
 queries:
   /queries/repository/campus:
     totals: true
@@ -335,121 +395,112 @@ queries:
   /queries/repository/collection:
     sql: |
       {{{COLLQ}}}
-      where
-        c.id = ?
-      {{{COLLQGRP}}}
+    template-params:
+      WHERE: where c.id = ?
     parameters:
     - name: inv_collection_id
       type: integer
   /queries/repository/collection-mnemonic:
     sql: |
       {{{COLLQ}}}
-      where
-        c.mnemonic = ?
-      {{{COLLQGRP}}}
+    template-params:
+      WHERE: where c.mnemonic = ?
     parameters:
     - name: mnemonic
       type: string
   /queries/repository/object:
     sql: |
       {{{OBJQ}}}
-      where
-        o.id = ?
-      {{{OBJQ2}}}
+    template-params:
+      WHERE: where o.id = ?
     files_sql: |
       {{{OBJFILES}}}
-      where
-        o.id = ?
-      {{{OBJFILES2}}}
     repl_sql: |
       {{{OBJREPL}}}
-        where
-          o.id = ?
-      {{{OBJREPL2}}}
     parameters:
     - name: inv_object_id
       type: integer
   /queries/repository/object-ark:
     sql: |
       {{{OBJQ}}}
-      where
-        o.ark = ?
-      {{{OBJQ2}}}
+    template-params:
+      WHERE: where o.ark = ?
     files_sql: |
       {{{OBJFILES}}}
-      where
-        o.ark = ?
-      {{{OBJFILES2}}}
     repl_sql: |
       {{{OBJREPL}}}
-        where
-        o.ark = ?
-      {{{OBJREPL2}}}
     parameters:
     - name: ark
       type: string
   /queries/repository/objects:
     sql: |
       {{{OBJQ}}}
-      where o.id >= (select max(id)-10 from inv.inv_objects)
-      {{{OBJQ2}}}
+    template-params:
+      WHERE: |
+        where o.id >= (select max(id)-10 from inv.inv_objects)
   /queries/repository/objects-localid:
     sql: |
       {{{OBJQ}}}
-      where exists (
-        select 1 from inv.inv_localids loc
-        where loc.inv_object_ark = o.ark
-        and loc.local_id = ?
-      )
-      {{{OBJQ2}}}
+    template-params:
+      WHERE: |
+        where exists (
+          select 1 from inv.inv_localids loc
+          where loc.inv_object_ark = o.ark
+          and loc.local_id = ?
+        )
     parameters:
     - name: localid
       type: string
   /queries/repository/objects-erc-who:
     sql: |
       {{{OBJQ}}}
-      where o.erc_who like ?
-      {{{OBJQ2}}}
+    template-params:
+      WHERE: |
+        where o.erc_who like ?
     parameters:
     - name: term
       type: string
   /queries/repository/objects-erc-what:
     sql: |
       {{{OBJQ}}}
-      where o.erc_what like ?
-      {{{OBJQ2}}}
+    template-params:
+      WHERE: |
+        where o.erc_what like ?
     parameters:
     - name: term
       type: string
   /queries/repository/objects-erc-when:
     sql: |
       {{{OBJQ}}}
-      where o.erc_when like ?
-      {{{OBJQ2}}}
+    template-params:
+      WHERE: |
+        where o.erc_when like ?
     parameters:
     - name: term
       type: string
   /queries/repository/objects-by-filename:
     sql: |
       {{{OBJQ}}}
-      where exists (
-        select 1 from inv.inv_files f
-        where pathname like ?
-        and f.inv_object_id = o.id
-      )
-      {{{OBJQ2}}}
+    template-params:
+      WHERE: |
+        where exists (
+          select 1 from inv.inv_files f
+          where pathname like ?
+          and f.inv_object_id = o.id
+        )
     parameters:
     - name: term
       type: string
   /queries/repository/objects-by-container:
     sql: |
       {{{OBJQ}}}
-      where exists (
-        select 1 from inv.inv_ingests ing
-        where filename = ?
-        and ing.inv_object_id = o.id
-      )
-      {{{OBJQ2}}}
+    template-params:
+      WHERE: |
+        where exists (
+          select 1 from inv.inv_ingests ing
+          where filename = ?
+          and ing.inv_object_id = o.id
+        )
     parameters:
     - name: term
       type: string
@@ -492,19 +543,34 @@ queries:
         order by
           ogroup,
           own_name
-  /queries/consistency/replication-objects-2:
+  /queries/consistency/replication/objects-2:
+    description: |
+      - [Object List: Older than 2 days](/queries/consistency/replication/objects-2/objlist?days=2)
+      - [Object List: Older than 1 day](/queries/consistency/replication/objects-2/objlist?days=1)
+      - [Object List: Any time](/queries/consistency/replication/objects-2/objlist?days=0)
     template-params:
       COPIES: 2
     totals: true
     sql: |
       {{{REPSQL}}}
-  /queries/consistency/replication-objects-1:
+  /queries/consistency/replication/objects-2/objlist:
+    template-params:
+      COPIES: 2
+    totals: true
+    sql: |
+      {{{OBJQPRE}}}
+      {{{REPSQLOBJ}}}
+      {{{OBJQPOST}}}
+    parameters:
+    - name: days
+      type: integer
+  /queries/consistency/replication/objects-1:
     template-params:
       COPIES: 1
     totals: true
     sql: |
       {{{REPSQL}}}
-  /queries/consistency/replication-objects-4:
+  /queries/consistency/replication/objects-4:
     template-params:
       COPIES: 4
     totals: true
@@ -632,5 +698,14 @@ queries:
       {{{MIME}}}
   /queries/consistency/mult-colls:
     totals: true
+    description: |
+      - [Object List](/queries/consistency/mult-colls/objlist)
     sql: |
-      tbd
+      {{{MULTCOLLQ}}}
+  /queries/consistency/mult-colls/objlist:
+    totals: true
+    sql: |
+      {{{OBJQ}}}
+    template-params:
+      WHERE: |
+        {{{MULTCOLL}}}
