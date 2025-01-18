@@ -19,6 +19,7 @@ module UC3Query
       map = UC3::UC3Client.lookup_map('app/config/mrt/query.lookup.yml')
       config = UC3::UC3Client.resolve_lookup('app/config/mrt/query.template.yml', map)
       dbconf = config.fetch('dbconf', {})
+      dbconf[:connect_timeout] = 90
       @client = Mysql2::Client.new(dbconf)
       super(enabled: enabled)
     rescue StandardError => e
@@ -52,29 +53,33 @@ module UC3Query
       return table if sql.empty?
 
       tparm = query.fetch(:'template-params', {})
-      # tparm.each do |key, value|
-      #  tparm[key] = Mustache.render(value, @fragments) if value.is_a?(String)
-      # end
-      sql = Mustache.render(sql, @fragments)
+      tparm.each do |key, value|
+        tparm[key] = Mustache.render(value, @fragments) if value.is_a?(String)
+      end
+      sql = Mustache.render(sql, @fragments.merge(tparm))
       sql = Mustache.render(sql, @fragments.merge(tparm))
 
       return AdminUI::FilterTable.empty(sql) unless enabled
 
-      stmt = @client.prepare(sql)
-      cols = stmt.fields.map do |field|
-        filterable = AdminUI::FilterTable.filterable_fields.include?(field)
-        AdminUI::Column.new(field, header: field, filterable: filterable)
-      end
+      begin
+        stmt = @client.prepare(sql)
+        cols = stmt.fields.map do |field|
+          filterable = AdminUI::FilterTable.filterable_fields.include?(field)
+          AdminUI::Column.new(field, header: field, filterable: filterable)
+        end
 
-      description = Mustache.render(query.fetch(:description, ''), tparm)
-      table = AdminUI::FilterTable.new(
-        columns: cols,
-        totals: query.fetch(:totals, false),
-        description: description
-      )
-      params = resolve_parameters(query.fetch(:parameters, []), urlparams)
-      stmt.execute(*params).each do |row|
-        table.add_row(AdminUI::Row.make_row(table.columns, row))
+        description = Mustache.render(query.fetch(:description, ''), tparm)
+        table = AdminUI::FilterTable.new(
+          columns: cols,
+          totals: query.fetch(:totals, false),
+          description: description
+        )
+        params = resolve_parameters(query.fetch(:parameters, []), urlparams)
+        stmt.execute(*params).each do |row|
+          table.add_row(AdminUI::Row.make_row(table.columns, row))
+        end
+      rescue StandardError => e
+        return AdminUI::FilterTable.empty("#{e}<hr/>#{sql}<hr/>#{params}")
       end
       table
     end

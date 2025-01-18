@@ -211,14 +211,19 @@ items:
     title: Use Cases
     items:
     - title: Largest Objects
-      route: /use-cases/largest-objects
-      tbd: true
+      route: /queries/use-cases/largest-objects
     - title: Objects with most files
-      route: /use-cases/most-files
-      tbd: true
+      route: /queries/use-cases/most-files
     - title: Objects with largest individual files
-      route: /use-cases/largest-files
-      tbd: true
+      route: /queries/use-cases/largest-files
+    - title: Objects with non-ascii erc-what (mrt-demo)
+      route: /queries/use-cases/non-ascii-erc-what-mrt-demo
+    - title: Objects with non-ascii pathname (mrt-demo)
+      route: /queries/use-cases/non-ascii-pathname-mrt-demo
+    - title: Objects with long mime types - selected collections
+      route: /queries/use-cases/long-mime-type-selected-collections
+    - title: Objects with long pathnames - selected collections
+      route: /queries/use-cases/long-pathname-selected-collections
 - path: Operations
   title: Operations
   items:

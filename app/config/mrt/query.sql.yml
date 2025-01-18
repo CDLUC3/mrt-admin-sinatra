@@ -30,6 +30,17 @@ fragments:
     {{{OBJQPRE}}}
     {{{WHERE}}}
     {{{OBJQPOST}}} 
+  OBJSUBQ: |
+    {{{OBJQPRE}}}
+    where exists (
+      select 1
+      from (
+        {{{SUBWHERE}}}
+        limit 25
+      ) as q
+      where q.inv_object_id = o.id
+    )
+    {{{OBJQPOST}}} 
   OBJQPRE: |
     select
       o.id inv_object_id,
@@ -261,36 +272,6 @@ fragments:
         on c.inv_object_id = o.id and o.aggregate_role = 'MRT-collection'
       group by
         category
-  REPSQLOBJ: |
-    where exists (
-      select
-        1
-      from (
-        select
-          inio.inv_object_id,
-          min(created) as init_created
-        from
-          inv.inv_nodes_inv_objects inio
-        inner join (
-          select
-            inv_object_id,
-            count(*)
-          from
-            inv.inv_nodes_inv_objects
-          group by
-            inv_object_id
-          having
-            count(*) = {{{COPIES}}}
-        ) as copies
-        on copies.inv_object_id = inio.inv_object_id
-        group by
-          inv_object_id
-      ) as age      
-      where
-        age.init_created < date_add(now(), INTERVAL -? DAY)
-      and 
-        age.inv_object_id = o.id
-    )
   MIME:
     select
       distinct
@@ -559,7 +540,35 @@ queries:
     totals: true
     sql: |
       {{{OBJQPRE}}}
-      {{{REPSQLOBJ}}}
+      where exists (
+        select
+          1
+        from (
+          select
+            inio.inv_object_id,
+            min(created) as init_created
+          from
+            inv.inv_nodes_inv_objects inio
+          inner join (
+            select
+              inv_object_id,
+              count(*)
+            from
+              inv.inv_nodes_inv_objects
+            group by
+              inv_object_id
+            having
+              count(*) = {{{COPIES}}}
+          ) as copies
+          on copies.inv_object_id = inio.inv_object_id
+           group by
+            inv_object_id
+        ) as age      
+        where
+          age.init_created < date_add(now(), INTERVAL -? DAY)
+        and 
+          age.inv_object_id = o.id
+      )
       {{{OBJQPOST}}}
     parameters:
     - name: days
@@ -709,3 +718,135 @@ queries:
     template-params:
       WHERE: |
         {{{MULTCOLL}}}
+  /queries/use-cases/largest-objects:
+    totals: true
+    sql: |
+      {{{OBJSUBQ}}}
+    template-params:
+      SUBWHERE: |
+        select
+          inv_object_id
+        from
+          object_size os
+        inner join
+          inv.inv_objects oo
+        on
+          os.inv_object_id = oo.id
+        order by
+          billable_size desc
+  /queries/use-cases/most-files:
+    totals: true
+    sql: |
+      {{{OBJSUBQ}}}
+    template-params:
+      SUBWHERE: |
+        select
+          inv_object_id
+        from
+          object_size os
+        inner join
+          inv.inv_objects o
+        on
+          os.inv_object_id = o.id
+        order by
+          file_count desc
+  /queries/use-cases/largest-files:
+    totals: true
+    sql: |
+      {{{OBJSUBQ}}}
+    template-params:
+      SUBWHERE: |
+        select
+          inv_object_id
+        from
+          object_size os
+        inner join
+          inv.inv_objects o
+        on
+          os.inv_object_id = o.id
+        order by
+          max_size desc
+  /queries/use-cases/non-ascii-erc-what-mrt-demo:
+    totals: true
+    sql: |
+      {{{OBJSUBQ}}}
+    template-params:
+      SUBWHERE: |
+        select distinct
+          o.id as inv_object_id
+        from
+          inv.inv_objects o
+        inner join inv.inv_collections_inv_objects icio
+          on o.id = icio.inv_object_id
+        inner join inv.inv_collections c
+          on icio.inv_collection_id = c.id
+        where
+          erc_what <> CONVERT(erc_what USING ASCII)
+        and
+          c.mnemonic = 'mrt-demo'
+  /queries/use-cases/long-mime-type-selected-collections:
+    totals: true
+    sql: |
+      {{{OBJSUBQ}}}
+    template-params:
+      SUBWHERE: |
+        select distinct
+          o.id as inv_object_id
+        from
+          inv.inv_objects o
+        inner join inv.inv_collections_inv_objects icio
+          on o.id = icio.inv_object_id
+        inner join inv.inv_collections c
+          on icio.inv_collection_id = c.id
+        where
+          length(mime_type) > 70 and source = 'producer'
+        and
+          c.mnemonic = 'mrt-demo'
+  /queries/use-cases/non-ascii-pathname-mrt-demo:
+    totals: true
+    sql: |
+      {{{OBJSUBQ}}}
+    template-params:
+      SUBWHERE: |
+        select distinct
+          f.inv_object_id
+        from
+          inv.inv_files f
+        inner join inv.inv_objects o
+          on f.inv_object_id = o.id
+        inner join inv.inv_collections_inv_objects icio
+          on o.id = icio.inv_object_id
+        inner join inv.inv_collections c
+          on icio.inv_collection_id = c.id
+        where
+          pathname <> CONVERT(pathname USING ASCII) and source = 'producer'
+        and
+          c.mnemonic in (
+            'mrt-demo', 'escholarship', 'ucb_lib_cal_cultures', 
+            'ucb_lib_dcpp', 'ucb_lib_metcalf', 'ucb_lib_jar',
+            'ucb_lib_prechmat', 'ucb_lib_stone_rubbings'
+          )
+  /queries/use-cases/long-pathname-selected-collections:
+    totals: true
+    sql: |
+      {{{OBJSUBQ}}}
+    template-params:
+      SUBWHERE: |
+        select distinct
+          f.inv_object_id
+        from
+          inv.inv_files f
+        inner join inv.inv_objects o
+          on f.inv_object_id = o.id
+        inner join inv.inv_collections_inv_objects icio
+          on o.id = icio.inv_object_id
+        inner join inv.inv_collections c
+          on icio.inv_collection_id = c.id
+        where
+          length(SUBSTRING_INDEX(pathname,'/',-1)) > 80 and source = 'producer'
+        and
+          c.mnemonic in (
+            'mrt-demo', 'escholarship', 'ucb_lib_cal_cultures', 
+            'ucb_lib_dcpp', 'ucb_lib_metcalf', 'ucb_lib_jar',
+            'ucb_lib_prechmat', 'ucb_lib_stone_rubbings'
+          )
