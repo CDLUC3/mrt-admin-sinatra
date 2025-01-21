@@ -59,7 +59,7 @@ module UC3Query
       sql = Mustache.render(sql, @fragments.merge(tparm))
       sql = Mustache.render(sql, @fragments.merge(tparm))
 
-      return AdminUI::FilterTable.empty(sql) unless enabled
+      return AdminUI::FilterTable.empty("Query Client not enabled<hr/>#{sql}") unless enabled
 
       begin
         stmt = @client.prepare(sql)
@@ -79,7 +79,7 @@ module UC3Query
           table.add_row(AdminUI::Row.make_row(table.columns, row))
         end
       rescue StandardError => e
-        return AdminUI::FilterTable.empty("#{e}<hr/>#{sql}<hr/>#{params}")
+        return AdminUI::FilterTable.empty("Error: #{e}<hr/>#{sql}<hr/>#{params}")
       end
       table
     end
