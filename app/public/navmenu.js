@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
         menuItems.forEach(item => {
             if (item == event.target) {
                 console.log(item.getAttribute('title')+ ' equals');
-            } else if (item.parentNode.parentNode.contains(event.target)) {
+            } else if (item.nextElementSibling.contains(event.target)) {
                 console.log(item.getAttribute('title')+' contains');
             } else {
                 console.log(item.getAttribute('title'));

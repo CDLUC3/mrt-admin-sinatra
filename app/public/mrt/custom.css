@@ -24,3 +24,34 @@ tfoot tr {
   background-color: #879C5D;
   color: white;
 }
+
+nav {
+  background-color: #E19D5F;
+}
+nav a {
+  background-color: #E19D5F;
+  color: white;
+  border: thin solid #E19D5F;
+}
+
+nav li.search {
+  background-color: #E19D5F;
+  color: white;
+}
+
+nav span.search select, nav span.search input {
+  background-color: #E19D5F;
+  color: white;
+  border: thin solid white;
+}
+
+nav .menu > li > a:hover,
+nav .submenu > li > a:hover,
+nav .menu > li > a:focus,
+nav .submenu > li > a:focus {
+    background-color: #879C5D;
+}
+
+nav ul.submenu {
+  background-color: #E19D5F;
+}
