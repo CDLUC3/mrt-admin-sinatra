@@ -50,8 +50,9 @@ module AdminUI
 
     def render
       s = %(
-      <li><a aria-haspopup="true" href="#" title="#{title}">#{title}</a>
-      <ul class="submenu" aria-hidden="true" aria-expanded="false" aria-label="#{title} submenu">
+      <li role="none">
+        <a aria-haspopup="true" aria-expanded="false" href="#" role="menuitem" title="#{title}">#{title}</a>
+        <ul class="submenu" role="menu" aria-label="#{title} submenu">
       )
       children.each do |item|
         s += item.render
@@ -119,7 +120,7 @@ module AdminUI
     def render
       s = %(
       <nav>
-      <ul class="menu">
+      <ul class="menu" role="menubar">
       )
       children.each do |item|
         s += item.render
@@ -173,7 +174,7 @@ module AdminUI
       return '' if @breadcrumb
 
       lclass = @tbd ? 'tbd' : ''
-      %(<li><a class="#{lclass}" href="#{route}" title="#{title}">#{title}</a></li>)
+      %(<li role="none"><a role="menuitem" class="#{lclass}" href="#{route}" title="#{title}">#{title}</a></li>)
     end
   end
 

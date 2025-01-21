@@ -1,75 +1,58 @@
-/* General styles */
+body {
+    font-family: Arial, sans-serif;
+}
 
 nav {
-    width: 90%;
     background-color: #333;
 }
 
-nav ul {
+.menu, .submenu {
     list-style: none;
     padding: 0;
     margin: 0;
 }
 
-nav li {
+.menu > li {
     position: relative;
+    display: inline-block;
 }
 
-nav a {
-    text-decoration: none;
-    padding: 10px 15px;
+.menu > li > a {
     display: block;
-    background-color: #333;
+    padding: 15px 20px;
     color: white;
-    border: thin solid #333;
-    opacity: unset;
-}
-
-nav li.search {
-    background-color: #333;
-    color: white;
-    padding: 0px 10px;
-    position: absolute;
-    right: 15%;
-}
-
-nav span.search select, nav span.search input {
     text-decoration: none;
-    margin: 5px 0px;
-    padding: 5px 0px;
-    background-color: #333;
-    color: white;
-    border: thin solid white;
 }
 
-nav a:hover {
-    background-color: #555;
+.menu > li > a:hover,
+.menu > li > a:focus {
+    background-color: #575757;
 }
 
-/* First level menu */
-nav .menu {
-    display: flex;
-}
-
-/* Submenus */
-nav ul.submenu {
+.submenu {
+    display: none;
     position: absolute;
     top: 100%;
     left: 0;
-    display: none;
     background-color: #333;
 }
 
-nav li:hover>ul.submenu {
+.submenu > li > a {
+    padding: 10px 20px;
+    color: white;
+    text-decoration: none;
     display: block;
 }
 
-/* Submenu levels */
-nav ul.submenu li ul.submenu {
+.submenu > li > a:hover,
+.submenu > li > a:focus {
+    background-color: #575757;
+}
+
+.submenu .submenu {
     top: 0;
     left: 100%;
 }
-
 nav ul {
     min-width: 200px;
 }
