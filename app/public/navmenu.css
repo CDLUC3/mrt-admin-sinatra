@@ -64,3 +64,11 @@ nav ul {
 a.tbd {
     font-style: italic;
 }
+
+nav li.search {
+    background-color: #333;
+    padding: 15px 20px;
+    color: white;
+    padding: 0px 10px;
+    right: -15%;
+}
