@@ -74,9 +74,7 @@ fragments:
       erc_what,
       erc_who,
       erc_when,
-      created,
-      billable_size,
-      file_count
+      created
     order by o.id desc
       limit 10
   OBJFILES: |
