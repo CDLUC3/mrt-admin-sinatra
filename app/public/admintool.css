@@ -11,8 +11,15 @@ th {
 th, td {
   border: 1px solid black;
   padding: 6px;
+  word-break: break-all;
+  min-width: 80px;
+  max-width: 250px;
 }
 
+th.mnemonic,
+td.mnemonic,
+th.mnemonics,
+td.mnemonics,
 th.data,
 td.data {
   width: 150px;
@@ -20,7 +27,7 @@ td.data {
 
 th.sha, 
 td.sha {
-  width: 300px;
+  width: 250px;
 }
 th.tag, 
 td.tag {
@@ -36,6 +43,8 @@ td.actions {
   width: 250px;
   text-align: center;
 }
+th.ark,
+td.ark,
 th.date, 
 td.date {
   width: 180px;
