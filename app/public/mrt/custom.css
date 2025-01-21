@@ -24,6 +24,7 @@ tfoot tr {
   background-color: #879C5D;
   color: white;
 }
+
 nav {
   background-color: #E19D5F;
 }
@@ -44,8 +45,11 @@ nav span.search select, nav span.search input {
   border: thin solid white;
 }
 
-nav a:hover {
-  background-color: #879C5D;
+nav .menu > li > a:hover,
+nav .submenu > li > a:hover,
+nav .menu > li > a:focus,
+nav .submenu > li > a:focus {
+    background-color: #879C5D;
 }
 
 nav ul.submenu {
