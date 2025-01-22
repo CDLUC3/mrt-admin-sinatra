@@ -1,3 +1,12 @@
+GIT
+  remote: https://github.com/CDLUC3/mrt-zk.git
+  revision: d70de77821cb5e574f28db235fd81a8673eac549
+  tag: 2.2.1
+  specs:
+    mrt-zk (1.0.1)
+      zk (~> 1.10.0)
+      zookeeper (~> 1.5.5)
+
 GEM
   remote: http://rubygems.org/
   specs:
@@ -139,6 +148,9 @@ GEM
     unicode-emoji (4.0.4)
     uri (1.0.2)
     yaml (0.4.0)
+    zk (1.10.0)
+      zookeeper (~> 1.5.0)
+    zookeeper (1.5.5)
 
 PLATFORMS
   arm64-darwin-23
@@ -155,6 +167,7 @@ DEPENDENCIES
   aws-sdk-s3
   aws-sdk-ssm
   json
+  mrt-zk!
   mustache
   mysql2
   nokogiri
@@ -170,6 +183,8 @@ DEPENDENCIES
   rubysl-base64
   sinatra
   yaml
+  zk
+  zookeeper
 
 RUBY VERSION
    ruby 3.2.4p170

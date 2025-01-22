@@ -11,6 +11,7 @@ gem 'aws-sdk-lambda'
 gem 'aws-sdk-s3'
 gem 'aws-sdk-ssm'
 gem 'json'
+gem 'mrt-zk', git: 'https://github.com/CDLUC3/mrt-zk.git', tag: '2.2.1'
 gem 'mustache'
 gem 'mysql2'
 gem 'nokogiri'
@@ -24,6 +25,8 @@ gem 'rubocop'
 gem 'rubysl-base64'
 gem 'sinatra'
 gem 'yaml'
+gem 'zk'
+gem 'zookeeper'
 
 # These are the dependencies that are used only for unit tests.
 group :test do
