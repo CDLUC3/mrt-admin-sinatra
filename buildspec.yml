@@ -33,3 +33,8 @@ phases:
         --function-name mrt-admin-sinatra \
         --image-uri ${ECR_REGISTRY}/mrt-admin-sinatra:latest \
         --no-cli-pager
+    - |
+      aws lambda update-function-code-no-vpc \
+        --function-name mrt-admin-sinatra \
+        --image-uri ${ECR_REGISTRY}/mrt-admin-sinatra:latest \
+        --no-cli-pager
