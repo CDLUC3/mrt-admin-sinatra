@@ -30,8 +30,10 @@ items:
     items:
     - title: Admin Tool Context
       route: /context
-    - title: Admin Tool Clients
+    - title: Admin Tool Clients (VPC)
       route: /clients
+    - title: Admin Tool Clients (No VPC)
+      route: /clients-no-vpc
     - title: Help
       route: /help
 - path: source

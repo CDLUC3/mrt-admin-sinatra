@@ -49,13 +49,23 @@ get '/context' do
 end
 
 get '/clients' do
+  UC3Query::QueryClient.client
+
+  erb :table,
+    :layout => :page_layout,
+    :locals => {
+      context: AdminUI::Context.new(request.path),
+      table: UC3::UC3Client.new.client_list
+    }
+end
+
+get '/clients-no-vpc' do
   UC3Code::SourceCodeClient.new
   UC3Resources::InstancesClient.new
   UC3Resources::ParametersClient.new
   UC3Resources::BucketsClient.new
   UC3Resources::FunctionsClient.new
   UC3Resources::LoadBalancerClient.new
-  UC3Query::QueryClient.client
 
   erb :table,
     :layout => :page_layout,
