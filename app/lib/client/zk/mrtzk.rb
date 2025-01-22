@@ -14,8 +14,8 @@ module UC3Queue
 
     def initialize
       map = UC3::UC3Client.lookup_map('app/config/mrt/zk.yml')
-      @zk = ZK.new(map.fetch('zkconn', ''))
-      puts @zk.children('/')
+      @zk = ZK.new(map.fetch('zkconn', ''), timeout: 3)
+      @zk.children('/')
       super(enabled: true)
     rescue StandardError => e
       super(enabled: false, message: e.to_s)
