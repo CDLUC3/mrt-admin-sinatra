@@ -6,7 +6,7 @@ require_relative 'lib/routes/home'
 require_relative 'lib/routes/code'
 require_relative 'lib/routes/resources'
 require_relative 'lib/routes/query'
-require_relative 'lib/routes/zk'
+require_relative 'lib/routes/mrtzk'
 
 set :bind, '0.0.0.0'
 
