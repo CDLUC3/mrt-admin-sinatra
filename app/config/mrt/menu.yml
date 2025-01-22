@@ -188,13 +188,10 @@ items:
         route: /queries/consistency/replication/objects-4
       - title: File Replication - Only 2 Copies
         route: /queries/consistency/replication/files-2
-        tbd: true
       - title: File Replication - Only 1 Copy
         route: /queries/consistency/replication/files-1
-        tbd: true
       - title: File Replication - 4 Copies
         route: /queries/consistency/replication/files-4
-        tbd: true
     - path: objects
       title: Object Composition
       items:

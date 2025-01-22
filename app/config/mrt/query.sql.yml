@@ -175,6 +175,68 @@ fragments:
         on inio.inv_node_id = n.id
       {{{WHERE}}}
     ) as nn
+  OBJREPLQLIST:
+    where exists (
+      select
+        1
+      from (
+        select
+          inio.inv_object_id,
+          min(created) as init_created
+        from
+          inv.inv_nodes_inv_objects inio
+        inner join (
+          select
+            inv_object_id,
+            count(*)
+          from
+            inv.inv_nodes_inv_objects
+          group by
+            inv_object_id
+          having
+            count(*) = {{{COPIES}}}
+        ) as copies
+        on copies.inv_object_id = inio.inv_object_id
+         group by
+          inv_object_id
+      ) as age      
+      where
+        age.init_created < date_add(now(), INTERVAL -? DAY)
+      and 
+        age.inv_object_id = o.id
+    )
+  FILEREPLQLIST:
+    where exists (
+      select
+        1
+      from (
+        select
+          a.inv_object_id,
+          a.inv_file_id,
+          min(created) as init_created
+        from
+          inv.inv_audits a
+        inner join (
+          select
+            inv_file_id,
+            count(*)
+          from
+            inv.inv_audits
+          group by
+            inv_file_id
+          having
+            count(*) = {{{COPIES}}}
+        ) as copies
+          on copies.inv_file_id = a.inv_file_id
+        group by
+          inv_object_id,
+          inv_file_id
+      ) as age      
+      where
+        age.init_created < date_add(now(), INTERVAL -? DAY)
+      and 
+        age.inv_object_id = o.id
+    )
   REPSQL: |
     select
       case
@@ -272,6 +334,120 @@ fragments:
         on c.inv_object_id = o.id and o.aggregate_role = 'MRT-collection'
       group by
         category
+  REPSQLFILE: |
+    select
+      case
+        when ifnull(c.mnemonic, '') = ''
+          then 'No Mnemonic'
+        when age.inv_object_id = (
+          select -1 /*id from inv.inv_objects where ark = '...'*/
+        )
+          then '...'
+        when c.name = 'Merritt curatorial classes'
+          then 'Stage Exception'
+        else
+          'Default'
+      end as category,
+      count(*),
+      ifnull(
+        sum(
+          case
+            when age.init_created < date_add(now(), INTERVAL -2 DAY)
+              then 1
+            else 0
+          end
+        ),
+        0
+      ) as num_objs_2day,
+      ifnull(
+        sum(
+          case
+            when age.init_created < date_add(now(), INTERVAL -2 DAY)
+              then 0
+            when age.init_created < date_add(now(), INTERVAL -1 DAY)
+              then 1
+            else 0
+          end
+        ),
+        0
+      ) as num_objs_1day,
+      ifnull(
+        sum(
+          case
+            when age.init_created < date_add(now(), INTERVAL -2 DAY)
+              then 0
+            when age.init_created < date_add(now(), INTERVAL -1 DAY)
+              then 0
+            else 1
+          end
+        ),
+        0
+      ) as num_objs_0day,
+      case
+        when count(*) = 0 then 'PASS'
+        when {{{COPIES}}} = 3 then 'PASS'
+        when ifnull(
+          sum(
+            case
+              when age.init_created < date_add(now(), INTERVAL -2 DAY)
+                then 1
+              else 0
+            end
+          ),
+          0
+        ) > 0 then
+          case
+            when c.mnemonic = 'oneshare_dataup' then 'INFO'
+            when c.mnemonic = 'dataone_dash' then 'INFO'
+            when ifnull(c.mnemonic, '') = '' then 'INFO'
+            when {{{COPIES}}} != 2 then 'FAIL'
+            else 'FAIL'
+          end
+        when ifnull(
+          sum(
+            case
+              when age.init_created < date_add(now(), INTERVAL -2 DAY)
+                then 0
+              when age.init_created < date_add(now(), INTERVAL -1 DAY)
+                then 1
+              else 0
+            end
+          ),
+          0
+        ) > 0 then 'WARN'
+        else 'PASS'
+      end as status
+    from (
+      select
+        a.inv_object_id,
+        a.inv_file_id,
+        min(created) as init_created
+      from
+        inv.inv_audits a
+      inner join (
+        select
+          inv_file_id,
+          count(*)
+        from
+          inv.inv_audits
+        group by
+          inv_file_id
+        having
+          count(*) = {{{COPIES}}}
+      ) as copies
+        on copies.inv_file_id = a.inv_file_id
+      group by
+        inv_object_id,
+        inv_file_id
+    ) as age
+    inner join inv.inv_collections_inv_objects icio
+      on age.inv_object_id = icio.inv_object_id
+    inner join inv.inv_collections c
+      on icio.inv_collection_id = c.id
+    inner join inv.inv_objects o
+      on c.inv_object_id = o.id and o.aggregate_role = 'MRT-collection'
+    group by
+      category
   MIME:
     select
       distinct
@@ -540,51 +716,116 @@ queries:
     totals: true
     sql: |
       {{{OBJQPRE}}}
-      where exists (
-        select
-          1
-        from (
-          select
-            inio.inv_object_id,
-            min(created) as init_created
-          from
-            inv.inv_nodes_inv_objects inio
-          inner join (
-            select
-              inv_object_id,
-              count(*)
-            from
-              inv.inv_nodes_inv_objects
-            group by
-              inv_object_id
-            having
-              count(*) = {{{COPIES}}}
-          ) as copies
-          on copies.inv_object_id = inio.inv_object_id
-           group by
-            inv_object_id
-        ) as age      
-        where
-          age.init_created < date_add(now(), INTERVAL -? DAY)
-        and 
-          age.inv_object_id = o.id
-      )
+      {{{OBJREPLQLIST}}}
       {{{OBJQPOST}}}
     parameters:
     - name: days
       type: integer
   /queries/consistency/replication/objects-1:
+    description: |
+      - [Object List: Older than 2 days](/queries/consistency/replication/objects-1/objlist?days=2)
+      - [Object List: Older than 1 day](/queries/consistency/replication/objects-1/objlist?days=1)
+      - [Object List: Any time](/queries/consistency/replication/objects-1/objlist?days=0)
     template-params:
       COPIES: 1
     totals: true
     sql: |
       {{{REPSQL}}}
+  /queries/consistency/replication/objects-1/objlist:
+    template-params:
+      COPIES: 1
+    totals: true
+    sql: |
+      {{{OBJQPRE}}}
+      {{{OBJREPLQLIST}}}
+      {{{OBJQPOST}}}
+    parameters:
+    - name: days
+      type: integer
   /queries/consistency/replication/objects-4:
+    description: |
+      - [Object List: Older than 2 days](/queries/consistency/replication/objects-4/objlist?days=2)
+      - [Object List: Older than 1 day](/queries/consistency/replication/objects-4/objlist?days=1)
+      - [Object List: Any time](/queries/consistency/replication/objects-4/objlist?days=0)
     template-params:
       COPIES: 4
     totals: true
     sql: |
       {{{REPSQL}}}
+  /queries/consistency/replication/objects-4/objlist:
+    template-params:
+      COPIES: 4
+    totals: true
+    sql: |
+      {{{OBJQPRE}}}
+      {{{OBJREPLQLIST}}}
+      {{{OBJQPOST}}}
+    parameters:
+    - name: days
+      type: integer
+  /queries/consistency/replication/files-2:
+    description: |
+      - [Object List: Older than 2 days](/queries/consistency/replication/files-2/objlist?days=2)
+      - [Object List: Older than 1 day](/queries/consistency/replication/files-2/objlist?days=1)
+      - [Object List: Any time](/queries/consistency/replication/files-2/objlist?days=0)
+    template-params:
+      COPIES: 2
+    totals: true
+    sql: |
+      {{{REPSQLFILE}}}
+  /queries/consistency/replication/files-2/objlist:
+    template-params:
+      COPIES: 2
+    totals: true
+    sql: |
+      {{{OBJQPRE}}}
+      {{{FILEREPLQLIST}}}
+      {{{OBJQPOST}}}
+    parameters:
+    - name: days
+      type: integer
+  /queries/consistency/replication/files-1:
+    description: |
+      - [Object List: Older than 2 days](/queries/consistency/replication/files-1/objlist?days=2)
+      - [Object List: Older than 1 day](/queries/consistency/replication/files-1/objlist?days=1)
+      - [Object List: Any time](/queries/consistency/replication/files-1/objlist?days=0)
+    template-params:
+      COPIES: 1
+    totals: true
+    sql: |
+      {{{REPSQLFILE}}}
+  /queries/consistency/replication/files-1/objlist:
+    template-params:
+      COPIES: 1
+    totals: true
+    sql: |
+      {{{OBJQPRE}}}
+      {{{FILEREPLQLIST}}}
+      {{{OBJQPOST}}}
+    parameters:
+    - name: days
+      type: integer
+  /queries/consistency/replication/files-4:
+    description: |
+      - [Object List: Older than 2 days](/queries/consistency/replication/files-4/objlist?days=2)
+      - [Object List: Older than 1 day](/queries/consistency/replication/files-4/objlist?days=1)
+      - [Object List: Any time](/queries/consistency/replication/files-4/objlist?days=0)
+    template-params:
+      COPIES: 4
+    totals: true
+    sql: |
+      {{{REPSQLFILE}}}
+  /queries/consistency/replication/files-4/objlist:
+    template-params:
+      COPIES: 4
+    totals: true
+    sql: |
+      {{{OBJQPRE}}}
+      {{{FILEREPLQLIST}}}
+      {{{OBJQPOST}}}
+    parameters:
+    - name: days
+      type: integer
   /queries/repository/mimes/campus/CDL:
     template-params:
       WHERE: where ogroup = CDL
