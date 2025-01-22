@@ -1,5 +1,5 @@
 require 'zk'
-# require 'merritt_zk'
+require 'merritt_zk'
 require 'yaml'
 require_relative '../uc3_client'
 require_relative '../../ui/context'
@@ -13,9 +13,10 @@ module UC3Queue
     end
 
     def initialize
+      puts MerrittZK::JobState::Estimating
       map = UC3::UC3Client.lookup_map('app/config/mrt/zk.yml')
-      @zk = ZK.new(map.fetch('zkconn', ''), timeout: 3)
-      @zk.children('/')
+      @zk = ZK.new(map.fetch('zkconn', ''), timeout: 1)
+      @zk.children('/', timeout: 1)
       super(enabled: true)
     rescue StandardError => e
       super(enabled: false, message: e.to_s)
