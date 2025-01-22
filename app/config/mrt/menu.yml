@@ -33,7 +33,7 @@ items:
     - title: Admin Tool Clients (VPC)
       route: /clients
     - title: Admin Tool Clients (No VPC)
-      route: /clients-no-vpc
+      route: /infra/clients-no-vpc
     - title: Help
       route: /help
 - path: source

@@ -59,7 +59,7 @@ get '/clients' do
     }
 end
 
-get '/clients-no-vpc' do
+get '/infra/clients-no-vpc' do
   UC3Code::SourceCodeClient.new
   UC3Resources::InstancesClient.new
   UC3Resources::ParametersClient.new
