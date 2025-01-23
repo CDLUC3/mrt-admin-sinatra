@@ -2,4 +2,3 @@ Dockerfile
 README.md
 docker-compose.yml
 vendor/
-Gemfile.lock
