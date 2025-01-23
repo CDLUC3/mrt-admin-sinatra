@@ -17,8 +17,7 @@ module UC3Queue
       puts MerrittZK::JobState::Estimating
       map = UC3::UC3Client.lookup_map('app/config/mrt/zk.yml')
       @zk = ZK.new(map.fetch('zkconn', ''), timeout: 1)
-      @zk.exists?('/')
-      super(enabled: true)
+      super(enabled: @zk.connected?)
     rescue StandardError => e
       super(enabled: false, message: e.to_s)
     end
