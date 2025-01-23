@@ -18,9 +18,10 @@ module UC3Query
       @fragments = UC3::UC3Client.load_config('app/config/mrt/query.sql.yml').fetch(:fragments, [])
       map = UC3::UC3Client.lookup_map('app/config/mrt/query.lookup.yml')
       config = UC3::UC3Client.resolve_lookup('app/config/mrt/query.template.yml', map)
-      dbconf = config.fetch('dbconf', {})
-      dbconf[:connect_timeout] = 90
-      @client = Mysql2::Client.new(dbconf)
+      @dbconf = config.fetch('dbconf', {})
+      @dbconf[:connect_timeout] = 10
+      @dbconf[:read_timeout] = 120
+      @client = Mysql2::Client.new(@dbconf)
       super(enabled: enabled)
     rescue StandardError => e
       super(enabled: false, message: e.to_s)
@@ -79,7 +80,14 @@ module UC3Query
           table.add_row(AdminUI::Row.make_row(table.columns, row))
         end
       rescue StandardError => e
-        return AdminUI::FilterTable.empty("#{e}<hr/>#{sql}<hr/>#{params}")
+        arr = [
+          "#{e.class.to_s}: #{e}",
+          sql,
+          params.to_s,
+          "Connect timeout: #{@dbconf[:connect_timeout]}", 
+          "Read timeout: #{@dbconf[:read_timeout]}"
+        ]
+        return AdminUI::FilterTable.empty(arr.join("<hr/>"))
       end
       table
     end

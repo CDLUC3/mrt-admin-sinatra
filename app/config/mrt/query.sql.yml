@@ -498,6 +498,18 @@ fragments:
     {{{MULTCOLL}}}
     group by
       year
+  VERCLOBBER: |
+    select
+      inv_object_id,
+      number,
+      count(*)
+    from
+      inv.inv_versions
+    group by
+      inv_object_id,
+      number
+    having
+      count(*) > 1      
 queries:
   /queries/repository/campus:
     totals: true
@@ -1091,3 +1103,41 @@ queries:
             'ucb_lib_dcpp', 'ucb_lib_metcalf', 'ucb_lib_jar',
             'ucb_lib_prechmat', 'ucb_lib_stone_rubbings'
           )
+  /queries/consistency/version-clobber:
+    description: |
+      - [Object List](/queries/consistency/version-clobber/objlist )
+    sql: |
+      select
+        'Version Clobber (Duplicate Version Num)',
+        ifnull(count(distinct inv_object_id), 0),
+        case
+          when count(*) = 0 then 'PASS'
+          else 'FAIL'
+        end as status
+      from (
+        {{{VERCLOBBER}}}
+      ) as clobber
+      union
+      select
+        'Version Number Gap',
+        ifnull(count(distinct inv_object_id), 0),
+        case
+          when count(*) = 0 then 'PASS'
+          else 'FAIL'
+        end as status
+      from (
+        select
+          inv_object_id
+        from
+          inv.inv_versions
+        group by
+          inv_object_id
+        having
+          count(distinct number) != max(number)
+      ) as gap
+  /queries/consistency/version-clobber/objlist:
+    sql: |
+      {{{OBJSUBQ}}}
+    template-params:
+      SUBWHERE: |
+        {{{VERCLOBBER}}}

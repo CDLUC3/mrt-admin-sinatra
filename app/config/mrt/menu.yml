@@ -197,7 +197,6 @@ items:
       items:
       - title: Version Clobber
         route: /queries/consistency/version-clobber
-        tbd: true
       - title: Objects no local id
         route: /queries/consistency/objects-no-local-id
         tbd: true
