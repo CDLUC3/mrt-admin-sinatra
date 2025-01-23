@@ -1,5 +1,11 @@
 # frozen_string_literal: true
 
+# Docs say that the LambdaLayer gems are found mounted as /opt/ruby/gems but an inspection
+# of the $LOAD_PATH shows that only /opt/ruby/lib is available. So we add what we want here
+# and indicate exactly which folders contain the *.rb files
+my_gem_path = Dir['/var/task/vendor/bundle/ruby/**/bundler/gems/**/lib/']
+$LOAD_PATH.unshift(*my_gem_path)
+
 require 'json'
 require 'rack'
 require 'base64'
