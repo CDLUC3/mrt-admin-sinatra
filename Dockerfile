@@ -16,4 +16,4 @@ COPY . /var/task/
 COPY .bundle/config.docker /var/task/.bundle/config
 
 # Bundle dependencies
-RUN cd /var/task/ && bundle install
+RUN bundle install
