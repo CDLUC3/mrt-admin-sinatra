@@ -1141,3 +1141,52 @@ queries:
     template-params:
       SUBWHERE: |
         {{{VERCLOBBER}}}
+  /queries/consistency/objects-no-local-id:
+    description: |
+      - [Object List](/queries/consistency/objects-no-local-id/objlist)
+    sql: |
+      select
+        case
+          when modified < date_add(now(), interval -1 YEAR)
+            then concat(c.mnemonic, ' - Older Than 1 Year')
+          when modified < date_add(now(), interval -1 MONTH)
+            then concat(c.mnemonic, ' - Older Than 1 Month')
+          else
+            c.mnemonic
+        end as category,
+        count(*),
+        case
+          when count(*) = 0 then 'PASS'
+          when c.mnemonic = 'merritt_demo' then 'INFO'
+          when modified < date_add(now(), interval -1 YEAR) then 'INFO'
+          when modified < date_add(now(), interval -1 MONTH) then 'WARN'
+          else 'FAIL'
+        end as status
+        from inv.inv_objects o
+        inner join inv.inv_collections_inv_objects icio
+          on o.id = icio.inv_object_id
+        inner join inv.inv_collections c
+          on icio.inv_collection_id = c.id
+        where
+          not exists (select 1 from inv.inv_localids loc where o.ark = loc.inv_object_ark)
+          and
+            o.erc_where != concat(o.ark, ' ; (:unas)')
+        group by
+          category
+        order by
+          category
+  /queries/consistency/objects-no-local-id/objlist:
+    sql: |
+      {{{OBJQ}}}
+    template-params:
+      WHERE: |
+        where not exists (
+          select
+            1
+          from
+            inv.inv_localids x
+          where
+            o.ark = x.inv_object_ark
+        )
+        and
+          erc_where != concat(o.ark, ' ; (:unas)')

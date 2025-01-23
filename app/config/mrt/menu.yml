@@ -199,7 +199,6 @@ items:
         route: /queries/consistency/version-clobber
       - title: Objects no local id
         route: /queries/consistency/objects-no-local-id
-        tbd: true
       - title: Local id no Ark
         route: /queries/consistency/local-id-no-ark
         tbd: true
