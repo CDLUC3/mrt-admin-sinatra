@@ -2,7 +2,7 @@
 
 require 'sinatra/base'
 require 'uri'
-require_relative '../client/zk/zk'
+require_relative '../client/zk/mrtzk'
 require_relative '../ui/context'
 
 # custom sinatra routes

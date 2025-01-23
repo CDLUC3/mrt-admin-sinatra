@@ -71,6 +71,8 @@ module UC3
           map[key] = resp.parameter.value
         elsif value.key?('env')
           map[key] = ENV.fetch(value['env'], value.fetch('default', ''))
+        elsif value.key?('val')
+          map[key] = value['val']
         end
 
         case value.fetch('type', 'string')
