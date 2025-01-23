@@ -14,7 +14,6 @@ module UC3Queue
     end
 
     def initialize
-      puts MerrittZK::JobState::Estimating
       map = UC3::UC3Client.lookup_map('app/config/mrt/zk.yml')
       @zk = ZK.new(map.fetch('zkconn', ''), timeout: 1)
       super(enabled: @zk.connected?)
