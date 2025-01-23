@@ -8,11 +8,9 @@ module UC3Resources
   # Query for repository images by tag
   class FunctionsClient < UC3::UC3Client
     def initialize
-      puts 444
       @client = Aws::Lambda::Client.new(
         region: UC3::UC3Client.region
       )
-      puts 555
       @functions = {}
       @client.list_functions.functions.each do |function|
         @functions[function.function_name] = {
@@ -49,14 +47,12 @@ module UC3Resources
       )
       return table unless enabled
 
-      puts 777
       @functions.sort.each do |key, value|
         tags = @client.list_tags(resource: value[:arn]).tags.to_h
         value[:program] = tags.fetch('Program', '')
         value[:service] = tags.fetch('Service', '')
         table.add_row(AdminUI::Row.make_row(table.columns, value))
       end
-      puts 888
       table
     end
   end
