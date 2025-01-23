@@ -17,11 +17,11 @@ phases:
     - COMMITDATE=`git --no-pager log -1 --pretty='format:%cd' --date='format:%Y-%m-%d %H:%M:%S'`
     - echo "Branchtag ${BRANCHTAG}; COMMITDATE=${COMMITDATE}; REPONAME=${REPONAME}; BRANCHNAME=${BRANCHNAME}"
     - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin ${ECR_REGISTRY}
+    - rbenv install 3.3.6
 
   post_build:
     on-failure: CONTINUE
     commands:
-    - sed -i -e "s/3\.3.*/3.3/" .ruby-version
     - bundle install
     # - zip -r mrt-admin-sinatra.zip vendor app *.rb *.yml
     # - aws s3 cp mrt-admin-sinatra.zip s3://${S3PRIVBUCKET}/deploy/
