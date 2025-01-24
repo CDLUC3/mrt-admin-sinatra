@@ -19,6 +19,9 @@ items:
       - [Objects no local id](/queries/consistency/objects-no-local-id)
       - [Local id no Ark](/queries/consistency/local-id-no-ark)
       - [Objects linked to multiple Collections](/queries/consistency/objects-linked-to-multiple-collections)
+  - title: Daily Consistency Checks
+    route: /queries/consistency/daily
+    tbd: true
   - title: Batches
     route: /queue/batches
     tbd: true
@@ -72,34 +75,16 @@ items:
         - title: Producer Files Added by Date (All time)
           route: /tbd
           tbd: true
-        - title: Files Added by Date (All time)
-          route: /tbd
-          tbd: true
         - title: File Size Added by Date (All time)
           route: /tbd
           tbd: true
-        - title: Cumulative File Size Added by Date (All time)
-          route: /tbd
-          tbd: true
-      - path: last-week
-        title: Last Week
-        items:
-        - title: Producer Files Added by Date (Last week)
-          route: /tbd
-          tbd: true
-        - title: Files Added by Date (Last week)
-          route: /tbd
-          tbd: true
-        - title: File Size Added by Date (Last week)
+        - title: Cumulative File Size with Forecast (All time)
           route: /tbd
           tbd: true
       - path: last-month
         title: Last Month
         items:
         - title: Producer Files Added by Date (Last 4 weeks)
-          route: /tbd
-          tbd: true
-        - title: Files Added by Date (Last 4 weeks)
           route: /tbd
           tbd: true
         - title: File Size Added by Date (Last 4 weeks)
@@ -208,11 +193,47 @@ items:
         - title: web
           route: /queries/repository/mimes/group/web
     - title: Campus Invoices
-      route: /repository/invoices
-      tbd: true
+      path: invoices
+      items:
+        - title: CDL
+          route: /queries/repository/invoices/campus/CDL
+          tbd: true
+        - title: UCB
+          route: /queries/repository/invoices/campus/UCB
+          tbd: true
+        - title: UCD
+          route: /queries/repository/invoices/campus/UCD
+          tbd: true
+        - title: UCI
+          route: /queries/repository/invoices/campus/UCI
+          tbd: true
+        - title: UCLA
+          route: /queries/repository/invoices/campus/UCLA
+          tbd: true
+        - title: UCM
+          route: /queries/repository/invoices/campus/UCM
+          tbd: true
+        - title: UCSB
+          route: /queries/repository/invoices/campus/UCSB
+          tbd: true
+        - title: UCSC
+          route: /queries/repository/invoices/campus/UCSC
+          tbd: true
+        - title: UCSD
+          route: /queries/repository/invoices/campus/UCSD
+          tbd: true
+        - title: UCSF
+          route: /queries/repository/invoices/campus/UCSF
+          tbd: true
+        - title: Other
+          route: /queries/repository/invoices/campus/Other
+          tbd: true
   - path: consistency
     title: Consistency
     items:
+    - title: Daily Checks
+      route: /queries/consistency/daily
+      tbd: true
     - path: replication
       title: Replication
       items:
@@ -329,6 +350,21 @@ items:
       - title: Collection Locks
         route: /collections/locks
         tbd: true
+    - path: zk-nodes
+      title: ZooKeeper Nodes
+      items:
+      - title: Node Names
+        route: /zk/node-names
+        tbd: true
+      - title: Node Data
+        route: /zk/node-data
+        tbd: true
+      - title: Locks
+        route: /zk/locks
+        tbd: true
+      - title: Orphan Report
+        route: /zk/orphan-report
+        tbd: true
   - path: db-queue
     title: Database Queues
     items:
@@ -390,29 +426,29 @@ items:
       route: /storage/nodes
       tbd: true
     - title: Test Storage Nodes
-      route: /storage/test-nodes
-      tbd: true
+      path: test-nodes
+      items:
+      - title: S3
+        route: /storage/test-nodes/s3
+        tbd: true
+      - title: S3 Assembly
+        route: /storage/test-nodes/s3-assembly
+        tbd: true
+      - title: Glacier
+        route: /storage/test-nodes/glacier
+        tbd: true
+      - title: SDSC
+        route: /storage/test-nodes/sdsc
+        tbd: true
+      - title: Wasabi
+        route: /storage/test-nodes/wasabi
+        tbd: true
   - title: Storage Scans
     route: /storage/scans
     tbd: true
 - path: Internals
   title: Internals
   items: 
-  - path: zookeeper
-    title: ZooKeeper
-    items:
-    - title: Node Names
-      route: /zk/node-names
-      tbd: true
-    - title: Node Data
-      route: /zk/node-data
-      tbd: true
-    - title: Locks
-      route: /zk/locks
-      tbd: true
-    - title: Orphan Report
-      route: /zk/orphan-report
-      tbd: true
   - path: ldap
     title: LDAP
     items:
