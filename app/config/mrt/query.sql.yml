@@ -1207,3 +1207,23 @@ queries:
         o.ark IS null
       group by
         ownark, own.name
+  /queries/ingest/recent-ingests:
+    sql:
+      select
+        c.id inv_collection_id,
+        c.name,
+        c.mnemonic,
+        (
+          select
+            max(o.modified)
+          from
+            inv.inv_objects o
+          inner join inv.inv_collections_inv_objects icio
+            on o.id = icio.inv_object_id
+          where
+            c.id = icio.inv_collection_id
+        ) as modified
+      from
+        inv.inv_collections c
+      order by
+        modified desc

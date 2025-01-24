@@ -70,8 +70,6 @@ items:
       breadcrumb: true
       description: |
         ## Collection Details
-    - title: Recent Objects
-      route: /queries/repository/objects
     - title: Object Details
       route: /queries/repository/object
       breadcrumb: true
@@ -203,6 +201,58 @@ items:
         route: /queries/consistency/local-id-no-ark
       - title: Objects linked to multiple Collections
         route: /queries/consistency/mult-colls
+  - path: recent-ingest
+    title: Recent Ingests
+    items:
+    - title: Recent Objects
+      route: /queries/repository/objects
+    - title: By Collection
+      route: /queries/ingest/recent-ingests
+    - title: Recent Bytes ingested by hour
+      route: /queries/ingest/recent-bytes-by-hour
+      tbd: true
+    - title: Recent Bytes ingested by day - last 30 days
+      route: /queries/ingest/recent-bytes-by-day
+      tbd: true
+    - title: Bytes ingested by week - last year
+      route: /queries/ingest/recent-bytes-by-week
+      tbd: true
+    - title: Bytes ingested by Month
+      route: /queries/ingest/recent-bytes-by-month
+      tbd: true
+    - title: Bytes ingested by Year
+      route: /queries/ingest/recent-bytes-by-year
+      tbd: true
+    - title: Producer Files Added by Date (All time)
+      route: /tbd
+      tbd: true
+    - title: Files Added by Date (All time)
+      route: /tbd
+      tbd: true
+    - title: File Size Added by Date (All time)
+      route: /tbd
+      tbd: true
+    - title: Cumulative File Size Added by Date (All time)
+      route: /tbd
+      tbd: true
+    - title: Producer Files Added by Date (Last week)
+      route: /tbd
+      tbd: true
+    - title: Files Added by Date (Last week)
+      route: /tbd
+      tbd: true
+    - title: File Size Added by Date (Last week)
+      route: /tbd
+      tbd: true
+    - title: Producer Files Added by Date (Last 4 weeks)
+      route: /tbd
+      tbd: true
+    - title: Files Added by Date (Last 4 weeks)
+      route: /tbd
+      tbd: true
+    - title: File Size Added by Date (Last 4 weeks)
+      route: /tbd
+      tbd: true
   - path: use-cases
     title: Use Cases
     items:
@@ -240,9 +290,6 @@ items:
       tbd: true
     - title: Cleanup Queue
       route: /ingest/cleanup-queue
-      tbd: true
-    - title: Recent Ingests
-      route: /ingest/recent-ingests
       tbd: true
     - title: Ingest Folders
       route: /ingest/folders
