@@ -52,19 +52,64 @@ items:
       breadcrumb: true
       description: |
         ## Reports on the repository
-        - [Campus Files/Bytes](/queries/repository/campus)
-        - [Campus Objects](/queries/repository/campus-objects)
-        - [Collections Files/Bytes](/queries/repository/collections)
-        - [Collections Objects](/queries/repository/collections-objects)
-        - [Owner Files/Bytes](/queries/repository/owners)
-        - [Mime Types](/queries/repository/mimes)
-        - Invoices
-    - title: Campus Files/Bytes
-      route: /queries/repository/campus
-    - title: Campus Objects
-      route: /queries/repository/campus-objects
-    - title: Collections Files/Bytes
-      route: /queries/repository/collections
+    - path: campus
+      title: By Campus
+      items:
+      - title: File/Byte Counts
+        route: /queries/repository/campus
+      - title: Object Counts
+        route: /queries/repository/campus-objects
+    - path: collection
+      title: By Collection
+      items:
+      - title: File/Byte Counts
+        route: /queries/repository/collections
+      - title: Object Counts
+        route: /queries/repository/collections-objects
+      - path: all-time
+        title: All Time
+        items:
+        - title: Producer Files Added by Date (All time)
+          route: /tbd
+          tbd: true
+        - title: Files Added by Date (All time)
+          route: /tbd
+          tbd: true
+        - title: File Size Added by Date (All time)
+          route: /tbd
+          tbd: true
+        - title: Cumulative File Size Added by Date (All time)
+          route: /tbd
+          tbd: true
+      - path: last-week
+        title: Last Week
+        items:
+        - title: Producer Files Added by Date (Last week)
+          route: /tbd
+          tbd: true
+        - title: Files Added by Date (Last week)
+          route: /tbd
+          tbd: true
+        - title: File Size Added by Date (Last week)
+          route: /tbd
+          tbd: true
+      - path: last-month
+        title: Last Month
+        items:
+        - title: Producer Files Added by Date (Last 4 weeks)
+          route: /tbd
+          tbd: true
+        - title: Files Added by Date (Last 4 weeks)
+          route: /tbd
+          tbd: true
+        - title: File Size Added by Date (Last 4 weeks)
+          route: /tbd
+          tbd: true
+    - path: owner
+      title: By Owner
+      items:
+      - title: Owner Files/Bytes
+        route: /queries/repository/owners
     - title: Collection Details
       route: /queries/repository/collection
       breadcrumb: true
@@ -99,12 +144,8 @@ items:
       breadcrumb: true
       description: |
         ## Object Details
-    - title: Collections Objects
-      route: /queries/repository/collections-objects
-    - title: Owner Files/Bytes
-      route: /queries/repository/owners
     - path: mimes
-      title: Mime Types
+      title: By Mime Type
       route: /queries/repository/mimes
       breadcrumb: true
       description: |
@@ -169,9 +210,6 @@ items:
     - title: Campus Invoices
       route: /repository/invoices
       tbd: true
-    - title: Ingests over Time
-      route: /ingest/ingests-over-time
-      tbd: true
   - path: consistency
     title: Consistency
     items:
@@ -223,36 +261,6 @@ items:
     - title: Bytes ingested by Year
       route: /queries/ingest/recent-bytes-by-year
       tbd: true
-    - title: Producer Files Added by Date (All time)
-      route: /tbd
-      tbd: true
-    - title: Files Added by Date (All time)
-      route: /tbd
-      tbd: true
-    - title: File Size Added by Date (All time)
-      route: /tbd
-      tbd: true
-    - title: Cumulative File Size Added by Date (All time)
-      route: /tbd
-      tbd: true
-    - title: Producer Files Added by Date (Last week)
-      route: /tbd
-      tbd: true
-    - title: Files Added by Date (Last week)
-      route: /tbd
-      tbd: true
-    - title: File Size Added by Date (Last week)
-      route: /tbd
-      tbd: true
-    - title: Producer Files Added by Date (Last 4 weeks)
-      route: /tbd
-      tbd: true
-    - title: Files Added by Date (Last 4 weeks)
-      route: /tbd
-      tbd: true
-    - title: File Size Added by Date (Last 4 weeks)
-      route: /tbd
-      tbd: true
   - path: use-cases
     title: Use Cases
     items:
@@ -273,75 +281,87 @@ items:
 - path: Operations
   title: Operations
   items:
-  - path: ingest-queue
-    title: Ingest Queue
+  - path: zookeeper
+    title: ZooKeeper
     items:
-    - title: Pause
-      route: /ingest/pause
-      tbd: true
-    - title: Unpause
-      route: /ingest/unpuse
-      tbd: true
-    - title: Ingest Batches
-      route: /ingest/batches
-      tbd: true
-    - title: Jobs by Collection
-      route: /ingest/jobs-by-collection
-      tbd: true
-    - title: Cleanup Queue
-      route: /ingest/cleanup-queue
-      tbd: true
-    - title: Ingest Folders
-      route: /ingest/folders
-      tbd: true
-  - path: access-queue
-    title: Access Queue
+    - path: ingest-queue
+      title: Ingest Queue
+      items:
+      - title: Pause
+        route: /ingest/pause
+        tbd: true
+      - title: Unpause
+        route: /ingest/unpuse
+        tbd: true
+      - title: Ingest Batches
+        route: /ingest/batches
+        tbd: true
+      - title: Jobs by Collection
+        route: /ingest/jobs-by-collection
+        tbd: true
+      - title: Cleanup Queue
+        route: /ingest/cleanup-queue
+        tbd: true
+      - title: Ingest Folders
+        route: /ingest/folders
+        tbd: true
+    - path: access-queue
+      title: Access Queue
+      items:
+      - title: Pause
+        route: /access/pause
+        tbd: true
+      - title: Unpause
+        route: /access/unpause
+        tbd: true
+      - title: View Queue
+        route: /access/jobs
+        tbd: true
+      - title: Cleanup Queue
+        route: /access/cleanup-queue
+        tbd: true
+    - path: zk-locks
+      title: Locks
+      items:
+      - title: Object Locks
+        route: /objects/locks
+        tbd: true
+      - title: Collection Locks
+        route: /collections/locks
+        tbd: true
+  - path: db-queue
+    title: Database Queues
     items:
-    - title: Pause
-      route: /access/pause
-      tbd: true
-    - title: Unpause
-      route: /access/unpause
-      tbd: true
-    - title: View Queue
-      route: /access/jobs
-      tbd: true
-    - title: Cleanup Queue
-      route: /access/cleanup-queue
-      tbd: true
-  - path: replication-queue
-    title: Replication Queue
-    items:
-    - title: Queued
-      route: /replication/queued
-      tbd: true
-    - title: In Progress
-      route: /replication/in-progress
-      tbd: true
-    - title: Failed
-      route: /replication/failed
-      tbd: true
-    - title: Recent Performance
-      route: /replication/recent-performance
-      tbd: true
-  - path: audit-queue
-    title: Audit Queue
-    items:
-    - title: Oldest Audit Check
-      route: /audit/oldest-audit-check
-      tbd: true
-    - title: Recent Performance
-      route: /audit/recent-performance
-      tbd: true
-    - title: Active Batches
-      route: /audit/active-batches
-      tbd: true
-    - title: Counts by State
-      route: /audit/counts-by-state
-      tbd: true
-  - title: Object Locks
-    route: /objects/locks
-    tbd: true
+    - path: replication-queue
+      title: Replication Queue
+      items:
+      - title: Queued
+        route: /replication/queued
+        tbd: true
+      - title: In Progress
+        route: /replication/in-progress
+        tbd: true
+      - title: Failed
+        route: /replication/failed
+        tbd: true
+      - title: Recent Performance
+        route: /replication/recent-performance
+        tbd: true
+    - path: audit-queue
+      title: Audit Queue
+      items:
+      - title: Oldest Audit Check
+        route: /audit/oldest-audit-check
+        tbd: true
+      - title: Recent Performance
+        route: /audit/recent-performance
+        tbd: true
+      - title: Active Batches
+        route: /audit/active-batches
+        tbd: true
+      - title: Counts by State
+        route: /audit/counts-by-state
+        tbd: true
   - path: collections
     title: Collections
     items:
@@ -363,9 +383,6 @@ items:
     - title: Node cleanup needed
       route: /collections/node-cleanup-needed
       tbd: true
-    - title: Collection Locks
-      route: /collections/locks
-      tbd: true
   - path: storage
     title: Storage
     items:
@@ -375,9 +392,9 @@ items:
     - title: Test Storage Nodes
       route: /storage/test-nodes
       tbd: true
-    - title: Storage Scans
-      route: /storage/scans
-      tbd: true
+  - title: Storage Scans
+    route: /storage/scans
+    tbd: true
 - path: Internals
   title: Internals
   items: 
