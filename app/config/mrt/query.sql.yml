@@ -1190,3 +1190,20 @@ queries:
         )
         and
           erc_where != concat(o.ark, ' ; (:unas)')
+  /queries/consistency/local-id-no-ark:
+    sql: |
+      SELECT
+        replace(loc.inv_owner_ark, '%2F', '/') as ownark,
+        own.name,
+        count(*) as count_ids,
+        'INFO' as status
+      FROM
+        inv.inv_localids loc
+      LEFT JOIN
+        inv.inv_objects o ON o.ark = loc.inv_object_ark
+      LEFT JOIN
+        inv.inv_owners own ON replace(loc.inv_owner_ark, '%2F', '/') = own.ark
+      WHERE
+        o.ark IS null
+      group by
+        ownark, own.name

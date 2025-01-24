@@ -193,7 +193,7 @@ items:
       - title: File Replication - 4 Copies
         route: /queries/consistency/replication/files-4
     - path: objects
-      title: Object Composition
+      title: Obj Composition
       items:
       - title: Version Clobber
         route: /queries/consistency/version-clobber
@@ -201,7 +201,6 @@ items:
         route: /queries/consistency/objects-no-local-id
       - title: Local id no Ark
         route: /queries/consistency/local-id-no-ark
-        tbd: true
       - title: Objects linked to multiple Collections
         route: /queries/consistency/mult-colls
   - path: use-cases
