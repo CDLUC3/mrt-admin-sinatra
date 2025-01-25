@@ -73,11 +73,9 @@ items:
         title: All Time
         items:
         - title: Producer Files Added by Date (All time)
-          route: /tbd
-          tbd: true
+          route: /queries/repository/all-time/producer-files
         - title: File Size Added by Date (All time)
-          route: /tbd
-          tbd: true
+          route: /queries/repository/all-time/file-size
         - title: Cumulative File Size with Forecast (All time)
           route: /tbd
           tbd: true
@@ -85,11 +83,9 @@ items:
         title: Last Month
         items:
         - title: Producer Files Added by Date (Last 4 weeks)
-          route: /tbd
-          tbd: true
+          route: /queries/repository/last-month/producer-files
         - title: File Size Added by Date (Last 4 weeks)
-          route: /tbd
-          tbd: true
+          route: /queries/repository/last-month/file-size
     - path: owner
       title: By Owner
       items:
@@ -299,6 +295,15 @@ items:
       route: /queries/use-cases/long-mime-type-selected-collections
     - title: Objects with long pathnames - selected collections
       route: /queries/use-cases/long-pathname-selected-collections
+  - path: content 
+    title: Content Reports 
+    items: 
+    - title: Producer File Listing 
+      route: /queries/content/producer-files
+      tbd: true
+    - title: UCSC Object Listing 
+      route: /queries/content/ucsc-objects
+      tbd: true
 - path: Operations
   title: Operations
   items:

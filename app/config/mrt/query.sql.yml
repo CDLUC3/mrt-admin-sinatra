@@ -509,7 +509,90 @@ fragments:
       inv_object_id,
       number
     having
-      count(*) > 1      
+      count(*) > 1
+  YEARS: |
+    select distinct 
+      date_add(
+        date(created), 
+        INTERVAL -(dayofyear(created)) + 1 DAY
+      ) start,
+      date_add(
+        date_add(
+          date(created), 
+          INTERVAL -(dayofyear(created)) + 1 DAY
+        ), 
+        INTERVAL +1 YEAR
+      ) end 
+    from inv.inv_objects 
+    order by start
+  WEEKS: |
+    select 
+      date_add(date(now()), INTERVAL -dayofweek(date(now())) +1 -21 DAY) start,
+      date_add(date(now()), INTERVAL -dayofweek(date(now())) +8 -21 DAY) end
+    union
+    select 
+      date_add(date(now()), INTERVAL -dayofweek(date(now())) +1 -14 DAY) start,
+      date_add(date(now()), INTERVAL -dayofweek(date(now())) +8 -14 DAY) end
+    union
+    select 
+      date_add(date(now()), INTERVAL -dayofweek(date(now())) +1 -7 DAY) start,
+      date_add(date(now()), INTERVAL -dayofweek(date(now())) +8 -7 DAY) end
+    union
+    select 
+      date_add(date(now()), INTERVAL -dayofweek(date(now())) +1 DAY) start,
+      date_add(date(now()), INTERVAL -dayofweek(date(now())) +8 DAY) end
+  COLLTOTAL: |
+    select
+      ogroup,
+      inv_collection_id,
+      mnemonic,
+      collection_name,
+      r.start,
+      r.end,
+      (
+        select 
+          {{{FIELD}}} 
+        from 
+          billing.owner_coll_mime_use_details ocmud
+        where 
+          ocmud.inv_collection_id = oc.inv_collection_id 
+        and 
+          ocmud.date_added >= r.start
+        and 
+          ocmud.date_added < r.end
+        and
+          source = 'producer'
+      ) as {{{FNAME}}}
+    from 
+      billing.owner_collections oc
+    cross join 
+      (
+        {{{RANGE}}}
+      ) as r
+    where 
+    (
+      select 
+        {{{FIELD}}} 
+      from 
+        billing.owner_coll_mime_use_details ocmud
+      where 
+        ocmud.inv_collection_id = oc.inv_collection_id
+      {{{FILTER}}}
+    ) > 0
+    group by 
+      ogroup,
+      inv_collection_id,
+      mnemonic,
+      collection_name,
+      r.start,
+      r.end
+    order by 
+      ogroup,
+      inv_collection_id,
+      mnemonic,
+      collection_name,
+      r.start,
+      r.end
 queries:
   /queries/repository/campus:
     totals: true
@@ -1227,3 +1310,42 @@ queries:
         inv.inv_collections c
       order by
         modified desc
+  /queries/repository/last-month/producer-files:
+    template-params:
+      RANGE: |
+        {{{WEEKS}}}
+      FIELD: ifnull(sum(ocmud.count_files), 0)
+      FNAME: count_files
+      FILTER: |
+        and 
+          ocmud.date_added >= date_add(date(now()), INTERVAL -DAYOFWEEK(date(now())) +1 -21 DAY)
+    sql: |
+      {{{COLLTOTAL}}}
+  /queries/repository/all-time/producer-files:
+    template-params:
+      RANGE: |
+        {{{YEARS}}}
+      FIELD: ifnull(sum(ocmud.count_files), 0)
+      FNAME: count_files
+    sql: |
+      {{{COLLTOTAL}}}
+  /queries/repository/last-month/file-size:
+    template-params:
+      RANGE: |
+        {{{WEEKS}}}
+      FIELD: ifnull(sum(ocmud.billable_size), 0)
+      FNAME: billable_size
+      FILTER: |
+        and 
+          ocmud.date_added >= date_add(date(now()), INTERVAL -DAYOFWEEK(date(now())) +1 -21 DAY)
+    sql: |
+      {{{COLLTOTAL}}}
+  /queries/repository/all-time/file-size:
+    template-params:
+      RANGE: |
+        {{{YEARS}}}
+      FIELD: ifnull(sum(ocmud.billable_size), 0)
+      FNAME: billable_size
+    sql: |
+      {{{COLLTOTAL}}}
+
