@@ -118,8 +118,11 @@ td.images span.val {
 td.num_colls, th.num_colls,
 td.num_objs, th.num_objs,
 td.files, th.files,
+td.int, th.int,
 td.size, th.size {
   text-align: right;
+  white-space: nowrap;
+  max-width: none;
 }
 tfoot tr {
   background-color: navy;
@@ -140,4 +143,8 @@ table div.description {
   padding: 2px;
   border: thin solid gray;
   margin: 5px;
+}
+
+th.note, td.note {
+  display: none;
 }

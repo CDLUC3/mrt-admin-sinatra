@@ -85,6 +85,7 @@ function clearButton() {
 
 function showTotals() {
   var test = [
+    'int', 
     'files', 
     'size',
     'count',
@@ -104,7 +105,8 @@ function showTotals() {
     }
     if (b) {
       var total = 0;
-      $("td."+$(this).attr('class')+":visible").each(function() {
+      var c = $(this).attr('class').split(' ')[0];
+      $("td." + c + ":visible").each(function() {
         total += parseInt($(this).text().replace(/,/g, ''));
       });
       $(this).text(total.toLocaleString());

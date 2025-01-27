@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'anbt-sql-formatter/formatter'
 require 'mysql2'
 require 'yaml'
 require_relative '../uc3_client'
@@ -22,6 +23,7 @@ module UC3Query
       @dbconf[:connect_timeout] = 10
       @dbconf[:read_timeout] = 120
       @client = Mysql2::Client.new(@dbconf)
+      @formatter = AnbtSql::Formatter.new(AnbtSql::Rule.new)
       super(enabled: enabled)
     rescue StandardError => e
       super(enabled: false, message: e.to_s)
@@ -45,6 +47,19 @@ module UC3Query
       vals
     end
 
+    def run_sql(sql)
+      hasharr = []
+      begin
+        stmt = @client.prepare(Mustache.render(sql, @fragments))
+        stmt.execute.each do |row|
+          hasharr << row.to_h
+        end
+      rescue StandardError => e
+        puts "#{e.class}: #{e}"
+      end
+      hasharr
+    end
+
     def query(path, urlparams, sqlsym: :sql)
       table = AdminUI::FilterTable.empty
       query = @queries.fetch(path.to_sym, {})
@@ -53,10 +68,17 @@ module UC3Query
       sql = query.fetch(sqlsym, '')
       return table if sql.empty?
 
+      # get know query parameters from yaml
       tparm = query.fetch(:'template-params', {})
+      # populate additional parameters using a query
+      query.fetch(:'template-sql', {}).each do |key, value|
+        tparm[key] = run_sql(value)
+      end
+      # resolve re-usable fragments found in template parameters
       tparm.each do |key, value|
         tparm[key] = Mustache.render(value, @fragments) if value.is_a?(String)
       end
+      # inject parameters into the sql.  allow 2 levels of nesting
       sql = Mustache.render(sql, @fragments.merge(tparm))
       sql = Mustache.render(sql, @fragments.merge(tparm))
 
@@ -66,10 +88,13 @@ module UC3Query
         stmt = @client.prepare(sql)
         cols = stmt.fields.map do |field|
           filterable = AdminUI::FilterTable.filterable_fields.include?(field)
-          AdminUI::Column.new(field, header: field, filterable: filterable)
+          col = AdminUI::Column.new(field, header: field, filterable: filterable)
+          col.cssclass += ' int' if field =~ /^\d\d\d\d-\d\d-\d\d$/
+          col
         end
 
         description = Mustache.render(query.fetch(:description, ''), tparm)
+        description += "<details><summary>SQL</summary><pre>#{@formatter.format(sql)}</pre></details>"
         table = AdminUI::FilterTable.new(
           columns: cols,
           totals: query.fetch(:totals, false),
@@ -81,13 +106,13 @@ module UC3Query
         end
       rescue StandardError => e
         arr = [
-          "#{e.class.to_s}: #{e}",
+          "#{e.class}: #{e}",
           sql,
           params.to_s,
-          "Connect timeout: #{@dbconf[:connect_timeout]}", 
+          "Connect timeout: #{@dbconf[:connect_timeout]}",
           "Read timeout: #{@dbconf[:read_timeout]}"
         ]
-        return AdminUI::FilterTable.empty(arr.join("<hr/>"))
+        return AdminUI::FilterTable.empty(arr.join('<hr/>'))
       end
       table
     end

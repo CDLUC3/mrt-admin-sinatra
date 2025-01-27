@@ -3,6 +3,7 @@
 source 'http://rubygems.org'
 ruby '~> 3.2'
 
+gem 'anbt-sql-formatter'
 gem 'aws-sdk-codeartifact'
 gem 'aws-sdk-ec2'
 gem 'aws-sdk-ecr'
