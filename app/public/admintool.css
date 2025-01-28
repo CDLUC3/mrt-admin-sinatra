@@ -6,11 +6,12 @@ body {
 div.main {
   max-width: 1200px;
   overflow-x: auto;
+  padding: 0px 5px;
 }
 
-table.caption {
-  width: 1200px;
-  max-width: 1200px;
+table caption {
+  width: 1150px;
+  max-width: 1150px;
 }
 
 table {
@@ -18,7 +19,6 @@ table {
   margin: 0 auto;
   width: 100%;
   transform: rotateX(180deg);
-  padding: 0px 5px;
 }
 
 div.tablewrap {
@@ -169,4 +169,8 @@ table div.description {
 
 th.blank, td.blank {
   display: none;
+}
+
+th.select {
+  width: 90%;
 }
