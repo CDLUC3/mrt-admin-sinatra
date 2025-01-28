@@ -529,48 +529,70 @@ fragments:
     select distinct 
       date_add(
         date_add(
-          date_add(date(created), INTERVAL +6 MONTH), 
-          INTERVAL -(dayofyear(date_add(date(created), INTERVAL +6 MONTH))) + 1 DAY
-        )
-      ), INTERVAL -1 YEAR) start,
+          date_add(
+            date_add(date(created), INTERVAL +6 MONTH), 
+            INTERVAL -(dayofyear(date_add(date(created), INTERVAL +6 MONTH))) + 1 DAY
+          ), 
+          INTERVAL -1 YEAR
+        ),
+        INTERVAL +6 MONTH
+      ) start,
       date_add(
-        date_add(date(created), INTERVAL +6 MONTH), 
-        INTERVAL -(dayofyear(date_add(date(created), INTERVAL +6 MONTH))) + 1 DAY
-      ) end 
+        date_add(
+          date_add(
+            date_add(date(created), INTERVAL +6 MONTH), 
+            INTERVAL -(dayofyear(date_add(date(created), INTERVAL +6 MONTH))) + 1 DAY
+          ), 
+          INTERVAL -1 YEAR
+        ),
+        INTERVAL +18 MONTH
+      ) end
     from inv.inv_objects 
     union
     select distinct 
       date_add(
         date_add(
-          date(max(created)), 
-          INTERVAL -(dayofyear(max(created))) + 1 DAY
+          date_add(
+            date_add(date(max(created)), INTERVAL +6 MONTH), 
+            INTERVAL -(dayofyear(date_add(date(max(created)), INTERVAL +6 MONTH))) + 1 DAY
+          ), 
+          INTERVAL -1 YEAR
         ),
-        INTERVAL +1 YEAR
+        INTERVAL +18 MONTH
       ) start,
       date_add(
         date_add(
-          date(max(created)), 
-          INTERVAL -(dayofyear(max(created))) + 1 DAY
-        ), 
-        INTERVAL +2 YEAR
-      ) end 
+          date_add(
+            date_add(date(max(created)), INTERVAL +6 MONTH), 
+            INTERVAL -(dayofyear(date_add(date(max(created)), INTERVAL +6 MONTH))) + 1 DAY
+          ), 
+          INTERVAL -1 YEAR
+        ),
+        INTERVAL +30 MONTH
+      ) end
     from inv.inv_objects 
     union
     select distinct 
       date_add(
         date_add(
-          date(max(created)), 
-          INTERVAL -(dayofyear(created)) + 1 DAY
+          date_add(
+            date_add(date(max(created)), INTERVAL +6 MONTH), 
+            INTERVAL -(dayofyear(date_add(date(max(created)), INTERVAL +6 MONTH))) + 1 DAY
+          ), 
+          INTERVAL -1 YEAR
         ),
-        INTERVAL +2 YEAR
+        INTERVAL +30 MONTH
       ) start,
       date_add(
         date_add(
-          date(max(created)), 
-          INTERVAL -(dayofyear(created)) + 1 DAY
-        ), 
-        INTERVAL +3 YEAR
-      ) end 
+          date_add(
+            date_add(date(max(created)), INTERVAL +6 MONTH), 
+            INTERVAL -(dayofyear(date_add(date(max(created)), INTERVAL +6 MONTH))) + 1 DAY
+          ), 
+          INTERVAL -1 YEAR
+        ),
+        INTERVAL +42 MONTH
+      ) end
     from inv.inv_objects 
     order by start
   WEEKS: |
