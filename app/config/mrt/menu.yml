@@ -76,9 +76,10 @@ items:
           route: /queries/repository/all-time/producer-files
         - title: File Size Added by Date (All time)
           route: /queries/repository/all-time/file-size
+        - title: Cumulative Producer File Count with Forecast (All time)
+          route: /queries/repository/all-time/cuml-producer-files
         - title: Cumulative File Size with Forecast (All time)
-          route: /tbd
-          tbd: true
+          route: /queries/repository/all-time/cuml-file-size
       - path: last-month
         title: Last Month
         items:

@@ -525,6 +525,54 @@ fragments:
       ) end 
     from inv.inv_objects 
     order by start
+  CUMLYEARS: |
+    select distinct 
+      date_add(
+        date_add(
+          date_add(date(created), INTERVAL +6 MONTH), 
+          INTERVAL -(dayofyear(date_add(date(created), INTERVAL +6 MONTH))) + 1 DAY
+        )
+      ), INTERVAL -1 YEAR) start,
+      date_add(
+        date_add(date(created), INTERVAL +6 MONTH), 
+        INTERVAL -(dayofyear(date_add(date(created), INTERVAL +6 MONTH))) + 1 DAY
+      ) end 
+    from inv.inv_objects 
+    union
+    select distinct 
+      date_add(
+        date_add(
+          date(max(created)), 
+          INTERVAL -(dayofyear(max(created))) + 1 DAY
+        ),
+        INTERVAL +1 YEAR
+      ) start,
+      date_add(
+        date_add(
+          date(max(created)), 
+          INTERVAL -(dayofyear(max(created))) + 1 DAY
+        ), 
+        INTERVAL +2 YEAR
+      ) end 
+    from inv.inv_objects 
+    union
+    select distinct 
+      date_add(
+        date_add(
+          date(max(created)), 
+          INTERVAL -(dayofyear(created)) + 1 DAY
+        ),
+        INTERVAL +2 YEAR
+      ) start,
+      date_add(
+        date_add(
+          date(max(created)), 
+          INTERVAL -(dayofyear(created)) + 1 DAY
+        ), 
+        INTERVAL +3 YEAR
+      ) end 
+    from inv.inv_objects 
+    order by start
   WEEKS: |
     select 
       date_add(date(now()), INTERVAL -dayofweek(date(now())) +1 -21 DAY) start,
@@ -563,7 +611,7 @@ fragments:
           source = 'producer'
       ) as '{{start}}',
       {{/RANGE}}
-      '' as note
+      '' as blank
     from 
       billing.owner_collections oc
     where 
@@ -575,6 +623,60 @@ fragments:
       where 
         ocmud.inv_collection_id = oc.inv_collection_id
       {{{FILTER}}}
+    ) > 0
+    group by 
+      ogroup,
+      inv_collection_id,
+      mnemonic,
+      collection_name
+    order by 
+      ogroup,
+      inv_collection_id,
+      mnemonic,
+      collection_name
+  COLLTOTALCUML: |
+    select
+      ogroup,
+      inv_collection_id,
+      mnemonic,
+      collection_name,
+      {{#RANGE}}
+      (
+        select 
+          {{{FIELD}}}
+        from 
+          billing.owner_coll_mime_use_details ocmud
+        where 
+          ocmud.inv_collection_id = oc.inv_collection_id 
+        and 
+          ocmud.date_added < '{{end}}'
+        and
+          source = 'producer'
+      ) + (
+        select
+          greatest(0, datediff('{{end}}', now())) * {{{FIELD}}} / 730
+        from
+          owner_coll_mime_use_details ocmud
+        where
+          oc.ogroup = ocmud.ogroup
+        and
+          oc.inv_collection_id = ocmud.inv_collection_id
+        and
+          date_added >= date_add(now(), interval - 730 day)
+        and source='producer'
+      ) as '{{end}}',
+      {{/RANGE}}
+      '' as blank
+    from 
+      billing.owner_collections oc
+    where 
+    (
+      select 
+        {{{FIELD}}} 
+      from 
+        billing.owner_coll_mime_use_details ocmud
+      where 
+        ocmud.inv_collection_id = oc.inv_collection_id
     ) > 0
     group by 
       ogroup,
@@ -1345,4 +1447,22 @@ queries:
         {{{YEARS}}}
     sql: |
       {{{COLLTOTAL}}}
+  /queries/repository/all-time/cuml-file-size:
+    totals: true
+    template-params:
+      FIELD: ifnull(sum(ocmud.billable_size), 0)
+    template-sql:
+      RANGE: |
+        {{{CUMLYEARS}}}
+    sql: |
+      {{{COLLTOTALCUML}}}
+  /queries/repository/all-time/cuml-producer-files:
+    totals: true
+    template-params:
+      FIELD: ifnull(sum(ocmud.count_files), 0)
+    template-sql:
+      RANGE: |
+        {{{CUMLYEARS}}}
+    sql: |
+      {{{COLLTOTALCUML}}}
 
