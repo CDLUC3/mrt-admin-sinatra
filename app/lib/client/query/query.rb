@@ -108,7 +108,7 @@ module UC3Query
       rescue StandardError => e
         arr = [
           "#{e.class}: #{e}",
-          sql,
+          "<details><summary>SQL</summary><pre>#{@formatter.format(sql)}</pre></details>",
           params.to_s,
           "Connect timeout: #{@dbconf[:connect_timeout]}",
           "Read timeout: #{@dbconf[:read_timeout]}"
