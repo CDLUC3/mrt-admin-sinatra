@@ -152,6 +152,8 @@ items:
           route: /queries/repository/mimes/campus/UCLA
         - title: UCM
           route: /queries/repository/mimes/campus/UCM
+        - title: UCR
+          route: /queries/repository/mimes/campus/UCR
         - title: UCSB
           route: /queries/repository/mimes/campus/UCSB
         - title: UCSC
@@ -209,6 +211,8 @@ items:
           route: /queries/repository/campus/invoices/2022/UCLA
         - title: UCM
           route: /queries/repository/campus/invoices/2022/UCM
+        - title: UCR
+          route: /queries/repository/campus/invoices/2022/UCR
         - title: UCSB
           route: /queries/repository/campus/invoices/2022/UCSB
         - title: UCSC
@@ -236,6 +240,8 @@ items:
           route: /queries/repository/campus/invoices/2023/UCLA
         - title: UCM
           route: /queries/repository/campus/invoices/2023/UCM
+        - title: UCR
+          route: /queries/repository/campus/invoices/2023/UCR
         - title: UCSB
           route: /queries/repository/campus/invoices/2023/UCSB
         - title: UCSC
@@ -263,6 +269,8 @@ items:
           route: /queries/repository/campus/invoices/2024/UCLA
         - title: UCM
           route: /queries/repository/campus/invoices/2024/UCM
+        - title: UCR
+          route: /queries/repository/campus/invoices/2024/UCR
         - title: UCSB
           route: /queries/repository/campus/invoices/2024/UCSB
         - title: UCSC

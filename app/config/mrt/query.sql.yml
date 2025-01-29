@@ -847,6 +847,20 @@ fragments:
       owner_collections c
     where
       ogroup like '{{{CAMPUS}}}'
+    union
+    select
+      'ZZ Campus 10TB Discount' as own_name,
+      null as mnemonic,
+      null as start_size_gb,
+      null as ytd_size_gb,
+      null as end_size_gb,
+      null as diff_size_gb,
+      null as days_available,
+      null as days_projected,
+      null as average_available_gb,
+      null as daily_average_projected_gb,
+      null as size,
+      -500.0 as cost
     order by 
       own_name,
       mnemonic
