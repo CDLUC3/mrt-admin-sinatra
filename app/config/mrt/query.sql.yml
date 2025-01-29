@@ -523,7 +523,8 @@ fragments:
         ), 
         INTERVAL +1 YEAR
       ) end 
-    from inv.inv_objects 
+    from inv.inv_objects
+    where created >= date_add(now(), INTERVAL -6 YEAR)
     order by start
   CUMLYEARS: |
     select distinct 
@@ -548,6 +549,7 @@ fragments:
         INTERVAL +18 MONTH
       ) end
     from inv.inv_objects 
+    where created >= date_add(now(), INTERVAL -3 YEAR)
     union
     select distinct 
       date_add(
@@ -644,6 +646,8 @@ fragments:
         billing.owner_coll_mime_use_details ocmud
       where 
         ocmud.inv_collection_id = oc.inv_collection_id
+      and 
+        ocmud.date_added >= date_add(now(), INTERVAL -6 YEAR)
       {{{FILTER}}}
     ) > 0
     group by 
@@ -676,7 +680,11 @@ fragments:
           source = 'producer'
       ) + (
         select
-          greatest(0, datediff('{{end}}', now())) * {{{FIELD}}} / 730
+          case 
+          when '{{end}}' > now()
+            then ifnull(datediff('{{end}}', now()) * {{{FIELD}}} / 730, 0)
+            else 0
+          end
         from
           owner_coll_mime_use_details ocmud
         where
@@ -691,7 +699,7 @@ fragments:
       '' as blank
     from 
       billing.owner_collections oc
-    where 
+    where exists
     (
       select 
         {{{FIELD}}} 
@@ -699,7 +707,7 @@ fragments:
         billing.owner_coll_mime_use_details ocmud
       where 
         ocmud.inv_collection_id = oc.inv_collection_id
-    ) > 0
+    )
     group by 
       ogroup,
       inv_collection_id,
@@ -1442,7 +1450,7 @@ queries:
   /queries/repository/all-time/producer-files:
     totals: true
     template-params:
-      FIELD: cast(ifnull(sum(ocmud.count_files), 0) as signed)
+      FIELD: cast(sum(ocmud.count_files) as signed)
     template-sql:
       RANGE: |
         {{{YEARS}}}
@@ -1451,7 +1459,7 @@ queries:
   /queries/repository/last-month/file-size:
     totals: true
     template-params:
-      FIELD: ifnull(sum(ocmud.billable_size) / 1000000000.0, 0)
+      FIELD: sum(ocmud.billable_size) / 1000000000.0
       FILTER: |
         and 
           ocmud.date_added >= date_add(date(now()), INTERVAL -DAYOFWEEK(date(now())) +1 -21 DAY)
@@ -1463,7 +1471,7 @@ queries:
   /queries/repository/all-time/file-size:
     totals: true
     template-params:
-      FIELD: ifnull(sum(ocmud.billable_size) / 1000000000.0, 0)
+      FIELD: sum(ocmud.billable_size) / 1000000000.0
     template-sql:
       RANGE: |
         {{{YEARS}}}
@@ -1472,19 +1480,9 @@ queries:
   /queries/repository/all-time/cuml-file-size:
     totals: true
     template-params:
-      FIELD: ifnull(sum(ocmud.billable_size) / 1000000000.0, 0)
+      FIELD: sum(ocmud.billable_size) / 1000000000.0
     template-sql:
       RANGE: |
         {{{CUMLYEARS}}}
     sql: |
       {{{COLLTOTALCUML}}}
-  /queries/repository/all-time/cuml-producer-files:
-    totals: true
-    template-params:
-      FIELD: ifnull(sum(ocmud.count_files), 0)
-    template-sql:
-      RANGE: |
-        {{{CUMLYEARS}}}
-    sql: |
-      {{{COLLTOTALCUML}}}
-

@@ -108,8 +108,12 @@ function showTotals() {
     if (b) {
       var total = 0;
       var c = $(this).attr('class').split(' ')[0];
+      var isfloat = $(this).hasClass('float');
       $("td." + c + ":visible").each(function() {
-        total += parseInt($(this).text().replace(/,/g, ''));
+        var v = $(this).text();
+        if (v == '' || v == null) return;
+        v = v.replace(/,/g, '');
+        total += isfloat ? parseFloat(v) : parseInt(v);
       });
       $(this).text(total.toLocaleString());
     }

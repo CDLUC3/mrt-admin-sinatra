@@ -141,7 +141,7 @@ module AdminUI
     def self.format_float(vfloat)
       i = vfloat.to_i
       d = vfloat - i
-      "#{format_int(i)}.#{d.to_s[2..3]}"
+      "#{format_int(i)}.#{format('%.2f', d)[2..3]}"
     end
 
     def self.format_int(vint)
@@ -155,7 +155,6 @@ module AdminUI
         v = datahash.fetch(col.sym, col.defval)
         v = '' if v.nil?
         if v.is_a?(BigDecimal)
-          puts "BigDecimal: #{v}: [#{col.cssclass}]"
           v = col.cssclass.split.include?('float') ? format_float(v.to_f) : format_int(v.to_i)
         end
         if AdminUI::FilterTable.id_fields.key?(col.sym.to_sym)

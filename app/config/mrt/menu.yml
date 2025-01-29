@@ -70,15 +70,13 @@ items:
       - title: Object Counts
         route: /queries/repository/collections-objects
       - path: all-time
-        title: All Time
+        title: Recent Years
         items:
-        - title: Producer Files Added by Date (All time)
+        - title: Producer Files Added by Date (Last 6 Years)
           route: /queries/repository/all-time/producer-files
-        - title: File Size Added by Date (All time)
+        - title: File Size Added by Date (Last 6 Years)
           route: /queries/repository/all-time/file-size
-        - title: Cumulative Producer File Count with Forecast (GB, All time)
-          route: /queries/repository/all-time/cuml-producer-files
-        - title: Cumulative File Size with Forecast (GB, All time)
+        - title: Cumulative File Size with - 3 Years + Forecast (GB)
           route: /queries/repository/all-time/cuml-file-size
       - path: last-month
         title: Last Month
