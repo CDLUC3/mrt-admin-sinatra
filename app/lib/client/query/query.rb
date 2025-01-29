@@ -89,7 +89,8 @@ module UC3Query
         cols = stmt.fields.map do |field|
           filterable = AdminUI::FilterTable.filterable_fields.include?(field)
           col = AdminUI::Column.new(field, header: field, filterable: filterable)
-          col.cssclass += ' int' if field =~ /^\d\d\d\d-\d\d-\d\d$/
+          col.cssclass += ' float' if field =~ /^(size|size_gb)$/
+          col.cssclass += ' float' if field =~ /^\d\d\d\d-\d\d-\d\d$/
           col
         end
 

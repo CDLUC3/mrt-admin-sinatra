@@ -86,8 +86,10 @@ function clearButton() {
 function showTotals() {
   var test = [
     'int', 
+    'float', 
     'files', 
     'size',
+    'size_gb',
     'count',
     'num_colls',
     'num_objs',

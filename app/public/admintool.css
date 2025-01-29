@@ -139,6 +139,8 @@ td.num_colls, th.num_colls,
 td.num_objs, th.num_objs,
 td.files, th.files,
 td.int, th.int,
+td.float, th.float,
+td.size_gb, th.size_gb,
 td.size, th.size {
   text-align: right;
   white-space: nowrap;

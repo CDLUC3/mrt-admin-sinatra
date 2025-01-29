@@ -138,13 +138,26 @@ module AdminUI
       @cols = data
     end
 
+    def self.format_float(vfloat)
+      i = vfloat.to_i
+      d = vfloat - i
+      "#{format_int(i)}.#{d.to_s[2..3]}"
+    end
+
+    def self.format_int(vint)
+      vint.to_s.reverse.gsub(/(\d{3})(?=\d)/, '\\1,').reverse
+    end
+
     def self.make_row(cols, datahash)
       cssclass = datahash.fetch(:cssclass, 'data')
       data = []
       cols.each do |col|
         v = datahash.fetch(col.sym, col.defval)
         v = '' if v.nil?
-        v = v.to_i.to_s.reverse.gsub(/(\d{3})(?=\d)/, '\\1,').reverse if v.is_a?(BigDecimal)
+        if v.is_a?(BigDecimal)
+          puts "BigDecimal: #{v}: [#{col.cssclass}]"
+          v = col.cssclass.split.include?('float') ? format_float(v.to_f) : format_int(v.to_i)
+        end
         if AdminUI::FilterTable.id_fields.key?(col.sym.to_sym)
           pre = AdminUI::FilterTable.id_fields[col.sym.to_sym]
           v = { value: v, href: "#{pre}#{v}" } unless pre.empty?
@@ -155,7 +168,9 @@ module AdminUI
           end
           v = arr
         elsif v.is_a?(Integer)
-          v = v.to_i.to_s.reverse.gsub(/(\d{3})(?=\d)/, '\\1,').reverse
+          v = format_int(v)
+        elsif v.is_a?(Float)
+          v = format_float(v)
         end
         data << v
       end
