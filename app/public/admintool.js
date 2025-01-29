@@ -61,6 +61,7 @@ function applyFilters() {
       $("select.filter").attr('disabled', false);
       var val = $(this).val();
       if (val == "ALLVALS") {
+        showTotals();
         return;
       }
       $("select.filter").attr('disabled', true);
@@ -89,6 +90,7 @@ function showTotals() {
     'float', 
     'files', 
     'size',
+    'cost',
     'size_gb',
     'count',
     'num_colls',
@@ -103,7 +105,7 @@ function showTotals() {
     'average_available_gb',
     'daily_average_projected_gb'
   ];
-  $("tfoot tr.totals").find("th").each(function() {
+  $("tfoot tr.totals").find("td").each(function() {
     var b = false;
     for (var i = 0; i < test.length; i++) {
       if ($(this).hasClass(test[i])) {
@@ -115,7 +117,7 @@ function showTotals() {
       var total = 0;
       var c = $(this).attr('class').split(' ')[0];
       var isfloat = $(this).hasClass('float');
-      $("td." + c + ":visible").each(function() {
+      $("tbody td." + c + ":visible").each(function() {
         var v = $(this).text();
         if (v == '' || v == null) return;
         v = v.replace(/,/g, '');

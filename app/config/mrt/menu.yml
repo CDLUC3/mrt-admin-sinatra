@@ -192,28 +192,87 @@ items:
       route: /queries/repository/campus/invoices
       breadcrumb: true
       items:
+      - title: 'FY Begin 2022'
+        path: '2022'
+        route: /queries/repository/campus/invoices/2022
+        breadcrumb: true
+        items:
         - title: CDL
-          route: /queries/repository/campus/invoices/CDL
+          route: /queries/repository/campus/invoices/2022/CDL
         - title: UCB
-          route: /queries/repository/campus/invoices/UCB
+          route: /queries/repository/campus/invoices/2022/UCB
         - title: UCD
-          route: /queries/repository/campus/invoices/UCD
+          route: /queries/repository/campus/invoices/2022/UCD
         - title: UCI
-          route: /queries/repository/campus/invoices/UCI
+          route: /queries/repository/campus/invoices/2022/UCI
         - title: UCLA
-          route: /queries/repository/campus/invoices/UCLA
+          route: /queries/repository/campus/invoices/2022/UCLA
         - title: UCM
-          route: /queries/repository/campus/invoices/UCM
+          route: /queries/repository/campus/invoices/2022/UCM
         - title: UCSB
-          route: /queries/repository/campus/invoices/UCSB
+          route: /queries/repository/campus/invoices/2022/UCSB
         - title: UCSC
-          route: /queries/repository/campus/invoices/UCSC
+          route: /queries/repository/campus/invoices/2022/UCSC
         - title: UCSD
-          route: /queries/repository/campus/invoices/UCSD
+          route: /queries/repository/campus/invoices/2022/UCSD
         - title: UCSF
-          route: /queries/repository/campus/invoices/UCSF
+          route: /queries/repository/campus/invoices/2022/UCSF
         - title: Other
-          route: /queries/repository/campus/invoices/Other
+          route: /queries/repository/campus/invoices/2022/Other
+      - title: 'FY Begin 2023'
+        path: '2023'
+        route: /queries/repository/campus/invoices/2023
+        breadcrumb: true
+        items:
+        - title: CDL
+          route: /queries/repository/campus/invoices/2023/CDL
+        - title: UCB
+          route: /queries/repository/campus/invoices/2023/UCB
+        - title: UCD
+          route: /queries/repository/campus/invoices/2023/UCD
+        - title: UCI
+          route: /queries/repository/campus/invoices/2023/UCI
+        - title: UCLA
+          route: /queries/repository/campus/invoices/2023/UCLA
+        - title: UCM
+          route: /queries/repository/campus/invoices/2023/UCM
+        - title: UCSB
+          route: /queries/repository/campus/invoices/2023/UCSB
+        - title: UCSC
+          route: /queries/repository/campus/invoices/2023/UCSC
+        - title: UCSD
+          route: /queries/repository/campus/invoices/2023/UCSD
+        - title: UCSF
+          route: /queries/repository/campus/invoices/2023/UCSF
+        - title: Other
+          route: /queries/repository/campus/invoices/2023/Other
+      - title: 'FY Begin 2024'
+        path: '2024'
+        route: /queries/repository/campus/invoices/2024
+        breadcrumb: true
+        items:
+        - title: CDL
+          route: /queries/repository/campus/invoices/2024/CDL
+        - title: UCB
+          route: /queries/repository/campus/invoices/2024/UCB
+        - title: UCD
+          route: /queries/repository/campus/invoices/2024/UCD
+        - title: UCI
+          route: /queries/repository/campus/invoices/2024/UCI
+        - title: UCLA
+          route: /queries/repository/campus/invoices/2024/UCLA
+        - title: UCM
+          route: /queries/repository/campus/invoices/2024/UCM
+        - title: UCSB
+          route: /queries/repository/campus/invoices/2024/UCSB
+        - title: UCSC
+          route: /queries/repository/campus/invoices/2024/UCSC
+        - title: UCSD
+          route: /queries/repository/campus/invoices/2024/UCSD
+        - title: UCSF
+          route: /queries/repository/campus/invoices/2024/UCSF
+        - title: Other
+          route: /queries/repository/campus/invoices/2024/Other
   - path: consistency
     title: Consistency
     items:

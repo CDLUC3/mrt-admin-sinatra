@@ -143,12 +143,26 @@ td.float, th.float,
 td.size_gb, th.size_gb,
 td.size, th.size {
   text-align: right;
-  white-space: nowrap;
-  max-width: none;
+  max-width: 200px;
+  width: 200px;
 }
+
+td.num_colls, 
+td.num_objs,
+td.files,
+td.int,
+td.float,
+td.size_gb,
+td.size {
+  white-space: nowrap;
+}
+
 tfoot tr {
   background-color: navy;
   color: white;
+}
+tfoot td {
+  font-weight: bold;
 }
 
 div.aux-table {

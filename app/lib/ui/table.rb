@@ -101,9 +101,9 @@ module AdminUI
       if @totals
         s += %(<tfoot><tr class='totals'>)
         @columns.each_with_index do |col, i|
-          s += %(<th class='#{col.cssclass}'>)
+          s += %(<td class='#{col.cssclass}'>)
           s += i.zero? ? 'Total' : ''
-          s += %(</th>)
+          s += %(</td>)
         end
         s += %(</tr></tfoot>)
       end
