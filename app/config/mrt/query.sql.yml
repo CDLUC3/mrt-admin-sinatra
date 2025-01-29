@@ -718,6 +718,127 @@ fragments:
       inv_collection_id,
       mnemonic,
       collection_name
+  FY2022: |
+    select
+      '2022-07-01' start,
+      '2023-07-01' end,
+      max(billing_totals_date) as dytd
+    from
+      daily_billing
+    where
+      billing_totals_date < '2023-07-01'
+  FY2023: |
+    select
+      '2023-07-01' start,
+      '2024-07-01' end,
+      max(billing_totals_date) as dytd
+    from
+      daily_billing
+    where
+      billing_totals_date < '2024-07-01'
+  FY2024: |
+    select
+      '2024-07-01' start,
+      '2025-07-01' end,
+      max(billing_totals_date) as dytd
+    from
+      daily_billing
+    where
+      billing_totals_date < '2025-07-01'
+  FY2025: |
+    select
+      '2025-07-01' start,
+      '2026-07-01' end,
+      max(billing_totals_date) as dytd
+    from
+      daily_billing
+    where
+      billing_totals_date < '2026-07-01'
+  INVOICE: |
+    {{#DATES}}
+    select
+      own_name                        /* Merritt ownership object.*/,
+      inv_owner_id,
+      mnemonic,
+      (
+        select
+          ifnull(avg(billable_size) / 1000000000.0, 0)
+        from
+          daily_billing db
+        where
+          c.inv_collection_id = db.inv_collection_id
+        and
+          c.inv_owner_id = db.inv_owner_id
+        and
+          billing_totals_date = '{{start}}'
+      ) as start_size_gb,
+      (
+        select
+          ifnull(avg(billable_size) / 1000000000.0, 0)
+        from
+          daily_billing db
+        where
+          c.inv_collection_id = db.inv_collection_id
+        and
+          c.inv_owner_id = db.inv_owner_id
+        and
+          billing_totals_date = '{{dytd}}'
+      ) as ytd_size_gb,
+      (
+        select
+          ifnull(avg(billable_size)  / 1000000000.0, 0)
+        from
+          daily_billing db
+        where
+          c.inv_collection_id = db.inv_collection_id
+        and
+          c.inv_owner_id = db.inv_owner_id
+        and
+          billing_totals_date = date_add('{{end}}', interval -1 day)
+      ) as end_size_gb,
+      (
+        select ytd_size_gb - start_size_gb
+      ) as diff_size_gb,
+      (
+        select
+          count(billable_size)  / 1000000000.0
+        from
+          daily_billing db
+        where
+          c.inv_collection_id = db.inv_collection_id
+        and
+          c.inv_owner_id = db.inv_owner_id
+        and
+          billing_totals_date >= '{{start}}'
+        and
+          billing_totals_date <= '{{dytd}}'
+      ) as days_available               /* number of billing day records in database */,
+      (
+        select if(datediff('{{end}}', '{{dytd}}') = 0, 0, datediff('{{end}}', '{{dytd}}') - 1)
+      ) as days_projected,
+      (
+        select
+          avg(billable_size) / 1000000000.0
+        from
+          daily_billing db
+        where
+          c.inv_collection_id = db.inv_collection_id
+        and
+          c.inv_owner_id = db.inv_owner_id
+        and
+          billing_totals_date >= '{{start}}'
+        and
+          billing_totals_date <= '{{dytd}}'
+      ) as average_available_gb,
+      (
+        select
+          ((average_available_gb * days_available) + (ytd_size_gb * days_projected)) / datediff('{{end}}', '{{start}}')
+      ) as daily_average_projected_gb
+    {{/DATES}}
+    from
+      owner_collections c
+    where
+      ogroup like '{{{CAMPUS}}}'
 queries:
   /queries/repository/campus:
     totals: true
@@ -1486,3 +1607,111 @@ queries:
         {{{CUMLYEARS}}}
     sql: |
       {{{COLLTOTALCUML}}}
+  /queries/repository/campus/invoices/CDL:
+    totals: true
+    template-params:
+      CAMPUS: CDL
+    template-sql:
+      DATES: |
+        {{{FY2022}}}
+    sql: |
+      {{{INVOICE}}}
+  /queries/repository/campus/invoices/UCB:
+    totals: true
+    template-params:
+      CAMPUS: UCB
+    template-sql:
+      DATES: |
+        {{{FY2022}}}
+    sql: |
+      {{{INVOICE}}}
+  /queries/repository/campus/invoices/UCD:
+    totals: true
+    template-params:
+      CAMPUS: UCD
+    template-sql:
+      DATES: |
+        {{{FY2022}}}
+    sql: |
+      {{{INVOICE}}}
+  /queries/repository/campus/invoices/UCI:
+    totals: true
+    template-params:
+      CAMPUS: UCI
+    template-sql:
+      DATES: |
+        {{{FY2022}}}
+    sql: |
+      {{{INVOICE}}}
+  /queries/repository/campus/invoices/UCLA:
+    totals: true
+    template-params:
+      CAMPUS: UCLA
+    template-sql:
+      DATES: |
+        {{{FY2022}}}
+    sql: |
+      {{{INVOICE}}}
+  /queries/repository/campus/invoices/UCM:
+    totals: true
+    template-params:
+      CAMPUS: UCM
+    template-sql:
+      DATES: |
+        {{{FY2022}}}
+    sql: |
+      {{{INVOICE}}}
+  /queries/repository/campus/invoices/UCR:
+    totals: true
+    template-params:
+      CAMPUS: UCR
+    template-sql:
+      DATES: |
+        {{{FY2022}}}
+    sql: |
+      {{{INVOICE}}}
+  /queries/repository/campus/invoices/UCSB:
+    totals: true
+    template-params:
+      CAMPUS: UCSB
+    template-sql:
+      DATES: |
+        {{{FY2022}}}
+    sql: |
+      {{{INVOICE}}}
+  /queries/repository/campus/invoices/UCSC:
+    totals: true
+    template-params:
+      CAMPUS: UCSC
+    template-sql:
+      DATES: |
+        {{{FY2022}}}
+    sql: |
+      {{{INVOICE}}}
+  /queries/repository/campus/invoices/UCSD:
+    totals: true
+    template-params:
+      CAMPUS: UCSD
+    template-sql:
+      DATES: |
+        {{{FY2022}}}
+    sql: |
+      {{{INVOICE}}}
+  /queries/repository/campus/invoices/UCSF:
+    totals: true
+    template-params:
+      CAMPUS: UCSF
+    template-sql:
+      DATES: |
+        {{{FY2022}}}
+    sql: |
+      {{{INVOICE}}}
+  /queries/repository/campus/invoices/Other:
+    totals: true
+    template-params:
+      CAMPUS: Other
+    template-sql:
+      DATES: |
+        {{{FY2022}}}
+    sql: |
+      {{{INVOICE}}}      

@@ -95,7 +95,13 @@ function showTotals() {
     'num_objs',
     'num_objs_2day',
     'num_objs_1day',
-    'num_objs_0day'
+    'num_objs_0day',
+    'start_size_gb',
+    'end_size_gb',
+    'diff_size_gb',
+    'ytd_size_gb',
+    'average_available_gb',
+    'daily_average_projected_gb'
   ];
   $("tfoot tr.totals").find("th").each(function() {
     var b = false;

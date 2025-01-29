@@ -189,40 +189,31 @@ items:
           route: /queries/repository/mimes/group/web
     - title: Campus Invoices
       path: invoices
+      route: /queries/repository/campus/invoices
+      breadcrumb: true
       items:
         - title: CDL
-          route: /queries/repository/invoices/campus/CDL
-          tbd: true
+          route: /queries/repository/campus/invoices/CDL
         - title: UCB
-          route: /queries/repository/invoices/campus/UCB
-          tbd: true
+          route: /queries/repository/campus/invoices/UCB
         - title: UCD
-          route: /queries/repository/invoices/campus/UCD
-          tbd: true
+          route: /queries/repository/campus/invoices/UCD
         - title: UCI
-          route: /queries/repository/invoices/campus/UCI
-          tbd: true
+          route: /queries/repository/campus/invoices/UCI
         - title: UCLA
-          route: /queries/repository/invoices/campus/UCLA
-          tbd: true
+          route: /queries/repository/campus/invoices/UCLA
         - title: UCM
-          route: /queries/repository/invoices/campus/UCM
-          tbd: true
+          route: /queries/repository/campus/invoices/UCM
         - title: UCSB
-          route: /queries/repository/invoices/campus/UCSB
-          tbd: true
+          route: /queries/repository/campus/invoices/UCSB
         - title: UCSC
-          route: /queries/repository/invoices/campus/UCSC
-          tbd: true
+          route: /queries/repository/campus/invoices/UCSC
         - title: UCSD
-          route: /queries/repository/invoices/campus/UCSD
-          tbd: true
+          route: /queries/repository/campus/invoices/UCSD
         - title: UCSF
-          route: /queries/repository/invoices/campus/UCSF
-          tbd: true
+          route: /queries/repository/campus/invoices/UCSF
         - title: Other
-          route: /queries/repository/invoices/campus/Other
-          tbd: true
+          route: /queries/repository/campus/invoices/Other
   - path: consistency
     title: Consistency
     items:
