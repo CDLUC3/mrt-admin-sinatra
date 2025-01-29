@@ -860,7 +860,7 @@ fragments:
       null as average_available_gb,
       null as daily_average_projected_gb,
       null as size,
-      -500.0 as cost
+      -1500.0 as cost
     order by 
       own_name,
       mnemonic
