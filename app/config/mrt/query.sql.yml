@@ -927,7 +927,7 @@ fragments:
       own_name,
       mnemonic
 queries:
-  /queries/repository/campus:
+  /queries/repository/campus/bytes:
     totals: true
     sql: |
       select
@@ -942,7 +942,7 @@ queries:
         ogroup
       order by
         ogroup
-  /queries/repository/campus-objects:
+  /queries/repository/campus/objects:
     totals: true
     sql: |
       select
@@ -956,7 +956,7 @@ queries:
         ogroup
       order by
         ogroup
-  /queries/repository/collections:
+  /queries/repository/collections/bytes:
     totals: true
     sql: |
       select
@@ -1089,7 +1089,7 @@ queries:
     parameters:
     - name: term
       type: string
-  /queries/repository/collections-objects:
+  /queries/repository/collections/objects:
     totals: true
     sql: |
       select

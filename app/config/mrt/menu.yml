@@ -39,26 +39,34 @@ items:
   items:
   - path: repository
     title: Repository
+    route: /queries/repository
+    breadcrumb: true
+    description: |
+      ## Reports on the repository
+      - [By Campus](/queries/repository/campus)
+      - [By Collection](/queries/repository/collections)
+      - [By Owner](/queries/repository/owners)
+      - [By Mime Type](/queries/repository/mimes)
+      - [Campus Invoices](/queries/repository/campus/invoices)      
     items:
-    - title: Repository Queries
-      route: /queries/repository
-      breadcrumb: true
-      description: |
-        ## Reports on the repository
     - path: campus
       title: By Campus
+      route: /queries/repository/campus
+      breadcrumb: true
       items:
       - title: File/Byte Counts
-        route: /queries/repository/campus
+        route: /queries/repository/campus/bytes
       - title: Object Counts
-        route: /queries/repository/campus-objects
+        route: /queries/repository/campus/objects
     - path: collection
       title: By Collection
+      route: /queries/repository/collections
+      breadcrumb: true
       items:
       - title: File/Byte Counts
-        route: /queries/repository/collections
+        route: /queries/repository/collections/bytes
       - title: Object Counts
-        route: /queries/repository/collections-objects
+        route: /queries/repository/collections/objects
       - path: all-time
         title: Recent Years
         items:
@@ -85,9 +93,6 @@ items:
       breadcrumb: true
       description: |
         ## Collection Details
-    - title: Object Details
-      route: /queries/repository/object
-      breadcrumb: true
     - title: Object Details - Search by Ark
       route: /queries/repository/object-ark
       breadcrumb: true
@@ -118,12 +123,6 @@ items:
       title: By Mime Type
       route: /queries/repository/mimes
       breadcrumb: true
-      description: |
-        The full mime query will bring back too many results.  
-
-        You must filter by 
-        - campus
-        - mime group
       items:
       - path: campus
         title: By Campus

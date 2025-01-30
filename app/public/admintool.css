@@ -33,6 +33,11 @@ th, td {
   padding: 6px;
   min-width: 90px;
   max-width: 200px;
+  overflow-x: clip;
+}
+
+th:hover, td:hover {
+  overflow-x: visible;
 }
 
 th select, td select {

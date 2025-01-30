@@ -35,9 +35,12 @@ module AdminUI
       paths.reverse.join('/')
     end
 
-    def add_submenu(path, title, breadcrumb: false, route: '')
+    def add_submenu(path, title, breadcrumb: false, description: '', route: '')
       child = Menu.new(path, title, parent: self)
-      child.top.route_names[route] = { title: title, description: '', breadcrumb: true } if breadcrumb && !route.empty?
+      if breadcrumb && !route.empty?
+        child.top.route_names[route] =
+          { title: title, description: description, breadcrumb: true }
+      end
       @children << child
       child
     end
@@ -78,14 +81,14 @@ module AdminUI
       parpath = path
       if @paths.key?(parpath)
         if menu
-          @paths[parpath].add_submenu(path, title, breadcrumb: breadcrumb, route: route)
+          @paths[parpath].add_submenu(path, title, description: description, breadcrumb: breadcrumb, route: route)
         else
           @paths[parpath].add_menu_item(route, title, description: description, tbd: tbd, breadcrumb: breadcrumb)
         end
       else
         parpath = File.dirname(path) until @paths.key?(parpath)
         if menu
-          @paths[parpath].add_submenu(path, title, breadcrumb: breadcrumb, route: route)
+          @paths[parpath].add_submenu(path, title, description: description, breadcrumb: breadcrumb, route: route)
         else
           @paths[parpath].add_submenu(path, path, breadcrumb: breadcrumb, route: route)
           create_menu_item_for_path(path, route, title, description: description, tbd: tbd, breadcrumb: breadcrumb,
@@ -114,8 +117,9 @@ module AdminUI
     def description_for_route(route)
       desc = ''
       if @route_names.key?(route)
-        desc = @route_names[route][:description]
-        if @route_names[route].fetch(:breadcrumb, false)
+        puts @route_names[route]
+        desc = @route_names[route].fetch(:description, '')
+        if @route_names[route].fetch(:breadcrumb, false) && desc.empty?
           @route_names.each do |key, value|
             next unless File.dirname(key) == route
 
