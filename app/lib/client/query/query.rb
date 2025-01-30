@@ -15,8 +15,9 @@ module UC3Query
     end
 
     def initialize
-      @queries = UC3::UC3Client.load_config('app/config/mrt/query.sql.yml').fetch(:queries, [])
+      @columndefs = UC3::UC3Client.load_config('app/config/mrt/query.sql.yml').fetch(:columns, [])
       @fragments = UC3::UC3Client.load_config('app/config/mrt/query.sql.yml').fetch(:fragments, [])
+      @queries = UC3::UC3Client.load_config('app/config/mrt/query.sql.yml').fetch(:queries, [])
       map = UC3::UC3Client.lookup_map('app/config/mrt/query.lookup.yml')
       config = UC3::UC3Client.resolve_lookup('app/config/mrt/query.template.yml', map)
       @dbconf = config.fetch('dbconf', {})
@@ -60,6 +61,29 @@ module UC3Query
       hasharr
     end
 
+    def make_column(field)
+      coldef = @columndefs.fetch(:names, {}).fetch(field.to_sym, {})
+      if coldef.empty?
+        @columndefs.fetch(:patterns, {}).each do |pattern, cd|
+          coldef = cd if field =~ Regexp.new(pattern.to_s)
+        end
+      end
+      header = coldef.fetch(
+        :header,
+        field.gsub('_', ' ').split.map(&:capitalize).join(' ').gsub('Gb', 'GB')
+      )
+      cssclass = coldef.fetch(:cssclass, '')
+      AdminUI::Column.new(
+        field,
+        header: header,
+        filterable: coldef.fetch(:filterable, false),
+        id: coldef.fetch(:id, false),
+        idlist: coldef.fetch(:idlist, false),
+        prefix: coldef.fetch(:prefix, ''),
+        cssclass: "#{field} #{cssclass}"
+      )
+    end
+
     def query(path, urlparams, sqlsym: :sql)
       table = AdminUI::FilterTable.empty
       query = @queries.fetch(path.to_sym, {})
@@ -87,11 +111,7 @@ module UC3Query
       begin
         stmt = @client.prepare(sql)
         cols = stmt.fields.map do |field|
-          filterable = AdminUI::FilterTable.filterable_fields.include?(field)
-          col = AdminUI::Column.new(field, header: field, filterable: filterable)
-          col.cssclass += ' float' if field =~ /^(cost|size|.*_gb)$/
-          col.cssclass += ' float' if field =~ /^\d\d\d\d-\d\d-\d\d$/
-          col
+          make_column(field)
         end
 
         description = Mustache.render(query.fetch(:description, ''), tparm)

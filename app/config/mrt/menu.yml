@@ -72,9 +72,9 @@ items:
       - path: all-time
         title: Recent Years
         items:
-        - title: Producer Files Added by Date (Last 6 Years)
+        - title: Producer Files Added by Date (Last 5 Years)
           route: /queries/repository/all-time/producer-files
-        - title: File Size Added by Date (Last 6 Years)
+        - title: File Size Added by Date (Last 5 Years)
           route: /queries/repository/all-time/file-size
         - title: Cumulative File Size with - 3 Years + Forecast (GB)
           route: /queries/repository/all-time/cuml-file-size

@@ -1,3 +1,65 @@
+columns:
+  names:
+    inv_object_id: 
+      id: true,
+      prefix: '/queries/repository/object?inv_object_id='
+      header: Obj ID
+    inv_owner_id:
+      id: true
+    node_number:
+      id: true
+    year:
+      id: true
+    collection_name:
+      header: Coll Name
+    inv_collection_id:
+      header: Coll ID
+      id: true
+      prefix: '/queries/repository/collection?inv_collection_id='
+    mnemonic:
+      header: Mnemonic
+      filterable: true
+      id: true
+      prefix: '/queries/repository/collection-mnemonic?mnemonic='
+    mnemonics:
+      header: Mnemonic
+      filterable: true
+      idlist: true
+      prefix: '/queries/repository/collection-mnemonic?mnemonic='
+    local_ids:
+      idlist: true
+    ogroup:
+      header: Campus
+      filterable: true
+    mime_group:
+      filterable: true
+    mime_type:
+      filterable: true
+    status:
+      filterable: true
+    own_name:
+      filterable: true
+    cost:
+      cssclass: float
+    size:
+      cssclass: float
+    daily_average_projected_gb:
+      cssclass: float
+    average_available_gb:
+      cssclass: float
+    size_gb:
+      cssclass: float
+    start_size_gb:
+      cssclass: float
+    ytd_size_gb:
+      cssclass: float
+    end_size_gb:
+      cssclass: float
+    diff_size_gb:
+      cssclass: float
+  patterns:
+    '^\d{4}-\d{2}-\d{2}$':
+      cssclass: float
 fragments:
   COLLQ: |
     select
@@ -524,7 +586,7 @@ fragments:
         INTERVAL +1 YEAR
       ) end 
     from inv.inv_objects
-    where created >= date_add(now(), INTERVAL -6 YEAR)
+    where created >= date_add(now(), INTERVAL -5 YEAR)
     order by start
   CUMLYEARS: |
     select distinct 

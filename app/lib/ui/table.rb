@@ -4,14 +4,6 @@
 module AdminUI
   # Table rendering classes
   class FilterTable
-    @id_fields = {}
-    @idlist_fields = {}
-    @filterable_fields = []
-
-    class << self
-      attr_accessor :id_fields, :idlist_fields, :filterable_fields
-    end
-
     def self.empty(message = '')
       return FilterTable.new if message.empty?
 
@@ -157,11 +149,11 @@ module AdminUI
         if v.is_a?(BigDecimal)
           v = col.cssclass.split.include?('float') ? format_float(v.to_f) : format_int(v.to_i)
         end
-        if AdminUI::FilterTable.id_fields.key?(col.sym.to_sym)
-          pre = AdminUI::FilterTable.id_fields[col.sym.to_sym]
+        if col.id
+          pre = col.prefix
           v = { value: v, href: "#{pre}#{v}" } unless pre.empty?
-        elsif AdminUI::FilterTable.idlist_fields.key?(col.sym.to_sym)
-          pre = AdminUI::FilterTable.idlist_fields[col.sym.to_sym]
+        elsif col.idlist
+          pre = col.prefix
           arr = v.split(',').map do |vv|
             (pre.empty? ? vv : { value: vv, href: "#{pre}#{vv}", title: vv })
           end
@@ -191,16 +183,20 @@ module AdminUI
 
   # Table rendering classes
   class Column
-    def initialize(sym, cssclass: '', header: '', spanclass: 'val', defval: '', filterable: false)
+    def initialize(sym, cssclass: '', header: '', spanclass: 'val', defval: '', filterable: false, id: false,
+      idlist: false, prefix: '')
       @sym = sym
       @cssclass = cssclass.empty? ? sym.to_s : cssclass
       @header = header.empty? ? sym.to_s : header
       @spanclass = spanclass
       @defval = defval
       @filterable = filterable
+      @id = id
+      @idlist = idlist
+      @prefix = prefix
     end
 
-    attr_accessor :sym, :cssclass, :header, :spanclass, :defval, :filterable
+    attr_accessor :sym, :cssclass, :header, :spanclass, :defval, :filterable, :id, :idlist, :prefix
 
     def render(cellval)
       if cellval.is_a?(Array)
