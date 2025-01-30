@@ -8,17 +8,7 @@ items:
     route: /queries/consistency
     breadcrumb: true
     description: |
-      ## Consistency Reports
-      - [Object Replication - Only 2 Copies](/queries/consistency/replication/objects-2)
-      - [Object Replication - Only 1 Copy](/queries/consistency/replication/objects-1)
-      - [Object Replication - 4 Copies](/queries/consistency/replication/objects-4)
-      - [File Replication - Only 2 Copies](/queries/consistency/replication/files-2)
-      - [File Replication - Only 1 Copy](/queries/consistency/replication/files-1)
-      - [File Replication - 4 Copies](/queries/consistency/replication/files-4)
-      - [Version Clobber](/queries/consistency/version-clobber)
-      - [Objects no local id](/queries/consistency/objects-no-local-id)
-      - [Local id no Ark](/queries/consistency/local-id-no-ark)
-      - [Objects linked to multiple Collections](/queries/consistency/objects-linked-to-multiple-collections)
+      _Daily Consistency Report Checks have not yet been implemented._
   - title: Daily Consistency Checks
     route: /queries/consistency/daily
     tbd: true
@@ -283,12 +273,16 @@ items:
           route: /queries/repository/campus/invoices/2024/Other
   - path: consistency
     title: Consistency
+    route: /queries/consistency
+    breadcrumb: true
     items:
     - title: Daily Checks
       route: /queries/consistency/daily
       tbd: true
     - path: replication
       title: Replication
+      route: /queries/consistency/replication
+      breadcrumb: true
       items:
       - title: Object Replication - Only 2 Copies
         route: /queries/consistency/replication/objects-2
@@ -302,17 +296,19 @@ items:
         route: /queries/consistency/replication/files-1
       - title: File Replication - 4 Copies
         route: /queries/consistency/replication/files-4
-    - path: objects
+    - path: obj-comp
       title: Obj Composition
+      route: /queries/consistency/obj-comp
+      breadcrumb: true
       items:
       - title: Version Clobber
-        route: /queries/consistency/version-clobber
+        route: /queries/consistency/obj-comp/version-clobber
       - title: Objects no local id
-        route: /queries/consistency/objects-no-local-id
+        route: /queries/consistency/obj-comp/objects-no-local-id
       - title: Local id no Ark
-        route: /queries/consistency/local-id-no-ark
+        route: /queries/consistency/obj-comp/local-id-no-ark
       - title: Objects linked to multiple Collections
-        route: /queries/consistency/mult-colls
+        route: /queries/consistency/obj-comp/mult-colls
   - path: recent-ingest
     title: Recent Ingests
     items:
@@ -363,150 +359,176 @@ items:
       tbd: true
 - path: Operations
   title: Operations
+  route: /ops
+  breadcrumb: true
   items:
   - path: zookeeper
     title: ZooKeeper
+    route: /ops/zk
+    breadcrumb: true
     items:
-    - path: ingest-queue
-      title: Ingest Queue
-      items:
-      - title: Pause
-        route: /ingest/pause
-        tbd: true
-      - title: Unpause
-        route: /ingest/unpuse
-        tbd: true
-      - title: Ingest Batches
-        route: /ingest/batches
-        tbd: true
-      - title: Jobs by Collection
-        route: /ingest/jobs-by-collection
-        tbd: true
-      - title: Cleanup Queue
-        route: /ingest/cleanup-queue
-        tbd: true
-      - title: Ingest Folders
-        route: /ingest/folders
-        tbd: true
-    - path: access-queue
-      title: Access Queue
-      items:
-      - title: Pause
-        route: /access/pause
-        tbd: true
-      - title: Unpause
-        route: /access/unpause
-        tbd: true
-      - title: View Queue
-        route: /access/jobs
-        tbd: true
-      - title: Cleanup Queue
-        route: /access/cleanup-queue
-        tbd: true
     - path: zk-locks
       title: Locks
+      route: /ops/zk/locks
+      breadcrumb: true
       items:
       - title: Object Locks
-        route: /objects/locks
+        route: /ops/zk/locks/objects
         tbd: true
       - title: Collection Locks
-        route: /collections/locks
+        route: /ops/zk/locks/collections
         tbd: true
     - path: zk-nodes
       title: ZooKeeper Nodes
+      route: /ops/zk/nodes
+      breadcrumb: true
       items:
       - title: Node Names
-        route: /zk/node-names
+        route: /ops/zk/nodes/node-names
         tbd: true
       - title: Node Data
-        route: /zk/node-data
+        route: /ops/zk/nodes/node-data
         tbd: true
       - title: Locks
-        route: /zk/locks
+        route: /ops/zk/nodes/lock-list
         tbd: true
       - title: Orphan Report
-        route: /zk/orphan-report
+        route: /ops/zk/nodes/orphan-report
+        tbd: true
+    - path: ingest-queue
+      title: Ingest Queue
+      route: /ops/zk/ingest
+      breadcrumb: true
+      items:
+      - title: Pause
+        route: /ops/zk/ingest/pause
+        tbd: true
+      - title: Unpause
+        route: /ops/zk/ingest/unpuse
+        tbd: true
+      - title: Ingest Batches
+        route: /ops/zk/ingest/batches
+        tbd: true
+      - title: Jobs by Collection
+        route: /ops/zk/ingest/jobs-by-collection
+        tbd: true
+      - title: Cleanup Queue
+        route: /ops/zk/ingest/cleanup-queue
+        tbd: true
+      - title: Ingest Folders
+        route: /ops/zk/ingest/folders
+        tbd: true
+    - path: access-queue
+      title: Access Queue
+      route: /ops/zk/access
+      breadcrumb: true
+      items:
+      - title: Pause
+        route: /ops/zk/access/pause
+        tbd: true
+      - title: Unpause
+        route: /ops/zk/access/unpause
+        tbd: true
+      - title: View Queue
+        route: /ops/zk/access/jobs
+        tbd: true
+      - title: Cleanup Queue
+        route: /ops/zk/access/cleanup-queue
         tbd: true
   - path: db-queue
     title: Database Queues
+    route: /ops/db-queue
+    breadcrumb: true
     items:
     - path: replication-queue
       title: Replication Queue
+      route: /ops/db-queue/replication
+      breadcrumb: true
       items:
-      - title: Queued
-        route: /replication/queued
+      - title: Repl Required
+        route: /ops/db-queue/replication/required
+      - title: Repl Queued
+        route: /ops/db-queue/replication/queued
         tbd: true
       - title: In Progress
-        route: /replication/in-progress
+        route: /ops/db-queue/replication/in-progress
         tbd: true
       - title: Failed
-        route: /replication/failed
+        route: /ops/db-queue/replication/failed
         tbd: true
       - title: Recent Performance
-        route: /replication/recent-performance
+        route: /ops/db-queue/replication/recent-performance
         tbd: true
     - path: audit-queue
+      route: /ops/db-queue/audit
+      breadcrumb: true
       title: Audit Queue
       items:
       - title: Oldest Audit Check
-        route: /audit/oldest-audit-check
+        route: /ops/db-queue/audit/oldest-audit-check
         tbd: true
       - title: Recent Performance
-        route: /audit/recent-performance
+        route: /ops/db-queue/audit/recent-performance
         tbd: true
       - title: Active Batches
-        route: /audit/active-batches
+        route: /ops/db-queue/audit/active-batches
         tbd: true
       - title: Counts by State
-        route: /audit/counts-by-state
+        route: /ops/db-queue/audit/counts-by-state
         tbd: true
   - path: collections
     title: Collections
+    route: /ops/collections
+    breadcrumb: true
     items:
     - title: Profiles
-      route: /collections/profiles
+      route: /ops/collections/profiles
       tbd: true
     - title: Collection Config
-      route: /collections/config
+      route: /ops/collections/config
       tbd: true
     - title: Storage Node Config
-      route: /collections/storage-node-config
+      route: /ops/collections/storage-node-config
       tbd: true
     - title: Non standard primary config
-      route: /collections/primary-config
+      route: /ops/collections/primary-config
       tbd: true
     - title: Non standard secondary config
-      route: /collections/secondary-config
+      route: /ops/collections/secondary-config
       tbd: true
     - title: Node cleanup needed
-      route: /collections/node-cleanup-needed
+      route: /ops/collections/node-cleanup-needed
       tbd: true
   - path: storage
+    route: /ops/storage
+    breadcrumb: true
     title: Storage
     items:
     - title: Storage Nodes
-      route: /storage/nodes
+      route: /ops/storage/nodes
       tbd: true
     - title: Test Storage Nodes
       path: test-nodes
+      route: /ops/storage/test-nodes
+      breadcrumb: true
       items:
       - title: S3
-        route: /storage/test-nodes/s3
+        route: /ops/storage/test-nodes/s3
         tbd: true
       - title: S3 Assembly
-        route: /storage/test-nodes/s3-assembly
+        route: /ops/storage/test-nodes/s3-assembly
         tbd: true
       - title: Glacier
-        route: /storage/test-nodes/glacier
+        route: /ops/storage/test-nodes/glacier
         tbd: true
       - title: SDSC
-        route: /storage/test-nodes/sdsc
+        route: /ops/storage/test-nodes/sdsc
         tbd: true
       - title: Wasabi
-        route: /storage/test-nodes/wasabi
+        route: /ops/storage/test-nodes/wasabi
         tbd: true
   - title: Storage Scans
-    route: /storage/scans
+    route: /ops/storage/scans
     tbd: true
 - path: Internals
   title: Internals

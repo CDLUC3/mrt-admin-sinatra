@@ -115,7 +115,7 @@ module UC3Query
         end
 
         description = Mustache.render(query.fetch(:description, ''), tparm)
-        description += "<details><summary>SQL</summary><pre>#{@formatter.format(sql)}</pre></details>"
+        description += "<details><summary>SQL</summary><pre>#{@formatter.format(sql).gsub(' (', '(')}</pre></details>"
         table = AdminUI::FilterTable.new(
           columns: cols,
           totals: query.fetch(:totals, false),
@@ -128,7 +128,7 @@ module UC3Query
       rescue StandardError => e
         arr = [
           "#{e.class}: #{e}",
-          "<details><summary>SQL</summary><pre>#{@formatter.format(sql)}</pre></details>",
+          "<details><summary>SQL</summary><pre>#{@formatter.format(sql).gsub(' (', '(')}</pre></details>",
           params.to_s,
           "Connect timeout: #{@dbconf[:connect_timeout]}",
           "Read timeout: #{@dbconf[:read_timeout]}"

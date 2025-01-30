@@ -12,7 +12,7 @@ module AdminUI
 
   ## Menu (array of submenus and menu items)
   class Menu
-    def initialize(path, title, parent: nil, breadroute: nil)
+    def initialize(path, title, parent: nil)
       @path = path
       @title = title
       @parent = parent
@@ -37,7 +37,7 @@ module AdminUI
 
     def add_submenu(path, title, breadcrumb: false, route: '')
       child = Menu.new(path, title, parent: self)
-      child.top.route_names[route] = { title: title, description: '' } if breadcrumb && !route.empty?
+      child.top.route_names[route] = { title: title, description: '', breadcrumb: true } if breadcrumb && !route.empty?
       @children << child
       child
     end
@@ -112,9 +112,18 @@ module AdminUI
     end
 
     def description_for_route(route)
-      return @route_names[route][:description] if @route_names.key?(route)
+      desc = ''
+      if @route_names.key?(route)
+        desc = @route_names[route][:description]
+        if @route_names[route].fetch(:breadcrumb, false)
+          @route_names.each do |key, value|
+            next unless File.dirname(key) == route
 
-      ''
+            desc += "\n- [#{value[:title]}](#{key})"
+          end
+        end
+      end
+      desc
     end
 
     def render

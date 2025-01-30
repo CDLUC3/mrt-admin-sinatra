@@ -50,6 +50,17 @@ module Sinatra
           }
       end
 
+      app.get '/ops/db-queue/**' do
+        puts request.path
+        request.params[:term] = URI.decode_www_form_component(request.params[:term]) if request.params.key?(:term)
+        erb :table,
+          layout: :page_layout,
+          locals: {
+            context: AdminUI::Context.new(request.path),
+            table: UC3Query::QueryClient.client.query(request.path, request.params)
+          }
+      end
+
       app.post '/search' do
         term = URI.encode_www_form_component(params[:search])
         case params[:search_type]

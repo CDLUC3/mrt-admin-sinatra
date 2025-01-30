@@ -1374,13 +1374,13 @@ queries:
     totals: true
     sql: |
       {{{MIME}}}
-  /queries/consistency/mult-colls:
+  /queries/consistency/obj-comp/mult-colls:
     totals: true
     description: |
-      - [Object List](/queries/consistency/mult-colls/objlist)
+      - [Object List](/queries/consistency/obj-comp/mult-colls/objlist)
     sql: |
       {{{MULTCOLLQ}}}
-  /queries/consistency/mult-colls/objlist:
+  /queries/consistency/obj-comp/mult-colls/objlist:
     totals: true
     sql: |
       {{{OBJQ}}}
@@ -1519,9 +1519,9 @@ queries:
             'ucb_lib_dcpp', 'ucb_lib_metcalf', 'ucb_lib_jar',
             'ucb_lib_prechmat', 'ucb_lib_stone_rubbings'
           )
-  /queries/consistency/version-clobber:
+  /queries/consistency/obj-comp/version-clobber:
     description: |
-      - [Object List](/queries/consistency/version-clobber/objlist )
+      - [Object List](/queries/consistency/obj-comp/version-clobber/objlist )
     sql: |
       select
         'Version Clobber (Duplicate Version Num)',
@@ -1551,15 +1551,15 @@ queries:
         having
           count(distinct number) != max(number)
       ) as gap
-  /queries/consistency/version-clobber/objlist:
+  /queries/consistency/obj-comp/version-clobber/objlist:
     sql: |
       {{{OBJSUBQ}}}
     template-params:
       SUBWHERE: |
         {{{VERCLOBBER}}}
-  /queries/consistency/objects-no-local-id:
+  /queries/consistency/obj-comp/objects-no-local-id:
     description: |
-      - [Object List](/queries/consistency/objects-no-local-id/objlist)
+      - [Object List](/queries/consistency/obj-comp/objects-no-local-id/objlist)
     sql: |
       select
         case
@@ -1591,7 +1591,7 @@ queries:
           category
         order by
           category
-  /queries/consistency/objects-no-local-id/objlist:
+  /queries/consistency/obj-comp/objects-no-local-id/objlist:
     sql: |
       {{{OBJQ}}}
     template-params:
@@ -1606,7 +1606,7 @@ queries:
         )
         and
           erc_where != concat(o.ark, ' ; (:unas)')
-  /queries/consistency/local-id-no-ark:
+  /queries/consistency/obj-comp/local-id-no-ark:
     sql: |
       SELECT
         replace(loc.inv_owner_ark, '%2F', '/') as ownark,
@@ -2017,4 +2017,104 @@ queries:
       DATES: |
         {{{FY2024}}}
     sql: |
-      {{{INVOICE}}}      
+      {{{INVOICE}}}
+  /ops/db-queue/replication/required:
+    sql: |
+      select
+        case
+          when u.inv_object_id = (
+            select id from inv.inv_objects where ark = 'ark:/99999/fk4t15qn1'
+          )
+            then 'Stage Exception'
+          else
+            'Default'
+        end as category,
+        count(u.inv_object_id) as obj,
+        sum(os.billable_size) as fbytes,
+        ifnull(
+          sum(
+            case
+              when u.modified < date_add(now(), INTERVAL -2 DAY)
+                then 1
+              else 0
+            end
+          ),
+          0
+        ) as day2,
+        ifnull(
+          sum(
+            case
+              when u.modified < date_add(now(), INTERVAL -2 DAY)
+                then 0
+              when u.modified < date_add(now(), INTERVAL -1 DAY)
+                then 1
+              else 0
+            end
+          ),
+          0
+        ) as day1,
+        ifnull(
+          sum(
+            case
+              when u.modified < date_add(now(), INTERVAL -2 DAY)
+                then 0
+              when u.modified < date_add(now(), INTERVAL -1 DAY)
+                then 0
+              else 1
+            end
+          ),
+          0
+        ) as day0,
+        case
+          when count(distinct u.inv_object_id) = 0 then 'PASS'
+          when
+            sum(
+              case
+                when u.modified < date_add(now(), INTERVAL -2 DAY)
+                  then 1
+                else 0
+              end
+            ) > 0 then 'FAIL'
+          when
+            sum(
+              case
+                when u.modified < date_add(now(), INTERVAL -2 DAY)
+                  then 0
+                when u.modified < date_add(now(), INTERVAL -1 DAY)
+                  then 1
+                else 0
+              end
+            ) > 0 then 'WARN'
+         else 'PASS'
+        end as status
+      from (
+        select
+          p.inv_object_id,
+          o.created,
+          o.modified
+        from
+          inv.inv_nodes_inv_objects p
+        inner join
+          inv.inv_objects o
+        on
+          o.id = p.inv_object_id
+        where
+          p.role='primary'
+        and
+          not exists(
+            select
+              1
+            from
+              inv.inv_nodes_inv_objects s
+            where
+              s.role='secondary'
+            and
+              p.inv_object_id = s.inv_object_id
+            and
+              s.version_number = o.version_number
+          )
+      ) as u
+      inner join object_size os
+        on os.inv_object_id = u.inv_object_id
+      group by
+        category
