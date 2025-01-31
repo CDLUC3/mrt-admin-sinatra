@@ -348,13 +348,13 @@ items:
       route: /queries/use-cases/long-pathname-selected-collections
   - path: content 
     title: Content Reports 
+    breadcrumb: true
+    route: /queries/content
     items: 
-    - title: Producer File Listing 
+    - title: Producer File Listing (slow)
       route: /queries/content/producer-files
-      tbd: true
-    - title: UCSC Object Listing 
+    - title: UCSC Object Listing (slow)
       route: /queries/content/ucsc-objects
-      tbd: true
 - path: Operations
   title: Operations
   route: /ops

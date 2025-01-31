@@ -43,6 +43,42 @@ module Sinatra
         redirect "/queries/recent/ingests?date=#{Date.today.strftime('%Y-%m-%d')}"
       end
 
+      app.get '/queries/content/producer-files' do
+        if request.params.key?('mnemonic')
+          erb :table,
+            layout: :page_layout,
+            locals: {
+              context: AdminUI::Context.new(request.path),
+              table: UC3Query::QueryClient.client.query(request.path, request.params)
+            }
+        else
+          erb :table,
+            layout: :page_layout,
+            locals: {
+              context: AdminUI::Context.new(request.path),
+              table: UC3Query::QueryClient.client.query('/queries/collections', request.params)
+            }
+        end
+      end
+
+      app.get '/queries/content/ucsc-objects' do
+        if request.params.key?('mnemonic')
+          erb :table,
+            layout: :page_layout,
+            locals: {
+              context: AdminUI::Context.new(request.path),
+              table: UC3Query::QueryClient.client.query(request.path, request.params)
+            }
+        else
+          erb :table,
+            layout: :page_layout,
+            locals: {
+              context: AdminUI::Context.new(request.path),
+              table: UC3Query::QueryClient.client.query('/queries/collections', request.params)
+            }
+        end
+      end
+
       app.get '/queries/**' do
         request.params[:term] = URI.decode_www_form_component(request.params[:term]) if request.params.key?(:term)
         erb :table,

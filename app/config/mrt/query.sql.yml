@@ -21,6 +21,11 @@ columns:
       filterable: true
       id: true
       prefix: '/queries/repository/collection-mnemonic?mnemonic='
+    mnemonic_choice:
+      header: Mnemonic
+      filterable: true
+      id: true
+      prefix: '?mnemonic='
     mnemonics:
       header: Mnemonic
       filterable: true
@@ -2981,4 +2986,122 @@ queries:
         ifnull(nc.object_count, 0) > 0
       order by
         n.number
-  
+  /queries/collections:
+    description: |
+      _Please Choose the Collection for this Report_
+    sql: |
+      select
+        mnemonic as mnemonic_choice,
+        ifnull(name, mnemonic) as collection_name
+      from
+        inv.inv_collections
+      where
+        mnemonic is not null
+      and 
+        mnemonic not like '%_sla'
+      and 
+        mnemonic not like '%_service_level_agreement'
+      and 
+        mnemonic not like 'mrt_%_classes'
+      order By
+        mnemonic
+  /queries/content/producer-files:
+    sql: |
+      select
+        distinct o.ark,
+        v.number,
+        substr(f.pathname, 10) as fname,
+        billable_size,
+        digest_value,
+        f.created,
+        loc.loc_id_agg
+      from
+        inv.inv_objects o
+      inner join inv.inv_files f
+        on f.inv_object_id = o.id and source = 'producer'
+      inner join inv.inv_versions v
+        on f.inv_version_id = v.id
+      left join
+        (
+          select inv_object_ark, group_concat(local_id) as loc_id_agg
+          from inv.inv_localids
+          group by inv_object_ark
+        ) loc
+        on o.ark = inv_object_ark
+      where exists (
+        select 1
+        from
+          inv.inv_collections_inv_objects icio
+        where
+          icio.inv_object_id = o.id
+        and
+          icio.inv_collection_id = (
+            select
+              id
+            from
+              inv.inv_collections c
+            where
+              c.mnemonic = ?
+          )
+      )
+      order by
+        o.ark,
+        fname
+    parameters:
+      - name: mnemonic
+        type: string
+  /queries/content/ucsc-objects:
+    sql: |
+      select
+        distinct o.ark,
+        loc.loc_id_agg,
+        replace(o.erc_what, '"', "'") as erc_what,
+        replace(o.erc_when, '"', "'") as erc_when,
+        replace(o.erc_who, '"', "'") as erc_who,
+        (
+          select count(*)
+          from inv.inv_versions v
+          inner join inv.inv_files f
+            on f.inv_object_id = o.id and f.inv_version_id = v.id
+            and f.source='producer' and o.version_number = v.number
+          where v.inv_object_id = o.id
+        ) as file_count,
+        os.billable_size,
+        concat('http://n2t.net/', o.ark) as permalink,
+        (
+          select group_concat(distinct f.mime_type)
+          from inv.inv_files f
+          where inv_object_id=o.id and source='producer'
+        ) as mimetypes
+      from
+        inv.inv_objects o
+      inner join billing.object_size os
+        on os.inv_object_id = o.id
+      left join
+        (
+          select inv_object_ark, group_concat(local_id) as loc_id_agg
+          from inv.inv_localids
+          group by inv_object_ark
+        ) loc
+        on o.ark = inv_object_ark
+      where exists (
+        select 1
+        from
+          inv.inv_collections_inv_objects icio
+        where
+          icio.inv_object_id = o.id
+        and
+          icio.inv_collection_id = (
+            select
+              id
+            from
+              inv.inv_collections c
+            where
+              c.mnemonic = ?
+          )
+      )
+      order by
+        o.ark
+    parameters:
+    - name: mnemonic
+      type: string
