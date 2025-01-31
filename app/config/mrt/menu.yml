@@ -469,6 +469,8 @@ items:
           route: /ops/db-queue/replication/activity/7days
         - title: Last 30 Days
           route: /ops/db-queue/replication/activity/30days
+        - title: 30-60 Days Ago
+          route: /ops/db-queue/replication/activity/30-60-days-ago
     - path: audit-queue
       route: /ops/db-queue/audit
       breadcrumb: true

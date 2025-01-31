@@ -935,10 +935,12 @@ fragments:
     select
       '{{title}}' as title,
       count(inio.inv_object_id) as objs,
-      ifnull(sum(inio.replic_size),0) / 1000000000.0 as bytes_gb,
-      ifnull(sum(inio.replic_size), 0) * (
-        timediff(now(), date_add(now(), interval -1 day)) / timediff(drange.end, drange.start)
-      ) / 1000000000.0 as bytes_gb_per_day
+      ifnull(sum(inio.replic_size), 0) / 1000000000.0 as bytes_gb,
+      datediff(drange.end, drange.start) as days,
+      case
+        when datediff(drange.end, drange.start) = 0 then 0
+        else ifnull(sum(inio.replic_size), 0) / 1000000000.0 / datediff(drange.end, drange.start)
+      end as bytes_gb_per_day
     from
       inv.inv_nodes_inv_objects inio,
       (
@@ -966,7 +968,7 @@ fragments:
       'Last Hour' as title,
       date_add(now(), interval -1 hour) as start,
       now() as end
-  SINCEMIDNIGTH: |
+  SINCEMIDNIGHT: |
     select
       'Since midnight' as title,
       date(now()) start,
@@ -991,6 +993,11 @@ fragments:
       'Last 30 days' as title,
       date_add(date(now()), INTERVAL -30 DAY) as start,
       now() as end
+  30TO60DAYS: |
+    select
+      '30 - 60 days ago' as title,
+      date_add(date(now()), INTERVAL -60 DAY) as start,
+      date_add(date(now()), INTERVAL -30 DAY) as end
 queries:
   /queries/repository/campus/bytes:
     totals: true
@@ -2504,7 +2511,7 @@ queries:
       {{{REPLACT}}}
     template-sql:
       DATES: |
-        {{{SINCEMIDNIGTHT}}}
+        {{{SINCEMIDNIGHT}}}
   /ops/db-queue/replication/activity/yesterday:
     sql: |
       {{{REPLACT}}}
@@ -2529,4 +2536,10 @@ queries:
     template-sql:
       DATES: |
         {{{30DAYS}}}
+  /ops/db-queue/replication/activity/30-60-days-ago:
+    sql: |
+      {{{REPLACT}}}
+    template-sql:
+      DATES: |
+        {{{30TO60DAYS}}}
 
