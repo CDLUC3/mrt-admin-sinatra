@@ -998,6 +998,81 @@ fragments:
       '30 - 60 days ago' as title,
       date_add(date(now()), INTERVAL -60 DAY) as start,
       date_add(date(now()), INTERVAL -30 DAY) as end
+  ITER72HOURS: |
+    with recursive rnums as (
+      select 0 as n
+      union all
+      select n+1 as n from rnums where n < 71
+    )
+    select 
+      str_to_date(
+        date_format(
+          date_add(date(now()), interval -rnums.n HOUR),
+          '%Y-%m-%d %H:00'
+        ),
+        '%Y-%m-%d %H:%i:%s'
+      ) as start,
+      date_add(
+        str_to_date(
+          date_format(
+            date_add(date(now()), interval -rnums.n HOUR),
+            '%Y-%m-%d %H:00'
+          ),
+          '%Y-%m-%d %H:%i:%s'
+        ), 
+        interval 1 HOUR
+      ) as end
+    from
+      rnums
+  ITER30DAYS: |
+    with recursive rnums as (
+      select 0 as n
+      union all
+      select n+1 as n from rnums where n < 29
+    )
+    select 
+      date_add(date(now()), interval -rnums.n DAY) as start,
+      date_add(date(now()), interval -rnums.n +1 DAY) as end
+    from
+      rnums
+  ITER52WEEKS: |
+    with recursive rnums as (
+      select 0 as n
+      union all
+      select n+1 as n from rnums where n < 51
+    )
+    select 
+      date_add(date_add(date(now()), interval -dayofweek(date(now())) + 1 DAY), interval -rnums.n WEEK) as start,
+      date_add(date_add(date(now()), interval -dayofweek(date(now())) + 1 DAY), interval -rnums.n +1 WEEK) as end
+    from
+      rnums
+  ITER12MONTHS: |
+    with recursive rnums as (
+      select 0 as n
+      union all
+      select n+1 as n from rnums where n < 11
+    )
+    select 
+      date_add(date_add(date(now()), interval -dayofmonth(date(now())) + 1 DAY), interval -rnums.n MONTH) as start,
+      date_add(date_add(date(now()), interval -dayofmonth(date(now())) + 1 DAY), interval -rnums.n +1 MONTH) as end
+    from
+      rnums
+  RECENTBYTES: |
+    {{#DATES}}
+    select
+      '{{{start}}}' as start,
+      sum(f.billable_size) / 1000000000.0 as size_gb
+    from
+      inv.inv_files f
+    where
+      created >= '{{{start}}}'
+    and
+      created < '{{{end}}}'
+    union all
+    {{/DATES}}
+    select '' start, 0 size_gb where false
+    order by 
+      start
 queries:
   /queries/repository/campus/bytes:
     totals: true
@@ -2111,115 +2186,32 @@ queries:
       type: date
   /queries/recent/bytes-by-hour:
     totals: true
+    template-sql: 
+      DATES: |
+        {{{ITER72HOURS}}}
     sql: |
-      with recursive rnums as (
-        select 0 as n
-        union all
-        select n+1 as n from rnums where n < 71
-      )
-      select 
-        start,
-        sum(f.billable_size) / 1000000000.0 as size_gb
-      from
-        (
-          select 
-            str_to_date(
-              date_format(
-                date_add(date(now()), interval -rnums.n HOUR),
-                '%Y-%m-%d %H:00'
-              ),
-              '%Y-%m-%d %H:%i:%s'
-            ) as start
-            from rnums
-        ) dates,
-        inv.inv_files f
-      where
-        created >= start
-      and
-        created < date_add(start, interval 1 HOUR)
-      group by
-        start
+      {{{RECENTBYTES}}}
   /queries/recent/bytes-by-day:
     totals: true
+    template-sql: 
+      DATES: |
+        {{{ITER30DAYS}}}
     sql: |
-      with recursive rnums as (
-        select 0 as n
-        union all
-        select n+1 as n from rnums where n < 29
-      )
-      select 
-        start,
-        sum(f.billable_size) / 1000000000.0 as size_gb
-      from
-        (
-          select 
-            date_add(date(now()), interval -rnums.n DAY) as start
-          from rnums
-        ) dates,
-        inv.inv_files f
-      where
-        created >= start
-      and
-        created < date_add(start, interval 1 DAY)
-      group by
-        start
-      order by 
-        start
+      {{{RECENTBYTES}}}
   /queries/recent/bytes-by-week:
     totals: true
+    template-sql: 
+      DATES: |
+        {{{ITER52WEEKS}}}
     sql: |
-      with recursive rnums as (
-        select 0 as n
-        union all
-        select n+1 as n from rnums where n < 51
-      )
-      select 
-        start,
-        sum(f.billable_size) / 1000000000.0 as size_gb
-      from
-        (
-          select 
-            date_add(date(now()), interval -rnums.n WEEK) as start
-          from rnums
-        ) dates,
-        billing.owner_coll_mime_use_details f
-      where
-        date_added >= start
-      and
-        date_added < date_add(start, interval 1 WEEK)
-      group by
-        start
-      order by 
-        start
+      {{{RECENTBYTES}}}
   /queries/recent/bytes-by-month:
     totals: true
+    template-sql: 
+      DATES: |
+        {{{ITER12MONTHS}}}
     sql: |
-      with recursive rnums as (
-        select 0 as n
-        union all
-        select n+1 as n from rnums where n < 11
-      )
-      select 
-        start,
-        sum(f.billable_size) / 1000000000.0 as size_gb
-      from
-        (
-          select 
-            date_add(
-              date_add(date(now()), interval -dayofmonth(date(now())) + 1 DAY), 
-              interval -rnums.n MONTH
-            ) as start
-          from rnums
-        ) dates,
-        billing.owner_coll_mime_use_details f
-      where
-        date_added >= start
-      and
-        date_added < date_add(start, interval 1 MONTH)
-      group by
-        start
-      order by 
-        start
+      {{{RECENTBYTES}}}
   /queries/recent/bytes-by-years:
     sql: |
       select 
