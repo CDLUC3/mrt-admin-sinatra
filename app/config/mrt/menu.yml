@@ -478,16 +478,34 @@ items:
       items:
       - title: Oldest Audit Check
         route: /ops/db-queue/audit/oldest-audit-check
-        tbd: true
-      - title: Recent Performance
-        route: /ops/db-queue/audit/recent-performance
-        tbd: true
       - title: Active Batches
         route: /ops/db-queue/audit/active-batches
-        tbd: true
       - title: Counts by State
         route: /ops/db-queue/audit/counts-by-state
-        tbd: true
+      - title: Last 30 days
+        route: /ops/db-queue/audit/30-days
+      - title: Recent Activity
+        route: /ops/db-queue/audit/activity
+        breadcrumb: true
+        items:
+        - title: Last Minute
+          route: /ops/db-queue/audit/activity/last-min
+        - title: Last 5 Minutes
+          route: /ops/db-queue/audit/activity/last-5min
+        - title: Last Hour
+          route: /ops/db-queue/audit/activity/last-hour
+        - title: Since Midnight
+          route: /ops/db-queue/audit/activity/since-midnight
+        - title: Yesterday
+          route: /ops/db-queue/audit/activity/yesterday
+        - title: 2 Days Ago
+          route: /ops/db-queue/audit/activity/2days-ago
+        - title: Last 7 Days
+          route: /ops/db-queue/audit/activity/7days
+        - title: Last 30 Days
+          route: /ops/db-queue/audit/activity/30days
+        - title: 30-60 Days Ago
+          route: /ops/db-queue/audit/activity/30-60-days-ago
   - path: collections
     title: Collections
     route: /ops/collections

@@ -61,6 +61,14 @@ columns:
       cssclass: float
     bytes_gb_per_day:
       cssclass: float
+    online_bytes_gb:
+      cssclass: float
+    s3_bytes_gb:
+      cssclass: float
+    wasabi_bytes_gb:
+      cssclass: float
+    sdsc_bytes_gb:
+      cssclass: float
   patterns:
     '^\d{4}-\d{2}-\d{2}$':
       cssclass: float
@@ -952,6 +960,19 @@ fragments:
       replicated >= drange.start
     and
       replicated < drange.end
+    {{/DATES}}
+  AUDITACT: |
+    {{#DATES}}
+    select
+      '{{title}}' as title,
+      status,
+      count(*)
+    from
+      inv.inv_audits
+    where
+      verified > '{{start}}'
+    and
+      verified < '{{end}}'
     {{/DATES}}
   LASTMIN: |
     select
@@ -2534,4 +2555,241 @@ queries:
     template-sql:
       DATES: |
         {{{30TO60DAYS}}}
-
+  /ops/db-queue/audit/oldest-audit-check:
+    sql: |
+      select
+        date(verified) as date,
+        case
+          when date(verified) < date_add(now(), INTERVAL -90 DAY) then 'FAIL'
+          when date(verified) < date_add(now(), INTERVAL -60 DAY) then 'WARN'
+          else 'PASS'
+        end as status
+      from
+        inv.inv_audits
+      where
+        status != 'processing'
+      AND NOT
+        verified IS null
+      order by
+        verified
+      LIMIT 1
+  /ops/db-queue/audit/active-batches:
+    sql: |
+      select
+        verified,
+        count(a.id) as file_count,
+        ifnull(
+          sum(
+            case
+              when a.inv_node_id in (select id from inv.inv_nodes where access_mode != 'on-line')
+                then 0
+              else full_size
+            end
+          ),
+          0
+        ) as online_bytes,
+        case
+          when verified is null and min(f.created) < date_add(now(), INTERVAL -1 DAY) then 'FAIL'
+          when verified is null and min(f.created) < date_add(now(), INTERVAL -10 HOUR) then 'WARN'
+          when verified < date_add(now(), INTERVAL -1 DAY) then 'FAIL'
+          when verified < date_add(now(), INTERVAL -10 HOUR) then 'WARN'
+          else 'PASS'
+        end as status
+      from
+        inv.inv_files f
+      inner join inv.inv_audits a
+        on
+          f.id = a.inv_file_id
+        and
+          f.inv_object_id = a.inv_object_id
+        and
+          f.inv_version_id = a.inv_version_id
+      where
+        status='processing'
+      group by
+        verified
+  /ops/db-queue/audit/counts-by-state:
+    sql: |
+      select
+        'unverified' as astatus,
+        acount,
+        case
+          when acount > 0 then 'FAIL'
+          else 'PASS'
+        end as status
+      from
+        (
+          select
+            count(*) as acount
+          from
+            inv.inv_audits
+          where
+            status = 'unverified'
+        ) as qcount
+      union
+      select
+        'size-mismatch' as astatus,
+        acount,
+        case
+          when acount > 0 then 'FAIL'
+          else 'PASS'
+        end as status
+      from
+        (
+          select
+            count(*) as acount
+          from
+            inv.inv_audits
+          where
+            status = 'size-mismatch'
+          ) as qcount
+      union
+      select
+        'digest-mismatch' as astatus,
+        acount,
+        case
+          when acount > 0 then 'FAIL'
+          else 'PASS'
+        end as status
+      from
+        (
+          select
+            count(*) as acount
+          from
+            inv.inv_audits
+          where
+            status = 'digest-mismatch'
+        ) as qcount
+      union
+      select
+        'system-unavailable' as astatus,
+        acount,
+        case
+          when acount > 0 then 'WARN'
+          else 'PASS'
+        end as status
+      from
+        (
+          select
+            count(*) as acount
+          from
+            inv.inv_audits
+          where
+            status = 'system-unavailable'
+        ) as qcount
+      union
+      select
+        'processing' as astatus,
+        acount,
+        'PASS' as status
+      from
+        (
+          select
+            count(*) as acount
+          from
+            inv.inv_audits
+          where
+            status = 'processing'
+        ) as qcount
+      union
+      select
+        'unknown' as astatus,
+        acount,
+        case
+          when acount > 0 then 'PASS'
+          else 'PASS'
+        end as status
+      from
+        (
+          select
+            count(*) as acount
+          from
+            inv.inv_audits
+          where
+            status = 'unknown'
+        ) as qcount
+  /ops/db-queue/audit/activity/last-min:
+    sql: |
+      {{{AUDITACT}}}
+    template-sql:
+      DATES: |
+        {{{LASTMIN}}}
+  /ops/db-queue/audit/activity/last-5min:
+    sql: |
+      {{{AUDITACT}}}
+    template-sql:
+      DATES: |
+        {{{LAST5MIN}}}
+  /ops/db-queue/audit/activity/last-hour:
+    sql: |
+      {{{AUDITACT}}}
+    template-sql:
+      DATES: |
+        {{{LASTHOUR}}}
+  /ops/db-queue/audit/activity/since-midnight:
+    sql: |
+      {{{AUDITACT}}}
+    template-sql:
+      DATES: |
+        {{{SINCEMIDNIGHT}}}
+  /ops/db-queue/audit/activity/yesterday:
+    sql: |
+      {{{AUDITACT}}}
+    template-sql:
+      DATES: |
+        {{{YESTERDAY}}}
+  /ops/db-queue/audit/activity/2days-ago:
+    sql: |
+      {{{AUDITACT}}}
+    template-sql:
+      DATES: |
+        {{{2DAYS}}}
+  /ops/db-queue/audit/activity/7days:
+    sql: |
+      {{{AUDITACT}}}
+    template-sql:
+      DATES: |
+        {{{7DAYS}}}
+  /ops/db-queue/audit/activity/30days:
+    sql: |
+      {{{AUDITACT}}}
+    template-sql:
+      DATES: |
+        {{{30DAYS}}}
+  /ops/db-queue/audit/activity/30-60-days-ago:
+    sql: |
+      {{{AUDITACT}}}
+    template-sql:
+      DATES: |
+        {{{30TO60DAYS}}}
+  /ops/db-queue/audit/30-days:
+    sql: |
+      select
+        audit_date,
+        all_files,
+        online_files,
+        online_bytes / 1000000000.0 as online_bytes_gb,
+        s3_files,
+        s3_bytes / 1000000000.0 as s3_bytes_gb,
+        glacier_files,
+        sdsc_files,
+        sdsc_bytes / 1000000000.0 as sdsc_bytes_gb,
+        wasabi_files,
+        wasabi_bytes / 1000000000.0 as wasabi_bytes_gb,
+        case
+          when (all_files > 2300000 and online_bytes > 12000000000000)
+            then 'PASS'
+          when (all_files > 1550000 and online_bytes >  8000000000000)
+            then 'INFO'
+          when (all_files < 1550000 and online_bytes <  8000000000000)
+            then 'FAIL'
+          when (audit_date < date_add(now(), INTERVAL -6 DAY))
+            then 'INFO'
+          else 'WARN'
+        end as status
+      from
+        audits_processed
+      where
+        audit_date > date_add(now(), INTERVAL -30 DAY)
+      order by
+        audit_date desc
