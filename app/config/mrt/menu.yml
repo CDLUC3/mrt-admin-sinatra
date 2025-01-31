@@ -482,7 +482,7 @@ items:
         route: /ops/db-queue/audit/active-batches
       - title: Counts by State
         route: /ops/db-queue/audit/counts-by-state
-      - title: Last 30 days
+      - title: Stats, Last 30 days
         route: /ops/db-queue/audit/30-days
       - title: Recent Activity
         route: /ops/db-queue/audit/activity
@@ -514,30 +514,33 @@ items:
     - title: Profiles
       route: /ops/collections/profiles
       tbd: true
-    - title: Collection Config
-      route: /ops/collections/config
-      tbd: true
     - title: Storage Node Config
       route: /ops/collections/storage-node-config
       tbd: true
-    - title: Non standard primary config
-      route: /ops/collections/primary-config
-      tbd: true
-    - title: Non standard secondary config
-      route: /ops/collections/secondary-config
-      tbd: true
-    - title: Node cleanup needed
-      route: /ops/collections/node-cleanup-needed
-      tbd: true
+    - path: db
+      title: DB config
+      route: /ops/collections/db
+      breadcrumb: true
+      items:
+      - title: Node cleanup needed (slow)
+        route: /ops/collections/db/node-cleanup-needed
+      - title: Non standard primary config (slow)
+        route: /ops/collections/db/primary-config
+      - title: Non standard secondary config
+        route: /ops/collections/db/secondary-config
   - path: storage
     route: /ops/storage
     breadcrumb: true
     title: Storage
     items:
-    - title: Storage Nodes
-      route: /ops/storage/nodes
-      tbd: true
-    - title: Test Storage Nodes
+    - path: db
+      title: DB config
+      route: /ops/storage/db
+      breadcrumb: true
+      items:
+      - title: Storage Nodes
+        route: /ops/storage/db/nodes
+    - title: Test Nodes
       path: test-nodes
       route: /ops/storage/test-nodes
       breadcrumb: true

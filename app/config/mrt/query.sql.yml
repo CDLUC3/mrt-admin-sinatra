@@ -2793,3 +2793,192 @@ queries:
         audit_date > date_add(now(), INTERVAL -30 DAY)
       order by
         audit_date desc
+  /ops/collections/db/node-cleanup-needed:
+    sql: |
+      select
+          icio.inv_collection_id,
+          ifnull(c.name, concat('Coll', c.id)) as collection_name,
+          n.number node_number,
+          count(*) num_objects,
+          'FAIL' as status
+        from
+          inv.inv_nodes_inv_objects inio
+        inner join
+          inv.inv_collections_inv_objects icio
+        on
+          inio.inv_object_id = icio.inv_object_id
+        inner join
+          inv.inv_nodes n
+        on
+          n.id = inio.inv_node_id
+        inner join
+          inv.inv_collections c
+        on
+          c.id = icio.inv_collection_id
+        where
+          inio.role = 'secondary'
+        and
+          not exists (
+            select
+              1
+            from
+              inv.inv_collections_inv_nodes icin
+            where
+              icin.inv_collection_id = icio.inv_collection_id
+            and
+              icin.inv_node_id = inio.inv_node_id
+          )
+        and exists (
+          select
+            1
+          from
+            inv.inv_objects o
+          where
+            o.id = inio.inv_object_id
+          and
+            aggregate_role = 'MRT-none'
+        )
+        group by
+          inio.inv_node_id,
+          n.number,
+          icio.inv_collection_id,
+          c.name,
+          status
+  /ops/collections/db/primary-config:
+    sql: |
+      select
+        n.number as nodenum,
+        n.description as nodename,
+        c.name as collection,
+        (
+          select
+            group_concat(nn.number order by nn.number)
+          from
+            inv.inv_collections_inv_nodes icin
+          inner join
+            inv.inv_nodes nn
+          on
+            icin.inv_node_id = nn.id
+          where
+            icin.inv_collection_id = c.id
+        ),
+        case
+          when n.number = 4001 then 'SKIP'
+          when n.number = 5001 then 'INFO'
+          when c.name like 'CDL Wasabi Demo Collection' then 'INFO'
+          else 'FAIL'
+        end as status
+      from
+        inv.inv_nodes n
+      inner join
+        inv.inv_nodes_inv_objects inio
+      on
+        n.id = inio.inv_node_id
+      and
+        inio.role = 'primary'
+      inner join
+        inv.inv_collections_inv_objects icio
+      on
+        icio.inv_object_id = inio.inv_object_id
+      inner join
+        inv.inv_collections c
+      on
+        c.id = icio.inv_collection_id
+      inner join
+        inv.inv_objects o
+      on
+        c.inv_object_id = o.id
+      and
+        o.aggregate_role = 'MRT-collection'
+      where
+        n.number not in (9501, 9502)
+      group by
+        nodenum,
+        nodename,
+        collection
+  /ops/collections/db/secondary-config:
+    sql: |
+      select
+        c.id as collid,
+        c.name as collection,
+        ifnull(icin.ncount, 0) ncount,
+        ifnull(icin.nodes, '') nodes,
+        case
+          when c.name like 'Merritt %' then 'INFO'
+          when lower(c.name) like '%service level agreement%' then 'INFO'
+          when c.name like '%SLA' then 'INFO'
+          when c.name like 'CDL Wasabi Demo Collection' then 'INFO'
+          when (
+            select 1 where not exists (
+              select 1 from inv.inv_collections_inv_objects icio
+              where icio.inv_collection_id = c.id
+            )
+          ) then 'WARN'
+          else 'FAIL'
+        end as status
+      from
+        inv.inv_collections c
+      left join (
+        select
+          icin.inv_collection_id,
+          count(*) as ncount,
+          ifnull(group_concat(n.number order by number), '') nodes
+        from
+          inv.inv_collections_inv_nodes icin
+        inner join
+          inv.inv_nodes n
+        on
+          icin.inv_node_id = n.id
+        group by
+          icin.inv_collection_id
+      ) icin
+      on
+        c.id = icin.inv_collection_id
+      where not exists (
+        select
+          1
+        from
+          inv.inv_objects o
+        where
+          c.inv_object_id = o.id
+        and
+          o.aggregate_role = 'MRT-service-level-agreement'
+      )
+      group by
+        collid,
+        collection
+      having
+        nodes not in ('2001,6001', '2001,9501', '2002,6001', '2002,9502')
+      order by
+        ncount desc, c.name
+  /ops/storage/db/nodes:
+    sql: |
+      select
+        n.number as node_number,
+        n.description,
+        nc.object_count as object_count,
+        nc.object_count_primary,
+        nc.object_count_secondary,
+        nc.file_count,
+        nc.billable_size / 1000000000.0 as size_gb,
+        ifnull(lim.tb, 0) * 1000 lim_gb,
+        case
+          when ifnull(lim.tb, 0) * 1000000000000 = 0 then 'SKIP'
+          when nc.billable_size > ifnull(lim.tb, 0) * 1000000000000 * .95 then 'FAIL'
+          when nc.billable_size > ifnull(lim.tb, 0) * 1000000000000 * .9 then 'WARN'
+          else 'PASS'
+        end status
+      from
+        inv.inv_nodes n
+      left join node_counts nc
+        on n.id = nc.inv_node_id
+      left join (
+        select
+          9501 as node, 650 as tb
+      ) lim
+        on n.number = lim.node
+      where
+        ifnull(nc.object_count, 0) > 0
+      order by
+        n.number
+  
