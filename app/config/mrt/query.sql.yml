@@ -57,6 +57,10 @@ columns:
       cssclass: float
     diff_size_gb:
       cssclass: float
+    bytes_gb:
+      cssclass: float
+    bytes_gb_per_day:
+      cssclass: float
   patterns:
     '^\d{4}-\d{2}-\d{2}$':
       cssclass: float
@@ -926,6 +930,67 @@ fragments:
     order by 
       own_name,
       mnemonic
+  REPLACT: |
+    {{#DATES}}
+    select
+      '{{title}}' as title,
+      count(inio.inv_object_id) as objs,
+      ifnull(sum(inio.replic_size),0) / 1000000000.0 as bytes_gb,
+      ifnull(sum(inio.replic_size), 0) * (
+        timediff(now(), date_add(now(), interval -1 day)) / timediff(drange.end, drange.start)
+      ) / 1000000000.0 as bytes_gb_per_day
+    from
+      inv.inv_nodes_inv_objects inio,
+      (
+        select
+          '{{start}}' as start,
+          '{{end}}' as end
+      ) as drange
+    where
+      replicated >= drange.start
+    and
+      replicated < drange.end
+    {{/DATES}}
+  LASTMIN: |
+    select
+      'Last Minute' as title,
+      date_add(now(), interval -1 minute) as start,
+      now() as end
+  LAST5MIN: |
+    select
+      'Last 5 Minutes' as title,
+      date_add(now(), interval -5 minute) as start,
+      now() as end
+  LASTHOUR: |
+    select
+      'Last Hour' as title,
+      date_add(now(), interval -1 hour) as start,
+      now() as end
+  SINCEMIDNIGTH: |
+    select
+      'Since midnight' as title,
+      date(now()) start,
+      now() as end
+  YESTERDAY: |
+    select
+      'Yesterday' as title,
+      date_add(date(now()), INTERVAL -1 DAY) as start,
+      date(now()) as end
+  2DAYS: |
+    select
+      '2 Days Ago' as title,
+      date_add(date(now()), INTERVAL -2 DAY) as start,
+      date_add(date(now()), INTERVAL -1 DAY) as end
+  7DAYS: |
+    select
+      'Last 7 days' as title,
+      date_add(now(), INTERVAL -7 DAY) as start,
+      now() as end
+  30DAYS: |
+    select
+      'Last 30 days' as title,
+      date_add(date(now()), INTERVAL -30 DAY) as start,
+      now() as end
 queries:
   /queries/repository/campus/bytes:
     totals: true
@@ -2259,3 +2324,209 @@ queries:
         on os.inv_object_id = u.inv_object_id
       group by
         category
+  /ops/db-queue/replication/in-progress:
+    sql: |
+      select
+        case
+          when o.ark in (
+            'ark:/13030/m5v45qp2',
+            'ark:/13030/j2br86wx',
+            'ark:/13030/j21n79mc'
+          ) then 'Issue 951 - Admin Object'
+          else 'Default'
+        end as category,
+        inio.inv_object_id,
+        o.ark,
+        o.version_number,
+        o.created,
+        inio.replic_start,
+        ifnull(inio.replic_size,0) as bytes,
+        count(i2.created) as seccnt,
+        min(i2.version_number) as secmin,
+        max(i2.version_number) as secmax,
+        case
+          when inio.replic_start is null and o.modified > date_add(now(), INTERVAL -4 HOUR)
+            then 'PASS'
+          when inio.replic_start is null
+            then 'INFO'
+          when inio.replic_start > date_add(now(), INTERVAL -4 HOUR)
+            then 'PASS'
+          when inio.replic_start > date_add(now(), INTERVAL -24 HOUR)
+            then 'WARN'
+          else 'FAIL'
+        end as status
+      from
+        inv.inv_nodes_inv_objects inio
+      inner join
+        inv.inv_objects o
+      on
+        o.id = inio.inv_object_id
+      left join
+        inv.inv_nodes_inv_objects i2
+      on
+        inio.inv_object_id = i2.inv_object_id
+      and
+        i2.role = 'secondary'
+      where
+        inio.replic_start is not null
+      and
+        ifnull(inio.replicated, '1970-01-01') < '1971-01-01'
+      and
+        inio.role = 'primary'
+      and
+        ifnull(inio.completion_status, 'unknown') = 'unknown'
+      group by
+        category,
+        inio.inv_object_id,
+        o.ark,
+        o.version_number,
+        o.created,
+        inio.replic_start,
+        bytes,
+        status
+  /ops/db-queue/replication/failed:
+    sql: |
+      select
+        case
+          when o.ark = '...' then '...'
+          else 'Default'
+        end as category,
+        inio.inv_object_id,
+        o.ark,
+        o.version_number,
+        o.created,
+        inio.replic_start,
+        ifnull(inio.replic_size,0) as bytes,
+        inio.completion_status,
+        (
+          select
+            group_concat(n.number)
+          from
+            inv.inv_nodes n
+          inner join
+            inv.inv_nodes_inv_objects i2
+          on
+            i2.inv_node_id = n.id
+          where
+            i2.role = 'secondary'
+          and
+            i2.inv_object_id = inio.inv_object_id
+          and
+            i2.completion_status = 'fail'
+        ) as nodes,
+        case
+          when o.ark = '...' then 'INFO'
+          else 'FAIL'
+        end as status
+      from
+        inv.inv_nodes_inv_objects inio
+      inner join
+        inv.inv_objects o
+      on
+        o.id = inio.inv_object_id
+      where
+        inio.replicated is not null
+      and
+        inio.replicated < '1971-01-01'
+      and
+        inio.role = 'primary'
+      and
+        inio.completion_status in ('fail')
+      union
+      select
+        case
+          when o.ark = '...' then '...'
+          else 'Default'
+        end as category,
+        inio.inv_object_id,
+        o.ark,
+        o.version_number,
+        o.created,
+        inio.replic_start,
+        ifnull(inio.replic_size,0) as bytes,
+        inio.completion_status,
+        (
+          select
+            group_concat(n.number)
+          from
+            inv.inv_nodes n
+          inner join
+            inv.inv_nodes_inv_objects i2
+          on
+            i2.inv_node_id = n.id
+          where
+            i2.role = 'secondary'
+          and
+            i2.inv_object_id = inio.inv_object_id
+          and
+            i2.completion_status = 'fail'
+        ) as nodes,
+        case
+          when o.ark = '...' then 'INFO'
+          else 'WARN'
+        end as status
+      from
+        inv.inv_nodes_inv_objects inio
+      inner join
+        inv.inv_objects o
+      on
+        o.id = inio.inv_object_id
+      where
+        inio.replicated is not null
+      and
+        inio.replicated < '1971-01-01'
+      and
+        inio.role = 'primary'
+      and
+        inio.completion_status in ('partial')
+      order by
+        replic_start desc
+  /ops/db-queue/replication/activity/last-min:
+    sql: |
+      {{{REPLACT}}}
+    template-sql:
+      DATES: |
+        {{{LASTMIN}}}
+  /ops/db-queue/replication/activity/last-5min:
+    sql: |
+      {{{REPLACT}}}
+    template-sql:
+      DATES: |
+        {{{LAST5MIN}}}
+  /ops/db-queue/replication/activity/last-hour:
+    sql: |
+      {{{REPLACT}}}
+    template-sql:
+      DATES: |
+        {{{LASTHOUR}}}
+  /ops/db-queue/replication/activity/since-midnight:
+    sql: |
+      {{{REPLACT}}}
+    template-sql:
+      DATES: |
+        {{{SINCEMIDNIGTHT}}}
+  /ops/db-queue/replication/activity/yesterday:
+    sql: |
+      {{{REPLACT}}}
+    template-sql:
+      DATES: |
+        {{{YESTERDAY}}}
+  /ops/db-queue/replication/activity/2days-ago:
+    sql: |
+      {{{REPLACT}}}
+    template-sql:
+      DATES: |
+        {{{2DAYS}}}
+  /ops/db-queue/replication/activity/7days:
+    sql: |
+      {{{REPLACT}}}
+    template-sql:
+      DATES: |
+        {{{7DAYS}}}
+  /ops/db-queue/replication/activity/30days:
+    sql: |
+      {{{REPLACT}}}
+    template-sql:
+      DATES: |
+        {{{30DAYS}}}
+

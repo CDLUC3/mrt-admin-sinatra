@@ -445,18 +445,30 @@ items:
       items:
       - title: Repl Required
         route: /ops/db-queue/replication/required
-      - title: Repl Queued
-        route: /ops/db-queue/replication/queued
-        tbd: true
       - title: In Progress
         route: /ops/db-queue/replication/in-progress
-        tbd: true
       - title: Failed
         route: /ops/db-queue/replication/failed
-        tbd: true
-      - title: Recent Performance
-        route: /ops/db-queue/replication/recent-performance
-        tbd: true
+      - title: Recent Activity
+        route: /ops/db-queue/replication/activity
+        breadcrumb: true
+        items:
+        - title: Last Minute
+          route: /ops/db-queue/replication/activity/last-min
+        - title: Last 5 Minutes
+          route: /ops/db-queue/replication/activity/last-5min
+        - title: Last Hour
+          route: /ops/db-queue/replication/activity/last-hour
+        - title: Since Midnight
+          route: /ops/db-queue/replication/activity/since-midnight
+        - title: Yesterday
+          route: /ops/db-queue/replication/activity/yesterday
+        - title: 2 Days Ago
+          route: /ops/db-queue/replication/activity/2days-ago
+        - title: Last 7 Days
+          route: /ops/db-queue/replication/activity/7days
+        - title: Last 30 Days
+          route: /ops/db-queue/replication/activity/30days
     - path: audit-queue
       route: /ops/db-queue/audit
       breadcrumb: true
