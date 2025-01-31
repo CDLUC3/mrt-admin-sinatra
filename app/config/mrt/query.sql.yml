@@ -1017,7 +1017,7 @@ queries:
     parameters:
     - name: ark
       type: string
-  /queries/repository/objects:
+  /queries/recent/objects:
     sql: |
       {{{OBJQ}}}
     template-params:
@@ -1623,7 +1623,7 @@ queries:
         o.ark IS null
       group by
         ownark, own.name
-  /queries/ingest/recent-ingests:
+  /queries/recent/by-collection:
     sql:
       select
         c.id inv_collection_id,
@@ -2018,6 +2018,147 @@ queries:
         {{{FY2024}}}
     sql: |
       {{{INVOICE}}}
+  /queries/recent/ingests:
+    sql: |
+      select
+        profile,
+        batch_id,
+        max(submitted) date_submitted,
+        count(*) num_objects
+      from
+        inv.inv_ingests
+      where
+        date(submitted) = ?
+      group by
+        profile,
+        batch_id
+      order by
+        max(submitted) desc
+    parameters:
+    - name: date
+      type: date
+  /queries/recent/bytes-by-hour:
+    totals: true
+    sql: |
+      with recursive rnums as (
+        select 0 as n
+        union all
+        select n+1 as n from rnums where n < 71
+      )
+      select 
+        start,
+        sum(f.billable_size) / 1000000000.0 as size_gb
+      from
+        (
+          select 
+            str_to_date(
+              date_format(
+                date_add(date(now()), interval -rnums.n HOUR),
+                '%Y-%m-%d %H:00'
+              ),
+              '%Y-%m-%d %H:%i:%s'
+            ) as start
+            from rnums
+        ) dates,
+        inv.inv_files f
+      where
+        created >= start
+      and
+        created < date_add(start, interval 1 HOUR)
+      group by
+        start
+  /queries/recent/bytes-by-day:
+    totals: true
+    sql: |
+      with recursive rnums as (
+        select 0 as n
+        union all
+        select n+1 as n from rnums where n < 29
+      )
+      select 
+        start,
+        sum(f.billable_size) / 1000000000.0 as size_gb
+      from
+        (
+          select 
+            date_add(date(now()), interval -rnums.n DAY) as start
+          from rnums
+        ) dates,
+        inv.inv_files f
+      where
+        created >= start
+      and
+        created < date_add(start, interval 1 DAY)
+      group by
+        start
+      order by 
+        start
+  /queries/recent/bytes-by-week:
+    totals: true
+    sql: |
+      with recursive rnums as (
+        select 0 as n
+        union all
+        select n+1 as n from rnums where n < 51
+      )
+      select 
+        start,
+        sum(f.billable_size) / 1000000000.0 as size_gb
+      from
+        (
+          select 
+            date_add(date(now()), interval -rnums.n WEEK) as start
+          from rnums
+        ) dates,
+        billing.owner_coll_mime_use_details f
+      where
+        date_added >= start
+      and
+        date_added < date_add(start, interval 1 WEEK)
+      group by
+        start
+      order by 
+        start
+  /queries/recent/bytes-by-month:
+    totals: true
+    sql: |
+      with recursive rnums as (
+        select 0 as n
+        union all
+        select n+1 as n from rnums where n < 11
+      )
+      select 
+        start,
+        sum(f.billable_size) / 1000000000.0 as size_gb
+      from
+        (
+          select 
+            date_add(
+              date_add(date(now()), interval -dayofmonth(date(now())) + 1 DAY), 
+              interval -rnums.n MONTH
+            ) as start
+          from rnums
+        ) dates,
+        billing.owner_coll_mime_use_details f
+      where
+        date_added >= start
+      and
+        date_added < date_add(start, interval 1 MONTH)
+      group by
+        start
+      order by 
+        start
+  /queries/recent/bytes-by-years:
+    sql: |
+      select 
+        distinct date_add(date(date_added), interval -dayofyear(date(date_added)) + 1 DAY) as start,
+        sum(f.billable_size) / 1000000000.0 as size_gb
+      from
+        billing.owner_coll_mime_use_details f
+      group by
+        start
+      order by 
+        start
   /ops/db-queue/replication/required:
     sql: |
       select

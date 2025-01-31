@@ -37,8 +37,14 @@ module UC3Query
     def resolve_parameters(qparams, urlparams)
       vals = []
       qparams.each do |param|
-        if param.key?(:value)
-          vals << param[:value]
+        if param.key?(:name) && param[:type] == 'date'
+          dv = Date.today.strftime('%Y-%m-%d')
+          begin
+            dv = Date.parse(urlparams.fetch(param[:name], dv)).strftime('%Y-%m-%d')
+          rescue StandardError
+            # use dv
+          end
+          vals << dv
         elsif param.key?(:name) && param[:type] == 'integer'
           vals << urlparams.fetch(param[:name], '-1').to_i
         elsif param.key?(:name)

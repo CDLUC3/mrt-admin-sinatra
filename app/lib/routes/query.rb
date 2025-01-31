@@ -39,6 +39,10 @@ module Sinatra
           }
       end
 
+      app.get '/queries/recent/ingests/today' do
+        redirect "/queries/recent/ingests?date=#{Date.today.strftime('%Y-%m-%d')}"
+      end
+
       app.get '/queries/**' do
         puts request.path
         request.params[:term] = URI.decode_www_form_component(request.params[:term]) if request.params.key?(:term)

@@ -310,26 +310,25 @@ items:
         route: /queries/consistency/obj-comp/mult-colls
   - path: recent-ingest
     title: Recent Ingests
+    route: /queries/recent
+    breadcrumb: true
     items:
     - title: Recent Objects
-      route: /queries/repository/objects
+      route: /queries/recent/objects
     - title: By Collection
-      route: /queries/ingest/recent-ingests
+      route: /queries/recent/by-collection
+    - title: By Date
+      route: /queries/recent/ingests/today
     - title: Recent Bytes ingested by hour
-      route: /queries/ingest/recent-bytes-by-hour
-      tbd: true
+      route: /queries/recent/bytes-by-hour
     - title: Recent Bytes ingested by day - last 30 days
-      route: /queries/ingest/recent-bytes-by-day
-      tbd: true
+      route: /queries/recent/bytes-by-day
     - title: Bytes ingested by week - last year
-      route: /queries/ingest/recent-bytes-by-week
-      tbd: true
+      route: /queries/recent/bytes-by-week
     - title: Bytes ingested by Month
-      route: /queries/ingest/recent-bytes-by-month
-      tbd: true
+      route: /queries/recent/bytes-by-month
     - title: Bytes ingested by Year
-      route: /queries/ingest/recent-bytes-by-year
-      tbd: true
+      route: /queries/recent/bytes-by-years
   - path: use-cases
     title: Use Cases
     items:
