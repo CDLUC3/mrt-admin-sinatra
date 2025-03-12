@@ -22,8 +22,8 @@ module UC3Query
       puts map
       key = ENV.fetch('config-key','default')
       puts key
-      map = map.fetch(key, {})
-      puts map
+      puts map.keys
+      map = map.fetch(key.to_sym, {})
       config = UC3::UC3Client.resolve_lookup('app/config/mrt/query.template.yml', map)
       @dbconf = config.fetch('dbconf', {})
       @dbconf[:connect_timeout] = 10
