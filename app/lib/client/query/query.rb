@@ -28,7 +28,7 @@ module UC3Query
       @formatter = AnbtSql::Formatter.new(AnbtSql::Rule.new)
       super(enabled: enabled)
     rescue StandardError => e
-      puts "#{e.class}: #{e}"
+      puts "#{e.class}: #{e}; #{e.backtrace.join("\n")}"
       super(enabled: false, message: e.to_s)
     end
 
