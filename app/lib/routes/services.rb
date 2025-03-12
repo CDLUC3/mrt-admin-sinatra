@@ -18,10 +18,10 @@ module Sinatra
       end
 
       app.get '/json/ingest/state' do
-        get_url('http://ingest:8080/state?t=json')
+        get_url('http://ingest:8080/ingest/state?t=json')
       end
 
-      app.get '/json/ui/audit-replic' do
+      app.get '/json/ingest/tag' do
         get_url('http://ingest:8080/static/build.content.txt')
       end
 
