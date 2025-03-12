@@ -17,10 +17,10 @@ module UC3Query
     def initialize
       @columndefs = UC3::UC3Client.load_config('app/config/mrt/query.sql.yml').fetch(:columns, [])
       @fragments = UC3::UC3Client.load_config('app/config/mrt/query.sql.yml').fetch(:fragments, [])
-      @queries = YAML.safe_load_file('app/config/mrt/query.sql.yml', aliases: true).fetch(:queries, [])
+      @queries = UC3::UC3Client.load_config('app/config/mrt/query.sql.yml', aliases: true).fetch(:queries, [])
       key = ENV.fetch('config-key','default')
       puts key
-      tmap = UC3::UC3Client.load_config('app/config/mrt/query.lookup.yml')
+      tmap = YAML.safe_load_file('app/config/mrt/query.lookup.yml')
       puts tmap
       tmap = tmap.fetch(key, {})
       puts tmap
