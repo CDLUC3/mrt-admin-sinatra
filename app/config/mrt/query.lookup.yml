@@ -1,4 +1,3 @@
-config-key: default
 docker:
   host: 
     val: db-container

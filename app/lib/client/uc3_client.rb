@@ -66,7 +66,6 @@ module UC3
       )
       map = YAML.safe_load_file(filename)
       map.each do |key, value|
-        next if value.is_a?(String)
         if value.key?('ssm')
           resp = ssm.get_parameter(name: value['ssm'], with_decryption: true)
           map[key] = resp.parameter.value
