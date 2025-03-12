@@ -19,8 +19,12 @@ module UC3Query
       @fragments = UC3::UC3Client.load_config('app/config/mrt/query.sql.yml').fetch(:fragments, [])
       @queries = UC3::UC3Client.load_config('app/config/mrt/query.sql.yml').fetch(:queries, [])
       map = UC3::UC3Client.lookup_map('app/config/mrt/query.lookup.yml')
+      puts map
       key = ENV.fetch('config-key','default')
-      config = UC3::UC3Client.resolve_lookup('app/config/mrt/query.template.yml', map.fetch(key, {}))
+      puts key
+      map = map.fetch(key, {})
+      puts map
+      config = UC3::UC3Client.resolve_lookup('app/config/mrt/query.template.yml', map)
       @dbconf = config.fetch('dbconf', {})
       @dbconf[:connect_timeout] = 10
       @dbconf[:read_timeout] = 120
