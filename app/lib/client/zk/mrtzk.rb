@@ -14,7 +14,7 @@ module UC3Queue
     end
 
     def initialize
-      map = UC3::UC3Client.lookup_map('app/config/mrt/zk.yml')
+      map = UC3::UC3Client.lookup_map_by_filename('app/config/mrt/zk.yml')
       @zk = ZK.new(map.fetch('zkconn', ''), timeout: 1)
       super(enabled: @zk.connected?)
     rescue StandardError => e

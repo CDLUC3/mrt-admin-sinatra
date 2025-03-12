@@ -60,11 +60,15 @@ module UC3
       JSON.parse(config.to_json, symbolize_names: true)
     end
 
-    def self.lookup_map(filename)
+    def self.lookup_map_by_filename(filename)
+      map = YAML.safe_load_file(filename)
+      lookup_map(map)
+    end
+    
+    def self.lookup_map(map)
       ssm = Aws::SSM::Client.new(
         region: UC3::UC3Client.region
       )
-      map = YAML.safe_load_file(filename)
       map.each do |key, value|
         if value.key?('ssm')
           resp = ssm.get_parameter(name: value['ssm'], with_decryption: true)

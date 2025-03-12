@@ -18,9 +18,9 @@ module UC3Query
       @columndefs = UC3::UC3Client.load_config('app/config/mrt/query.sql.yml').fetch(:columns, [])
       @fragments = UC3::UC3Client.load_config('app/config/mrt/query.sql.yml').fetch(:fragments, [])
       @queries = UC3::UC3Client.load_config('app/config/mrt/query.sql.yml').fetch(:queries, [])
-      map = UC3::UC3Client.lookup_map('app/config/mrt/query.lookup.yml')
       key = ENV.fetch('config-key','default')
-      map = map.fetch(key.to_sym, {})
+      tmap = UC3::UC3Client.load_config('app/config/mrt/query.sql.yml').fetch(key, {})
+      map = UC3::UC3Client.lookup_map(tmap)
       puts map
       config = UC3::UC3Client.resolve_lookup('app/config/mrt/query.template.yml', map)
       @dbconf = config.fetch('dbconf', {})
