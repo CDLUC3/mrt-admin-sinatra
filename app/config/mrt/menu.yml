@@ -593,6 +593,19 @@ items:
   - title: OpenSearch Usage
     route: /infra/opensearch-usage
     tbd: true
+  - title: Services
+    path: services
+    route: /json
+    breadcrumb: true
+    items:
+    - title: UI State
+      route: /json/ui/state
+    - title: UI Audit Replic State
+      route: /json/ui/audit-replic
+    - title: Ingest State
+      route: /json/ingest/state
+    - title: Ingest Build Tag
+      route: /json/ingest/tag
 - path: resources
   title: AWS
   items:
@@ -616,10 +629,3 @@ items:
     route: /infra/functions
   - title: UC3 Load Balancers
     route: /infra/elbs
-- path: services 
-  title: Services
-  items:
-  - title: UI State
-    route: /json/ui/state
-  - title: UI State
-    route: /json/ui/audit-replic

@@ -17,6 +17,14 @@ module Sinatra
         get_url('http://ui:8086/state-audit-replic.json')
       end
 
+      app.get '/json/ingest/state' do
+        get_url('http://ingest:8080/state?t=json')
+      end
+
+      app.get '/json/ui/audit-replic' do
+        get_url('http://ingest:8080/static/build.content.txt')
+      end
+
     end
 
     def get_url(url)
