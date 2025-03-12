@@ -5,6 +5,7 @@ require 'sinatra/base'
 require_relative 'lib/routes/home'
 require_relative 'lib/routes/code'
 require_relative 'lib/routes/resources'
+require_relative 'lib/routes/services'
 require_relative 'lib/routes/query'
 require_relative 'lib/routes/mrtzk'
 
@@ -13,6 +14,7 @@ set :bind, '0.0.0.0'
 include Sinatra::UC3HomeRoutes
 include Sinatra::UC3CodeRoutes
 include Sinatra::UC3ResourcesRoutes
+include Sinatra::UC3ServicesRoutes
 include Sinatra::UC3QueryRoutes
 
 Sinatra::UC3HomeRoutes.load_menu_file('app/config/mrt/menu.yml')

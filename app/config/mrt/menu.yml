@@ -616,3 +616,10 @@ items:
     route: /infra/functions
   - title: UC3 Load Balancers
     route: /infra/elbs
+- path: services 
+  title: Services
+  items:
+  - title: UI State
+    route: /json/ui/state
+  - title: UI State
+    route: /json/ui/audit-replic
