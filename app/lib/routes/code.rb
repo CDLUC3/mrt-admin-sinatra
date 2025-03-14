@@ -10,7 +10,7 @@ module Sinatra
   module UC3CodeRoutes
     def self.registered(app)
       app.get '/source' do
-        erb 'mrt/source'.to_sym,
+        erb :'mrt/source',
           :layout => :page_layout,
           :locals => {
             context: AdminUI::Context.new(request.path),

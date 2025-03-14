@@ -32,7 +32,7 @@ module UC3Resources
       !@client.nil?
     end
 
-    def list_functions(filters: {})
+    def list_functions
       table = AdminUI::FilterTable.new(
         columns: [
           AdminUI::Column.new(:name, header: 'Name'),
@@ -47,7 +47,7 @@ module UC3Resources
       )
       return table unless enabled
 
-      @functions.sort.each do |key, value|
+      @functions.sort.each do |_key, value|
         tags = @client.list_tags(resource: value[:arn]).tags.to_h
         value[:program] = tags.fetch('Program', '')
         value[:service] = tags.fetch('Service', '')

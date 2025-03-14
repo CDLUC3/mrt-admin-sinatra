@@ -21,6 +21,9 @@ module LambdaFunctions
   # Lambda entry point for the Admin Tool
   class Handler
     def self.process(event:, context:)
+      # context is nil when running locally
+      context.nil?
+
       # unless context.nil?
       #  ENV['LAMBDA_CONTEXT_FUNCTION_NAME']=context.function_name
       #  ENV['LAMBDA_CONTEXT_FUNCTION_VERSION']=context.function_version

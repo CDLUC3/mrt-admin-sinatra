@@ -28,7 +28,7 @@ module AdminUI
         @filterable = true if col.filterable
       end
     end
-    []
+
     def add_filter(filter)
       @filters.push(filter)
     end
@@ -56,7 +56,7 @@ module AdminUI
         s += %(<tr class='filters'>)
         @columns.each_with_index do |col, i|
           s += %(<th class='#{col.cssclass}'>)
-          s += %(<button class='filter' title='remove filters to make table sortable'>Clear</button>) if i == 0
+          s += %(<button class='filter' title='remove filters to make table sortable'>Clear</button>) if i.zero?
           if col.filterable
             s += %(
             <select data='#{col.cssclass}' class='filter'>

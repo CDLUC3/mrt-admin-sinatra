@@ -34,7 +34,7 @@ module UC3Resources
       !@client.nil?
     end
 
-    def list_instances(filters: {})
+    def list_instances
       table = AdminUI::FilterTable.new(
         columns: [
           AdminUI::Column.new(:name, header: 'Name'),
@@ -63,7 +63,7 @@ module UC3Resources
           @elbs[lb][:tgname] << "#{tg.target_type}: #{tg.target_group_name}"
         end
       end
-      @elbs.sort.each do |key, value|
+      @elbs.sort.each do |_key, value|
         @client.describe_listeners(load_balancer_arn: value[:arn]).listeners.each do |listener|
           listener.default_actions.each do |action|
             value[:listener] << action.type

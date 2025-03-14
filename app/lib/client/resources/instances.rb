@@ -67,7 +67,7 @@ module UC3Resources
           }
         end
       end
-      instances.sort.each do |key, value|
+      instances.sort.each do |_key, value|
         table.add_row(AdminUI::Row.make_row(table.columns, value))
       end
       table

@@ -21,7 +21,7 @@ module UC3Resources
       !@client.nil?
     end
 
-    def list_parameters(filters: {})
+    def list_parameters
       table = AdminUI::FilterTable.new(
         columns: [
           AdminUI::Column.new(:path, header: 'Path'),
@@ -54,7 +54,7 @@ module UC3Resources
         opt[:next_token] = next_token
       end
       next_token = 'na'
-      opt = {filters: [{key: 'Type', values: ['SecureString']}]}
+      opt = { filters: [{ key: 'Type', values: ['SecureString'] }] }
       while next_token
         res = @client.describe_parameters(opt)
         res.parameters.each do |param|
@@ -67,7 +67,7 @@ module UC3Resources
         next_token = res.next_token
         opt[:next_token] = next_token
       end
-      params.sort.each do |key, value|
+      params.sort.each do |_key, value|
         table.add_row(AdminUI::Row.make_row(table.columns, value))
       end
       table

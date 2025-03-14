@@ -61,7 +61,7 @@ module UC3
     end
 
     def self.lookup_map_by_filename(filename)
-      map = YAML.safe_load_file(filename, aliases: true) 
+      map = YAML.safe_load_file(filename, aliases: true)
       lookup_map(map)
     end
 

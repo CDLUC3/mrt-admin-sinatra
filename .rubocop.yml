@@ -49,3 +49,9 @@ AllCops:
 
 Style/GlobalVars:
   Enabled: false
+
+Style/MixinUsage:
+  Enabled: false
+
+Metrics/ModuleLength:
+  Enabled: false

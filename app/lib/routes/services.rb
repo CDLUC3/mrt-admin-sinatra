@@ -24,22 +24,18 @@ module Sinatra
       app.get '/json/ingest/tag' do
         get_url('http://ingest:8080/ingest/static/build.content.txt')
       end
-
     end
 
     def get_url(url)
-      begin
-        uri = URI.parse(url)
-        response = Net::HTTP.get_response(uri)
-        json = response.body
-        content_type :json
-        json
-      rescue StandardError => e
-        content_type :json
-        { uri: uri, error: e.to_s }.to_json
-      end
+      uri = URI.parse(url)
+      response = Net::HTTP.get_response(uri)
+      json = response.body
+      content_type :json
+      json
+    rescue StandardError => e
+      content_type :json
+      { uri: uri, error: e.to_s }.to_json
     end
-
   end
   register UC3ServicesRoutes
 end

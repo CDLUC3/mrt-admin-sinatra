@@ -24,7 +24,7 @@ module UC3Resources
       !@client.nil?
     end
 
-    def list_buckets(filters: {})
+    def list_buckets
       table = AdminUI::FilterTable.new(
         columns: [
           AdminUI::Column.new(:name, header: 'Name'),
@@ -33,7 +33,7 @@ module UC3Resources
       )
       return table unless enabled
 
-      @buckets.sort.each do |key, value|
+      @buckets.sort.each do |_key, value|
         table.add_row(AdminUI::Row.make_row(table.columns, value))
       end
       table
