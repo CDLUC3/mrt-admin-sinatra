@@ -22,7 +22,7 @@ module Sinatra
       end
 
       app.get '/json/ingest/tag' do
-        get_url('http://ingest:8080/static/build.content.txt')
+        get_url('http://ingest:8080/ingest/static/build.content.txt')
       end
 
     end

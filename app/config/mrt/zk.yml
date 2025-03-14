@@ -1,2 +1,2 @@
 zkconn: 
-  ssm: /uc3/mrt/stg/zk
+  val: zoo:2181
