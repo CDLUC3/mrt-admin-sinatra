@@ -22,5 +22,7 @@ module UC3Queue
     rescue StandardError => e
       super(enabled: false, message: e.to_s)
     end
+
+    attr_reader :zk
   end
 end

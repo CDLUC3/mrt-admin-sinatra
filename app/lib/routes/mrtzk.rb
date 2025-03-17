@@ -10,6 +10,11 @@ module Sinatra
   # client specific routes
   module UC3ZKRoutes
     def self.registered(app)
+      app.get '/ops/zk/nodes/node-names' do
+        content_type :json
+        zkcli = UC3Queue::ZKClient.new
+        MerrittZK::NodeDump.new(zkcli.zk, request.params).listing.to_json
+      end
       # tbd
     end
   end
