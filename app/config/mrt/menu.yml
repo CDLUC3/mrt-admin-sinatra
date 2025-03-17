@@ -23,10 +23,15 @@ items:
     items:
     - title: Admin Tool Context
       route: /context
-    - title: Admin Tool Clients (VPC)
+    - title: Admin Tool Clients (Webapp)
       route: /clients
+      admindeploy: webapp
+    - title: Admin Tool Clients (VPC)
+      route: /clients-vpc
+      admindeploy: lambda
     - title: Admin Tool Clients (No VPC)
       route: /infra/clients-no-vpc
+      admindeploy: lambda
     - title: Help
       route: /help
 - path: source
