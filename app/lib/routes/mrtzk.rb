@@ -13,9 +13,7 @@ module Sinatra
       app.get '/ops/zk/nodes/node-names' do
         content_type :json
         zkcli = UC3Queue::ZKClient.new
-        puts "zkcli: #{zkcli}"
         nodedump = MerrittZK::NodeDump.new(zkcli.zk, request.params)
-        puts "nodedump: #{nodedump}"
         nodedump.listing.to_json
       end
       # tbd
