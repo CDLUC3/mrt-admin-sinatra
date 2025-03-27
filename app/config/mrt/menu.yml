@@ -624,6 +624,7 @@ items:
       - [Buckets](/infra/buckets)
       - [Lambda Functions](/infra/functions)
       - [Load Balancers](/infra/elbs)
+      - [ECS Services](/infra/ecs)
   - title: UC3 Instances
     route: /infra/instances
   - title: UC3 SSM Parameters
@@ -634,3 +635,5 @@ items:
     route: /infra/functions
   - title: UC3 Load Balancers
     route: /infra/elbs
+  - title: UC3 ECS Services
+    route: /infra/ecs

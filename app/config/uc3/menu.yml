@@ -34,5 +34,3 @@ items:
     route: /infra/buckets
   - title: UC3 Lambda Functions
     route: /infra/functions
-  - title: UC3 Load Balancers
-    route: /infra/elbs

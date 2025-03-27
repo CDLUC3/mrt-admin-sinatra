@@ -10,7 +10,7 @@ Sinatra based admin tool for the new Merritt AWS account.
 
 ### Merritt app
 ```
-bundle exec puma app/config_mrt.ru
+ADMINDEPLOY=webapp bundle exec puma app/config_mrt.ru
 ```
 
 Resources for deploying as a lambda
