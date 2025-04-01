@@ -55,3 +55,7 @@ nav .submenu > li > a:focus {
 nav ul.submenu {
   background-color: #E19D5F;
 }
+
+td.image_digest {
+  word-wrap: anywhere;;
+}

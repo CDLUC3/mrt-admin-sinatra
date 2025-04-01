@@ -44,6 +44,7 @@ get '/clients' do
   UC3Code::SourceCodeClient.new
   UC3Resources::InstancesClient.new
   UC3Resources::ParametersClient.new
+  UC3Resources::ServicesClient.new
   UC3Resources::BucketsClient.new
   UC3Resources::FunctionsClient.new
   UC3Resources::LoadBalancerClient.new

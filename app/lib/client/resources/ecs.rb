@@ -17,7 +17,19 @@ module UC3Resources
       # The ImageDigest is the identity key for an image inside of an ECR Repository.
       @client.list_services(cluster: 'mrt-ecs-stack').service_arns.each do |arn|
         @client.describe_services(cluster: 'mrt-ecs-stack', services: [arn]).services.each do |svc|
-          # list_service_deployments(cluster, service, status: SUCCESSFUL)
+          digest = nil
+          @client.list_service_deployments(
+            cluster: 'mrt-ecs-stack', 
+            service: arn, 
+            status: ["SUCCESSFUL"]
+          ).service_deployments.each do |sd|
+            @client.describe_service_revisions(service_revision_arns: [sd.target_service_revision_arn]).service_revisions.each do |sr|
+              sr.container_images.each do |ci|
+                digest = ci.image_digest
+              end
+            end
+            break
+          end
           dep = svc.deployments ? svc.deployments[0] : {}
           @services[svc.service_name] = {
             name: svc.service_name,
@@ -25,7 +37,8 @@ module UC3Resources
             running_count: svc.running_count,
             pending_count: svc.pending_count,
             created: dep.created_at,
-            updated: dep.updated_at
+            updated: dep.updated_at,
+            image_digest: digest
           }
         end
       end
@@ -46,7 +59,8 @@ module UC3Resources
           AdminUI::Column.new(:running_count, header: 'Running'),
           AdminUI::Column.new(:pending_count, header: 'Pending'),
           AdminUI::Column.new(:created, header: 'Created'),
-          AdminUI::Column.new(:updated, header: 'Updated')
+          AdminUI::Column.new(:updated, header: 'Updated'),
+          AdminUI::Column.new(:image_digest, header: 'Image Digest')
         ]
       )
       return table unless enabled
