@@ -24,6 +24,63 @@ module Sinatra
       app.get '/json/ingest/tag' do
         get_url('http://ingest:8080/ingest/static/build.content.txt')
       end
+
+      app.get '/json/store/state' do
+        get_url('http://store:8080/store/state?t=json')
+      end
+
+      app.get '/json/store/tag' do
+        get_url('http://store:8080/store/static/build.content.txt')
+      end
+
+      app.get '/json/store/nodes' do
+        get_url('http://store:8080/store/jsonstatus')
+      end
+
+      app.get '/json/inventory/state' do
+        get_url('http://inventory:8080/inventory/state?t=json')
+      end
+
+      app.get '/json/inventory/tag' do
+        get_url('http://inventory:8080/inventory/static/build.content.txt')
+      end
+
+      app.get '/json/audit/state' do
+        get_url('http://audit:8080/audit/state?t=json')
+      end
+
+      app.get '/json/audit/tag' do
+        get_url('http://audit:8080/audit/static/build.content.txt')
+      end
+
+      app.get '/json/audit/nodes' do
+        get_url('http://audit:8080/audit/jsonstatus')
+      end
+
+      app.get '/json/replic/state' do
+        get_url('http://replic:8080/replic/state?t=json')
+      end
+
+      app.get '/json/replic/tag' do
+        get_url('http://replic:8080/replic/static/build.content.txt')
+      end
+
+      app.get '/json/replic/nodes' do
+        get_url('http://replic:8080/replic/jsonstatus')
+      end
+
+      app.get '/json/access/state' do
+        get_url('http://access:8080/access/state?t=json')
+      end
+
+      app.get '/json/access/tag' do
+        get_url('http://access:8080/access/static/build.content.txt')
+      end
+
+      app.get '/json/access/nodes' do
+        get_url('http://access:8080/access/jsonstatus')
+      end
+
     end
 
     def get_url(url)

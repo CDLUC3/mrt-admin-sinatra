@@ -603,14 +603,85 @@ items:
     route: /json
     breadcrumb: true
     items:
-    - title: UI State
-      route: /json/ui/state
-    - title: UI Audit Replic State
-      route: /json/ui/audit-replic
-    - title: Ingest State
-      route: /json/ingest/state
-    - title: Ingest Build Tag
-      route: /json/ingest/tag
+    - title: UI
+      path: ui
+      route: /json/ui
+      breadcrumb: true
+      items:
+      - title: UI State
+        route: /json/ui/state
+      - title: UI Audit Replic State
+        route: /json/ui/audit-replic
+    - title: Ingest
+      path: ingest
+      route: /json/ingest
+      breadcrumb: true
+      items:
+      - title: Ingest State
+        route: /json/ingest/state
+      - title: Ingest Build Tag
+        route: /json/ingest/tag
+    - title: Store
+      path: store
+      route: /json/store
+      breadcrumb: true
+      items:
+      - title: Store State
+        route: /json/store/state
+      - title: Store Build Tag
+        route: /json/store/tag
+      - title: Store Nodes
+        route: /json/store/nodes
+    - title: Inventory
+      path: inventory
+      route: /json/inventory
+      breadcrumb: true
+      items:
+      - title: Inventory State
+        route: /json/inventory/state
+      - title: Inventory Build Tag
+        route: /json/inventory/tag
+      - title: Inventory Start
+        route: /json/inventory/start
+      - title: Inventory Stop
+        route: /json/inventory/stop
+    - title: Audit
+      path: audit
+      route: /json/audit
+      breadcrumb: true
+      items:
+      - title: Audit State
+        route: /json/audit/state
+      - title: Audit Build Tag
+        route: /json/audit/tag
+      - title: Audit Start
+        route: /json/audit/start
+      - title: Audit Stop
+        route: /json/audit/stop
+    - title: Replic
+      path: replic
+      route: /json/replic
+      breadcrumb: true
+      items:
+      - title: Replic State
+        route: /json/replic/state
+      - title: Replic Build Tag
+        route: /json/replic/tag
+      - title: Replic Start
+        route: /json/replic/start
+      - title: Replic Stop
+        route: /json/replic/stop
+    - title: Access
+      path: access
+      route: /json/access
+      breadcrumb: true
+      items:
+      - title: Access State
+        route: /json/saccessore/state
+      - title: Access Build Tag
+        route: /json/access/tag
+      - title: Access Nodes
+        route: /json/access/nodes
 - path: resources
   title: AWS
   items:

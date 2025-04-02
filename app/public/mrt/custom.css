@@ -57,5 +57,5 @@ nav ul.submenu {
 }
 
 td.image_digest {
-  word-wrap: anywhere;;
+  word-wrap: anywhere !important;
 }
