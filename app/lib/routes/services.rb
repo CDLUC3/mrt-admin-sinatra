@@ -41,6 +41,14 @@ module Sinatra
         get_url('http://inventory:8080/inventory/state?t=json')
       end
 
+      app.get '/json/inventory/start' do
+        post_url('http://inventory:8080/inventory/service/start?t=json')
+      end
+
+      app.get '/json/inventory/stop' do
+        post_url('http://inventory:8080/inventory/service/stop?t=json')
+      end
+
       app.get '/json/inventory/tag' do
         get_url('http://inventory:8080/inventory/static/build.content.txt')
       end
@@ -57,12 +65,28 @@ module Sinatra
         get_url('http://audit:8080/audit/jsonstatus')
       end
 
+      app.get '/json/audit/start' do
+        post_url('http://audit:8080/audit/service/start?t=json')
+      end
+
+      app.get '/json/audit/stop' do
+        post_url('http://audit:8080/audit/service/stop?t=json')
+      end
+
       app.get '/json/replic/state' do
         get_url('http://replic:8080/replic/state?t=json')
       end
 
       app.get '/json/replic/tag' do
         get_url('http://replic:8080/replic/static/build.content.txt')
+      end
+
+      app.get '/json/replic/start' do
+        post_url('http://replic:8080/replic/service/start?t=json')
+      end
+
+      app.get '/json/replic/stop' do
+        post_url('http://replic:8080/replic/service/stop?t=json')
       end
 
       app.get '/json/replic/nodes' do
@@ -86,6 +110,17 @@ module Sinatra
     def get_url(url)
       uri = URI.parse(url)
       response = Net::HTTP.get_response(uri)
+      json = response.body
+      content_type :json
+      json
+    rescue StandardError => e
+      content_type :json
+      { uri: uri, error: e.to_s }.to_json
+    end
+
+    def post_url(url)
+      uri = URI.parse(url)
+      response = Net::HTTP.put_response(uri)
       json = response.body
       content_type :json
       json
