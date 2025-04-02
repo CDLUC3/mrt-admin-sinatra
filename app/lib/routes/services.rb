@@ -120,7 +120,11 @@ module Sinatra
 
     def post_url(url)
       uri = URI.parse(url)
-      response = Net::HTTP.put_response(uri)
+      req = Net::HTTP::Post.new(uri)
+      req.content_type = 'application/json'
+      response = Net::HTTP.start(uri.hostname, uri.port) do |http|
+        http.request(req)
+      end
       json = response.body
       content_type :json
       json

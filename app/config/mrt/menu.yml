@@ -583,15 +583,10 @@ items:
     - title: Collections
       route: /ldap/collections
       tbd: true
-  - title: LDAP Certs
-    route: /infra/certs
-    tbd: true
   - title: Merritt Server State
-    route: /services/state
-    tbd: true
+    route: https://us-west-2.console.aws.amazon.com/ecs/v2/clusters/mrt-ecs-stack/services?region=us-west-2
   - title: Merritt Deployment State
-    route: /services/deployment
-    tbd: true
+    route: /infra/ecs
   - title: SSM Usage
     route: /infra/ssm-usage
     tbd: true
