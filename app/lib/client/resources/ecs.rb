@@ -15,7 +15,7 @@ module UC3Resources
       # An ECS Service has a ServiceDeployment which has a TargetServiceRevision.
       # A ServiceRevision has ContainerImage which has an ImageDigest.
       # The ImageDigest is the identity key for an image inside of an ECR Repository.
-      @client.list_services(cluster: 'mrt-ecs-stack').service_arns.each do |arn|
+      @client.list_services(cluster: 'mrt-ecs-stack', max_results: 20).service_arns.each do |arn|
         @client.describe_services(cluster: 'mrt-ecs-stack', services: [arn]).services.each do |svc|
           digest = nil
           @client.list_service_deployments(

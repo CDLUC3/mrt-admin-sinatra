@@ -16,7 +16,6 @@ module Sinatra
         nodedump = MerrittZK::NodeDump.new(zkcli.zk, request.params)
         nodedump.listing.to_json
       end
-      # tbd
     end
   end
   register UC3ZKRoutes
