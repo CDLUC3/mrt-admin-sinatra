@@ -387,9 +387,9 @@ items:
       breadcrumb: true
       items:
       - title: All Nodes
-        route: /ops/zk/nodes/node-names?zkpath=/batch-uuids&mode=node
+        route: /ops/zk/nodes/node-names?zkpath=/&mode=node
       - title: All Nodes
-        route: /ops/zk/nodes/node-names?zkpath=/batch-uuids&mode=data
+        route: /ops/zk/nodes/node-names?zkpath=/&mode=data
       - title: Batch UUID's
         route: /ops/zk/nodes/node-names?zkpath=/batch-uuids&mode=node
       - title: Batches
@@ -403,7 +403,7 @@ items:
       - title: Access Nodes
         route: /ops/zk/nodes/node-names?zkpath=/access
       - title: Orphan Report
-        route: /ops/zk/nodes/node-names?zkpath=/batch-uuids&mode=test
+        route: /ops/zk/nodes/node-names?zkpath=/&mode=test
         tbd: true
     - path: ingest-queue
       title: Ingest Queue
