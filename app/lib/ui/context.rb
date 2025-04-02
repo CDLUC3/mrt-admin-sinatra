@@ -39,7 +39,7 @@ module AdminUI
       child = Menu.new(path, title, parent: self)
       if breadcrumb && !route.empty?
         child.top.route_names[route] =
-          { title: title, description: description, breadcrumb: true }
+          { title: title, description: description, breadcrumb: true, route: route }
       end
       @children << child
       child
@@ -123,7 +123,7 @@ module AdminUI
           @route_names.each do |key, value|
             next unless File.dirname(key) == route
 
-            desc += "\n- [#{value[:title]}](#{key})"
+            desc += "\n- [#{value[:title]}](#{value[:route]})"
           end
         end
       end
@@ -175,7 +175,7 @@ module AdminUI
       @breadcrumb = breadcrumb
       @description = description
 
-      @parent.top.route_names[route_normalized] = { title: title, description: description }
+      @parent.top.route_names[route_normalized] = { title: title, description: description, route: @route }
     end
 
     attr_accessor :title, :route, :description, :tbd, :breadcrumb
