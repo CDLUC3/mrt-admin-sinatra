@@ -117,7 +117,7 @@ module AdminUI
     def description_for_route(route)
       desc = ''
       if @route_names.key?(route)
-        puts @route_names[route]
+
         desc = @route_names[route].fetch(:description, '')
         if @route_names[route].fetch(:breadcrumb, false) && desc.empty?
           @route_names.each do |key, value|
@@ -174,13 +174,17 @@ module AdminUI
       @tbd = tbd
       @breadcrumb = breadcrumb
       @description = description
+
       @parent.top.route_names[route_normalized] = { title: title, description: description }
     end
 
     attr_accessor :title, :route, :description, :tbd, :breadcrumb
 
     def route_normalized
-      @route
+      arr = @route.split('?')
+      return @route if arr.length == 1
+      arr[1] = arr[1].gsub(/\//, '_')
+      arr.join('?')
     end
 
     def render

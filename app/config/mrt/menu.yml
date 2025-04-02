@@ -370,17 +370,6 @@ items:
     route: /ops/zk
     breadcrumb: true
     items:
-    - path: zk-locks
-      title: Locks
-      route: /ops/zk/locks
-      breadcrumb: true
-      items:
-      - title: Object Locks
-        route: /ops/zk/locks/objects
-        tbd: true
-      - title: Collection Locks
-        route: /ops/zk/locks/collections
-        tbd: true
     - path: zk-nodes
       title: ZooKeeper Nodes
       route: /ops/zk/nodes
@@ -388,7 +377,7 @@ items:
       items:
       - title: All Nodes
         route: /ops/zk/nodes/node-names?zkpath=/&mode=node
-      - title: All Nodes
+      - title: All Node Data
         route: /ops/zk/nodes/node-names?zkpath=/&mode=data
       - title: Batch UUID's
         route: /ops/zk/nodes/node-names?zkpath=/batch-uuids&mode=node
