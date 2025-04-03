@@ -56,7 +56,7 @@ module UC3Queue
 
     def dump_nodes(params)
       nodedump = []
-      nodedump = MerrittZK::NodeDump.new(@zk, params) unless @zk.nil?
+      nodedump = MerrittZK::NodeDump.new(@zk, params).listing unless @zk.nil?
 
       case params.fetch('mode', 'node')
       when 'data'
