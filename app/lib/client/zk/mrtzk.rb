@@ -54,6 +54,15 @@ module UC3Queue
       )
     end
 
+    def make_ref(node)
+      m = /(bid[0-9]+)$/.match(node)
+      return {href: "/ops/zk/nodes/node-names?zkpath=/batches/#{m[1]}&mode=data", value: "/batches/#{m[1]}"} if m
+      m = /(jid[0-9]+)$/.match(node)
+      return {href: "/ops/zk/nodes/node-names?zkpath=/jobs/#{m[1]}&mode=data", value: "/jobs/#{m[1]}"} if m
+
+      ""
+    end
+
     def dump_nodes(params)
       nodedump = []
       nodedump = MerrittZK::NodeDump.new(@zk, params).listing unless @zk.nil?
@@ -61,20 +70,20 @@ module UC3Queue
       case params.fetch('mode', 'node')
       when 'data'
         table = node_data_table
-        table.add_row(AdminUI::Row.make_row(
-          table.columns,{node: nodedump.to_json}
-        ))
-        nodedump.each do |node, value|
-          table.add_row(
-            AdminUI::Row.make_row(
-              table.columns,
-              {
-                node: node,
-                ref: '',
-                nodedata: value
-              }
+        nodedump.each do |row|
+          row.each do |node, value|
+            table.add_row(
+              AdminUI::Row.make_row(
+                table.columns,
+              
+                {
+                  node: node,
+                  ref: make_ref(node)+make_ref(value),
+                  nodedata: value
+                }
+              )
             )
-          )
+          end
         end
       when 'test'
         table = node_test_table
@@ -94,16 +103,14 @@ module UC3Queue
         end
       else 
         table = node_table
-        table.add_row(AdminUI::Row.make_row(
-          table.columns,{node: nodedump.to_json}
-        ))
         nodedump.each do |node|
+          next unless node.is_a?(String)
           table.add_row(
             AdminUI::Row.make_row(
               table.columns,
               {
                 node: node,
-                ref: ''
+                ref: make_ref(node)
               }
             )
           )
