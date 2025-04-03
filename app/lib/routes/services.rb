@@ -37,6 +37,10 @@ module Sinatra
         get_url('http://store:8080/store/jsonstatus')
       end
 
+      app.get '/json/store/hostname' do
+        get_url('http://store:8080/store/hostname')
+      end
+
       app.get '/json/inventory/state' do
         get_url('http://inventory:8080/inventory/state?t=json')
       end

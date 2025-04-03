@@ -11,11 +11,12 @@ module Sinatra
   module UC3ZKRoutes
     def self.registered(app)
       app.get '/ops/zk/nodes/node-names' do
-        content_type :json
-        zkcli = UC3Queue::ZKClient.new
-        return "No Data" if zkcli.zk.nil?
-        nodedump = MerrittZK::NodeDump.new(zkcli.zk, request.params)
-        nodedump.listing.to_json
+        erb :table,
+          :layout => :page_layout,
+          :locals => {
+            context: AdminUI::Context.new(request.path),
+            table: UC3Queue::ZKClient.new.dump_nodes(request.params)
+          }
       end
     end
   end

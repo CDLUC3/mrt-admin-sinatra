@@ -623,6 +623,8 @@ items:
         route: /json/store/tag
       - title: Store Nodes
         route: /json/store/nodes
+      - title: Store Hostname
+        route: /json/store/hostname
     - title: Inventory
       path: inventory
       route: /json/inventory
