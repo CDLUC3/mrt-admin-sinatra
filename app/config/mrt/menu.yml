@@ -393,7 +393,6 @@ items:
         route: /ops/zk/nodes/node-names?zkpath=/access
       - title: Orphan Report
         route: /ops/zk/nodes/node-names?zkpath=/&mode=test
-        tbd: true
     - path: ingest-queue
       title: Ingest Queue
       route: /ops/zk/ingest

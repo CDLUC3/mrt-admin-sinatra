@@ -74,11 +74,10 @@ module UC3Queue
           row.each do |node, value|
             table.add_row(
               AdminUI::Row.make_row(
-                table.columns,
-              
+                table.columns,              
                 {
                   node: node,
-                  ref: make_ref(node)+make_ref(value),
+                  ref: make_ref(node).empty? ? make_ref(value) : make_ref(node),
                   nodedata: value
                 }
               )
