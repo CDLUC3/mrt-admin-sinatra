@@ -63,7 +63,7 @@ module UC3Queue
         table = node_data_table
         table.add_row(AdminUI::Row.make_row(
           table.columns,{node: nodedump.to_json}
-        )
+        ))
         nodedump.each do |node, value|
           table.add_row(
             AdminUI::Row.make_row(
@@ -96,7 +96,7 @@ module UC3Queue
         table = node_table
         table.add_row(AdminUI::Row.make_row(
           table.columns,{node: nodedump.to_json}
-        )
+        ))
         nodedump.each do |node|
           table.add_row(
             AdminUI::Row.make_row(
