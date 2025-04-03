@@ -55,6 +55,8 @@ module UC3Queue
     end
 
     def make_ref(node)
+      return "" unless node.is_a?(String)
+
       m = /(bid[0-9]+)$/.match(node)
       return {href: "/ops/zk/nodes/node-names?zkpath=/batches/#{m[1]}&mode=data", value: "/batches/#{m[1]}"} if m
       m = /(jid[0-9]+)$/.match(node)
