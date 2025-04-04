@@ -74,7 +74,9 @@ td.actions {
 th.ark,
 td.ark,
 th.date, 
-td.date {
+td.date,
+th.jobdata, 
+td.jobdata {
   width: 180px;
 }
 tr.other th.tag, tr.other td.tag {

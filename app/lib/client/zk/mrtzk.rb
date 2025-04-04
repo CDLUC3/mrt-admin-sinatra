@@ -23,19 +23,21 @@ module UC3Queue
       super(enabled: false, message: e.to_s)
     end
 
+    def date_format(date)
+      return '' if date.nil? || date.empty?
+      DateTime.parse(date).strftime('%Y-%m-%d %H:%M:%S')
+    end
+
     def batches
       batches = MerrittZK::Batch.list_batches_as_json(@zk)
       table = AdminUI::FilterTable.new(
         columns: [
           AdminUI::Column.new(:id, header: 'Batch ID'),
-          AdminUI::Column.new(:jobCount, header: 'Job Count'),
+          AdminUI::Column.new(:jobCount, header: 'Job Count', cssclass: 'int'),
           AdminUI::Column.new(:profile, header: 'Profile'),
           AdminUI::Column.new(:submissionDate, header: 'DateTime', cssclass: 'date'),
           AdminUI::Column.new(:type, header: 'Type'),
-          AdminUI::Column.new(:submitter, header: 'Submitter'),
-          AdminUI::Column.new(:creator, header: 'Creator'),
-          AdminUI::Column.new(:title, header: 'Title'),
-          AdminUI::Column.new(:filename, header: 'File'),
+          AdminUI::Column.new(:jobdata, header: 'Job Data'),
           AdminUI::Column.new(:status, header: 'Status'),
         ]
       )
@@ -44,6 +46,12 @@ module UC3Queue
           href: "/ops/zk/nodes/node-names?zkpath=/batches/#{batch[:id]}&mode=data", 
           value: batch[:id]
         }
+        batch[:submissionDate] = date_format(batch[:submissionDate])
+        batch[:jobdata] = []
+        batch[:jobdata] << batch[:submitter]
+        batch[:jobdata] << batch[:creator]
+        batch[:jobdata] << batch[:title]
+        batch[:jobdata] << batch[:filename]
         table.add_row(
           AdminUI::Row.make_row(
             table.columns,
@@ -64,14 +72,9 @@ module UC3Queue
           AdminUI::Column.new(:profile, header: 'Profile'),
           AdminUI::Column.new(:submissionDate, header: 'DateTime', cssclass: 'date'),
           AdminUI::Column.new(:type, header: 'Type'),
-          AdminUI::Column.new(:submitter, header: 'Submitter'),
-          # AdminUI::Column.new(:creator, header: 'Creator'),
-          # AdminUI::Column.new(:title, header: 'Title'),
-          AdminUI::Column.new(:objectID, header: 'Ark'),
-          AdminUI::Column.new(:priority, header: 'Priority'),
+          AdminUI::Column.new(:jobdata, header: 'Job Data'),
+          AdminUI::Column.new(:priority, header: 'Priority', cssclass: 'int'),
           AdminUI::Column.new(:space_needed, header: 'Space Needed GB', cssclass: 'float'),
-          AdminUI::Column.new(:filename, header: 'File'),
-          AdminUI::Column.new(:status, header: 'Status'),
         ]
       )
       jobs.each do |job|
@@ -83,7 +86,14 @@ module UC3Queue
           href: "/ops/zk/nodes/node-names?zkpath=/batches/#{job[:bid]}&mode=data", 
           value: job[:bid]
         }
+        job[:submissionDate] = date_format(job[:submissionDate])
         job[:space_needed] = job[:space_needed].to_f / 1_000_000_000
+        job[:jobdata] = []
+        job[:jobdata] << job[:objectID]
+        job[:jobdata] << job[:submitter]
+        job[:jobdata] << job[:creator]
+        job[:jobdata] << job[:title]
+        job[:jobdata] << job[:filename]
         table.add_row(
           AdminUI::Row.make_row(
             table.columns,
