@@ -36,8 +36,8 @@ module UC3Queue
       AdminUI::FilterTable.new(
         columns: [
           AdminUI::Column.new(:node, header: 'Node'),
-          AdminUI::Column.new(:ref, header: 'Reference'),
-          AdminUI::Column.new(:nodedata, header: 'Node Data')
+          AdminUI::Column.new(:nodedata, header: 'Node Data'),
+          AdminUI::Column.new(:ref, header: 'Reference')
         ]
       )
     end  
@@ -80,7 +80,7 @@ module UC3Queue
                 {
                   node: node,
                   ref: make_ref(node).empty? ? make_ref(value) : make_ref(node),
-                  nodedata: value
+                  nodedata: JSON.pretty_generate(value)
                 }
               )
             )
