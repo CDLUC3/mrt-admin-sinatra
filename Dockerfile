@@ -12,8 +12,12 @@ RUN dnf -y update && \
     dnf clean all
 
 # Add Admin Tool Code to the image
-COPY . /var/task/
+COPY Gemfile* /var/task/
 COPY .bundle/config.docker /var/task/.bundle/config
 
 # Bundle dependencies
+RUN bundle install
+
+COPY . /var/task
+COPY .bundle/config.docker /var/task/.bundle/config
 RUN bundle install

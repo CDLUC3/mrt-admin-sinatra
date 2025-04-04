@@ -23,27 +23,127 @@ module UC3Queue
       super(enabled: false, message: e.to_s)
     end
 
-    def node_table
-      AdminUI::FilterTable.new(
+    def batches
+      batches = MerrittZK::Batch.list_batches_as_json(@zk)
+      table = AdminUI::FilterTable.new(
+        columns: [
+          AdminUI::Column.new(:id, header: 'Batch ID'),
+          AdminUI::Column.new(:jobCount, header: 'Job Count'),
+          AdminUI::Column.new(:profile, header: 'Profile'),
+          AdminUI::Column.new(:submissionDate, header: 'DateTime', cssclass: 'date'),
+          AdminUI::Column.new(:type, header: 'Type'),
+          AdminUI::Column.new(:submitter, header: 'Submitter'),
+          AdminUI::Column.new(:creator, header: 'Creator'),
+          AdminUI::Column.new(:title, header: 'Title'),
+          AdminUI::Column.new(:filename, header: 'File'),
+          AdminUI::Column.new(:status, header: 'Status'),
+        ]
+      )
+      batches.each do |batch|
+        batch[:id] = {
+          href: "/ops/zk/nodes/node-names?zkpath=/batches/#{batch[:id]}&mode=data", 
+          value: batch[:id]
+        }
+        table.add_row(
+          AdminUI::Row.make_row(
+            table.columns,
+            batch
+          )
+        )
+      end
+      table
+    end
+
+    def jobs
+      jobs = MerrittZK::Job.list_jobs_as_json(@zk)
+      table = AdminUI::FilterTable.new(
+        columns: [
+          AdminUI::Column.new(:bid, header: 'Batch ID'),
+          AdminUI::Column.new(:id, header: 'Job ID'),
+          AdminUI::Column.new(:status, header: 'Status'),
+          AdminUI::Column.new(:profile, header: 'Profile'),
+          AdminUI::Column.new(:submissionDate, header: 'DateTime', cssclass: 'date'),
+          AdminUI::Column.new(:type, header: 'Type'),
+          AdminUI::Column.new(:submitter, header: 'Submitter'),
+          # AdminUI::Column.new(:creator, header: 'Creator'),
+          # AdminUI::Column.new(:title, header: 'Title'),
+          AdminUI::Column.new(:objectID, header: 'Ark'),
+          AdminUI::Column.new(:priority, header: 'Priority'),
+          AdminUI::Column.new(:space_needed, header: 'Space Needed GB', cssclass: 'float'),
+          AdminUI::Column.new(:filename, header: 'File'),
+          AdminUI::Column.new(:status, header: 'Status'),
+        ]
+      )
+      jobs.each do |job|
+        job[:id] = {
+          href: "/ops/zk/nodes/node-names?zkpath=/jobs/#{job[:id]}&mode=data", 
+          value: job[:id]
+        }
+        job[:bid] = {
+          href: "/ops/zk/nodes/node-names?zkpath=/batches/#{job[:bid]}&mode=data", 
+          value: job[:bid]
+        }
+        job[:space_needed] = job[:space_needed].to_f / 1_000_000_000
+        table.add_row(
+          AdminUI::Row.make_row(
+            table.columns,
+            job
+          )
+        )
+      end
+      table
+    end
+
+    def dump_node_table(nodedump)
+      table = AdminUI::FilterTable.new(
         columns: [
           AdminUI::Column.new(:node, header: 'Node'),
           AdminUI::Column.new(:ref, header: 'Reference')
         ]
       )
+      nodedump.each do |node|
+        next unless node.is_a?(String)
+        table.add_row(
+          AdminUI::Row.make_row(
+            table.columns,
+            {
+              node: node,
+              ref: make_ref(node)
+            }
+          )
+        )
+      end
+      table
     end  
 
-    def node_data_table
-      AdminUI::FilterTable.new(
+    def dump_node_data_table(nodedump)
+      table = AdminUI::FilterTable.new(
         columns: [
           AdminUI::Column.new(:node, header: 'Node'),
           AdminUI::Column.new(:nodedata, header: 'Node Data'),
           AdminUI::Column.new(:ref, header: 'Reference')
         ]
       )
+      nodedump.each do |row|
+        row.each do |node, value|
+          next if node == "Status"
+          table.add_row(
+            AdminUI::Row.make_row(
+              table.columns,              
+              {
+                node: node,
+                ref: make_ref(node).empty? ? make_ref(value) : make_ref(node),
+                nodedata: JSON.pretty_generate(value)
+              }
+            )
+          )
+        end
+      end
+      table
     end  
 
-    def node_test_table
-      AdminUI::FilterTable.new(
+    def dump_node_test_table(nodedump)
+      table = AdminUI::FilterTable.new(
         columns: [
           AdminUI::Column.new(:path, header: 'Path'),
           AdminUI::Column.new(:created, header: 'Created'),
@@ -52,6 +152,23 @@ module UC3Queue
           AdminUI::Column.new(:status, header: 'Status')
         ]
       )
+      nodedump.each do |node|
+        value = node.values.first
+        next unless value.is_a?(Array)
+        table.add_row(
+          AdminUI::Row.make_row(
+            table.columns,
+            {
+              path: value[0],
+              created: value[1],
+              orphanpath: value[2],
+              test: value[3],
+              status: value[4]
+            }
+          )
+        )
+      end
+      table
     end
 
     def make_ref(node)
@@ -71,54 +188,11 @@ module UC3Queue
 
       case params.fetch('mode', 'node')
       when 'data'
-        table = node_data_table
-        nodedump.each do |row|
-          row.each do |node, value|
-            next if node == "Status"
-            table.add_row(
-              AdminUI::Row.make_row(
-                table.columns,              
-                {
-                  node: node,
-                  ref: make_ref(node).empty? ? make_ref(value) : make_ref(node),
-                  nodedata: JSON.pretty_generate(value)
-                }
-              )
-            )
-          end
-        end
+        table = dump_node_data_table(nodedump)
       when 'test'
-        table = node_test_table
-        nodedump.each do |node|
-          value = node.values.first
-          next unless value.is_a?(Array)
-          table.add_row(
-            AdminUI::Row.make_row(
-              table.columns,
-              {
-                path: value[0],
-                created: value[1],
-                orphanpath: value[2],
-                test: value[3],
-                status: value[4]
-              }
-            )
-          )
-        end
+        table = dump_node_test_table(nodedump)
       else 
-        table = node_table
-        nodedump.each do |node|
-          next unless node.is_a?(String)
-          table.add_row(
-            AdminUI::Row.make_row(
-              table.columns,
-              {
-                node: node,
-                ref: make_ref(node)
-              }
-            )
-          )
-        end
+        table = dump_node_table(nodedump)
       end
       table
     end

@@ -406,10 +406,8 @@ items:
         tbd: true
       - title: Ingest Batches
         route: /ops/zk/ingest/batches
-        tbd: true
       - title: Jobs by Collection
         route: /ops/zk/ingest/jobs-by-collection
-        tbd: true
       - title: Cleanup Queue
         route: /ops/zk/ingest/cleanup-queue
         tbd: true
