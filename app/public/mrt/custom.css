@@ -61,6 +61,6 @@ td.image_digest {
 }
 
 td.nodedata {
-  width: 300px;
+  min-width: 300px;
   white-space: pre;
 }

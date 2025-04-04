@@ -89,7 +89,8 @@ module UC3Queue
         end
       when 'test'
         table = node_test_table
-        nodedump.each do |value|
+        nodedump.each do |node|
+          value = node.values.first
           next unless value.is_a?(Array)
           table.add_row(
             AdminUI::Row.make_row(
