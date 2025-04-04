@@ -380,17 +380,17 @@ items:
       - title: All Node Data
         route: /ops/zk/nodes/node-names?zkpath=/&mode=data
       - title: Batch UUID's
-        route: /ops/zk/nodes/node-names?zkpath=/batch-uuids&mode=node
+        route: /ops/zk/nodes/node-names?zkpath=/batch-uuids&mode=data
       - title: Batches
-        route: /ops/zk/nodes/node-names?zkpath=/batches
+        route: /ops/zk/nodes/node-names?zkpath=/batches&mode=node
       - title: Jobs
-        route: /ops/zk/nodes/node-names?zkpath=/jobs
+        route: /ops/zk/nodes/node-names?zkpath=/jobs&mode=node
       - title: Jobs By State
         route: /ops/zk/nodes/node-names?zkpath=/jobs/states&mode=node
       - title: Locks
         route: /ops/zk/nodes/node-names?zkpath=/locks&mode=node
       - title: Access Nodes
-        route: /ops/zk/nodes/node-names?zkpath=/access
+        route: /ops/zk/nodes/node-names?zkpath=/access&mode=node
       - title: Orphan Report
         route: /ops/zk/nodes/node-names?zkpath=/&mode=test
     - path: ingest-queue
