@@ -59,3 +59,8 @@ nav ul.submenu {
 td.image_digest {
   word-wrap: anywhere !important;
 }
+
+td.nodedata {
+  width: 300px;
+  white-space: pre;
+}
