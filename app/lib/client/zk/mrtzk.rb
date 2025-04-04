@@ -74,6 +74,7 @@ module UC3Queue
         table = node_data_table
         nodedump.each do |row|
           row.each do |node, value|
+            next if node == "Status"
             table.add_row(
               AdminUI::Row.make_row(
                 table.columns,              
@@ -89,6 +90,7 @@ module UC3Queue
       when 'test'
         table = node_test_table
         nodedump.each do |value|
+          next unless value.is_a?(Array)
           table.add_row(
             AdminUI::Row.make_row(
               table.columns,
