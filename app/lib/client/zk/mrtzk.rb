@@ -39,6 +39,7 @@ module UC3Queue
           AdminUI::Column.new(:type, header: 'Type'),
           AdminUI::Column.new(:jobdata, header: 'Job Data'),
           AdminUI::Column.new(:status, header: 'Status'),
+          AdminUI::Column.new(:actions, header: 'Actions'),
         ]
       )
       batches.each do |batch|
@@ -52,6 +53,19 @@ module UC3Queue
         batch[:jobdata] << batch[:creator]
         batch[:jobdata] << batch[:title]
         batch[:jobdata] << batch[:filename]
+        batch[:actions] = []
+        batch[:actions] << {
+          value: 'Requeue',
+          href: "#",
+          cssclass: 'buttontbd',
+          disabled: false
+        }
+        batch[:actions] << {
+          value: 'Queue Del',
+          href: "#",
+          cssclass: 'buttontbd',
+          disabled: false
+        }
         table.add_row(
           AdminUI::Row.make_row(
             table.columns,
@@ -75,6 +89,7 @@ module UC3Queue
           AdminUI::Column.new(:jobdata, header: 'Job Data'),
           AdminUI::Column.new(:priority, header: 'Priority', cssclass: 'int'),
           AdminUI::Column.new(:space_needed, header: 'Space Needed GB', cssclass: 'float'),
+          AdminUI::Column.new(:actions, header: 'Actions'),
         ]
       )
       jobs.each do |job|
@@ -94,6 +109,31 @@ module UC3Queue
         job[:jobdata] << job[:creator]
         job[:jobdata] << job[:title]
         job[:jobdata] << job[:filename]
+        job[:actions] = []
+        job[:actions] << {
+          value: 'Requeue',
+          href: "#",
+          cssclass: 'buttontbd',
+          disabled: false
+        }
+        job[:actions] << {
+          value: 'Queue Del',
+          href: "#",
+          cssclass: 'buttontbd',
+          disabled: false
+        }
+        job[:actions] << {
+          value: 'Hold',
+          href: "#",
+          cssclass: 'buttontbd',
+          disabled: false
+        }
+        job[:actions] << {
+          value: 'Release',
+          href: "#",
+          cssclass: 'buttontbd',
+          disabled: false
+        }
         table.add_row(
           AdminUI::Row.make_row(
             table.columns,
