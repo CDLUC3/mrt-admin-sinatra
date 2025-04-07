@@ -13,11 +13,9 @@ items:
     route: /queries/consistency/daily
     tbd: true
   - title: Batches
-    route: /queue/batches
-    tbd: true
+    route: /ops/zk/ingest/batches
   - title: Jobs
-    route: /queue/jobs-by-collection
-    tbd: true
+    route: /ops/zk/ingest/jobs-by-collection
   - path: about
     title: About
     items:

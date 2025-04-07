@@ -33,7 +33,7 @@ module Sinatra
           :layout => :page_layout,
           :locals => {
             context: AdminUI::Context.new(request.path),
-            table: UC3Queue::ZKClient.new.jobs
+            table: UC3Queue::ZKClient.new.jobs_by_collection(request.params)
           }
       end
     end

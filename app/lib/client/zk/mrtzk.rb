@@ -76,7 +76,51 @@ module UC3Queue
       table
     end
 
-    def jobs
+
+    def jobs_by_collection(params)
+      return jobs(params) unless params.empty?
+
+      @colls = {}
+      MerrittZK::Job.list_jobs_as_json(@zk).each do |job|
+        @colls[job[:profile]] ||= {}
+        @colls[job[:profile]][job[:status]] ||= []
+        @colls[job[:profile]][job[:status]] << job
+      end
+
+      table = AdminUI::FilterTable.new(
+        columns: [
+          AdminUI::Column.new(:profile, header: 'Profile'),
+          AdminUI::Column.new(:jobstatus, header: 'Job Status'),
+          AdminUI::Column.new(:jobCount, header: 'Job Count', cssclass: 'int'),
+          AdminUI::Column.new(:status, header: 'Status')
+        ]
+      )
+      @colls.keys.sort.each do |profile|
+        @colls[profile].keys.sort.each do |jobstatus|
+          job_count = @colls[profile][jobstatus].size
+          table.add_row(
+            AdminUI::Row.make_row(
+              table.columns,
+              {
+                profile: {
+                  href: "/ops/zk/ingest/jobs-by-collection?profile=#{profile}",
+                  value: profile
+                },
+                jobstatus: {
+                  href: "/ops/zk/ingest/jobs-by-collection?profile=#{profile}&status=#{jobstatus}",
+                  value: jobstatus
+                },
+                jobCount: job_count,
+                status: jobstatus == 'Failed' ? 'FAIL' : 'PASS'
+              }
+            )
+          )
+        end
+      end
+      table
+    end
+
+    def jobs(params)
       jobs = MerrittZK::Job.list_jobs_as_json(@zk)
       table = AdminUI::FilterTable.new(
         columns: [
@@ -93,6 +137,9 @@ module UC3Queue
         ]
       )
       jobs.each do |job|
+        next unless params.fetch('profile', job[:profile]) == job[:profile]
+        next unless params.fetch('status', job[:status]) == job[:status]
+
         job[:id] = {
           href: "/ops/zk/nodes/node-names?zkpath=/jobs/#{job[:id]}&mode=data", 
           value: job[:id]
