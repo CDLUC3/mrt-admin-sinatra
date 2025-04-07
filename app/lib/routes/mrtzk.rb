@@ -36,6 +36,15 @@ module Sinatra
             table: UC3Queue::ZKClient.new.jobs_by_collection(request.params)
           }
       end
+
+      app.get '/ops/zk/access/jobs' do
+        erb :table,
+          :layout => :page_layout,
+          :locals => {
+            context: AdminUI::Context.new(request.path),
+            table: UC3Queue::ZKClient.new.assembly_requests
+          }
+      end
     end
   end
   register UC3ZKRoutes

@@ -425,7 +425,6 @@ items:
         tbd: true
       - title: View Queue
         route: /ops/zk/access/jobs
-        tbd: true
       - title: Cleanup Queue
         route: /ops/zk/access/cleanup-queue
         tbd: true

@@ -191,6 +191,50 @@ module UC3Queue
       table
     end
 
+    def assembly_requests
+      jobs = MerrittZK::Access.list_jobs_as_json(@zk)
+      table = AdminUI::FilterTable.new(
+        columns: [
+          AdminUI::Column.new(:id, header: 'ID'),
+          AdminUI::Column.new(:token, header: 'Token'),
+          AdminUI::Column.new(:bytes, header: 'Bytes GB', cssclass: 'float'),
+          AdminUI::Column.new(:status, header: 'Status'),
+          AdminUI::Column.new(:date, header: 'DateTime', cssclass: 'date'),
+          AdminUI::Column.new(:actions, header: 'Actions'),
+        ]
+      )
+      jobs.each do |job|
+
+        job[:id] = {
+          href: "/ops/zk/nodes/node-names?zkpath=#{job[:queueNode]}/#{job[:id]}&mode=data", 
+          value: "#{job[:queueNode].gsub(/\/access\//, '')} #{job[:id]}"
+        }
+        job[:date] = date_format(job[:date])
+        job[:bytes] = job[:bytes].to_f / 1_000_000_000
+        job[:status] = job[:qstatus]
+        job[:actions] = []
+        job[:actions] << {
+          value: 'Requeue',
+          href: "#",
+          cssclass: 'buttontbd',
+          disabled: false
+        }
+        job[:actions] << {
+          value: 'Queue Del',
+          href: "#",
+          cssclass: 'buttontbd',
+          disabled: false
+        }
+        table.add_row(
+          AdminUI::Row.make_row(
+            table.columns,
+            job
+          )
+        )
+      end
+      table
+    end
+
     def dump_node_table(nodedump)
       table = AdminUI::FilterTable.new(
         columns: [
