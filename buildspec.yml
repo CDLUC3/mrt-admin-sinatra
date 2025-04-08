@@ -39,4 +39,5 @@ phases:
         --no-cli-pager
     - |
       aws ecs update-service --cluster mrt-ecs-stack --service admintool \
-       --desired-count 2 --output yaml --no-cli-pager --force-new-deployment
+       --desired-count 2 --output yaml --no-cli-pager \
+       --force-new-deployment || echo "Skip ECS Deployment"

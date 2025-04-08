@@ -13,7 +13,10 @@ module UC3Resources
       )
       @buckets = {}
       @client.list_buckets.buckets.each do |bucket|
-        @buckets[bucket.name] = { name: bucket.name, created: bucket.creation_date }
+        @buckets[bucket.name] = {
+          name: bucket.name,
+          created: date_format(bucket.creation_date, convert_timezone: true)
+        }
       end
       super(enabled: enabled)
     rescue StandardError => e

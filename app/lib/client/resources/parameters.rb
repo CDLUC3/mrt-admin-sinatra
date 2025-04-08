@@ -46,7 +46,7 @@ module UC3Resources
             path: path,
             type: param.type,
             value: param.type == 'SecureString' ? '***' : param.value,
-            modified: param.last_modified_date,
+            modified: date_format(param.last_modified_date, convert_timezone: true),
             version: param.version
           }
         end

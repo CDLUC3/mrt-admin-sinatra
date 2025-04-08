@@ -18,7 +18,7 @@ module UC3Resources
           runtime: function.runtime,
           timeout: function.timeout,
           memory: function.memory_size,
-          last_modified: function.last_modified,
+          last_modified: date_format(function.last_modified, convert_timezone: true),
           package_type: function.package_type,
           arn: function.function_arn
         }

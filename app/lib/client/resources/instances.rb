@@ -60,7 +60,7 @@ module UC3Resources
             subservice: inst.tags.find { |t| t.key == 'Subservice' }&.value,
             env: inst.tags.find { |t| t.key == 'Environment' }&.value,
             type: inst.instance_type,
-            launch: inst.launch_time,
+            launch: date_format(inst.launch_time, convert_timezone: true),
             state: inst.state.name,
             az: inst.placement.availability_zone,
             cssclass: "data #{inst.state.name}"
