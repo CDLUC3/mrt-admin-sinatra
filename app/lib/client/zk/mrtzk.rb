@@ -270,7 +270,7 @@ module UC3Queue
           next if node == "Status"
           table.add_row(
             AdminUI::Row.make_row(
-              table.columns,              
+              table.columns,
               {
                 node: node,
                 ref: make_ref(node).empty? ? make_ref(value) : make_ref(node),
@@ -319,6 +319,8 @@ module UC3Queue
       return {href: "/ops/zk/nodes/node-names?zkpath=/batches/#{m[1]}&mode=data", value: "/batches/#{m[1]}"} if m
       m = /(jid[0-9]+)$/.match(node)
       return {href: "/ops/zk/nodes/node-names?zkpath=/jobs/#{m[1]}&mode=data", value: "/jobs/#{m[1]}"} if m
+      m = /(qid[0-9]+)$/.match(node)
+      return {href: "/ops/zk/nodes/node-names?zkpath=#{node}&mode=data", value: "#{m[1]}"} if m
 
       ""
     end
