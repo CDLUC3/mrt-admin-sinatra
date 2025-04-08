@@ -23,11 +23,6 @@ module UC3Queue
       super(enabled: false, message: e.to_s)
     end
 
-    def date_format(date)
-      return '' if date.nil? || date.empty?
-      DateTime.parse(date).strftime('%Y-%m-%d %H:%M:%S')
-    end
-
     def batches
       batches = MerrittZK::Batch.list_batches_as_json(@zk)
       table = AdminUI::FilterTable.new(

@@ -15,6 +15,13 @@ module UC3
       UC3Client.clients[self.class.to_s] = { name: self.class.to_s, enabled: enabled, message: message }
     end
 
+    def date_format(date, convert_timezone: false)
+      return '' if date.nil? || date.empty?
+      d = DateTime.parse(date).to_time
+      d = d.localtime if convert_timezone
+      d.strftime('%Y-%m-%d %H:%M:%S')
+    end
+
     def self.region
       ENV['AWS_REGION'] || 'us-west-2'
     end

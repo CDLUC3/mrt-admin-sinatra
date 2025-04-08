@@ -36,8 +36,8 @@ module UC3Resources
             desired_count: svc.desired_count,
             running_count: svc.running_count,
             pending_count: svc.pending_count,
-            created: dep.created_at,
-            updated: dep.updated_at,
+            created: date_format(dep.created_at, convert_timezone: true),
+            updated: date_format(dep.updated_at, convert_timezone: true),
             image_digest: digest
           }
         end
