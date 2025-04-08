@@ -16,10 +16,11 @@ module UC3
     end
 
     def date_format(date, convert_timezone: false)
-      puts "DD1 #{date} #{convert_timezone}" 
-      return '' if date.nil? || date.empty?
+      puts "DD1 #{date} #{convert_timezone}"
+      return '' if date.nil? || date.to_s.empty?
       d = DateTime.parse(date.to_s).to_time
       puts "DD2 #{d}" 
+      return '' if d.nil?
       d = d.localtime if convert_timezone
       puts "DD3 #{d}" 
       d.strftime('%Y-%m-%d %H:%M:%S')
