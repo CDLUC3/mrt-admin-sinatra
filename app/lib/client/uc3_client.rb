@@ -16,9 +16,9 @@ module UC3
     end
 
     def date_format(date, convert_timezone: false)
+      puts "DD1 #{date} #{convert_timezone}" 
       return '' if date.nil? || date.empty?
-      puts "DD1 #{date}" 
-      d = DateTime.parse(date).to_time
+      d = DateTime.parse(date.to_s).to_time
       puts "DD2 #{d}" 
       d = d.localtime if convert_timezone
       puts "DD3 #{d}" 

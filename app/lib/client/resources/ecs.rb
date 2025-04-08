@@ -31,7 +31,7 @@ module UC3Resources
             break
           end
           dep = svc.deployments ? svc.deployments[0] : {}
-          puts "DD0 #{dep.created_at} #{dep.updated_at} #{digest}"
+          puts "DD0 #{dep.created_at} #{dep.updated_at}"
           @services[svc.service_name] = {
             name: svc.service_name,
             desired_count: svc.desired_count,
