@@ -42,10 +42,12 @@ module UC3Resources
         res = @client.get_parameters_by_path(opt)
         res.parameters.each do |param|
           path = param.name
+          value = param.type == 'SecureString' ? '***' : param.value
+          value = "#{value[0..100]}..." if value.length > 100
           params[path] = {
             path: path,
             type: param.type,
-            value: param.type == 'SecureString' ? '***' : param.value,
+            value: value,
             modified: date_format(param.last_modified_date, convert_timezone: true),
             version: param.version
           }
