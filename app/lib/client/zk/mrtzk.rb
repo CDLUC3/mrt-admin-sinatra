@@ -193,20 +193,21 @@ module UC3Queue
           AdminUI::Column.new(:id, header: 'ID'),
           AdminUI::Column.new(:token, header: 'Token'),
           AdminUI::Column.new(:bytes, header: 'Bytes GB', cssclass: 'float'),
-          AdminUI::Column.new(:status, header: 'Status'),
+          AdminUI::Column.new(:queue_status, header: 'Queue Status'),
           AdminUI::Column.new(:date, header: 'DateTime', cssclass: 'date'),
           AdminUI::Column.new(:actions, header: 'Actions'),
+          AdminUI::Column.new(:status, header: 'Status'),
         ]
       )
       jobs.each do |job|
-
         job[:id] = {
           href: "/ops/zk/nodes/node-names?zkpath=#{job[:queueNode]}/#{job[:id]}&mode=data", 
           value: "#{job[:queueNode].gsub(/\/access\//, '')} #{job[:id]}"
         }
         job[:date] = date_format(job[:date])
         job[:bytes] = job[:bytes].to_f / 1_000_000_000
-        job[:status] = job[:qstatus]
+        job[:queue_status] = job[:status]
+        job[:status] = 'PASS'
         job[:actions] = []
         job[:actions] << {
           value: 'Requeue',
@@ -335,5 +336,46 @@ module UC3Queue
       table
     end
     attr_reader :zk
+
+    def pause_ingest
+      MerrittZK::Locks.lock_ingest_queue(@zk)
+    end
+  
+    def unpause_ingest
+      MerrittZK::Locks.unlock_ingest_queue(@zk)
+    end
+
+    def cleanup_ingest_queue
+      MerrittZK::Batch.delete_completed_batches(@zk)
+    end
+
+    def pause_access_small
+      MerrittZK::Locks.lock_small_access_queue(@zk)
+    end
+  
+    def unpause_access_small
+      MerrittZK::Locks.unlock_small_access_queue(@zk)
+    end
+
+    def pause_access_large
+      MerrittZK::Locks.lock_large_access_queue(@zk)
+    end
+  
+    def unpause_access_large
+      MerrittZK::Locks.unlock_large_access_queue(@zk)
+    end
+
+    def cleanup_access_queue
+      puts "Cleaning up access jobs"
+      MerrittZK::Access.list_jobs_as_json(@zk).each do |job|
+        qn = job.fetch(:queueNode, MerrittZK::Access::SMALL).gsub(%r{^/access/}, '')
+        j = MerrittZK::Access.new(qn, job.fetch(:id, ''))
+        j.load(@zk)
+        next unless j.status.deletable?
+
+        j.delete(@zk)
+      end
+    end
   end
+
 end

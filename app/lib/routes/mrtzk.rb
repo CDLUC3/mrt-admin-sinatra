@@ -37,6 +37,46 @@ module Sinatra
           }
       end
 
+      app.get '/ops/zk/ingest/pause' do
+        UC3Queue::ZKClient.new.pause_ingest
+        redirect '/ops/zk/nodes/node-names?zkpath=/locks&mode=node'
+      end
+
+      app.get '/ops/zk/ingest/unpause' do
+        UC3Queue::ZKClient.new.unpause_ingest
+        redirect '/ops/zk/nodes/node-names?zkpath=/locks&mode=node'
+      end
+
+      app.get '/ops/zk/ingest/cleanup-queue' do
+        UC3Queue::ZKClient.new.cleanup_ingest_queue
+        redirect '/ops/zk/nodes/node-names?zkpath=/batches&mode=node'
+      end
+
+      app.get '/ops/zk/access/pause-small' do
+        UC3Queue::ZKClient.new.pause_access_small
+        redirect '/ops/zk/nodes/node-names?zkpath=/locks&mode=node'
+      end
+
+      app.get '/ops/zk/access/unpause-small' do
+        UC3Queue::ZKClient.new.unpause_access_small
+        redirect '/ops/zk/nodes/node-names?zkpath=/locks&mode=node'
+      end
+
+      app.get '/ops/zk/access/pause-large' do
+        UC3Queue::ZKClient.new.pause_access_large
+        redirect '/ops/zk/nodes/node-names?zkpath=/locks&mode=node'
+      end
+
+      app.get '/ops/zk/access/unpause-large' do
+        UC3Queue::ZKClient.new.unpause_access_large
+        redirect '/ops/zk/nodes/node-names?zkpath=/locks&mode=node'
+      end
+
+      app.get '/ops/zk/access/cleanup-queue' do
+        UC3Queue::ZKClient.new.cleanup_access_queue
+        redirect '/ops/zk/nodes/node-names?zkpath=/access&mode=node'
+      end
+
       app.get '/ops/zk/access/jobs' do
         erb :table,
           :layout => :page_layout,

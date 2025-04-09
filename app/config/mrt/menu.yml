@@ -398,17 +398,14 @@ items:
       items:
       - title: Pause
         route: /ops/zk/ingest/pause
-        tbd: true
       - title: Unpause
-        route: /ops/zk/ingest/unpuse
-        tbd: true
+        route: /ops/zk/ingest/unpause
       - title: Ingest Batches
         route: /ops/zk/ingest/batches
       - title: Jobs by Collection
         route: /ops/zk/ingest/jobs-by-collection
       - title: Cleanup Queue
         route: /ops/zk/ingest/cleanup-queue
-        tbd: true
       - title: Ingest Folders
         route: /ops/zk/ingest/folders
         tbd: true
@@ -417,17 +414,18 @@ items:
       route: /ops/zk/access
       breadcrumb: true
       items:
-      - title: Pause
-        route: /ops/zk/access/pause
-        tbd: true
-      - title: Unpause
-        route: /ops/zk/access/unpause
-        tbd: true
+      - title: Pause Small Queue
+        route: /ops/zk/access/pause-small
+      - title: Unpause Small Queue
+        route: /ops/zk/access/unpause-small
+      - title: Pause Large Queue
+        route: /ops/zk/access/pause-large
+      - title: Unpause Large Queue
+        route: /ops/zk/access/unpause-large
       - title: View Queue
         route: /ops/zk/access/jobs
       - title: Cleanup Queue
         route: /ops/zk/access/cleanup-queue
-        tbd: true
   - path: db-queue
     title: Database Queues
     route: /ops/db-queue
