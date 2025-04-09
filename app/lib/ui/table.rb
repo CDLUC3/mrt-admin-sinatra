@@ -213,6 +213,8 @@ module AdminUI
           href = cellval.fetch(:href, '')
           title = cellval.fetch(:title, '')
           render_link(val, href, cssclass: cellval.fetch(:cssclass, ''), title: title)
+        elsif cellval.key?(:title)
+          render_span(val, title: cellval.fetch(:title, ''), cssclass: cellval.fetch(:cssclass, ''))
         else
           cellval.fetch(:value, '').to_s
         end
@@ -227,6 +229,10 @@ module AdminUI
 
     def render_link(val, href, cssclass: '', title: '')
       "<a href='#{href}' class='#{cssclass}' title='#{title}'>#{val}</a>"
+    end
+
+    def render_span(val, cssclass: '', title: '')
+      "<span class='#{cssclass}' title='#{title}'>#{val}</span>"
     end
   end
 
