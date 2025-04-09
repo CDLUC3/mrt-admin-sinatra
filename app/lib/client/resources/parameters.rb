@@ -43,7 +43,7 @@ module UC3Resources
         res.parameters.each do |param|
           path = param.name
           value = param.type == 'SecureString' ? '***' : param.value
-          value = "#{value[0..100]}..." if value.length > 100
+          value = { value: "#{value[0..100]}...", title: value } if value.length > 100
           params[path] = {
             path: path,
             type: param.type,
