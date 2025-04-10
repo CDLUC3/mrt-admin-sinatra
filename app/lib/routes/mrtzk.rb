@@ -218,27 +218,27 @@ module Sinatra
       end
 
       app.get '/ops/zk/ingest/force-failure/estimating' do
-        File.new('/tdr/ingest/queue/Estimate_FAILURE', 'w')
+        File.new('/tdr/ingest/queue/Estimate_FAIL', 'w')
         redirect '/ops/zk/ingest/folders'
       end
 
       app.get '/ops/zk/ingest/force-failure/provisioning' do
-        File.new('/tdr/ingest/queue/Provision_FAILURE', 'w')
+        File.new('/tdr/ingest/queue/Provision_FAIL', 'w')
         redirect '/ops/zk/ingest/folders'
       end
 
       app.get '/ops/zk/ingest/force-failure/download' do
-        File.new('/tdr/ingest/queue/Download_FAILURE', 'w')
+        File.new('/tdr/ingest/queue/Download_FAIL', 'w')
         redirect '/ops/zk/ingest/folders'
       end
 
       app.get '/ops/zk/ingest/force-failure/processing' do
-        File.new('/tdr/ingest/queue/Process_FAILURE', 'w')
+        File.new('/tdr/ingest/queue/Process_FAIL', 'w')
         redirect '/ops/zk/ingest/folders'
       end
 
       app.get '/ops/zk/ingest/force-failure/notify' do
-        File.new('/tdr/ingest/queue/Notify_FAILURE', 'w')
+        File.new('/tdr/ingest/queue/Notify_FAIL', 'w')
         redirect '/ops/zk/ingest/folders'
       end
     end

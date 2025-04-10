@@ -118,7 +118,7 @@ module UC3
           type: isdir ? 'Directory' : 'File',
           actions: []
         }
-        if !isdir && folder =~ /_FAILURE$/
+        if !isdir && folder =~ /_FAIL$/
           data[:actions] << {
             value: 'Delete',
             href: "/ops/zk/ingest/folder/delete",
