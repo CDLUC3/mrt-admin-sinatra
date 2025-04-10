@@ -426,6 +426,8 @@ items:
         route: /ops/zk/access/jobs
       - title: Cleanup Queue
         route: /ops/zk/access/cleanup-queue
+      - title: Create Fake Access Request
+        route: /ops/zk/access/fake
   - path: db-queue
     title: Database Queues
     route: /ops/db-queue

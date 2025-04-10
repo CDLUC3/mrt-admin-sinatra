@@ -74,7 +74,7 @@ module Sinatra
 
       app.get '/ops/zk/access/cleanup-queue' do
         UC3Queue::ZKClient.new.cleanup_access_queue
-        redirect '/ops/zk/nodes/node-names?zkpath=/access&mode=node'
+        redirect '/ops/zk/access/jobs'
       end
 
       app.get '/ops/zk/access/jobs' do
@@ -93,10 +93,82 @@ module Sinatra
         begin
           UC3Queue::ZKClient.new.delete_access(qn, id)
           content_type :json
-          {path: path, message: "Deleted #{path}"}.to_json
+          {message: "#{path} marked for deletion"}.to_json
         rescue StandardError => e
           content_type :json
           {path: path, message: "ERROR: #{e.class}: #{e.message}"}.to_json
+        end
+      end
+
+      app.post '/ops/zk/ingest/job/delete/*' do
+        id = params[:splat][0]
+        begin
+          UC3Queue::ZKClient.new.delete_ingest_job(id)
+          content_type :json
+          {message: "#{id} marked for deletion"}.to_json
+        rescue StandardError => e
+          content_type :json
+          {job: id, message: "ERROR: #{e.class}: #{e.message}"}.to_json
+        end
+      end
+
+      app.post '/ops/zk/ingest/job/requeue/*' do
+        id = params[:splat][0]
+        begin
+          UC3Queue::ZKClient.new.requeue_ingest_job(id)
+          content_type :json
+          {message: "#{id} requeued"}.to_json
+        rescue StandardError => e
+          content_type :json
+          {job: id, message: "ERROR: #{e.class}: #{e.message}"}.to_json
+        end
+      end
+
+      app.post '/ops/zk/ingest/job/hold/*' do
+        id = params[:splat][0]
+        begin
+          UC3Queue::ZKClient.new.hold_ingest_job(id)
+          content_type :json
+          {message: "#{id} held"}.to_json
+        rescue StandardError => e
+          content_type :json
+          {job: id, message: "ERROR: #{e.class}: #{e.message}"}.to_json
+        end
+      end
+
+      app.post '/ops/zk/ingest/job/release/*' do
+        id = params[:splat][0]
+        begin
+          UC3Queue::ZKClient.new.release_ingest_job(id)
+          content_type :json
+          {message: "#{id} released"}.to_json
+        rescue StandardError => e
+          content_type :json
+          {job: id, message: "ERROR: #{e.class}: #{e.message}"}.to_json
+        end
+      end
+
+      app.post '/ops/zk/ingest/batch/delete/*' do
+        id = params[:splat][0]
+        begin
+          UC3Queue::ZKClient.new.delete_ingest_batch(id)
+          content_type :json
+          {message: "#{id} marked for deletion"}.to_json
+        rescue StandardError => e
+          content_type :json
+          {batch: id, message: "ERROR: #{e.class}: #{e.message}"}.to_json
+        end
+      end
+
+      app.post '/ops/zk/ingest/batch/update-reporting/*' do
+        id = params[:splat][0]
+        begin
+          UC3Queue::ZKClient.new.update_reporting_ingest_batch(id)
+          content_type :json
+          {message: "#{id} marked for update reporting"}.to_json
+        rescue StandardError => e
+          content_type :json
+          {batch: id, message: "ERROR: #{e.class}: #{e.message}"}.to_json
         end
       end
 
@@ -113,7 +185,13 @@ module Sinatra
           {path: path, message: "ERROR: #{e.class}: #{e.message}"}.to_json
         end
       end
+
+      app.get '/ops/zk/access/fake' do
+        j = UC3Queue::ZKClient.new.fake_access
+        redirect '/ops/zk/access/jobs'
+      end
     end
   end
+
   register UC3ZKRoutes
 end

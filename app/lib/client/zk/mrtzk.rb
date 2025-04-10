@@ -40,6 +40,7 @@ module UC3Queue
       batches.each do |batch|
         status = batch[:status].to_s
 
+        id = batch[:id]
         batch[:id] = {
           href: "/ops/zk/nodes/node-names?zkpath=/batches/#{batch[:id]}&mode=data", 
           value: batch[:id]
@@ -52,13 +53,16 @@ module UC3Queue
         batch[:jobdata] << batch[:filename]
         batch[:actions] = []
         batch[:actions] << {
-          value: 'Requeue',
-          href: "#",
+          value: 'Update Reporting',
+          post: true,
+          href: "/ops/zk/ingest/batch/update-reporting/#{id}",
           cssclass: 'button',
           disabled: !%w[Failed].include?(status)
         }
         batch[:actions] << {
           value: 'Queue Del',
+          href: "/ops/zk/ingest/batch/delete/#{id}",
+          post: true,
           href: "#",
           cssclass: 'button',
           disabled: !%w[Failed Completed].include?(status)
@@ -137,6 +141,7 @@ module UC3Queue
         next unless params.fetch('profile', job[:profile]) == job[:profile]
         next unless params.fetch('status', job[:status]) == job[:status]
 
+        id = job[:id]
         status = job[:status].to_s
 
         job[:id] = {
@@ -158,25 +163,29 @@ module UC3Queue
         job[:actions] = []
         job[:actions] << {
           value: 'Requeue',
-          href: "#",
+          href: "/ops/zk/ingest/job/requeue/#{id}",
+          post: true,
           cssclass: 'button',
           disabled: !%w[Failed].include?(status)
         }
         job[:actions] << {
           value: 'Queue Del',
-          href: "#",
+          href: "/ops/zk/ingest/job/delete/#{id}",
+          post: true,
           cssclass: 'button',
           disabled: !%w[Failed Completed].include?(status)
         }
         job[:actions] << {
           value: 'Hold',
-          href: "#",
+          href: "/ops/zk/ingest/job/hold/#{id}",
+          post: true,
           cssclass: 'button',
           disabled: !%w[Pending].include?(status)
         }
         job[:actions] << {
           value: 'Release',
-          href: "#",
+          href: "/ops/zk/ingest/job/release/#{id}",
+          post: true,
           cssclass: 'button',
           disabled: !%w[Held].include?(status)
         }
@@ -209,7 +218,7 @@ module UC3Queue
         id = job[:id]
         job[:queue_status] = status
         job[:id] = {
-          href: "/ops/zk/nodes/node-names?zkpath=#{qn}/#{job[:id]}&mode=data", 
+          href: "/ops/zk/nodes/node-names?zkpath=#{job[:queueNode]}/#{job[:id]}&mode=data", 
           value: "#{qn} #{job[:id]}"
         }
         job[:date] = date_format(job[:date])
@@ -391,13 +400,83 @@ module UC3Queue
     def delete_access(qn, id)
       j = MerrittZK::Access.new(qn, id)
       j.load(@zk)
-      j.delete(@zk) if j.status.deletable?
+      j.set_status(@zk, MerrittZK::AccessState::Deleted)
+    end
+
+    def delete_ingest_job(id)
+      j = MerrittZK::Job.new(id)
+      j.load(@zk)
+      j.set_status(@zk, MerrittZK::JobState::Deleted)
+    end
+
+    def requeue_ingest_job(id)
+      job = MerrittZK::Job.new(id)
+      job.load(@zk)
+
+      js = job.json_property(@zk, MerrittZK::ZkKeys::STATUS)
+      laststat = js.fetch(:last_successful_status, '')
+
+      job.lock(@zk)
+
+      case laststat
+      when 'Pending', '', nil
+        job.set_status(@zk, MerrittZK::JobState::Estimating, job_retry: true)
+      when 'Estimating'
+        job.set_status(@zk, MerrittZK::JobState::Provisioning, job_retry: true)
+      when 'Provisioning'
+        job.set_status(@zk, MerrittZK::JobState::Downloading, job_retry: true)
+      when 'Downloading'
+        job.set_status(@zk, MerrittZK::JobState::Processing, job_retry: true)
+      when 'Processing'
+        job.set_status(@zk, MerrittZK::JobState::Recording, job_retry: true)
+      when 'Recording'
+        job.set_status(@zk, MerrittZK::JobState::Notify, job_retry: true)
+      end
+
+      job.unlock(@zk)
+    end
+
+    def hold_ingest_job(id)
+      j = MerrittZK::Job.new(id)
+      j.load(@zk)
+      j.set_status(@zk, MerrittZK::JobState::Held)
+    end
+
+    def release_ingest_job(id)
+      j = MerrittZK::Job.new(id)
+      j.load(@zk)
+      j.set_status(@zk, MerrittZK::JobState::Pending)
+    end
+
+    def delete_ingest_batch(id)
+      b = MerrittZK::Batch.new(id)
+      b.load(@zk)
+      b.set_status(@zk, MerrittZK::BatchState::Deleted)
+    end
+
+    def update_reporting_ingest_batch(id)
+      b = MerrittZK::Batch.new(id)
+      b.load(@zk)
+      b.set_status(@zk, MerrittZK::BatchState::UpdateReporting)
     end
 
     def requeue_access(qn, id)
       j = MerrittZK::Access.new(qn, id)
       j.load(@zk)
       j.set_status(@zk, MerrittZK::AccessState::Pending)
+    end
+
+    def fake_access
+      MerrittZK::Access.create_assembly(
+        @zk, 
+        MerrittZK::Access::SMALL, 
+        {
+          "cloud-content-byte": 17079,
+          "delivery-node": 7777,
+          "status": 201,
+          "token": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"
+        }
+      )
     end
   end
 
