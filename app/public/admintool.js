@@ -1,7 +1,7 @@
 $(document).ready(function() {
   showTotals();
   applySearchBox();
-  applyButtonDisabled();
+  applyButtonControls();
   applyFilterCheckboxes();
   applyFilters();
   clearButton();
@@ -16,11 +16,29 @@ function applySearchBox() {
   });
 }
 
-function applyButtonDisabled() {
+function applyButtonControls() {
   // Allow links to be disabled in table displays
   $("table.data a").on("click", function() {
-    if ($(this).hasClass('button-disabled')) {
+    if ($(this).attr('disabled')) {
       return false;
+    }
+    if ($(this).hasClass('post')) {
+      $(this).attr('disabled', true);
+      $.ajax({
+        dataType: "text",
+        method: "POST",
+        url: $(this).attr('data'),
+        success: function(data) {
+          $("#alertmsg").text(data).dialog({
+            show: { effect: "blind", duration: 800 }
+          });
+        },
+        error: function( xhr, status ) {
+          $("#alertmsg").text(xhr.responseText).dialog({
+            show: { effect: "blind", duration: 800 }
+          });
+        }
+      });
     }
   });
 }

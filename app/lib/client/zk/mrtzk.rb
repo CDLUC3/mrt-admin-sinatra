@@ -38,6 +38,8 @@ module UC3Queue
         ]
       )
       batches.each do |batch|
+        status = batch[:status].to_s
+
         batch[:id] = {
           href: "/ops/zk/nodes/node-names?zkpath=/batches/#{batch[:id]}&mode=data", 
           value: batch[:id]
@@ -52,14 +54,14 @@ module UC3Queue
         batch[:actions] << {
           value: 'Requeue',
           href: "#",
-          cssclass: 'buttontbd',
-          disabled: false
+          cssclass: 'button',
+          disabled: !%w[Failed].include?(status)
         }
         batch[:actions] << {
           value: 'Queue Del',
           href: "#",
-          cssclass: 'buttontbd',
-          disabled: false
+          cssclass: 'button',
+          disabled: !%w[Failed Completed].include?(status)
         }
         table.add_row(
           AdminUI::Row.make_row(
@@ -135,6 +137,8 @@ module UC3Queue
         next unless params.fetch('profile', job[:profile]) == job[:profile]
         next unless params.fetch('status', job[:status]) == job[:status]
 
+        status = job[:status].to_s
+
         job[:id] = {
           href: "/ops/zk/nodes/node-names?zkpath=/jobs/#{job[:id]}&mode=data", 
           value: job[:id]
@@ -155,26 +159,26 @@ module UC3Queue
         job[:actions] << {
           value: 'Requeue',
           href: "#",
-          cssclass: 'buttontbd',
-          disabled: false
+          cssclass: 'button',
+          disabled: !%w[Failed].include?(status)
         }
         job[:actions] << {
           value: 'Queue Del',
           href: "#",
-          cssclass: 'buttontbd',
-          disabled: false
+          cssclass: 'button',
+          disabled: !%w[Failed Completed].include?(status)
         }
         job[:actions] << {
           value: 'Hold',
           href: "#",
-          cssclass: 'buttontbd',
-          disabled: false
+          cssclass: 'button',
+          disabled: !%w[Pending].include?(status)
         }
         job[:actions] << {
           value: 'Release',
           href: "#",
-          cssclass: 'buttontbd',
-          disabled: false
+          cssclass: 'button',
+          disabled: !%w[Held].include?(status)
         }
         table.add_row(
           AdminUI::Row.make_row(
@@ -200,27 +204,32 @@ module UC3Queue
         ]
       )
       jobs.each do |job|
+        status = job[:status].to_s
+        id = job[:id]
+        job[:queue_status] = status
         job[:id] = {
           href: "/ops/zk/nodes/node-names?zkpath=#{job[:queueNode]}/#{job[:id]}&mode=data", 
           value: "#{job[:queueNode].gsub(/\/access\//, '')} #{job[:id]}"
         }
         job[:date] = date_format(job[:date])
         job[:bytes] = job[:bytes].to_f / 1_000_000_000
-        job[:queue_status] = job[:status]
-        job[:status] = 'PASS'
         job[:actions] = []
         job[:actions] << {
           value: 'Requeue',
           href: "#",
-          cssclass: 'buttontbd',
-          disabled: false
+          cssclass: 'button',
+          disabled: !%w[Failed Consumed].include?(status)
         }
         job[:actions] << {
           value: 'Queue Del',
-          href: "#",
-          cssclass: 'buttontbd',
-          disabled: false
+          href: "/ops/zk/access/delete/#{id}",
+          post: true,
+          cssclass: 'button',
+          disabled: !%w[Failed Completed].include?(status)
         }
+
+        job[:status] = 'PASS'
+
         table.add_row(
           AdminUI::Row.make_row(
             table.columns,

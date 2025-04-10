@@ -96,14 +96,13 @@ a.buttontbd {
   background-color: navy;  
   color: yellow;
 }
-a.button-disabled {
+a[disabled].button {
   background-color: navy;
   border: thin solid navy;
   color: gray;
 }
 a.button,
-a.buttontbd,
-a.button-disabled {
+a.buttontbd {
   padding: 5px 10px;
   margin: 3px;
   text-align: center;

@@ -9,7 +9,7 @@ a.buttontbd {
   background-color: #879C5D;  
   color: yellow;
 }
-a.button-disabled {
+a[disabled].button {
   background-color: #b9c89a;
   border: thin solid #879C5D;
   color: gray;

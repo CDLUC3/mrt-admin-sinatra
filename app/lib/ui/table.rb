@@ -202,7 +202,8 @@ module AdminUI
       if cellval.is_a?(Array)
         s = ''
         cellval.each do |vv|
-          s += "<span class='#{spanclass}' title='#{vv}'>#{render(vv)}</span>"
+          title = vv.is_a?(Hash) ? vv.fetch(:title, vv.fetch(:value, '')) : vv
+          s += "<span class='#{spanclass}' title='#{title}'>#{render(vv)}</span>"
         end
         s.to_s
       elsif cellval.is_a?(Hash)
@@ -212,7 +213,10 @@ module AdminUI
         elsif cellval.key?(:href)
           href = cellval.fetch(:href, '')
           title = cellval.fetch(:title, '')
-          render_link(val, href, cssclass: cellval.fetch(:cssclass, ''), title: title)
+          disabled = cellval.fetch(:disabled, false)
+          cssclass = cellval.fetch(:cssclass, '')
+          post = cellval.fetch(:post, false)
+          render_link(val, href, cssclass: cssclass, title: title, disabled: disabled, post: post)
         elsif cellval.key?(:title)
           render_span(val, title: cellval.fetch(:title, ''), cssclass: cellval.fetch(:cssclass, ''))
         else
@@ -227,8 +231,13 @@ module AdminUI
       val
     end
 
-    def render_link(val, href, cssclass: '', title: '')
-      "<a href='#{href}' class='#{cssclass}' title='#{title}'>#{val}</a>"
+    def render_link(val, href, cssclass: '', title: '', disabled: false, post: false)
+      dis = disabled ? 'disabled' : ''
+      if post
+        "<a href='#' data='#{href}' class='post #{cssclass}' title='#{title}' #{dis}>#{val}</a>"
+      else
+        "<a href='#{href}' class='#{cssclass}' title='#{title}' #{dis}>#{val}</a>"
+      end
     end
 
     def render_span(val, cssclass: '', title: '')

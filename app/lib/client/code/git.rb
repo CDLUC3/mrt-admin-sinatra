@@ -104,7 +104,7 @@ module UC3Code
       actions << {
         value: 'Deploy Dev',
         href: NOACT,
-        cssclass: 'button-disabled',
+        cssclass: 'button',
         disabled: true
       }
       unless tagartifacts.empty?

@@ -85,6 +85,18 @@ module Sinatra
             table: UC3Queue::ZKClient.new.assembly_requests
           }
       end
+
+      app.post '/ops/zk/access/delete/*' do
+        path = params[:splat][0]
+        begin
+          UC3Queue::ZKClient.new.delete_access(path)
+          redirect '/ops/zk/access/jobs'
+        rescue StandardError => e
+          content_type :json
+          {path: path, error: e.message}.to_json
+        end
+      end
+
     end
   end
   register UC3ZKRoutes
