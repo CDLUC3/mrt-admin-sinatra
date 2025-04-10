@@ -25,11 +25,12 @@ function applyButtonControls() {
     if ($(this).hasClass('post')) {
       $(this).attr('disabled', true);
       $.ajax({
-        dataType: "text",
+        dataType: "json",
         method: "POST",
-        url: $(this).attr('data'),
+        url: $(this).attr('url'),
+        data: $(this).attr('data'),
         success: function(data) {
-          $("#alertmsg").text(data).dialog({
+          $("#alertmsg").text(data['message']).dialog({
             show: { effect: "blind", duration: 800 }
           });
         },

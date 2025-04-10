@@ -216,7 +216,8 @@ module AdminUI
           disabled = cellval.fetch(:disabled, false)
           cssclass = cellval.fetch(:cssclass, '')
           post = cellval.fetch(:post, false)
-          render_link(val, href, cssclass: cssclass, title: title, disabled: disabled, post: post)
+          data = cellval.fetch(:data, '')
+          render_link(val, href, cssclass: cssclass, title: title, disabled: disabled, post: post, data: data)
         elsif cellval.key?(:title)
           render_span(val, title: cellval.fetch(:title, ''), cssclass: cellval.fetch(:cssclass, ''))
         else
@@ -231,10 +232,10 @@ module AdminUI
       val
     end
 
-    def render_link(val, href, cssclass: '', title: '', disabled: false, post: false)
+    def render_link(val, href, cssclass: '', title: '', disabled: false, post: false, data: '')
       dis = disabled ? 'disabled' : ''
       if post
-        "<a href='#' data='#{href}' class='post #{cssclass}' title='#{title}' #{dis}>#{val}</a>"
+        "<a href='#' url='#{href}' data='#{data}' class='post #{cssclass}' title='#{title}' #{dis}>#{val}</a>"
       else
         "<a href='#{href}' class='#{cssclass}' title='#{title}' #{dis}>#{val}</a>"
       end

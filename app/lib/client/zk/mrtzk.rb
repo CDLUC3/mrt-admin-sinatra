@@ -205,24 +205,26 @@ module UC3Queue
       )
       jobs.each do |job|
         status = job[:status].to_s
+        qn = job[:queueNode].gsub(/\/access\//, '')
         id = job[:id]
         job[:queue_status] = status
         job[:id] = {
-          href: "/ops/zk/nodes/node-names?zkpath=#{job[:queueNode]}/#{job[:id]}&mode=data", 
-          value: "#{job[:queueNode].gsub(/\/access\//, '')} #{job[:id]}"
+          href: "/ops/zk/nodes/node-names?zkpath=#{qn}/#{job[:id]}&mode=data", 
+          value: "#{qn} #{job[:id]}"
         }
         job[:date] = date_format(job[:date])
         job[:bytes] = job[:bytes].to_f / 1_000_000_000
         job[:actions] = []
         job[:actions] << {
           value: 'Requeue',
-          href: "#",
+          href: "/ops/zk/access/requeue/#{qn}/#{id}",
+          post: true,
           cssclass: 'button',
           disabled: !%w[Failed Consumed].include?(status)
         }
         job[:actions] << {
           value: 'Queue Del',
-          href: "/ops/zk/access/delete/#{id}",
+          href: "/ops/zk/access/delete/#{qn}/#{id}",
           post: true,
           cssclass: 'button',
           disabled: !%w[Failed Completed].include?(status)
@@ -384,6 +386,18 @@ module UC3Queue
 
         j.delete(@zk)
       end
+    end
+
+    def delete_access(qn, id)
+      j = MerrittZK::Access.new(qn, id)
+      j.load(@zk)
+      j.delete(@zk) if j.status.deletable?
+    end
+
+    def requeue_access(qn, id)
+      j = MerrittZK::Access.new(qn, id)
+      j.load(@zk)
+      j.set_status(@zk, MerrittZK::AccessState::Pending)
     end
   end
 

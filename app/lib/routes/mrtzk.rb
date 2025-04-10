@@ -86,17 +86,33 @@ module Sinatra
           }
       end
 
-      app.post '/ops/zk/access/delete/*' do
-        path = params[:splat][0]
+      app.post '/ops/zk/access/delete/*/*' do
+        qn = params[:splat][0]
+        id = params[:splat][1]
+        path = "/#{qn}/#{id}"
         begin
-          UC3Queue::ZKClient.new.delete_access(path)
-          redirect '/ops/zk/access/jobs'
+          UC3Queue::ZKClient.new.delete_access(qn, id)
+          content_type :json
+          {path: path, message: "Deleted #{path}"}.to_json
         rescue StandardError => e
           content_type :json
-          {path: path, error: e.message}.to_json
+          {path: path, message: "ERROR: #{e.class}: #{e.message}"}.to_json
         end
       end
 
+      app.post '/ops/zk/access/requeue/*/*' do
+        qn = params[:splat][0]
+        id = params[:splat][1]
+        path = "/#{qn}/#{id}"
+        begin
+          UC3Queue::ZKClient.new.requeue_access(qn, id)
+          content_type :json
+          {path: path, message: "Requeued #{path}"}.to_json
+        rescue StandardError => e
+          content_type :json
+          {path: path, message: "ERROR: #{e.class}: #{e.message}"}.to_json
+        end
+      end
     end
   end
   register UC3ZKRoutes
