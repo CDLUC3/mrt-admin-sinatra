@@ -100,5 +100,40 @@ module UC3
     def self.resolve_lookup(filename, map)
       YAML.safe_load(Mustache.render(File.read(filename), map))
     end
+
+    def ingest_folders(params)
+      table = AdminUI::FilterTable.new(
+        columns: [
+          AdminUI::Column.new(:name, header: 'Folder'),
+          AdminUI::Column.new(:type, header: 'Type'),
+          AdminUI::Column.new(:actions, header: 'Actions'),
+        ]
+      )
+      dir = '/tdr/ingest/queue'
+      Dir.entries(dir).each do |folder|
+        next if folder == '.' || folder == '..'
+        isdir = File.directory?("#{dir}/#{folder}")
+        data = {
+          name: folder,
+          type: isdir ? 'Directory' : 'File',
+          actions: []
+        }
+        if !isdir && folder =~ /_FAILURE$/
+          data[:actions] << {
+            value: 'Delete',
+            href: "/ops/zk/ingest/folder/delete",
+            data: folder,
+            cssclass: 'button',
+            post: true,
+            disabled: false
+          }
+        end
+        table.add_row(AdminUI::Row.make_row(
+          table.columns, 
+          data
+        ))
+      end
+      table
+    end
   end
 end

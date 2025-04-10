@@ -27,6 +27,7 @@ function applyButtonControls() {
       $.ajax({
         dataType: "json",
         method: "POST",
+        contentType: "text/plain; charset=utf-8",
         url: $(this).attr('url'),
         data: $(this).attr('data'),
         success: function(data) {

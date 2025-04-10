@@ -190,6 +190,57 @@ module Sinatra
         j = UC3Queue::ZKClient.new.fake_access
         redirect '/ops/zk/access/jobs'
       end
+
+      app.get '/ops/zk/ingest/folders' do
+        erb :table,
+          :layout => :page_layout,
+          :locals => {
+            context: AdminUI::Context.new(request.path),
+            table: UC3::UC3Client.new.ingest_folders(request.params)
+          }
+      end
+
+      app.post '/ops/zk/ingest/folder/delete' do
+        begin
+          f = request.body.read
+          unless f.empty?
+            File.delete("/tdr/ingest/queue/#{f}")
+            content_type :json
+            {message: "#{f} deleted"}.to_json
+          else
+            content_type :json
+            {message: 'No file specified'}.to_json
+          end
+        rescue StandardError => e
+          content_type :json
+          {message: "ERROR: #{e.class}: #{e.message}"}.to_json
+        end
+      end
+
+      app.get '/ops/zk/ingest/force-failure/estimating' do
+        File.new('/tdr/ingest/queue/Estimate_FAILURE', 'w')
+        redirect '/ops/zk/ingest/folders'
+      end
+
+      app.get '/ops/zk/ingest/force-failure/provisioning' do
+        File.new('/tdr/ingest/queue/Provision_FAILURE', 'w')
+        redirect '/ops/zk/ingest/folders'
+      end
+
+      app.get '/ops/zk/ingest/force-failure/download' do
+        File.new('/tdr/ingest/queue/Download_FAILURE', 'w')
+        redirect '/ops/zk/ingest/folders'
+      end
+
+      app.get '/ops/zk/ingest/force-failure/processing' do
+        File.new('/tdr/ingest/queue/Process_FAILURE', 'w')
+        redirect '/ops/zk/ingest/folders'
+      end
+
+      app.get '/ops/zk/ingest/force-failure/notify' do
+        File.new('/tdr/ingest/queue/Notify_FAILURE', 'w')
+        redirect '/ops/zk/ingest/folders'
+      end
     end
   end
 

@@ -63,7 +63,6 @@ module UC3Queue
           value: 'Queue Del',
           href: "/ops/zk/ingest/batch/delete/#{id}",
           post: true,
-          href: "#",
           cssclass: 'button',
           disabled: !%w[Failed Completed].include?(status)
         }

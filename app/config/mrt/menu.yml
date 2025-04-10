@@ -408,7 +408,20 @@ items:
         route: /ops/zk/ingest/cleanup-queue
       - title: Ingest Folders
         route: /ops/zk/ingest/folders
-        tbd: true
+      - path: force-failure
+        title: Force Failure
+        route: /ops/zk/ingest/force-failure
+        items:
+        - title: Estimating
+          route: /ops/zk/ingest/force-failure/estimating
+        - title: Download
+          route: /ops/zk/ingest/force-failure/download
+        - title: Notify
+          route: /ops/zk/ingest/force-failure/notify
+        - title: Provisioning
+          route: /ops/zk/ingest/force-failure/provisioning
+        - title: Processing
+          route: /ops/zk/ingest/force-failure/processing
     - path: access-queue
       title: Access Queue
       route: /ops/zk/access
