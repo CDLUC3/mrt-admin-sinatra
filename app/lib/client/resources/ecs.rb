@@ -27,7 +27,7 @@ module UC3Resources
             @client.describe_service_revisions(service_revision_arns: [sd.target_service_revision_arn]).service_revisions.each do |sr|
               sr.container_images.each do |ci|
                 digest = ci.image_digest
-                image = ci.image.gsub(/^.*amazonaws.com\//, '')
+                image = ci.image.to_s.gsub(/^.*amazonaws.com\//, '')
               end
             end
             break
