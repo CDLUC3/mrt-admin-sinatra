@@ -196,7 +196,7 @@ module Sinatra
           :layout => :page_layout,
           :locals => {
             context: AdminUI::Context.new(request.path),
-            table: UC3::UC3Client.new.ingest_folders(request.params)
+            table: UC3::FileSystemClient.new.ingest_folders(request.params)
           }
       end
 
@@ -204,7 +204,7 @@ module Sinatra
         begin
           f = request.body.read
           unless f.empty?
-            File.delete("/tdr/ingest/queue/#{f}")
+            File.delete("#{UC3::FileSystemClient.DIR}/#{f}")
             content_type :json
             {message: "#{f} deleted"}.to_json
           else

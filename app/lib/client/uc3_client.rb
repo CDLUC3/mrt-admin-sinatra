@@ -101,32 +101,68 @@ module UC3
       YAML.safe_load(Mustache.render(File.read(filename), map))
     end
 
+  end
+
+  class FileSystemClient < UC3Client
+    DIR = '/tdr/ingest/queue'
     def ingest_folders(params)
+      path = params.fetch('path', '')
+      path = "" if path =~ /^\.\./
+      dir = path.empty? ? DIR : "#{DIR}/#{path}"
+
       table = AdminUI::FilterTable.new(
         columns: [
-          AdminUI::Column.new(:name, header: 'Folder'),
-          AdminUI::Column.new(:type, header: 'Type'),
+          AdminUI::Column.new(:name, header: 'Name'),
+          AdminUI::Column.new(:created, header: 'Created'),
+          AdminUI::Column.new(:size, header: 'Bytes', cssclass: 'size'),
           AdminUI::Column.new(:actions, header: 'Actions'),
         ]
       )
-      dir = '/tdr/ingest/queue'
-      Dir.entries(dir).each do |folder|
-        next if folder == '.' || folder == '..'
-        isdir = File.directory?("#{dir}/#{folder}")
-        data = {
-          name: folder,
-          type: isdir ? 'Directory' : 'File',
-          actions: []
-        }
-        if !isdir && folder =~ /_FAIL$/
-          data[:actions] << {
-            value: 'Delete',
-            href: "/ops/zk/ingest/folder/delete",
-            data: folder,
-            cssclass: 'button',
-            post: true,
-            disabled: false
-          }
+      count = 0
+      Dir.entries(dir).sort.each do |folder|
+        next if folder == '.' || (folder == '..' && path.empty?)
+        count += 1
+        break if count > 1000
+        
+        if File.directory?("#{dir}/#{folder}")
+          if folder == '..'
+            data = {
+              name: {value: '..', href: "/ops/zk/ingest/folders?path=#{File.dirname(path)}"},
+              created: '',
+              size: '',
+              actions: []
+            }
+          else
+            data = {
+              name: {value: folder, href: "/ops/zk/ingest/folders?path=#{path}/#{folder}"},
+              created: date_format(File.ctime("#{dir}/#{folder}")),
+              size: '',
+              actions: []
+            }
+          end
+        else
+          if folder =~ /(Estimate|Provision|Download|Process|Notify)_FAIL$/
+            data = {
+              name: folder,
+              created: date_format(File.ctime("#{dir}/#{folder}")),
+              size: File.size("#{dir}/#{folder}"),
+              actions: {
+                value: 'Delete',
+                href: "/ops/zk/ingest/folder/delete",
+                data: folder,
+                cssclass: 'button',
+                post: true,
+                disabled: false
+              }
+            }
+          else
+            data = {
+              name: folder,
+              created: date_format(File.ctime("#{dir}/#{folder}")),
+              size: File.size("#{dir}/#{folder}"),
+              actions: []
+            }
+          end
         end
         table.add_row(AdminUI::Row.make_row(
           table.columns, 
