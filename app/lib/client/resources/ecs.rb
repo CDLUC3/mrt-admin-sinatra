@@ -18,6 +18,7 @@ module UC3Resources
       @client.list_services(cluster: 'mrt-ecs-stack', max_results: 20).service_arns.each do |arn|
         @client.describe_services(cluster: 'mrt-ecs-stack', services: [arn]).services.each do |svc|
           digest = nil
+          image = nil
           @client.list_service_deployments(
             cluster: 'mrt-ecs-stack', 
             service: arn, 
@@ -26,6 +27,7 @@ module UC3Resources
             @client.describe_service_revisions(service_revision_arns: [sd.target_service_revision_arn]).service_revisions.each do |sr|
               sr.container_images.each do |ci|
                 digest = ci.image_digest
+                image = ci.image
               end
             end
             break
@@ -38,7 +40,7 @@ module UC3Resources
             pending_count: svc.pending_count,
             created: date_format(dep.created_at, convert_timezone: true),
             updated: date_format(dep.updated_at, convert_timezone: true),
-            image_digest: digest
+            image: [image, digest]
           }
         end
       end
@@ -60,7 +62,7 @@ module UC3Resources
           AdminUI::Column.new(:pending_count, header: 'Pending'),
           AdminUI::Column.new(:created, header: 'Created'),
           AdminUI::Column.new(:updated, header: 'Updated'),
-          AdminUI::Column.new(:image_digest, header: 'Image Digest')
+          AdminUI::Column.new(:image, header: 'Image')
         ]
       )
       return table unless enabled
