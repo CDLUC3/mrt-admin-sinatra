@@ -7,6 +7,7 @@ require_relative 'lib/routes/code'
 require_relative 'lib/routes/resources'
 require_relative 'lib/routes/services'
 require_relative 'lib/routes/query'
+require_relative 'lib/routes/ldap'
 require_relative 'lib/routes/mrtzk'
 
 set :bind, '0.0.0.0'
@@ -16,6 +17,7 @@ include Sinatra::UC3CodeRoutes
 include Sinatra::UC3ResourcesRoutes
 include Sinatra::UC3ServicesRoutes
 include Sinatra::UC3QueryRoutes
+include Sinatra::UC3LdapRoutes
 
 Sinatra::UC3HomeRoutes.load_menu_file('app/config/mrt/menu.yml')
 AdminUI::Context.css = '/mrt/custom.css'
@@ -39,6 +41,8 @@ get '/context' do
 end
 
 get '/clients' do
+  UC3::UC3Client.new
+  UC3::FileSystemClient.new
   UC3Query::QueryClient.client
   UC3Queue::ZKClient.client
   UC3Code::SourceCodeClient.new
@@ -48,6 +52,7 @@ get '/clients' do
   UC3Resources::BucketsClient.new
   UC3Resources::FunctionsClient.new
   UC3Resources::LoadBalancerClient.new
+  UC3Ldap::LDAPClient.client
 
   erb :table,
     :layout => :page_layout,
