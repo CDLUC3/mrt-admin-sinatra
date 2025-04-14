@@ -204,7 +204,7 @@ module Sinatra
         begin
           f = request.body.read
           unless f.empty?
-            File.delete("#{UC3::FileSystemClient.DIR}/#{f}")
+            File.delete("#{UC3::FileSystemClient::DIR}/#{f}")
             content_type :json
             {message: "#{f} deleted"}.to_json
           else

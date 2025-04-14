@@ -10,14 +10,63 @@ module Sinatra
   # client specific routes
   module UC3LdapRoutes
     def self.registered(app)
-      app.get '/ldap' do
+      app.get '/ldap/users' do
         ldap = UC3Ldap::LDAPClient.client
-        ldap.load_users
-        erb :none,
+        ldap.load
+        erb :table,
           :layout => :page_layout,
           :locals => {
             context: AdminUI::Context.new(request.path),
-            table: ldap.users.table,
+            table: ldap.users_table,
+          }
+      end
+
+      app.get '/ldap/users/*' do
+        user = params[:splat][0]
+        ldap = UC3Ldap::LDAPClient.client
+        ldap.load
+        #ldap.collection_detail_records(user)
+        roles = ldap.user_detail_records(user)
+        erb :table,
+          :layout => :page_layout,
+          :locals => {
+            context: AdminUI::Context.new(request.path),
+            table: ldap.user_details_table(roles),
+          }
+      end
+
+      app.get '/ldap/collections/*' do
+        coll = params[:splat][0]
+        ldap = UC3Ldap::LDAPClient.client
+        ldap.load
+        roles = ldap.collection_detail_records(coll)
+        erb :table,
+          :layout => :page_layout,
+          :locals => {
+            context: AdminUI::Context.new(request.path),
+            table: ldap.collection_details_table(roles),
+          }
+      end
+
+      app.get '/ldap/collections' do
+        ldap = UC3Ldap::LDAPClient.client
+        ldap.load
+        erb :table,
+          :layout => :page_layout,
+          :locals => {
+            context: AdminUI::Context.new(request.path),
+            table: ldap.collections_table,
+          }
+      end
+
+      app.get '/ldap/roles' do
+        ldap = UC3Ldap::LDAPClient.client
+        ldap.load
+        erb :table,
+          :layout => :page_layout,
+          :locals => {
+            context: AdminUI::Context.new(request.path),
+            table: ldap.roles_table,
           }
       end
 

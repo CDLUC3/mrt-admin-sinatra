@@ -576,16 +576,18 @@ items:
   items: 
   - path: ldap
     title: LDAP
+    route: /ldap
+    breadcrumb: true
     items:
     - title: Users
       route: /ldap/users
-      tbd: true
-    - title: Groups
-      route: /ldap/groups
-      tbd: true
     - title: Collections
       route: /ldap/collections
+    - title: Missing LDAP Collections
+      route: /ldap/collections-missing
       tbd: true
+    - title: Roles
+      route: /ldap/roles
   - title: Merritt Server State
     route: https://us-west-2.console.aws.amazon.com/ecs/v2/clusters/mrt-ecs-stack/services?region=us-west-2
   - title: Merritt Deployment State
