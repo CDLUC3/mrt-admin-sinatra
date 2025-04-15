@@ -3109,3 +3109,18 @@ queries:
     parameters:
     - name: mnemonic
       type: string
+  /queries/misc/collections:
+    totals: true
+    sql: |
+      select
+        id as inv_collection_id,
+        mnemonic,
+        name as collection_name,
+        ark
+      from
+        inv.inv_collections
+      where
+        mnemonic is not null
+      order by
+        mnemonic
+ 

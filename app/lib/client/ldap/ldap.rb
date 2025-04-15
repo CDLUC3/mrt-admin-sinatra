@@ -99,8 +99,6 @@ module UC3Ldap
         next if user.uid.nil?
         next if user.uid.empty?
 
-        puts "User: #{user.inspect}"
-  
         @users[user.uid] = user
       end
     end
@@ -179,6 +177,25 @@ module UC3Ldap
       v
     end
 
+    def users_table_data
+      arr = []
+      @users.each_value do |user|
+        arr.append({
+          uid: {value: user.uid, href: "/ldap/users/#{user.uid}"},
+          unlinked: user.unlinked,
+          email: user.email,
+          displayname: user.displayname,
+          arkid: user.ark,
+          lastaccess: user.lastaccess,
+          read_count: user.read_count,
+          write_count: user.write_count,
+          download_count: user.download_count,
+          admin_count: user.admin_count
+        })
+      end
+      arr
+    end
+    
     def users_table
       table = AdminUI::FilterTable.new(
         columns: [
@@ -194,21 +211,28 @@ module UC3Ldap
           AdminUI::Column.new(:admin_count, header: 'Admin Count')
         ]
       ) 
-      @users.each_value do |user|
-        table.add_row(AdminUI::Row.make_row(table.columns, {
-          uid: {value: user.uid, href: "/ldap/users/#{user.uid}"},
-          unlinked: user.unlinked,
-          email: user.email,
-          displayname: user.displayname,
-          arkid: user.ark,
-          lastaccess: user.lastaccess,
-          read_count: user.read_count,
-          write_count: user.write_count,
-          download_count: user.download_count,
-          admin_count: user.admin_count
-        }))
+      users_table_data.each do |user|
+        table.add_row(AdminUI::Row.make_row(table.columns, user))
       end
       table
+    end
+
+    def collections_table_data
+      arr = []
+      @collections.each_value do |coll|
+        arr.append({
+          mnemonic: {value: coll.mnemonic, href: "/ldap/collections/#{coll.mnemonic}"},
+          unlinked: coll.unlinked,
+          description: coll.description,
+          profile: coll.profile,
+          arkid: coll.ark,
+          read_count: coll.read_count,
+          write_count: coll.write_count,
+          download_count: coll.download_count,
+          admin_count: coll.admin_count
+        })
+      end
+      arr
     end
 
     def collections_table
@@ -225,18 +249,8 @@ module UC3Ldap
           AdminUI::Column.new(:admin_count, header: 'Admin Count')
         ]
       ) 
-      @collections.each_value do |coll|
-        table.add_row(AdminUI::Row.make_row(table.columns, {
-          mnemonic: {value: coll.mnemonic, href: "/ldap/collections/#{coll.mnemonic}"},
-          unlinked: coll.unlinked,
-          description: coll.description,
-          profile: coll.profile,
-          arkid: coll.ark,
-          read_count: coll.read_count,
-          write_count: coll.write_count,
-          download_count: coll.download_count,
-          admin_count: coll.admin_count
-        }))
+      collections_table_data.each do |coll|
+        table.add_row(AdminUI::Row.make_row(table.columns, coll))
       end
       table
     end

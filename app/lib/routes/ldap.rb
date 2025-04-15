@@ -3,6 +3,7 @@
 require 'sinatra/base'
 require 'uri'
 require_relative '../client/ldap/ldap'
+require_relative '../client/ldap/ldapmap'
 require_relative '../ui/context'
 
 # custom sinatra routes
@@ -25,7 +26,6 @@ module Sinatra
         user = params[:splat][0]
         ldap = UC3Ldap::LDAPClient.client
         ldap.load
-        #ldap.collection_detail_records(user)
         roles = ldap.user_detail_records(user)
         erb :table,
           :layout => :page_layout,
@@ -70,6 +70,14 @@ module Sinatra
           }
       end
 
+      app.get '/ldap/collections-missing' do
+        erb :table,
+          :layout => :page_layout,
+          :locals => {
+            context: AdminUI::Context.new(request.path),
+            table: UC3Ldap::LDAPCollectionMapList.new.ldap_collection_map,
+          }
+      end
     end
   end
   register UC3LdapRoutes

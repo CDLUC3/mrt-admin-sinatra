@@ -29,6 +29,18 @@ module AdminUI
       end
     end
 
+    def table_data
+      d = []
+      @rows.each do |row|
+        r = {}
+        row.cols.each_with_index do |col, i|
+          r[@columns[i].sym.to_sym] = col.is_a?(Hash) ? col.fetch(:value, '') : col
+        end
+        d.append(r)
+      end
+      d
+    end
+
     def add_filter(filter)
       @filters.push(filter)
     end
