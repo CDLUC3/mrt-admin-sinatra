@@ -155,7 +155,7 @@ module UC3Query
       stmt.execute
       stmt = @client.prepare('call update_node_counts()')
       stmt.execute
-      stmt = @client.prepare('call update_billing_range()')
+      stmt = @client.prepare('call update_billing_range_ecs()')
       stmt.execute
       stmt = @client.prepare('call update_audits_processed()')
       stmt.execute
