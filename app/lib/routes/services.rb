@@ -109,6 +109,18 @@ module Sinatra
         get_url('http://access:8080/access/jsonstatus')
       end
 
+      app.get '/stack-init' do
+        stack_init
+      end
+
+    end
+
+    def stack_init
+      resp = []
+      resp << JSON.parse(post_url('http://inventory:8080/inventory/service/start?t=json'))
+      resp << JSON.parse(post_url('http://replic:8080/replic/service/start?t=json'))
+      resp << JSON.parse(post_url('http://audit:8080/audit/service/start?t=json'))
+      resp.to_json
     end
 
     def get_url(url)
@@ -136,6 +148,7 @@ module Sinatra
       content_type :json
       { uri: uri, error: e.to_s }.to_json
     end
+
   end
   register UC3ServicesRoutes
 end

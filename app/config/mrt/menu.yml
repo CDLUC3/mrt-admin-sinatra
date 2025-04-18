@@ -685,6 +685,8 @@ items:
         route: /json/access/tag
       - title: Access Nodes
         route: /json/access/nodes
+    - title: Stack init 
+      route: /stack-init
 - path: resources
   title: AWS
   items:
