@@ -149,5 +149,18 @@ module UC3Query
     end
 
     attr_accessor :queries
+
+    def update_billing
+      stmt = @client.prepare('call update_object_size()')
+      stmt.execute
+      stmt = @client.prepare('call update_node_counts()')
+      stmt.execute
+      stmt = @client.prepare('call update_billing_range()')
+      stmt.execute
+      stmt = @client.prepare('call update_audits_processed()')
+      stmt.execute
+      stmt = @client.prepare('call update_ingests_processed()')
+      stmt.execute
+    end
   end
 end

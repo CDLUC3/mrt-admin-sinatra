@@ -358,6 +358,8 @@ items:
       route: /queries/content/producer-files
     - title: UCSC Object Listing (slow)
       route: /queries/content/ucsc-objects
+  - route: /queries/update-billing
+    title: Update Billing Stats
 - path: Operations
   title: Operations
   route: /ops
@@ -585,7 +587,6 @@ items:
       route: /ldap/collections
     - title: Missing LDAP Collections
       route: /ldap/collections-missing
-      tbd: true
     - title: Roles
       route: /ldap/roles
   - title: Merritt Server State

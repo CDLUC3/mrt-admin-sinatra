@@ -39,6 +39,11 @@ module Sinatra
           }
       end
 
+      app.get '/queries/update-billing' do
+        UC3Query::QueryClient.client.update_billing
+        redirect '/queries/repository/collections/bytes'
+      end
+
       app.get '/queries/recent/ingests/today' do
         redirect "/queries/recent/ingests?date=#{Date.today.strftime('%Y-%m-%d')}"
       end
