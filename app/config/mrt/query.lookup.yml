@@ -9,6 +9,17 @@ docker:
     val: password
   base_url:
     env: base_url
+ecs:
+  host: 
+    ssm: /uc3/mrt/ecs/billing/db-host
+  database: 
+    ssm: /uc3/mrt/ecs/billing/db-name
+  username: 
+    ssm: /uc3/mrt/ecs/billing/readwrite/db-user
+  password: 
+    ssm: /uc3/mrt/ecs/billing/readwrite/db-password
+  base_url:
+    env: base_url
 default:
   host: 
     ssm: /uc3/mrt/dev/billing/db-host

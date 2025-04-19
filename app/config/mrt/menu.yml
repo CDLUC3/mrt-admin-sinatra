@@ -593,12 +593,6 @@ items:
     route: https://us-west-2.console.aws.amazon.com/ecs/v2/clusters/mrt-ecs-stack/services?region=us-west-2
   - title: Merritt Deployment State
     route: /infra/ecs
-  - title: SSM Usage
-    route: /infra/ssm-usage
-    tbd: true
-  - title: OpenSearch Usage
-    route: /infra/opensearch-usage
-    tbd: true
   - title: Services
     path: services
     route: /json
@@ -713,3 +707,15 @@ items:
     route: /infra/elbs
   - title: UC3 ECS Services
     route: /infra/ecs
+- path: future
+  title: Future
+  breadcrumb: true
+  description: |
+    ## Placeholders for features to develop later
+  items:
+  - title: SSM Usage
+    route: /infra/ssm-usage
+    tbd: true
+  - title: OpenSearch Usage
+    route: /infra/opensearch-usage
+    tbd: true
