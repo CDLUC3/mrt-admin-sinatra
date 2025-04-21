@@ -10,12 +10,18 @@ module Sinatra
   module UC3CodeRoutes
     def self.registered(app)
       app.get '/source' do
-        erb :'mrt/source',
-          :layout => :page_layout,
-          :locals => {
+        erb :table,
+        :layout => :page_layout,
+        :locals => {
             context: AdminUI::Context.new(request.path),
-            repos: UC3Code::SourceCodeClient.new.repos.keys
+            table: UC3Code::SourceCodeClient.new.repos
           }
+      end
+
+      app.get '/source/artifacts/*' do |repo|
+        content_type :json
+        srccode = UC3Code::SourceCodeClient.new
+        srccode.artifacts(repo).to_json
       end
 
       app.get '/source/*' do |repo|
@@ -28,6 +34,7 @@ module Sinatra
             table: srccode.repo_tags(repo)
           }
       end
+
     end
   end
   register UC3CodeRoutes
