@@ -19,9 +19,31 @@ module Sinatra
       end
 
       app.get '/source/artifacts/*' do |repo|
-        content_type :json
         srccode = UC3Code::SourceCodeClient.new
-        srccode.artifacts(repo).to_json
+
+        erb :table,
+          :layout => :page_layout,
+          :locals => {
+            context: AdminUI::Context.new(request.path),
+            table: srccode.artifacts_table(repo)
+          }
+      end
+
+      app.get '/source/artifact/*/*/*' do |artifact, version, asset|
+        srccode = UC3Code::SourceCodeClient.new
+        content_type :xml
+        srccode.artifact(artifact, version, asset)
+      end
+
+      app.get '/source/artifact_manifest/*/*/*' do |artifact, version, asset|
+        srccode = UC3Code::SourceCodeClient.new
+        srccode.artifact_manifest(artifact, version, asset).to_json
+        erb :table,
+          :layout => :page_layout,
+          :locals => {
+            context: AdminUI::Context.new(request.path),
+            table: srccode.artifact_manifest_table(srccode.artifact_manifest(artifact, version, asset))
+          }
       end
 
       app.get '/source/*' do |repo|

@@ -2,6 +2,7 @@
 
 require 'json'
 require 'yaml'
+require 'rubygems'
 require_relative 'git'
 require_relative 'codeartifact'
 require_relative 'ecr_images'
@@ -48,13 +49,14 @@ module UC3Code
         ]
       )
       @repos.keys.each do |repo|
+        artifacts = repo_config(repo).fetch(:artifacts, []).empty? ? {} : {value: repo, href: "/source/artifacts/#{repo}"}
         table.add_row(
           AdminUI::Row.make_row(
             table.columns,
             {
               repo: repo,
               tags: {value: repo, href: "/source/#{repo}"},
-              artifacts: {value: repo, href: "/source/artifacts/#{repo}"},
+              artifacts: artifacts
             }
           )
         )
@@ -64,7 +66,23 @@ module UC3Code
 
     def artifacts(repo)
       repohash = repo_config(repo)
-      @codeartifact.list_package_versions(repohash: repohash)
+      @codeartifact.list_package_artifacts(repohash: repohash)
+    end
+
+    def artifacts_table(repo)
+      @codeartifact.artifact_table(artifacts(repo))
+    end
+
+    def artifact(artifact, version, asset)
+      @codeartifact.artifact(artifact, version, asset)
+    end
+
+    def artifact_manifest(artifact, version, asset)
+      @codeartifact.artifact_manifest(artifact, version, asset)
+    end
+
+    def artifact_manifest_table(res)
+      @codeartifact.artifact_manifest_table(res)
     end
   end
 end

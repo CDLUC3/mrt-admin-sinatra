@@ -1,7 +1,7 @@
 GIT
   remote: https://github.com/CDLUC3/mrt-zk.git
-  revision: a49b0fdd2b34a60f2090c54f0783852cc771dd78
-  tag: 2.4.0
+  revision: 52c79f6a0fceac0d7e257b3a16766a5080f808af
+  tag: 2.4.6
   specs:
     mrt-zk (1.0.1)
       zk (~> 1.10.0)
@@ -74,6 +74,7 @@ GEM
     mysql2 (0.5.6)
     net-http (0.6.0)
       uri
+    net-ldap (0.19.0)
     nio4r (2.7.4)
     nokogiri (1.18.7)
       mini_portile2 (~> 2.8.2)
@@ -137,6 +138,7 @@ GEM
     ruby-progressbar (1.13.0)
     ruby2_keywords (0.0.5)
     rubysl-base64 (2.0.0)
+    rubyzip (2.4.1)
     sawyer (0.9.2)
       addressable (>= 2.3.5)
       faraday (>= 0.17.3, < 3)
@@ -175,6 +177,7 @@ DEPENDENCIES
   mrt-zk!
   mustache
   mysql2
+  net-ldap
   nokogiri
   octokit
   puma
@@ -186,6 +189,7 @@ DEPENDENCIES
   rspec
   rubocop
   rubysl-base64
+  rubyzip
   sinatra
   yaml
   zk

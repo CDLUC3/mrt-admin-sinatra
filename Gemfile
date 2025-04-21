@@ -29,6 +29,7 @@ gem 'rubocop'
 gem 'rubysl-base64'
 gem 'sinatra'
 gem 'yaml'
+gem 'rubyzip'
 gem 'zk'
 gem 'zookeeper'
 
