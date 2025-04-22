@@ -218,7 +218,7 @@ module AdminUI
     end
 
     def description
-      Redcarpet::Markdown.new(Redcarpet::Render::HTML.new).render(@description)
+      Redcarpet::Markdown.new(Redcarpet::Render::HTML.new, fenced_code_blocks: true).render(@description)
     end
 
     attr_accessor :title, :route

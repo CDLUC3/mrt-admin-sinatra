@@ -24,9 +24,10 @@ AdminUI::Context.css = '/mrt/custom.css'
 AdminUI::Context.index_md = 'app/markdown/mrt/index.md'
 
 get '/' do
-  erb :index,
+  erb :markdown,
     :layout => :page_layout,
     :locals => {
+      md_file: AdminUI::Context.index_md,
       context: AdminUI::Context.new(request.path)
     }
 end
@@ -90,26 +91,20 @@ get '/infra/clients-no-vpc' do
     }
 end
 
-get '/objects/**' do
-  erb :'mrt/objects',
+get '/ops/collections/**' do
+  erb :markdown,
     :layout => :page_layout,
     :locals => {
+      md_file: 'app/markdown/mrt/collections.md',
       context: AdminUI::Context.new(request.path)
     }
 end
 
-get '/collections/**' do
-  erb :'mrt/collections',
+get '/ops/storage/scans' do
+  erb :markdown,
     :layout => :page_layout,
     :locals => {
-      context: AdminUI::Context.new(request.path)
-    }
-end
-
-get '/storage_scans' do
-  erb :'mrt/storage_scans',
-    :layout => :page_layout,
-    :locals => {
+      md_file: 'app/markdown/mrt/storage_scans.md',
       context: AdminUI::Context.new(request.path)
     }
 end

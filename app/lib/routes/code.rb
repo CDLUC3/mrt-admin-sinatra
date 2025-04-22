@@ -9,12 +9,14 @@ module Sinatra
   # client specific routes
   module UC3CodeRoutes
     def self.registered(app)
-      app.get '/source' do
+      app.get '/source/tags/*' do |repo|
+        srccode = UC3Code::SourceCodeClient.new
+
         erb :table,
-        :layout => :page_layout,
-        :locals => {
+          :layout => :page_layout,
+          :locals => {
             context: AdminUI::Context.new(request.path),
-            table: UC3Code::SourceCodeClient.new.repos
+            table: srccode.repo_tags(repo)
           }
       end
 
@@ -63,17 +65,32 @@ module Sinatra
           }
       end
 
-      app.get '/source/*' do |repo|
-        srccode = UC3Code::SourceCodeClient.new
-
-        erb :table,
+      app.get '/source' do
+        erb :markdown,
           :layout => :page_layout,
           :locals => {
-            context: AdminUI::Context.new(request.path, title: "Repo Tags: #{srccode.reponame(repo)}"),
-            table: srccode.repo_tags(repo)
+            md_file: 'app/markdown/mrt/source.md',
+            context: AdminUI::Context.new(request.path)
           }
       end
 
+      app.get '/source/conventions' do
+        erb :markdown,
+          :layout => :page_layout,
+          :locals => {
+            md_file: "app/markdown/mrt/source.md",
+            context: AdminUI::Context.new(request.path)
+          }
+      end
+
+      app.get '/source/conventions/*' do |md|
+        erb :markdown,
+          :layout => :page_layout,
+          :locals => {
+            md_file: "app/markdown/mrt/conventions/#{md}",
+            context: AdminUI::Context.new(request.path)
+          }
+      end
     end
   end
   register UC3CodeRoutes
