@@ -69,6 +69,7 @@ module UC3Code
         end
         pv.versions.each do |v|
           rec = { 
+            status: v.status,
             version: v.version,
             package: artifact,
             domain: ARTDOMAIN,
@@ -79,6 +80,14 @@ module UC3Code
             pom: nil,
             command: ''
           }
+          rec[:published] = @client.describe_package_version(
+            domain: ARTDOMAIN,
+            repository: ARTREPOSITORY,
+            format: ARTFORMAT,
+            namespace: ARTNAMESPACE,
+            package: artifact,
+            package_version: v.version
+          ).package_version.published_time
           @client.list_package_version_assets({
             domain: ARTDOMAIN,
             repository: ARTREPOSITORY,
@@ -97,10 +106,12 @@ module UC3Code
                 value: asset.name,
                 href: "/source/artifact_manifest/#{artifact}/#{v.version}/#{asset.name}"
               }
-              rec[:command] = {
-                value: 'command',
-                href: "/source/artifact_command/#{artifact}/#{v.version}/#{asset.name}"
-              }
+              rec[:command] = [
+                {
+                  value: 'show download',
+                  href: "/source/artifact_command/#{artifact}/#{v.version}/#{asset.name}"
+                }
+              ]
             else
               rec[:assets] << asset.name
             end
@@ -128,6 +139,7 @@ module UC3Code
     def artifact_table(arr)
       table = AdminUI::FilterTable.new(
         columns: [
+          AdminUI::Column.new(:published, header: 'Published'),
           AdminUI::Column.new(:package, header: 'Package'),
           AdminUI::Column.new(:version, header: 'Version'),
           AdminUI::Column.new(:pom, header: 'POM'),
