@@ -108,9 +108,18 @@ module UC3Code
               }
               rec[:command] = [
                 {
-                  value: 'show download',
-                  href: "/source/artifact_command/#{artifact}/#{v.version}/#{asset.name}"
-                }
+                  value: 'download cmd',
+                  href: "/source/artifact_command/#{artifact}/#{v.version}/#{asset.name}",
+                  cssclass: 'button'
+                },
+                {
+                  value: 'Delete',
+                  href: "/source/artifacts/delete/#{v.version}",
+                  cssclass: 'button',
+                  post: true,
+                  disabled: false,
+                  data: artifact
+              }
               ]
             else
               rec[:assets] << asset.name
