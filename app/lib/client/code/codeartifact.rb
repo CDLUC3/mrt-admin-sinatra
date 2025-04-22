@@ -76,7 +76,8 @@ module UC3Code
             format: ARTFORMAT,
             namespace: ARTNAMESPACE,
             assets: [],
-            pom: nil
+            pom: nil,
+            command: ''
           }
           @client.list_package_version_assets({
             domain: ARTDOMAIN,
@@ -95,6 +96,10 @@ module UC3Code
               rec[:assets] << {
                 value: asset.name,
                 href: "/source/artifact_manifest/#{artifact}/#{v.version}/#{asset.name}"
+              }
+              rec[:command] = {
+                value: 'command',
+                href: "/source/artifact_command/#{artifact}/#{v.version}/#{asset.name}"
               }
             else
               rec[:assets] << asset.name
@@ -126,7 +131,8 @@ module UC3Code
           AdminUI::Column.new(:package, header: 'Package'),
           AdminUI::Column.new(:version, header: 'Version'),
           AdminUI::Column.new(:pom, header: 'POM'),
-          AdminUI::Column.new(:assets, header: 'Assets')
+          AdminUI::Column.new(:assets, header: 'Assets'),
+          AdminUI::Column.new(:command, header: 'Command')
         ]
       )
       arr.each do |row|

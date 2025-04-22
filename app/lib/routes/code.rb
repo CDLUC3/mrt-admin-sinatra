@@ -46,6 +46,23 @@ module Sinatra
           }
       end
 
+      app.get '/source/artifact_command/*/*/*' do |artifact, version, asset|
+        data = <<~EOF
+        aws codeartifact get-package-version-asset \\
+          --domain=cdlib-uc3-mrt --repository=uc3-mrt-java \\
+          --package=#{artifact} --package-version=#{version} \\
+          --format=maven --namespace=org.cdlib.mrt \\
+          --asset=#{asset} \\
+          #{artifact}.war
+        EOF
+        erb :pre,
+          :layout => :page_layout,
+          :locals => {
+            context: AdminUI::Context.new(request.path),
+            data: data
+          }
+      end
+
       app.get '/source/*' do |repo|
         srccode = UC3Code::SourceCodeClient.new
 
