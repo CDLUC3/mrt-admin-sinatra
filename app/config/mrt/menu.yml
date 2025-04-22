@@ -775,8 +775,6 @@ items:
     route: /infra/functions
   - title: UC3 Load Balancers
     route: /infra/elbs
-  - title: UC3 ECS Services
-    route: /infra/ecs
 - path: future
   title: Future
   breadcrumb: true

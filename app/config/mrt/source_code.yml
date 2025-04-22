@@ -10,6 +10,8 @@ repos:
     - mrt-admin-sinatra
   ui:
     repo: CDLUC3/mrt-dashboard
+    image_repos:
+    - mrt-dashboard
   store:
     repo: CDLUC3/mrt-store
     artifacts:

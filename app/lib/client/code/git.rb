@@ -17,7 +17,14 @@ module UC3Code
   class GithubClient < UC3::UC3Client
     NOACT = 'javascript:alert("Not yet implemented");'
     def initialize
-      token = '' # TBD
+      key = ENV.fetch('config-key', 'default')
+      tmap = YAML.safe_load_file('app/config/mrt/source.lookup.yml', aliases: true)
+      puts tmap
+      tmap = tmap.fetch(key, {})
+      puts tmap
+      map = UC3::UC3Client.lookup_map(tmap)
+
+      token = map.fetch('token', '')
       opts = {}
       opts[:access_token] = token unless token.empty?
       begin
@@ -99,29 +106,34 @@ module UC3Code
       cssclasses
     end
 
-    def actions(_tag, _commit, _release, tagartifacts, tagimages)
+    def actions(_repohash, tag, _commit, _release, tagartifacts, tagimages)
       actions = []
-      actions << {
-        value: 'Deploy Dev',
-        href: NOACT,
-        cssclass: 'button',
-        disabled: true
-      }
       unless tagartifacts.empty?
         actions << {
           value: 'Delete Artifacts',
-          href: NOACT,
-          cssclass: 'buttontbd',
-          disabled: false
+          href: "/source/artifacts/delete/#{tag}",
+          cssclass: 'button',
+          post: true,
+          disabled: false,
+          data: tagartifacts.join("\n")
         }
       end
 
       unless tagimages.empty?
         actions << {
           value: 'Delete Images',
+          href: "/source/images/delete/#{tag}",
+          cssclass: 'button',
+          post: true,
+          disabled: false,
+          data: tagimages.join("\n  ")
+        }
+
+        actions << {
+          value: 'Deploy Dev',
           href: NOACT,
-          cssclass: 'buttontbd',
-          disabled: false
+          cssclass: 'button',
+          disabled: true
         }
       end
       actions
@@ -180,7 +192,7 @@ module UC3Code
           release: make_release(repo, tag, tagrelease),
           artifacts: tagartifacts,
           images: tagimages,
-          actions: actions(tag.name, commit, tagrelease, tagartifacts, tagimages)
+          actions: actions(repohash, tag.name, commit, tagrelease, tagartifacts, tagimages)
         }
       end
 

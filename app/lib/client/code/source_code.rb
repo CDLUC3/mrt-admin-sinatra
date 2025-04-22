@@ -84,5 +84,13 @@ module UC3Code
     def artifact_manifest_table(res)
       @codeartifact.artifact_manifest_table(res)
     end
+
+    def delete_image(tag, image)
+      @ecrimages.delete_image(tag, image)
+    end
+
+    def delete_artifact(tag, artifact)
+      @codeartifact.delete_artifact(tag, artifact)
+    end
   end
 end

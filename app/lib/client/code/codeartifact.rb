@@ -195,5 +195,16 @@ module UC3Code
       end
       table
     end
+
+    def delete_artifact(tag, artifact)
+      @client.delete_package_versions(
+        domain: ARTDOMAIN,
+        repository: ARTREPOSITORY,
+        format: ARTFORMAT,
+        namespace: ARTNAMESPACE,
+        package: artifact,
+        versions: [tag]
+      )
+    end
   end
 end

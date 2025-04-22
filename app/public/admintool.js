@@ -24,6 +24,7 @@ function applyButtonControls() {
     }
     if ($(this).hasClass('post')) {
       $(this).attr('disabled', true);
+      self = this;
       $.ajax({
         dataType: "json",
         method: "POST",
@@ -32,12 +33,14 @@ function applyButtonControls() {
         data: $(this).attr('data'),
         success: function(data) {
           $("#alertmsg").text(data['message']).dialog({
-            show: { effect: "blind", duration: 800 }
+            show: { effect: "blind", duration: 800 },
+            position: { my: "right", at: "left", of: self }
           });
         },
         error: function( xhr, status ) {
           $("#alertmsg").text(xhr.responseText).dialog({
-            show: { effect: "blind", duration: 800 }
+            show: { effect: "blind", duration: 800 },
+            position: { my: "right", at: "left", of: self }
           });
         }
       });

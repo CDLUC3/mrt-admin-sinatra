@@ -91,6 +91,36 @@ module Sinatra
             context: AdminUI::Context.new(request.path)
           }
       end
+
+      app.post '/source/artifacts/delete/*' do |tag|
+        begin
+          srccode = UC3Code::SourceCodeClient.new
+          arr = []
+          request.body.each_line do |line|
+            srccode.delete_artifact(tag, line.strip)
+            arr << line.strip
+          end
+          {message: "Deleted: #{arr.join(', ')} for tag #{tag}"}.to_json
+        rescue StandardError => e
+          content_type :json
+          {message: "ERROR: #{e.class}: #{e.message}"}.to_json
+        end
+      end
+
+      app.post '/source/images/delete/*' do |tag|
+        begin
+          srccode = UC3Code::SourceCodeClient.new
+          arr = []
+          request.body.each_line do |line|
+            srccode.delete_image(tag, line.strip)
+            arr << line.strip
+          end
+          {message: "Deleted: #{arr.join(', ')} for tag #{tag}"}.to_json
+        rescue StandardError => e
+          content_type :json
+          {message: "ERROR: #{e.class}: #{e.message}"}.to_json
+        end
+      end
     end
   end
   register UC3CodeRoutes

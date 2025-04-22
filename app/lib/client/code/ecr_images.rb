@@ -42,5 +42,16 @@ module UC3Code
       end
       res
     end
+
+    def delete_image(tag, image)
+      @client.batch_delete_image(
+        repository_name: image,
+        image_ids: [
+          {
+            image_tag: tag
+          }
+        ]
+      )
+    end
   end
 end
