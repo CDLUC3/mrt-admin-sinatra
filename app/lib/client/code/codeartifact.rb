@@ -119,7 +119,7 @@ module UC3Code
                   post: true,
                   disabled: false,
                   data: artifact
-              }
+                }
               ]
             else
               rec[:assets] << asset.name

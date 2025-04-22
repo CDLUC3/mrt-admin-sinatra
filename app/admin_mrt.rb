@@ -117,3 +117,8 @@ get '/**' do
       context: AdminUI::Context.new(request.path)
     }
 end
+
+post '/hello' do
+  content_type :json
+  {message: "Hello"}.to_json
+end

@@ -21,14 +21,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     document.addEventListener('click', (event) => {
-        console.log(event.target.getAttribute('title') + 'target');
         menuItems.forEach(item => {
             if (item == event.target) {
-                console.log(item.getAttribute('title')+ ' equals');
             } else if (item.nextElementSibling.contains(event.target)) {
-                console.log(item.getAttribute('title')+' contains');
             } else {
-                console.log(item.getAttribute('title'));
                 item.setAttribute('aria-expanded', 'false');
                 const submenu = item.nextElementSibling;
                 if (submenu) {

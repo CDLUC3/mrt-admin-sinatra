@@ -247,7 +247,7 @@ module AdminUI
     def render_link(val, href, cssclass: '', title: '', disabled: false, post: false, data: '')
       dis = disabled ? 'disabled' : ''
       if post
-        "<a href='#' url='#{href}' data='#{data}' class='post #{cssclass}' title='#{title}' #{dis}>#{val}</a>"
+        "<a href='javascript:void(0)' url='#{href}' data='#{data}' class='post #{cssclass}' title='#{title}' #{dis}>#{val}</a>"
       else
         "<a href='#{href}' class='#{cssclass}' title='#{title}' #{dis}>#{val}</a>"
       end
