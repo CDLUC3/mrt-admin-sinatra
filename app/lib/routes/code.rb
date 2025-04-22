@@ -31,6 +31,17 @@ module Sinatra
           }
       end
 
+      app.get '/source/images/*' do |repo|
+        srccode = UC3Code::SourceCodeClient.new
+
+        erb :table,
+          :layout => :page_layout,
+          :locals => {
+            context: AdminUI::Context.new(request.path),
+            table: srccode.images_table(repo)
+          }
+      end
+
       app.get '/source/artifact/*/*/*' do |artifact, version, asset|
         srccode = UC3Code::SourceCodeClient.new
         content_type :xml

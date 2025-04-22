@@ -73,6 +73,15 @@ module UC3Code
       @codeartifact.artifact_table(artifacts(repo))
     end
 
+    def images(repo)
+      repohash = repo_config(repo)
+      @ecrimages.list_images(repohash: repohash)
+    end
+
+    def images_table(repo)
+      @ecrimages.image_table(images(repo))
+    end
+
     def artifact(artifact, version, asset)
       @codeartifact.artifact(artifact, version, asset)
     end
