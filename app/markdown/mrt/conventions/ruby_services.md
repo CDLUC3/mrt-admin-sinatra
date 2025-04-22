@@ -1,4 +1,12 @@
 ## Ruby Services - Git Tagging Conventions
+
+### Workflow
+```
+Git Commit -> CodeBuild -> ECR --> ECS Deploy (dev)
+Git Tag -> CodeBuild -> ECR
+```
+
+### Git Tagging Conventions
 Merritt Ruby code is published to ECR. CodeArtifact is not utilized.
 
 - `main` branch
@@ -9,8 +17,12 @@ Merritt Ruby code is published to ECR. CodeArtifact is not utilized.
 - `tag` tag
   - tagged as `subservice:tag` in ECR
 
-## Ruby Serivces - Image Tagging Conventions
+### Image Tagging Conventions
 _⚠️ This is not yet implemented_
+
+```
+ECR Tag -> ECS Deploy
+```
 
 When the underlying image for a published service is updated, the following will be created in ECR.
 

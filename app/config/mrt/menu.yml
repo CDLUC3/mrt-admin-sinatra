@@ -34,82 +34,79 @@ items:
       route: /help
 - path: source
   title: Source
+  route: /source
+  breadcrumb: true
   items:
-  - title: Source Code
-    route: /source
+  - title: Tag Conventions
+    route: /source/conventions
     breadcrumb: true
-    path: source
+    path: conventions
     items:
-    - title: Tag Conventions
-      route: /source/conventions
-      breadcrumb: true
-      path: conventions
-      items:
-      - title: Merritt Jars
-        route: /source/conventions/jars.md
-      - title: Merritt Java Services
-        route: /source/conventions/wars.md
-      - title: Merritt Ruby Gems
-        route: /source/conventions/gems.md
-      - title: Merritt Ruby Services
-        route: /source/conventions/ruby_services.md
-    - title: Repostiory Tags
-      route: /source/tags
-      path: tags
-      breadcrumb: true
-      items:
-      - title: Admin Tool - Main Acct
-        route: /source/tags/admin-mainacct
-      - title: Admin Tool (New)
-        route: /source/tags/admintool
-      - title: UI
-        route: /source/tags/ui
-      - title: Ingest
-        route: /source/tags/ingest
-      - title: Store
-        route: /source/tags/store
-      - title: Inventory
-        route: /source/tags/inventory
-      - title: Audit
-        route: /source/tags/audit
-      - title: Replic
-        route: /source/tags/replic
-    - title: Repostiory Images
-      route: /source/images
-      path: images
-      breadcrumb: true
-      items:
-      - title: Admin Tool - Main Acct
-        route: /source/images/admin-mainacct
-      - title: Admin Tool (New)
-        route: /source/images/admintool
-      - title: UI
-        route: /source/images/ui
-      - title: Ingest
-        route: /source/images/ingest
-      - title: Store
-        route: /source/images/store
-      - title: Inventory
-        route: /source/images/inventory
-      - title: Audit
-        route: /source/images/audit
-      - title: Replic
-        route: /source/images/replic
-    - title: Repostiory Artifacts
-      route: /source/artifacts
-      path: artifacts
-      breadcrumb: true
-      items:
-      - title: Ingest
-        route: /source/artifacts/ingest
-      - title: Store
-        route: /source/artifacts/store
-      - title: Inventory
-        route: /source/artifacts/inventory
-      - title: Audit
-        route: /source/artifacts/audit
-      - title: Replic
-        route: /source/artifacts/replic
+    - title: Merritt Jars
+      route: /source/conventions/jars.md
+    - title: Merritt Java Services
+      route: /source/conventions/wars.md
+    - title: Merritt Ruby Gems
+      route: /source/conventions/gems.md
+    - title: Merritt Ruby Services
+      route: /source/conventions/ruby_services.md
+  - title: Repostiory Tags
+    route: /source/tags
+    path: tags
+    breadcrumb: true
+    items:
+    - title: Admin Tool - Main Acct
+      route: /source/tags/admin-mainacct
+    - title: Admin Tool (New)
+      route: /source/tags/admintool
+    - title: UI
+      route: /source/tags/ui
+    - title: Ingest
+      route: /source/tags/ingest
+    - title: Store
+      route: /source/tags/store
+    - title: Inventory
+      route: /source/tags/inventory
+    - title: Audit
+      route: /source/tags/audit
+    - title: Replic
+      route: /source/tags/replic
+  - title: Repostiory Images
+    route: /source/images
+    path: images
+    breadcrumb: true
+    items:
+    - title: Admin Tool - Main Acct
+      route: /source/images/admin-mainacct
+    - title: Admin Tool (New)
+      route: /source/images/admintool
+    - title: UI
+      route: /source/images/ui
+    - title: Ingest
+      route: /source/images/ingest
+    - title: Store
+      route: /source/images/store
+    - title: Inventory
+      route: /source/images/inventory
+    - title: Audit
+      route: /source/images/audit
+    - title: Replic
+      route: /source/images/replic
+  - title: Repostiory Artifacts
+    route: /source/artifacts
+    path: artifacts
+    breadcrumb: true
+    items:
+    - title: Ingest
+      route: /source/artifacts/ingest
+    - title: Store
+      route: /source/artifacts/store
+    - title: Inventory
+      route: /source/artifacts/inventory
+    - title: Audit
+      route: /source/artifacts/audit
+    - title: Replic
+      route: /source/artifacts/replic
 - path: reports
   title: Reports
   items:

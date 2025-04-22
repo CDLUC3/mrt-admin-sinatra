@@ -1,5 +1,12 @@
 ## Java Libraries - Tagging Conventions
 
+### Workflow
+```
+Git Commit -> CodeBuild -> CodeArtifact
+```
+
+### Git Tagging Conventions
+
 - Merritt Java libraries are published as snapshots.  These snapshots are updated.
 - Merritt Java Libraries are versioned via the version tag within the libraries pom.xml file.
 - When breaking changes are made to a library, the developer *should* create a new version.

@@ -1,5 +1,12 @@
 ## Java Services - Tagging Conventions
 
+### Workflow
+```
+Git Commit -> CodeBuild -> CodeArtifact -> ECR
+Git Tag -> CodeBuild -> CodeArtifact -> ECR
+```
+
+### Git Tagging Conventions
 - `main` branch
   - tagged as `subservice.version-SNAPSHOT.war` in CodeArtifact
     - snapshots can be overwritten
@@ -13,8 +20,12 @@
     - tags cannot be overwritten
   - tagges as `subservice:tag` in ECR
 
-## Java Serivces - Image Tagging Conventions
+### Image Tagging Conventions
 _⚠️ This is not yet implemented_
+
+```
+ECR Tag -> ECS Deploy
+```
 
 When the underlying image for a published service is updated, the following will be created in ECR.
 
