@@ -44,7 +44,7 @@ module UC3Code
     end
 
     def list_images(repohash: {})
-      res = {}
+      res = []
       return res unless enabled
 
       repohash.fetch(:image_repos, []).each do |image|
@@ -60,8 +60,7 @@ module UC3Code
           tag = img.image_tag
           next if tag.nil?
 
-          res[tag] = res.fetch(tag, {tag: tag, images: [], pushed: nil, pulled: nil})
-          res[tag][:images] << image
+          rec = {tag: tag, digest: img.image_digest, image: image, pushed: nil, pulled: nil}
           @client.describe_images(
             repository_name: image,
             image_ids: [
@@ -71,9 +70,9 @@ module UC3Code
               }
             ]
           ).image_details.each do |imgdet|
-            res[tag][:pushed] = date_format(imgdet.image_pushed_at)
-            res[tag][:pulled] = date_format(imgdet.last_recorded_pull_time)
-            res[tag][:actions] = [
+            rec[:pushed] = date_format(imgdet.image_pushed_at)
+            rec[:pulled] = date_format(imgdet.last_recorded_pull_time)
+            rec[:actions] = [
               {
                 value: 'Delete',
                 href: "/source/images/delete/#{tag}",
@@ -84,6 +83,7 @@ module UC3Code
               }
             ]
           end
+          res << rec
         end
       end
       res
@@ -92,18 +92,19 @@ module UC3Code
     def image_table(res)
       table = AdminUI::FilterTable.new(
         columns: [
-          AdminUI::Column.new(:tag, header: 'Tag'),
-          AdminUI::Column.new(:images, header: 'Images'),
+          AdminUI::Column.new(:tag, header: 'Tag', filterable: true),
+          AdminUI::Column.new(:image, header: 'Image', filterable: true),
+          AdminUI::Column.new(:digest, header: 'Digest', filterable: true),
           AdminUI::Column.new(:pushed, header: 'Pushed At'),
           AdminUI::Column.new(:pulled, header: 'Last Pulled At'),
           AdminUI::Column.new(:actions, header: 'Actions')
         ]
       )
-      res.keys.each do |tag|
+      res.each do |rec|
         table.add_row(
           AdminUI::Row.make_row(
             table.columns,
-            res[tag]
+            rec
           )
         )
       end
