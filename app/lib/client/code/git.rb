@@ -16,6 +16,9 @@ module UC3Code
   # Query for github repository tags
   class GithubClient < UC3::UC3Client
     NOACT = 'javascript:alert("Not yet implemented");'
+    TAG_ECS_DEV = 'ecs-dev'
+    TAG_ECS_STG = 'ecs-stg'
+    TAG_ECS_PRD = 'ecs-prd'
     def initialize
       key = ENV.fetch('config-key', 'default')
       tmap = YAML.safe_load_file('app/config/mrt/source.lookup.yml', aliases: true)
@@ -103,7 +106,7 @@ module UC3Code
       cssclasses
     end
 
-    def actions(_repohash, tag, _commit, _release, tagartifacts, tagimages, deployed)
+    def actions(_repohash, tag, _commit, release, tagartifacts, tagimages, deployed, matching_tags)
       actions = []
       unless tagartifacts.empty? || deployed
         actions << {
@@ -126,12 +129,65 @@ module UC3Code
           data: tagimages.join("\n")
         } unless deployed
 
-        actions << {
-          value: 'Deploy Dev',
-          href: NOACT,
-          cssclass: 'button',
-          disabled: true
-        }
+        if matching_tags.include?(TAG_ECS_DEV)
+          actions << {
+            value: "Untag #{TAG_ECS_DEV}",
+            href: "/source/images/untag/#{TAG_ECS_DEV}",
+            cssclass: 'button',
+            post: true,
+            disabled: false,
+            data: tagimages.join("\n")
+          }
+        else
+          actions << {
+            value: "Tag #{TAG_ECS_DEV}",
+            href: "/source/images/retag/#{tag}/#{TAG_ECS_DEV}",
+            cssclass: 'button',
+            post: true,
+            disabled: false,
+            data: tagimages.join("\n")
+          }
+        end
+
+        if matching_tags.include?(TAG_ECS_STG)
+          actions << {
+            value: "Untag #{TAG_ECS_STG}",
+            href: "/source/images/untag/#{TAG_ECS_STG}",
+            cssclass: 'button',
+            post: true,
+            disabled: false,
+            data: tagimages.join("\n")
+          }
+        elsif UC3::UC3Client.semantic_tag?(tag)
+          actions << {
+            value: "Tag #{TAG_ECS_STG}",
+            href: "/source/images/retag/#{tag}/#{TAG_ECS_STG}",
+            cssclass: 'button',
+            post: true,
+            disabled: false,
+            data: tagimages.join("\n")
+          }
+        end
+
+        if matching_tags.include?(TAG_ECS_PRD)
+          actions << {
+            value: "Untag #{TAG_ECS_PRD}",
+            href: "/source/images/untag/#{TAG_ECS_PRD}",
+            cssclass: 'button',
+            post: true,
+            disabled: false,
+            data: tagimages.join("\n")
+          }
+        elsif UC3::UC3Client.semantic_tag?(tag) && !release.empty?
+          actions << {
+            value: "Tag #{TAG_ECS_PRD}",
+            href: "/source/images/retag/#{tag}/#{TAG_ECS_PRD}",
+            cssclass: 'button',
+            post: true,
+            disabled: false,
+            data: tagimages.join("\n")
+          }
+        end
       end
       actions
     end
@@ -201,7 +257,7 @@ module UC3Code
           artifacts: tagartifacts,
           images: tagimages,
           matching_tags: matching_tags,
-          actions: actions(repohash, tag.name, commit, tagrelease, tagartifacts, tagimages, deployed)
+          actions: actions(repohash, tag.name, commit, tagrelease, tagartifacts, tagimages, deployed, matching_tags)
         }
       end
 

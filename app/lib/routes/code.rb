@@ -132,6 +132,36 @@ module Sinatra
           {message: "ERROR: #{e.class}: #{e.message}"}.to_json
         end
       end
+
+      app.post '/source/images/retag/*/*' do |tag, newtag|
+        begin
+          srccode = UC3Code::SourceCodeClient.new
+          arr = []
+          request.body.each_line do |line|
+            srccode.retag_image(tag, newtag, line.strip)
+            arr << line.strip
+          end
+          {message: "Retagged: #{arr.join(', ')} for tag #{tag} --> #{newtag}"}.to_json
+        rescue StandardError => e
+          content_type :json
+          {message: "ERROR: #{e.class}: #{e.message}"}.to_json
+        end
+      end
+
+      app.post '/source/images/untag/*' do |tag|
+        begin
+          srccode = UC3Code::SourceCodeClient.new
+          arr = []
+          request.body.each_line do |line|
+            srccode.untag_image(tag, line.strip)
+            arr << line.strip
+          end
+          {message: "Untag: #{arr.join(', ')} for tag #{tag}"}.to_json
+        rescue StandardError => e
+          content_type :json
+          {message: "ERROR: #{e.class}: #{e.message}"}.to_json
+        end
+      end
     end
   end
   register UC3CodeRoutes

@@ -98,6 +98,14 @@ module UC3Code
       @ecrimages.delete_image(tag, image)
     end
 
+    def retag_image(tag, newtag, image)
+      @ecrimages.retag_image(tag, newtag, image)
+    end
+
+    def untag_image(tag, image)
+      @ecrimages.untag_image(tag, image)
+    end
+
     def delete_artifact(tag, artifact)
       @codeartifact.delete_artifact(tag, artifact)
     end

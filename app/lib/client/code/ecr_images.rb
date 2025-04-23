@@ -84,9 +84,9 @@ module UC3Code
     def image_table(res)
       table = AdminUI::FilterTable.new(
         columns: [
-          AdminUI::Column.new(:tag, header: 'Tag', filterable: true),
-          AdminUI::Column.new(:image, header: 'Image', filterable: true),
-          AdminUI::Column.new(:digest, header: 'Digest', filterable: true),
+          AdminUI::Column.new(:tag, header: 'Tag'),
+          AdminUI::Column.new(:image, header: 'Image'),
+          AdminUI::Column.new(:digest, header: 'Digest'),
           AdminUI::Column.new(:pushed, header: 'Pushed At'),
           AdminUI::Column.new(:matching_tags, header: 'Matching Tags'),
           AdminUI::Column.new(:actions, header: 'Actions')
@@ -115,6 +115,26 @@ module UC3Code
           }
         ]
       )
+    end
+
+    def retag_image(tag, newtag, image)
+      resp = @client.batch_get_image(
+        repository_name: image,
+        image_ids: [
+          {
+            image_tag: tag
+          }
+        ]
+      )
+      @client.put_image(
+        repository_name: image,
+        image_manifest: resp.images[0].image_manifest,
+        image_tag: newtag
+      )
+    end
+
+    def untag_image(tag, image)
+      delete_image(tag, image)
     end
   end
 end
