@@ -33,7 +33,7 @@ repos:
   audit:
     repo: CDLUC3/mrt-audit
     artifacts:
-    - mrtaudit
+    - mrt-auditwarpub
     image_repos:
     - mrt-audit
   replic:

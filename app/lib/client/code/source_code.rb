@@ -36,7 +36,7 @@ module UC3Code
       @github.list_tags(
         repohash: repohash,
         artifacts: @codeartifact.list_package_versions(repohash: repohash),
-        ecrimages: @ecrimages.list_image_tags(repohash: repohash)
+        ecrimages: @ecrimages.list_images(repohash: repohash)
       )
     end
 

@@ -68,6 +68,7 @@ module UC3Code
           return res
         end
         pv.versions.each do |v|
+          next if UC3::UC3Client.semantic_tag?(v.version)
           rec = { 
             status: v.status,
             version: v.version,
@@ -111,16 +112,16 @@ module UC3Code
                   value: 'download cmd',
                   href: "/source/artifact_command/#{artifact}/#{v.version}/#{asset.name}",
                   cssclass: 'button'
-                },
-                {
-                  value: 'Delete',
-                  href: "/source/artifacts/delete/#{v.version}",
-                  cssclass: 'button',
-                  post: true,
-                  disabled: false,
-                  data: artifact
                 }
               ]
+              rec[:command] << {
+                value: 'Delete',
+                href: "/source/artifacts/delete/#{v.version}",
+                cssclass: 'button',
+                post: true,
+                disabled: false,
+                data: artifact
+              } unless UC3::UC3Client.keep_artifact_version?(v.version)
             else
               rec[:assets] << asset.name
             end

@@ -53,6 +53,7 @@ module UC3Code
           AdminUI::Column.new(:release, header: 'Documented Release', cssclass: 'release'),
           AdminUI::Column.new(:artifacts, header: 'Artifacts', cssclass: 'artifacts'),
           AdminUI::Column.new(:images, header: 'ECR Images', cssclass: 'images'),
+          AdminUI::Column.new(:matching_tags, header: 'Matching Tags'),
           AdminUI::Column.new(:actions, header: 'Actions', cssclass: 'actions', spanclass: '')
         ],
         filters: [
@@ -91,24 +92,20 @@ module UC3Code
       releases
     end
 
-    def semantic_tag?(tag)
-      !(tag =~ /^\d+\.\d+\.\d+$/).nil?
-    end
-
     def css_classes(tag, _commit, release, tagartifacts, tagimages)
       cssclasses = [
         'data',
-        semantic_tag?(tag) ? 'semantic' : 'other'
-        ]
+        UC3::UC3Client.semantic_tag?(tag) ? 'semantic' : 'other'
+      ]
       cssclasses << 'no-release' if release.empty?
       cssclasses << 'no-artifact' if tagartifacts.empty?
       cssclasses << 'no-image' if tagimages.empty?
       cssclasses
     end
 
-    def actions(_repohash, tag, _commit, _release, tagartifacts, tagimages)
+    def actions(_repohash, tag, _commit, _release, tagartifacts, tagimages, deployed)
       actions = []
-      unless tagartifacts.empty?
+      unless tagartifacts.empty? || deployed
         actions << {
           value: 'Delete Artifacts',
           href: "/source/artifacts/delete/#{tag}",
@@ -126,8 +123,8 @@ module UC3Code
           cssclass: 'button',
           post: true,
           disabled: false,
-          data: tagimages.join("\n  ")
-        }
+          data: tagimages.join("\n")
+        } unless deployed
 
         actions << {
           value: 'Deploy Dev',
@@ -182,7 +179,18 @@ module UC3Code
 
         tagrelease = releases.fetch(tag.name, {})
         tagartifacts = artifacts.fetch(tag.name, [])
-        tagimages = ecrimages.fetch(tag.name, [])
+        tagimagerecs = ecrimages.fetch(tag.name, [])
+        tagimages = []
+        deployed = false
+        matching_tags = []
+        tagimagerecs.each do |tagrec|
+          tagimages << tagrec.fetch(:image, '') unless tagrec.fetch(:image, '').empty?
+          deployed |= tagrec.fetch(:deployed, false)
+          matching_tags << tagrec.fetch(:matching_tags, '') unless tagrec.fetch(:matching_tags, '').empty?
+          matching_tags.flatten!
+        end
+
+        next if !UC3::UC3Client.semantic_tag?(tag.name) && tagartifacts.empty? && tagimages.empty?
 
         @tags[tag.name] = {
           cssclass: css_classes(tag.name, commit, tagrelease, tagartifacts, tagimages).join(' '),
@@ -192,7 +200,8 @@ module UC3Code
           release: make_release(repo, tag, tagrelease),
           artifacts: tagartifacts,
           images: tagimages,
-          actions: actions(repohash, tag.name, commit, tagrelease, tagartifacts, tagimages)
+          matching_tags: matching_tags,
+          actions: actions(repohash, tag.name, commit, tagrelease, tagartifacts, tagimages, deployed)
         }
       end
 

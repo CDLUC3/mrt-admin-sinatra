@@ -19,32 +19,9 @@ module UC3Code
       !@client.nil?
     end
 
-    def list_image_tags(repohash: {})
-      res = {}
-      return res unless enabled
-
-      repohash.fetch(:image_repos, []).each do |image|
-        begin
-          imglist = @client.list_images(
-            repository_name: image
-          )
-        rescue StandardError => e
-          puts "Client ERR: #{e}: #{@client}"
-          return res
-        end
-        imglist.image_ids.each do |img|
-          tag = img.image_tag
-          next if tag.nil?
-
-          res[tag] = res.fetch(tag, [])
-          res[tag] << image
-        end
-      end
-      res
-    end
-
     def list_images(repohash: {})
-      res = []
+      res = {}
+      dig = {}
       return res unless enabled
 
       repohash.fetch(:image_repos, []).each do |image|
@@ -60,7 +37,9 @@ module UC3Code
           tag = img.image_tag
           next if tag.nil?
 
-          rec = {tag: tag, digest: img.image_digest, image: image, pushed: nil, pulled: nil}
+          rec = {tag: tag, digest: img.image_digest, image: image, pushed: nil, pulled: nil, matching_tags: []}
+          dig[img.image_digest] = dig.fetch(img.image_digest, [])
+          dig[img.image_digest] << tag
           @client.describe_images(
             repository_name: image,
             image_ids: [
@@ -71,19 +50,32 @@ module UC3Code
             ]
           ).image_details.each do |imgdet|
             rec[:pushed] = date_format(imgdet.image_pushed_at)
-            rec[:pulled] = date_format(imgdet.last_recorded_pull_time)
-            rec[:actions] = [
-              {
-                value: 'Delete',
-                href: "/source/images/delete/#{tag}",
-                cssclass: 'button',
-                post: true,
-                disabled: false,
-                data: image
-              }
-            ]
           end
-          res << rec
+          res[tag] = res.fetch(tag, [])
+          res[tag] << rec
+        end
+      end
+      res.each do |tag, arr|
+        arr.each do |rec|
+          image = rec[:image]
+          dig[rec[:digest]].each do |t|
+            next if t == tag
+            rec[:matching_tags] << t
+          end
+        
+          rec[:deployed] = UC3::UC3Client.deployed_tag?(tag, rec[:matching_tags])
+          next if rec[:deployed]
+  
+          rec[:actions] = [
+            {
+              value: 'Delete',
+              href: "/source/images/delete/#{tag}",
+              cssclass: 'button',
+              post: true,
+              disabled: false,
+              data: image
+            }
+          ]
         end
       end
       res
@@ -96,17 +88,20 @@ module UC3Code
           AdminUI::Column.new(:image, header: 'Image', filterable: true),
           AdminUI::Column.new(:digest, header: 'Digest', filterable: true),
           AdminUI::Column.new(:pushed, header: 'Pushed At'),
-          AdminUI::Column.new(:pulled, header: 'Last Pulled At'),
+          AdminUI::Column.new(:matching_tags, header: 'Matching Tags'),
           AdminUI::Column.new(:actions, header: 'Actions')
         ]
       )
-      res.each do |rec|
-        table.add_row(
-          AdminUI::Row.make_row(
-            table.columns,
-            rec
+      res.keys.each do |tag|
+        next if UC3::UC3Client.semantic_tag?(tag)
+        res.fetch(tag, []).each do |rec|
+          table.add_row(
+            AdminUI::Row.make_row(
+              table.columns,
+              rec
+            )
           )
-        )
+        end
       end
       table
     end

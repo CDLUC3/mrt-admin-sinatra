@@ -101,6 +101,23 @@ module UC3
       YAML.safe_load(Mustache.render(File.read(filename), map))
     end
 
+    def self.semantic_tag?(tag)
+      !(tag =~ /^\d+\.\d+\.\d+$/).nil?
+    end
+
+    def self.deployed_tag?(tag, itags)
+      arr = itags.clone
+      arr << tag
+      arr.each do |t|
+        return true if t =~ /^(ecs-.*|dev|stg|prd|latest)$/
+      end
+      false
+    end
+
+    def self.keep_artifact_version?(v)
+      v =~ /^\d+\.\d+-SNAPSHOT$/
+    end
+
   end
 
   class FileSystemClient < UC3Client
