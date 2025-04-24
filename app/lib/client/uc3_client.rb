@@ -106,7 +106,7 @@ module UC3
     end
 
     def self.semantic_prefix_tag?(tag)
-      !(tag =~ /^\d+\.\d+\.\d(\..+)?$/).nil?
+      !(tag =~ /^\d+\.\d+\.\d+(\..+)?$/).nil?
     end
 
     def self.deployed_tag?(tag, itags)

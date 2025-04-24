@@ -255,7 +255,7 @@ module UC3Code
           images: tagimages,
           matching_tags: matching_tags,
           actions: actions(repohash, tag.name, commit, tagrelease, tagartifacts, tagimages, deployed, matching_tags)
-        } if UC3::UC3Client.semantic_tag?(tag.name) || !tagartifacts.empty? || !tagimages.empty?
+        } if UC3::UC3Client.semantic_prefix_tag?(tag.name) || !tagartifacts.empty? || !tagimages.empty?
       end
 
       tags.each_value do |data|

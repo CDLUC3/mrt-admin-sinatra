@@ -68,7 +68,7 @@ module UC3Code
           return res
         end
         pv.versions.each do |v|
-          next if UC3::UC3Client.semantic_tag?(v.version)
+          next if UC3::UC3Client.semantic_prefix_tag?(v.version)
           rec = { 
             status: v.status,
             version: v.version,

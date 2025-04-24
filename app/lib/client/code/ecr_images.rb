@@ -116,7 +116,7 @@ module UC3Code
         ]
       )
       res.keys.each do |tag|
-        next if UC3::UC3Client.semantic_tag?(tag)
+        next if UC3::UC3Client.semantic_prefix_tag?(tag)
         res.fetch(tag, []).each do |rec|
           table.add_row(
             AdminUI::Row.make_row(
