@@ -45,7 +45,7 @@ phases:
       docker pull ${ECR_REGISTRY}/docker-hub/webpronl/reveal-md --quiet
       docker-compose -f present/deploy/docker-compose-static.yml up
       aws s3 rm --recursive s3://${S3CFBUCKET}/present/ecs-deploy || echo 'delete skipped'
-      aws s3 cp --recursive present/deploy s3://${S3CFBUCKET}/present/ecs-deploy
+      aws s3 cp --recursive present/deploy/present_build s3://${S3CFBUCKET}/present/ecs-deploy
       aws s3 cp --recursive images s3://${S3CFBUCKET}/present/ecs-deploy/images
 
       aws cloudfront create-invalidation --distribution-id ${CFDISTRIBUTIONID} --paths /present/ecs-deploy/* --region us-east-1
