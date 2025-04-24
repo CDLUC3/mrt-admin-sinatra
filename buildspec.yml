@@ -43,8 +43,8 @@ phases:
        --force-new-deployment || echo "Skip ECS Deployment"
     - |
       cd present/deploy
-      docker pull ${ECR_REGISTRY}/docker-hub/webpronl/reveal-md
-      docker-compose up
+      docker pull ${ECR_REGISTRY}/docker-hub/webpronl/reveal-md --quiet
+      docker-compose -f docker-compose-static.yml up
       aws s3 rm --recursive s3://${S3CFBUCKET}/present/ecs-deploy || echo 'delete skipped'
       aws s3 cp --recursive $1 s3://${S3CFBUCKET}/present/ecs-deploy
       aws s3 cp --recursive images s3://${S3CFBUCKET}/present/ecs-deploy/images
