@@ -51,7 +51,7 @@ phases:
       aws cloudfront create-invalidation --distribution-id ${CFDISTRIBUTIONID} --paths /present/ecs-deploy/* --region us-east-1
     - |
       docker-compose -f present/tagging/docker-compose-static.yml up
-      touch mkdir -p present/tagging/present_build/mermaid/dist
+      mkdir -p present/tagging/present_build/mermaid/dist
       curl "https://cdn.jsdelivr.net/npm/mermaid@11.6.0/dist/mermaid.min.js" -o present/tagging/present_build/mermaid/dist/mermaid.min.js
       aws s3 rm --recursive --only-show-errors s3://${S3CFBUCKET}/present/tagging || echo 'delete skipped'
       aws s3 cp --recursive --only-show-errors present/tagging/present_build s3://${S3CFBUCKET}/present/tagging
