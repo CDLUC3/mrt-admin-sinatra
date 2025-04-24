@@ -1,6 +1,6 @@
 ## Merritt Builds for ECS
 
-- [Presentation](https://merritt.uc3dev.cdlib.org/present/ecs-deploy/build.html#/)
+- [View as Slides](https://merritt.uc3dev.cdlib.org/present/ecs-deploy/build.html#/)
 - [Presentation Source](https://github.com/CDLUC3/mrt-admin-sinatra/blob/main/present/deploy/build.md)
 ---
 

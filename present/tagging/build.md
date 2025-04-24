@@ -1,6 +1,6 @@
 ## Merritt Tagging and Build Rules
 
-- [Presentation](https://merritt.uc3dev.cdlib.org/present/tagging/build.html#/)
+- [View as Slides](https://merritt.uc3dev.cdlib.org/present/tagging/build.html#/)
 - [Presentation Source](https://github.com/CDLUC3/mrt-admin-sinatra/blob/main/present/tagging/build.md)
 
 ---
@@ -48,10 +48,10 @@ graph LR
 
 ### Commit/Tag CodeBuild Actions
 - `main` branch
-  - tagged as `library.version-SNAPSHOT` in CodeArtifact
+  - Artifact: `library.version-SNAPSHOT`
 - `branch` branch
-  - *requires a CodePipleline to trach changes to a feature branch in order to publish updates*
-  - tagged as `library.version-SNAPSHOT` in CodeArtifact
+  - Artifact: `library.version-SNAPSHOT`
+  - must be configured in CodePipeline to track specific branches
 - `tag` tag
   - tagging is not relevant for Merritt Java libraries
 
@@ -123,14 +123,20 @@ graph LR
 
 ### Commit/Tag CodeBuild Actions
 - `main` branch
-  - tagged as `subservice.version-SNAPSHOT.war` in CodeArtifact
-  - tagged as `subservice:dev` in ECR
+  - Artifact: `subservice.version-SNAPSHOT.war`
+  - ECR Image: `subservice:dev`
 - `branch` branch
-  - tagged as `subservice.branch-SNAPSHOT` in CodeArtifact
-  - tagged as `subservice:branch` in ECR
+  - Artifact: `subservice.branch-SNAPSHOT`
+  - ECR Image: `subservice:branch`
 - `tag` tag
-  - tagged as `subservice.TAG` in CodeArtifact
-  - tagges as `subservice:tag` in ECR
+  - Artifact: `subservice.TAG`
+  - ECR Image: `subservice:tag`
+
+----
+
+### Auto Deployment
+
+Merritt Java services can be configured to auto-deploy to ECS Dev from the main branch
 
 ----
 
@@ -173,6 +179,14 @@ graph LR
 
 - None
 
+----
+
+### Gemfile references to a library version
+```
+gem 'mrt-zk', git: 'https://github.com/CDLUC3/mrt-zk.git', tag: '2.4.6'
+```
+
+
 ---
 
 ## Ruby Services
@@ -206,12 +220,17 @@ graph LR
 ### Commit/Tag CodeBuild Actions
 
 - `main` branch
-  - tagged as `subservice:dev` in ECR
-  - auto deployed to DEV ECS
+  - ECR Image: `subservice:dev`
 - `branch` branch
-  - tagged as `subservice:branch` in ECR
+  - ECR Image: `subservice:branch`
 - `tag` tag
-  - tagged as `subservice:tag` in ECR
+  - ECR Image: `subservice:tag`
+
+----
+
+### Auto Deployment
+
+Merritt UI and Admin Tool will auto-deploy to ECS from the main branch
 
 ----
 

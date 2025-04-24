@@ -38,18 +38,7 @@ items:
   breadcrumb: true
   items:
   - title: Tag Conventions
-    route: /source/conventions
-    breadcrumb: true
-    path: conventions
-    items:
-    - title: Merritt Jars
-      route: /source/conventions/jars.md
-    - title: Merritt Java Services
-      route: /source/conventions/wars.md
-    - title: Merritt Ruby Gems
-      route: /source/conventions/gems.md
-    - title: Merritt Ruby Services
-      route: /source/conventions/ruby_services.md
+    route: https://github.com/CDLUC3/mrt-admin-sinatra/blob/main/present/tagging/build.md
   - title: Repostiory Tags
     route: /source/tags
     path: tags
