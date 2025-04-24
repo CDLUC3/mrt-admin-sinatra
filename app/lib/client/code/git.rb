@@ -47,13 +47,13 @@ module UC3Code
       AdminUI::FilterTable.new(
         # Tag	Date	Commit Sha	Documented Release	Artifacts	ECR Images	Actions
         columns: [
-          AdminUI::Column.new(:tag, header: 'Tag', cssclass: 'tag'),
+          AdminUI::Column.new(:tag, header: 'Git Tag', cssclass: 'tag'),
           AdminUI::Column.new(:date, header: 'Date', cssclass: 'date'),
           AdminUI::Column.new(:sha, header: 'Commit Sha', cssclass: 'sha'),
           AdminUI::Column.new(:release, header: 'Documented Release', cssclass: 'release'),
           AdminUI::Column.new(:artifacts, header: 'Artifacts', cssclass: 'artifacts'),
           AdminUI::Column.new(:images, header: 'ECR Images', cssclass: 'images'),
-          AdminUI::Column.new(:matching_tags, header: 'Matching Tags'),
+          AdminUI::Column.new(:matching_tags, header: 'Matching Image Tags'),
           AdminUI::Column.new(:actions, header: 'Actions', cssclass: 'actions', spanclass: '')
         ],
         filters: [

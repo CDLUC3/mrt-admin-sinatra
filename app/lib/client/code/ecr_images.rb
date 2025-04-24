@@ -107,11 +107,11 @@ module UC3Code
     def image_table(res)
       table = AdminUI::FilterTable.new(
         columns: [
-          AdminUI::Column.new(:tag, header: 'Tag'),
+          AdminUI::Column.new(:tag, header: 'Image Tag'),
           AdminUI::Column.new(:image, header: 'Image'),
           AdminUI::Column.new(:digest, header: 'Digest'),
           AdminUI::Column.new(:pushed, header: 'Pushed At'),
-          AdminUI::Column.new(:matching_tags, header: 'Matching Tags'),
+          AdminUI::Column.new(:matching_tags, header: 'Matching Image Tags'),
           AdminUI::Column.new(:actions, header: 'Actions')
         ]
       )
