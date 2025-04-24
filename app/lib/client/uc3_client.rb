@@ -105,6 +105,10 @@ module UC3
       !(tag =~ /^\d+\.\d+\.\d+$/).nil?
     end
 
+    def self.semantic_prefix_tag?(tag)
+      !(tag =~ /^\d+\.\d+\.\d(\..+)?$/).nil?
+    end
+
     def self.deployed_tag?(tag, itags)
       arr = itags.clone
       arr << tag

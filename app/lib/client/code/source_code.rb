@@ -11,6 +11,10 @@ require_relative '../../ui/table'
 
 # Scope custom code for UC3 to distinguish from 3rd party classes
 module UC3Code
+  TAG_ECS_DEV = 'ecs-dev'
+  TAG_ECS_STG = 'ecs-stg'
+  TAG_ECS_PRD = 'ecs-prd'
+
   # Load clients for retrieving source code information
   class SourceCodeClient < UC3::UC3Client
     def initialize

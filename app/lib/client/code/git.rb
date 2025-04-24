@@ -16,9 +16,6 @@ module UC3Code
   # Query for github repository tags
   class GithubClient < UC3::UC3Client
     NOACT = 'javascript:alert("Not yet implemented");'
-    TAG_ECS_DEV = 'ecs-dev'
-    TAG_ECS_STG = 'ecs-stg'
-    TAG_ECS_PRD = 'ecs-prd'
     def initialize
       key = ENV.fetch('config-key', 'default')
       tmap = YAML.safe_load_file('app/config/mrt/source.lookup.yml', aliases: true)
@@ -70,14 +67,16 @@ module UC3Code
 
     def get_commits(repo)
       commits = {}
-      @client.commits_since(repo, @since).each do |commit|
-        commits[commit.sha] = {
-          sha: commit.sha,
-          message: commit.commit.message,
-          author: commit.commit.author.name,
-          date: commit.commit.author.date,
-          url: commit.html_url
-        }
+      @client.branches(repo).each do |branch|
+        @client.commits_since(repo, @since, sha: branch.name).each do |commit|
+          commits[commit.sha] = {
+            sha: commit.sha,
+            message: commit.commit.message,
+            author: commit.commit.author.name,
+            date: commit.commit.author.date,
+            url: commit.html_url
+          }
+        end
       end
       commits
     end
@@ -158,7 +157,7 @@ module UC3Code
             disabled: false,
             data: tagimages.join("\n")
           }
-        elsif UC3::UC3Client.semantic_tag?(tag)
+        elsif UC3::UC3Client.semantic_prefix_tag?(tag)
           actions << {
             value: "Tag #{TAG_ECS_STG}",
             href: "/source/images/retag/#{tag}/#{TAG_ECS_STG}",
@@ -232,7 +231,7 @@ module UC3Code
 
         commit = commits.fetch(tag.commit.sha, {})
         next if commit.empty?
-
+ 
         tagrelease = releases.fetch(tag.name, {})
         tagartifacts = artifacts.fetch(tag.name, [])
         tagimagerecs = ecrimages.fetch(tag.name, [])
@@ -246,8 +245,6 @@ module UC3Code
           matching_tags.flatten!
         end
 
-        next if !UC3::UC3Client.semantic_tag?(tag.name) && tagartifacts.empty? && tagimages.empty?
-
         @tags[tag.name] = {
           cssclass: css_classes(tag.name, commit, tagrelease, tagartifacts, tagimages).join(' '),
           tag: tag.name,
@@ -258,7 +255,7 @@ module UC3Code
           images: tagimages,
           matching_tags: matching_tags,
           actions: actions(repohash, tag.name, commit, tagrelease, tagartifacts, tagimages, deployed, matching_tags)
-        }
+        } if UC3::UC3Client.semantic_tag?(tag.name) || !tagartifacts.empty? || !tagimages.empty?
       end
 
       tags.each_value do |data|

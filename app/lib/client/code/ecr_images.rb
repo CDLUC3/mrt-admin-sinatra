@@ -24,7 +24,8 @@ module UC3Code
       dig = {}
       return res unless enabled
 
-      repohash.fetch(:image_repos, []).each do |image|
+      tagimages = repohash.fetch(:image_repos, [])
+      tagimages.each do |image|
         begin
           imglist = @client.list_images(
             repository_name: image
@@ -37,7 +38,7 @@ module UC3Code
           tag = img.image_tag
           next if tag.nil?
 
-          rec = {tag: tag, digest: img.image_digest, image: image, pushed: nil, pulled: nil, matching_tags: []}
+          rec = {tag: tag, digest: img.image_digest, image: image, pushed: nil, pulled: nil, matching_tags: [], actions: []}
           dig[img.image_digest] = dig.fetch(img.image_digest, [])
           dig[img.image_digest] << tag
           @client.describe_images(
@@ -64,9 +65,30 @@ module UC3Code
           end
         
           rec[:deployed] = UC3::UC3Client.deployed_tag?(tag, rec[:matching_tags])
+
+          if rec[:matching_tags].include?(TAG_ECS_DEV)
+            rec[:actions] << {
+              value: "Untag #{TAG_ECS_DEV}",
+              href: "/source/images/untag/#{TAG_ECS_DEV}",
+              cssclass: 'button',
+              post: true,
+              disabled: false,
+              data: tagimages.join("\n")
+            }
+          else
+            rec[:actions] << {
+              value: "Tag #{TAG_ECS_DEV}",
+              href: "/source/images/retag/#{tag}/#{TAG_ECS_DEV}",
+              cssclass: 'button',
+              post: true,
+              disabled: false,
+              data: tagimages.join("\n")
+            }
+          end
+  
           next if rec[:deployed]
   
-          rec[:actions] = [
+          rec[:actions] << [
             {
               value: 'Delete',
               href: "/source/images/delete/#{tag}",
@@ -76,6 +98,7 @@ module UC3Code
               data: image
             }
           ]
+  
         end
       end
       res
