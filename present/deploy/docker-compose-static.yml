@@ -1,0 +1,10 @@
+version: '3.9'
+services:
+  reveal-md:
+    image: ${ECR_REGISTRY}/docker-hub/webpronl/reveal-md
+    ports:
+    - 8099:1948
+    command: ["/slides", "build.md", "--theme", "white", "--css", "demo.css", "--static", "/assets"]
+    volumes:
+    - ".:/slides"
+    - "./present_build:/assets"
