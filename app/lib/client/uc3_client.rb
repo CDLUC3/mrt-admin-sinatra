@@ -78,9 +78,13 @@ module UC3
         region: UC3::UC3Client.region
       )
       map.each do |key, value|
-        if value.key?('ssm')
-          resp = ssm.get_parameter(name: value['ssm'], with_decryption: true)
-          map[key] = resp.parameter.value
+        if value.key?('ssm') && !ssm.nil?
+          begin
+            resp = ssm.get_parameter(name: value['ssm'], with_decryption: true)
+            map[key] = resp.parameter.value
+          rescue
+            map[key] = value.fetch('default', 'not-applicable')
+          end
         elsif value.key?('env')
           map[key] = ENV.fetch(value['env'], value.fetch('default', ''))
         elsif value.key?('val')

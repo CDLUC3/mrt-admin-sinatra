@@ -6,6 +6,27 @@ This lambda is part of the [Merritt Preservation System](https://github.com/CDLU
 
 Sinatra based admin tool for the new Merritt AWS account.
 
+## Execution Options
+
+- Local ruby app (bundle exec, NO AWS auth)
+  - NO AWS API support
+  - NO local database
+  - NO VPC database connections (uc3)
+- Local ruby app (bundle exec, WITH AWS auth)
+  - NO AWS API support
+  - NO local database
+  - NO VPC database connections (uc3)
+- Local docker-compose stack (AWS auth does not transfer to containers)
+  - NO AWS API support
+  - HAS local database
+  - NO VPC database connections (uc3)
+- ECS Stack
+  - HAS local database or VPC database connection (vpc)
+  - HAS AWS API support
+- Lambda (VPC + NonVPC)
+  - NO local databse
+  - HAS VPC database connection (main account)
+
 ## Local Testing
 
 ### Merritt app
