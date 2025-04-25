@@ -37,8 +37,10 @@ items:
   route: /source
   breadcrumb: true
   items:
-  - title: Tag Conventions
+  - title: Tag Conventions ℹ️
     route: https://github.com/CDLUC3/mrt-admin-sinatra/blob/main/present/tagging/build.md
+  - title: Deploy Conventions ℹ️
+    route: https://github.com/CDLUC3/mrt-admin-sinatra/blob/main/present/ecs-deploy/build.md
   - title: Repostiory Tags
     route: /source/tags
     path: tags
@@ -418,7 +420,7 @@ items:
     - title: UCSC Object Listing (slow)
       route: /queries/content/ucsc-objects
   - route: /queries/update-billing
-    title: Update Billing Stats
+    title: Update Billing Stats ▶️
 - path: Operations
   title: Operations
   route: /ops
@@ -457,20 +459,20 @@ items:
       route: /ops/zk/ingest
       breadcrumb: true
       items:
-      - title: Pause
+      - title: Pause ▶️
         route: /ops/zk/ingest/pause
-      - title: Unpause
+      - title: Unpause ▶️
         route: /ops/zk/ingest/unpause
       - title: Ingest Batches
         route: /ops/zk/ingest/batches
       - title: Jobs by Collection
         route: /ops/zk/ingest/jobs-by-collection
-      - title: Cleanup Queue
+      - title: Cleanup Queue ▶️
         route: /ops/zk/ingest/cleanup-queue
       - title: Ingest Folders
         route: /ops/zk/ingest/folders
       - path: force-failure
-        title: Force Failure
+        title: Force Failure ▶️
         route: /ops/zk/ingest/force-failure
         items:
         - title: Estimating
@@ -488,19 +490,19 @@ items:
       route: /ops/zk/access
       breadcrumb: true
       items:
-      - title: Pause Small Queue
+      - title: Pause Small Queue ▶️
         route: /ops/zk/access/pause-small
-      - title: Unpause Small Queue
+      - title: Unpause Small Queue ▶️
         route: /ops/zk/access/unpause-small
-      - title: Pause Large Queue
+      - title: Pause Large Queue ▶️
         route: /ops/zk/access/pause-large
-      - title: Unpause Large Queue
+      - title: Unpause Large Queue ▶️
         route: /ops/zk/access/unpause-large
       - title: View Queue
         route: /ops/zk/access/jobs
-      - title: Cleanup Queue
+      - title: Cleanup Queue ▶️
         route: /ops/zk/access/cleanup-queue
-      - title: Create Fake Access Request
+      - title: Create Fake Access Request ▶️
         route: /ops/zk/access/fake
   - path: db-queue
     title: Database Queues
@@ -697,9 +699,9 @@ items:
         route: /json/inventory/state
       - title: Inventory Build Tag
         route: /json/inventory/tag
-      - title: Inventory Start
+      - title: Inventory Start ▶️
         route: /json/inventory/start
-      - title: Inventory Stop
+      - title: Inventory Stop ▶️
         route: /json/inventory/stop
     - title: Audit
       path: audit
@@ -710,9 +712,9 @@ items:
         route: /json/audit/state
       - title: Audit Build Tag
         route: /json/audit/tag
-      - title: Audit Start
+      - title: Audit Start ▶️
         route: /json/audit/start
-      - title: Audit Stop
+      - title: Audit Stop ▶️
         route: /json/audit/stop
     - title: Replic
       path: replic
@@ -723,9 +725,9 @@ items:
         route: /json/replic/state
       - title: Replic Build Tag
         route: /json/replic/tag
-      - title: Replic Start
+      - title: Replic Start ▶️
         route: /json/replic/start
-      - title: Replic Stop
+      - title: Replic Stop ▶️
         route: /json/replic/stop
     - title: Access
       path: access

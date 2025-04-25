@@ -24,9 +24,15 @@ phases:
     # - zip -r mrt-admin-sinatra.zip vendor app *.rb *.yml
     # - aws s3 cp mrt-admin-sinatra.zip s3://${S3PRIVBUCKET}/deploy/
     - |
+      # mrt-admin-sinatra:latest is used for the lambda
       docker build --quiet --push \
         --build-arg ECR_REGISTRY=${ECR_REGISTRY} \
         -t ${ECR_REGISTRY}/mrt-admin-sinatra .
+      
+      # mrt-admin-sinatra:ecs-dev for ECS
+      docker build --quiet --push \
+        --build-arg ECR_REGISTRY=${ECR_REGISTRY} \
+        -t ${ECR_REGISTRY}/mrt-admin-sinatra:ecs-dev .
     - |
       aws lambda update-function-code \
         --function-name mrt-admin-sinatra \
