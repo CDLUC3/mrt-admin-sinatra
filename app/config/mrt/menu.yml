@@ -39,8 +39,8 @@ items:
   items:
   - title: Tag Conventions ℹ️
     route: https://github.com/CDLUC3/mrt-admin-sinatra/blob/main/present/tagging/build.md
-  - title: Deploy Conventions ℹ️
-    route: https://github.com/CDLUC3/mrt-admin-sinatra/blob/main/present/ecs-deploy/build.md
+  - title: Deploy Process ℹ️
+    route: https://merritt.uc3dev.cdlib.org/present/ecs-deploy/build.html#/
   - title: Repostiory Tags
     route: /source/tags
     path: tags
@@ -420,7 +420,7 @@ items:
     - title: UCSC Object Listing (slow)
       route: /queries/content/ucsc-objects
   - route: /queries/update-billing
-    title: Update Billing Stats ▶️
+    title: Update Billing ▶️
 - path: Operations
   title: Operations
   route: /ops
@@ -472,18 +472,18 @@ items:
       - title: Ingest Folders
         route: /ops/zk/ingest/folders
       - path: force-failure
-        title: Force Failure ▶️
+        title: Force Failure
         route: /ops/zk/ingest/force-failure
         items:
-        - title: Estimating
+        - title: Estimating ▶️
           route: /ops/zk/ingest/force-failure/estimating
-        - title: Download
+        - title: Download ▶️
           route: /ops/zk/ingest/force-failure/download
-        - title: Notify
+        - title: Notify ▶️
           route: /ops/zk/ingest/force-failure/notify
-        - title: Provisioning
+        - title: Provisioning ▶️
           route: /ops/zk/ingest/force-failure/provisioning
-        - title: Processing
+        - title: Processing ▶️
           route: /ops/zk/ingest/force-failure/processing
     - path: access-queue
       title: Access Queue
