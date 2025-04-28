@@ -45,8 +45,8 @@ module AdminUI
       child
     end
 
-    def add_menu_item(route, title, description: '', tbd: false, breadcrumb: false)
-      mi = MenuItem.new(self, route, title, description: description, tbd: tbd, breadcrumb: breadcrumb)
+    def add_menu_item(route, title, description: '', tbd: false, breadcrumb: false, external: false, method: 'get')
+      mi = MenuItem.new(self, route, title, description: description, tbd: tbd, breadcrumb: breadcrumb, external: external, method: method)
       @children << mi
       mi
     end
@@ -77,13 +77,13 @@ module AdminUI
       @instance
     end
 
-    def create_menu_item_for_path(path, route, title, description: '', tbd: false, breadcrumb: false, menu: false)
+    def create_menu_item_for_path(path, route, title, description: '', tbd: false, breadcrumb: false, menu: false, external: false, method: 'get')
       parpath = path
       if @paths.key?(parpath)
         if menu
           @paths[parpath].add_submenu(path, title, description: description, breadcrumb: breadcrumb, route: route)
         else
-          @paths[parpath].add_menu_item(route, title, description: description, tbd: tbd, breadcrumb: breadcrumb)
+          @paths[parpath].add_menu_item(route, title, description: description, tbd: tbd, breadcrumb: breadcrumb, external: external, method: method)
         end
       else
         parpath = File.dirname(path) until @paths.key?(parpath)
@@ -92,7 +92,7 @@ module AdminUI
         else
           @paths[parpath].add_submenu(path, path, breadcrumb: breadcrumb, route: route)
           create_menu_item_for_path(path, route, title, description: description, tbd: tbd, breadcrumb: breadcrumb,
-            menu: menu)
+            menu: menu, external: external, method: method)
         end
       end
     end
@@ -167,18 +167,20 @@ module AdminUI
 
   ## Menu item (hash of title, description and full route (path and query string)
   class MenuItem
-    def initialize(parent, route, title, description: '', tbd: false, breadcrumb: false)
+    def initialize(parent, route, title, description: '', tbd: false, breadcrumb: false, external: false, method: 'get')
       @parent = parent
       @title = title
       @route = route
       @tbd = tbd
+      @external = external
+      @method = method
       @breadcrumb = breadcrumb
       @description = description
 
       @parent.top.route_names[route_normalized] = { title: title, description: description, route: @route }
     end
 
-    attr_accessor :title, :route, :description, :tbd, :breadcrumb
+    attr_accessor :title, :route, :description, :tbd, :breadcrumb, :external, :method
 
     def route_normalized
       arr = @route.split('?')
@@ -191,7 +193,35 @@ module AdminUI
       return '' if @breadcrumb
 
       lclass = @tbd ? 'tbd' : ''
-      %(<li role="none"><a role="menuitem" class="#{lclass}" href="#{route}" title="#{title}">#{title}</a></li>)
+      if @method == 'get'
+        icon = @external ? ' 🔗' : ''
+        target = @external ? '_blank' : '_self'
+        %(
+          <li role="none">
+            <a role="menuitem"
+              class="#{lclass}"
+              href="#{route}"
+              title="#{title}"
+              target="#{target}" 
+            >
+            <span>#{title}#{icon}</span>
+            </a>
+          </li>
+        )
+      else
+        icon = ' ⚙️'
+        %(
+          <li role="none">
+            <a role="none"
+              class="post-link"
+              data-route="#{route}"
+              title="#{title}"
+            >
+            <span>#{title}#{icon}</span>
+            </a>
+          </li>
+        )
+      end
     end
   end
 

@@ -37,42 +37,42 @@ module Sinatra
           }
       end
 
-      app.get '/ops/zk/ingest/pause' do
+      app.post '/ops/zk/ingest/pause' do
         UC3Queue::ZKClient.new.pause_ingest
         redirect '/ops/zk/nodes/node-names?zkpath=/locks&mode=node'
       end
 
-      app.get '/ops/zk/ingest/unpause' do
+      app.post '/ops/zk/ingest/unpause' do
         UC3Queue::ZKClient.new.unpause_ingest
         redirect '/ops/zk/nodes/node-names?zkpath=/locks&mode=node'
       end
 
-      app.get '/ops/zk/ingest/cleanup-queue' do
+      app.post '/ops/zk/ingest/cleanup-queue' do
         UC3Queue::ZKClient.new.cleanup_ingest_queue
         redirect '/ops/zk/nodes/node-names?zkpath=/batches&mode=node'
       end
 
-      app.get '/ops/zk/access/pause-small' do
+      app.post '/ops/zk/access/pause-small' do
         UC3Queue::ZKClient.new.pause_access_small
         redirect '/ops/zk/nodes/node-names?zkpath=/locks&mode=node'
       end
 
-      app.get '/ops/zk/access/unpause-small' do
+      app.post '/ops/zk/access/unpause-small' do
         UC3Queue::ZKClient.new.unpause_access_small
         redirect '/ops/zk/nodes/node-names?zkpath=/locks&mode=node'
       end
 
-      app.get '/ops/zk/access/pause-large' do
+      app.post '/ops/zk/access/pause-large' do
         UC3Queue::ZKClient.new.pause_access_large
         redirect '/ops/zk/nodes/node-names?zkpath=/locks&mode=node'
       end
 
-      app.get '/ops/zk/access/unpause-large' do
+      app.post '/ops/zk/access/unpause-large' do
         UC3Queue::ZKClient.new.unpause_access_large
         redirect '/ops/zk/nodes/node-names?zkpath=/locks&mode=node'
       end
 
-      app.get '/ops/zk/access/cleanup-queue' do
+      app.post '/ops/zk/access/cleanup-queue' do
         UC3Queue::ZKClient.new.cleanup_access_queue
         redirect '/ops/zk/access/jobs'
       end
@@ -186,7 +186,7 @@ module Sinatra
         end
       end
 
-      app.get '/ops/zk/access/fake' do
+      app.post '/ops/zk/access/fake' do
         j = UC3Queue::ZKClient.new.fake_access
         redirect '/ops/zk/access/jobs'
       end
@@ -217,27 +217,27 @@ module Sinatra
         end
       end
 
-      app.get '/ops/zk/ingest/force-failure/estimating' do
+      app.post '/ops/zk/ingest/force-failure/estimating' do
         File.new('/tdr/ingest/queue/Estimate_FAIL', 'w')
         redirect '/ops/zk/ingest/folders'
       end
 
-      app.get '/ops/zk/ingest/force-failure/provisioning' do
+      app.post '/ops/zk/ingest/force-failure/provisioning' do
         File.new('/tdr/ingest/queue/Provision_FAIL', 'w')
         redirect '/ops/zk/ingest/folders'
       end
 
-      app.get '/ops/zk/ingest/force-failure/download' do
+      app.post '/ops/zk/ingest/force-failure/download' do
         File.new('/tdr/ingest/queue/Download_FAIL', 'w')
         redirect '/ops/zk/ingest/folders'
       end
 
-      app.get '/ops/zk/ingest/force-failure/processing' do
+      app.post '/ops/zk/ingest/force-failure/processing' do
         File.new('/tdr/ingest/queue/Process_FAIL', 'w')
         redirect '/ops/zk/ingest/folders'
       end
 
-      app.get '/ops/zk/ingest/force-failure/notify' do
+      app.post '/ops/zk/ingest/force-failure/notify' do
         File.new('/tdr/ingest/queue/Notify_FAIL', 'w')
         redirect '/ops/zk/ingest/folders'
       end

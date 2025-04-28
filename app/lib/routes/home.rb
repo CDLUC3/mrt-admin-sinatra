@@ -25,6 +25,8 @@ module Sinatra
         title,
         description: item.fetch(:description, ''),
         tbd: item.fetch(:tbd, false),
+        external: item.fetch(:external, false),
+        method: item.fetch(:method, 'get'),
         breadcrumb: item.fetch(:breadcrumb, false),
         menu: route.empty? || !items.empty?
       )

@@ -37,10 +37,12 @@ items:
   route: /source
   breadcrumb: true
   items:
-  - title: Tag Conventions ℹ️
+  - title: Tag Conventions
+    external: true
     route: https://github.com/CDLUC3/mrt-admin-sinatra/blob/main/present/tagging/build.md
-  - title: Deploy Process ℹ️
+  - title: Deploy Process
     route: https://merritt.uc3dev.cdlib.org/present/ecs-deploy/build.html#/
+    external: true
   - title: Repostiory Tags
     route: /source/tags
     path: tags
@@ -420,7 +422,8 @@ items:
     - title: UCSC Object Listing (slow)
       route: /queries/content/ucsc-objects
   - route: /queries/update-billing
-    title: Update Billing ▶️
+    title: Update Billing
+    method: post
 - path: Operations
   title: Operations
   route: /ops
@@ -459,51 +462,65 @@ items:
       route: /ops/zk/ingest
       breadcrumb: true
       items:
-      - title: Pause ▶️
+      - title: Pause
         route: /ops/zk/ingest/pause
-      - title: Unpause ▶️
+        method: post
+      - title: Unpause
         route: /ops/zk/ingest/unpause
+        method: post
       - title: Ingest Batches
         route: /ops/zk/ingest/batches
       - title: Jobs by Collection
         route: /ops/zk/ingest/jobs-by-collection
-      - title: Cleanup Queue ▶️
+      - title: Cleanup Queue
         route: /ops/zk/ingest/cleanup-queue
+        method: post
       - title: Ingest Folders
         route: /ops/zk/ingest/folders
       - path: force-failure
         title: Force Failure
         route: /ops/zk/ingest/force-failure
         items:
-        - title: Estimating ▶️
+        - title: Estimating
           route: /ops/zk/ingest/force-failure/estimating
-        - title: Download ▶️
+          method: post
+        - title: Download
           route: /ops/zk/ingest/force-failure/download
-        - title: Notify ▶️
+          method: post
+        - title: Notify
           route: /ops/zk/ingest/force-failure/notify
-        - title: Provisioning ▶️
+          method: post
+        - title: Provisioning
           route: /ops/zk/ingest/force-failure/provisioning
-        - title: Processing ▶️
+          method: post
+        - title: Processing
           route: /ops/zk/ingest/force-failure/processing
+          method: post
     - path: access-queue
       title: Access Queue
       route: /ops/zk/access
       breadcrumb: true
       items:
-      - title: Pause Small Queue ▶️
+      - title: Pause Small Queue
         route: /ops/zk/access/pause-small
-      - title: Unpause Small Queue ▶️
+        method: post
+      - title: Unpause Small Queue
         route: /ops/zk/access/unpause-small
-      - title: Pause Large Queue ▶️
+        method: post
+      - title: Pause Large Queue
         route: /ops/zk/access/pause-large
-      - title: Unpause Large Queue ▶️
+        method: post
+      - title: Unpause Large Queue
         route: /ops/zk/access/unpause-large
+        method: post
       - title: View Queue
         route: /ops/zk/access/jobs
-      - title: Cleanup Queue ▶️
+      - title: Cleanup Queue
         route: /ops/zk/access/cleanup-queue
-      - title: Create Fake Access Request ▶️
+        method: post
+      - title: Create Fake Access Request
         route: /ops/zk/access/fake
+        method: post
   - path: db-queue
     title: Database Queues
     route: /ops/db-queue
@@ -699,10 +716,12 @@ items:
         route: /json/inventory/state
       - title: Inventory Build Tag
         route: /json/inventory/tag
-      - title: Inventory Start ▶️
+      - title: Inventory Start
+        method: post
         route: /json/inventory/start
-      - title: Inventory Stop ▶️
+      - title: Inventory Stop
         route: /json/inventory/stop
+        method: post
     - title: Audit
       path: audit
       route: /json/audit
@@ -712,10 +731,12 @@ items:
         route: /json/audit/state
       - title: Audit Build Tag
         route: /json/audit/tag
-      - title: Audit Start ▶️
+      - title: Audit Start
         route: /json/audit/start
-      - title: Audit Stop ▶️
+        method: post
+      - title: Audit Stop
         route: /json/audit/stop
+        method: post
     - title: Replic
       path: replic
       route: /json/replic
@@ -725,10 +746,12 @@ items:
         route: /json/replic/state
       - title: Replic Build Tag
         route: /json/replic/tag
-      - title: Replic Start ▶️
+      - title: Replic Start
         route: /json/replic/start
-      - title: Replic Stop ▶️
+        method: post
+      - title: Replic Stop
         route: /json/replic/stop
+        method: post
     - title: Access
       path: access
       route: /json/access
@@ -742,6 +765,7 @@ items:
         route: /json/access/nodes
     - title: Stack init 
       route: /stack-init
+      method: post
 - path: resources
   title: AWS
   items:

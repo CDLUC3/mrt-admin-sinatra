@@ -39,7 +39,7 @@ module Sinatra
           }
       end
 
-      app.get '/queries/update-billing' do
+      app.post '/queries/update-billing' do
         UC3Query::QueryClient.client.update_billing
         redirect '/queries/repository/collections/bytes'
       end

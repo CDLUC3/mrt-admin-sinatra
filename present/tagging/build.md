@@ -154,7 +154,7 @@ Merritt Java services can be configured to auto-deploy to ECS Dev from the main 
 When the underlying image for a published service is updated, the following will be recreated in ECR.
 
 - Docker Image Patched After Code Deployment of tag `tag`
-  - `subservice:tag-YYMMDD`
+  - `subservice:tag-docker-YYMMDD`
 
 ---
 
@@ -248,4 +248,4 @@ Merritt UI and Admin Tool will auto-deploy to ECS from the main branch
 When the underlying image for a published service is updated, the following will be recreated in ECR.
 
 - Docker Image Patched After Code Deployment of tag `tag`
-  - `subservice:tag-YYMMDD`
+  - `subservice:tag-docker-YYMMDD`

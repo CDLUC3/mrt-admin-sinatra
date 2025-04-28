@@ -4,6 +4,7 @@ $(document).ready(function() {
   applyButtonControls();
   applyFilterCheckboxes();
   applyFilters();
+  applyMenuPost();
   clearButton();
 });
 
@@ -154,5 +155,15 @@ function showTotals() {
       });
       $(this).text(total.toLocaleString());
     }
+  });
+}
+
+function applyMenuPost() {
+  $("a.post-link").on("click", function() {
+    const route = $(this).attr('data-route');
+    const form = $('<form></form>').attr('method', 'POST').attr('action', route);
+    form.appendTo('body');
+    form.submit();
+    return false;
   });
 }

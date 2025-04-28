@@ -45,11 +45,11 @@ module Sinatra
         get_url('http://inventory:8080/inventory/state?t=json')
       end
 
-      app.get '/json/inventory/start' do
+      app.post '/json/inventory/start' do
         post_url('http://inventory:8080/inventory/service/start?t=json')
       end
 
-      app.get '/json/inventory/stop' do
+      app.post '/json/inventory/stop' do
         post_url('http://inventory:8080/inventory/service/stop?t=json')
       end
 
@@ -69,11 +69,11 @@ module Sinatra
         get_url('http://audit:8080/audit/jsonstatus')
       end
 
-      app.get '/json/audit/start' do
+      app.post '/json/audit/start' do
         post_url('http://audit:8080/audit/service/start?t=json')
       end
 
-      app.get '/json/audit/stop' do
+      app.post '/json/audit/stop' do
         post_url('http://audit:8080/audit/service/stop?t=json')
       end
 
@@ -85,11 +85,11 @@ module Sinatra
         get_url('http://replic:8080/replic/static/build.content.txt')
       end
 
-      app.get '/json/replic/start' do
+      app.post '/json/replic/start' do
         post_url('http://replic:8080/replic/service/start?t=json')
       end
 
-      app.get '/json/replic/stop' do
+      app.post '/json/replic/stop' do
         post_url('http://replic:8080/replic/service/stop?t=json')
       end
 
@@ -109,7 +109,7 @@ module Sinatra
         get_url('http://access:8080/access/jsonstatus')
       end
 
-      app.get '/stack-init' do
+      app.post '/stack-init' do
         stack_init
       end
 

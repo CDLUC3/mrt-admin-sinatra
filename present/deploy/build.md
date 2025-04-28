@@ -175,7 +175,7 @@ In order to stay on top of image vulnerabilities, docker images should be republ
 ----
 
 ### CodeBuild runs in the background
-- mrt-dashboard:1.7.9-250424 is published to ECR
+- mrt-dashboard:1.7.9-docker-250424 is published to ECR
 
 ----
 
