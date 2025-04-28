@@ -73,6 +73,16 @@ module Sinatra
         redirect '/infra/ecs'
       end
 
+      app.post '/infra/ecs/scale-up/*' do |service|
+        UC3Resources::ServicesClient.new.scale_up_service(service)
+        redirect '/infra/ecs'
+      end
+
+      app.post '/infra/ecs/scale-down/*' do |service|
+        UC3Resources::ServicesClient.new.scale_down_service(service)
+        redirect '/infra/ecs'
+      end
+
 
     end
   end

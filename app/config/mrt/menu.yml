@@ -700,6 +700,12 @@ items:
       - title: Redeploy Ingest
         route: /infra/ecs/redeploy/ingest
         method: post
+      - title: Scale Up Ingest
+        route: /infra/ecs/scale-up/ingest
+        method: post
+      - title: Scale Down Ingest
+        route: /infra/ecs/scale-down/ingest
+        method: post
     - title: Store
       path: store
       route: /json/store
@@ -715,6 +721,12 @@ items:
         route: /json/store/hostname
       - title: Redeploy Store
         route: /infra/ecs/redeploy/store
+        method: post
+      - title: Scale Up Store
+        route: /infra/ecs/scale-up/store
+        method: post
+      - title: Scale Down Store
+        route: /infra/ecs/scale-down/store
         method: post
     - title: Inventory
       path: inventory

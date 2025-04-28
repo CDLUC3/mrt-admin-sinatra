@@ -89,5 +89,25 @@ module UC3Resources
         force_new_deployment: true
       ).to_json
     end
+
+    def scale_up_service(service)
+      return unless enabled
+
+      @client.update_service(
+        cluster: 'mrt-ecs-stack',
+        service: service,
+        desired_count: 2
+      ).to_json
+    end
+
+    def scale_down_service(service)
+      return unless enabled
+
+      @client.update_service(
+        cluster: 'mrt-ecs-stack',
+        service: service,
+        desired_count: 1
+      ).to_json
+    end
   end
 end
