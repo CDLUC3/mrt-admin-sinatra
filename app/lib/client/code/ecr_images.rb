@@ -159,5 +159,34 @@ module UC3Code
     def untag_image(tag, image)
       delete_image(tag, image)
     end
+
+    def get_image_tags_by_digest(image, tag, digest)
+      arr = []
+      return arr unless enabled
+      return arr unless image =~ /^mrt-(dashboard|ingest|store|inventory|audit|replic|admin-sinatra)$/
+      begin
+        resp = @client.describe_images(
+          repository_name: image,
+          image_ids: [
+            {
+              image_digest: digest
+            }
+          ],
+          filter: {
+            tag_status: 'TAGGED'
+          }
+        )
+        resp.image_details.each do |img|
+          next if img.image_tags.nil?
+          img.image_tags.each do |t|
+            next if t == tag
+            arr << t
+          end
+        end
+      rescue StandardError => e
+        puts "Client ERR: #{e}"
+      end
+      arr
+    end
   end
 end

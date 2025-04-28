@@ -685,6 +685,9 @@ items:
         route: /json/ui/state
       - title: UI Audit Replic State
         route: /json/ui/audit-replic
+      - title: Redeploy UI
+        route: /infra/ecs/redeploy/ui
+        method: post
     - title: Ingest
       path: ingest
       route: /json/ingest
@@ -694,6 +697,9 @@ items:
         route: /json/ingest/state
       - title: Ingest Build Tag
         route: /json/ingest/tag
+      - title: Redeploy Ingest
+        route: /infra/ecs/redeploy/ingest
+        method: post
     - title: Store
       path: store
       route: /json/store
@@ -707,6 +713,9 @@ items:
         route: /json/store/nodes
       - title: Store Hostname
         route: /json/store/hostname
+      - title: Redeploy Store
+        route: /infra/ecs/redeploy/store
+        method: post
     - title: Inventory
       path: inventory
       route: /json/inventory
@@ -721,6 +730,9 @@ items:
         route: /json/inventory/start
       - title: Inventory Stop
         route: /json/inventory/stop
+        method: post
+      - title: Redeploy Inventory
+        route: /infra/ecs/redeploy/inventory
         method: post
     - title: Audit
       path: audit
@@ -737,6 +749,9 @@ items:
       - title: Audit Stop
         route: /json/audit/stop
         method: post
+      - title: Redeploy Audit
+        route: /infra/ecs/redeploy/audit
+        method: post
     - title: Replic
       path: replic
       route: /json/replic
@@ -751,6 +766,9 @@ items:
         method: post
       - title: Replic Stop
         route: /json/replic/stop
+        method: post
+      - title: Redeploy Replic
+        route: /infra/ecs/redeploy/access
         method: post
     - title: Access
       path: access

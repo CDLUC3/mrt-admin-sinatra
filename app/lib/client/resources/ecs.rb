@@ -2,6 +2,7 @@
 
 require 'aws-sdk-ecs'
 require_relative '../uc3_client'
+require_relative '../code/ecr_images'
 
 # Scope custom code for UC3 to distinguish from 3rd party classes
 module UC3Resources
@@ -11,6 +12,7 @@ module UC3Resources
       @client = Aws::ECS::Client.new(
         region: UC3::UC3Client.region
       )
+      @ecr_client = UC3Code::ECRImagesClient.new
       @services = {}
       # An ECS Service has a ServiceDeployment which has a TargetServiceRevision.
       # A ServiceRevision has ContainerImage which has an ImageDigest.
@@ -32,7 +34,10 @@ module UC3Resources
             end
             break
           end
+
           dep = svc.deployments ? svc.deployments[0] : {}
+          image_name = image.split(':')[0]
+          image_tag = image.split(':')[1]
           @services[svc.service_name] = {
             name: svc.service_name,
             desired_count: svc.desired_count,
@@ -40,7 +45,8 @@ module UC3Resources
             pending_count: svc.pending_count,
             created: date_format(dep.created_at, convert_timezone: true),
             updated: date_format(dep.updated_at, convert_timezone: true),
-            image: [image, digest]
+            image: [image, digest],
+            tags: @ecr_client.get_image_tags_by_digest(image_name, image_tag, digest)
           }
         end
       end
@@ -62,7 +68,8 @@ module UC3Resources
           AdminUI::Column.new(:pending_count, header: 'Pending'),
           AdminUI::Column.new(:created, header: 'Created'),
           AdminUI::Column.new(:updated, header: 'Updated'),
-          AdminUI::Column.new(:image, header: 'Image')
+          AdminUI::Column.new(:image, header: 'Image'),
+          AdminUI::Column.new(:tags, header: 'Matching Tags')
         ]
       )
       return table unless enabled
@@ -71,6 +78,16 @@ module UC3Resources
         table.add_row(AdminUI::Row.make_row(table.columns, value))
       end
       table
+    end
+
+    def redeploy_service(service)
+      return unless enabled
+
+      @client.update_service(
+        cluster: 'mrt-ecs-stack',
+        service: service,
+        force_new_deployment: true
+      ).to_json
     end
   end
 end

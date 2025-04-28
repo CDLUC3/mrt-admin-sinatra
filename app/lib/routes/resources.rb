@@ -67,6 +67,13 @@ module Sinatra
             table: UC3Resources::ServicesClient.new.list_services
           }
       end
+
+      app.post '/infra/ecs/redeploy/*' do |service|
+        UC3Resources::ServicesClient.new.redeploy_service(service)
+        redirect '/infra/ecs'
+      end
+
+
     end
   end
   register UC3ResourcesRoutes
