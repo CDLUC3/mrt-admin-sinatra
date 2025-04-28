@@ -68,10 +68,10 @@ module UC3Code
           return res
         end
         pv.versions.each do |v|
-          next if UC3::UC3Client.semantic_prefix_tag?(v.version)
           rec = { 
             status: v.status,
             version: v.version,
+            semantic: UC3::UC3Client.semantic_prefix_tag?(v.version),
             package: artifact,
             domain: ARTDOMAIN,
             repository: ARTREPOSITORY,
@@ -152,6 +152,7 @@ module UC3Code
           AdminUI::Column.new(:published, header: 'Published'),
           AdminUI::Column.new(:package, header: 'Package'),
           AdminUI::Column.new(:version, header: 'Version'),
+          AdminUI::Column.new(:semantic, header: 'Semantic'),
           AdminUI::Column.new(:pom, header: 'POM'),
           AdminUI::Column.new(:assets, header: 'Assets'),
           AdminUI::Column.new(:command, header: 'Command')
