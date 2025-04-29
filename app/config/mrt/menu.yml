@@ -669,8 +669,9 @@ items:
       route: /ldap/roles
   - title: Merritt Server State
     route: https://us-west-2.console.aws.amazon.com/ecs/v2/clusters/mrt-ecs-stack/services?region=us-west-2
-  - title: Merritt Deployment State
+  - title: Deployment State (AWS)
     route: /infra/ecs
+    external: true
   - title: Services
     path: services
     route: /json
@@ -832,3 +833,5 @@ items:
   - title: OpenSearch Usage
     route: /infra/opensearch-usage
     tbd: true
+  - title: List Collections (Simple)
+    route: /queries/misc/collections
