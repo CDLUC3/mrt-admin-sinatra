@@ -667,11 +667,11 @@ items:
       route: /ldap/collections-missing
     - title: Roles
       route: /ldap/roles
-  - title: Merritt Server State
+  - title: ECS Console
     route: https://us-west-2.console.aws.amazon.com/ecs/v2/clusters/mrt-ecs-stack/services?region=us-west-2
-  - title: Deployment State (AWS)
-    route: /infra/ecs
     external: true
+  - title: Deployment State
+    route: /infra/ecs
   - title: Services
     path: services
     route: /json
