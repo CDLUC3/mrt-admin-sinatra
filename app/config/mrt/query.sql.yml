@@ -2349,7 +2349,7 @@ queries:
               s.version_number = o.version_number
           )
       ) as u
-      inner join object_size os
+      right join object_size os
         on os.inv_object_id = u.inv_object_id
       group by
         category
