@@ -821,17 +821,23 @@ items:
     route: /infra/functions
   - title: UC3 Load Balancers
     route: /infra/elbs
-- path: future
-  title: Future
+- path: debug
+  title: Debug
   breadcrumb: true
   description: |
     ## Placeholders for features to develop later
   items:
-  - title: SSM Usage
-    route: /infra/ssm-usage
-    tbd: true
-  - title: OpenSearch Usage
-    route: /infra/opensearch-usage
-    tbd: true
+  - title: Future
+    path: Future
+    breadcrumb: true 
+    items:
+    - title: SSM Usage
+      route: /infra/ssm-usage
+      tbd: true
+    - title: OpenSearch Usage
+      route: /infra/opensearch-usage
+      tbd: true
   - title: List Collections (Simple)
     route: /queries/misc/collections
+  - title: DB time
+    route: /queries/misc/now

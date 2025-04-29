@@ -3123,4 +3123,8 @@ queries:
         mnemonic is not null
       order by
         mnemonic
+  /queries/misc/now:
+    sql: |
+      select
+        now() as current
  
