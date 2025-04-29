@@ -781,7 +781,7 @@ items:
         route: /json/replic/stop
         method: post
       - title: Redeploy Replic
-        route: /infra/ecs/redeploy/access
+        route: /infra/ecs/redeploy/replic
         method: post
     - title: Access
       path: access
