@@ -777,8 +777,8 @@ items:
       - title: Replic Start
         route: /json/replic/start
         method: post
-      - title: Replic Stop
-        route: /json/replic/stop
+      - title: Replic Pause
+        route: /json/replic/pause
         method: post
       - title: Redeploy Replic
         route: /infra/ecs/redeploy/replic

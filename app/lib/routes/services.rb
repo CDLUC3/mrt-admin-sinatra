@@ -89,8 +89,8 @@ module Sinatra
         post_url('http://replic:8080/replic/service/start?t=json')
       end
 
-      app.post '/json/replic/stop' do
-        post_url('http://replic:8080/replic/service/stop?t=json')
+      app.post '/json/replic/pause' do
+        post_url('http://replic:8080/replic/service/pause?t=json')
       end
 
       app.get '/json/replic/nodes' do
