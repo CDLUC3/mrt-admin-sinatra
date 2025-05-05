@@ -464,9 +464,11 @@ items:
       items:
       - title: Pause
         route: /ops/zk/ingest/pause
+        confmsg: This will pause the ingest queue until the queue is unpaused.
         method: post
       - title: Unpause
         route: /ops/zk/ingest/unpause
+        confmsg: This will resume ingest processing if the queue is currently paused.
         method: post
       - title: Ingest Batches
         route: /ops/zk/ingest/batches
@@ -474,6 +476,7 @@ items:
         route: /ops/zk/ingest/jobs-by-collection
       - title: Cleanup Queue
         route: /ops/zk/ingest/cleanup-queue
+        confmsg: This will cleanup all completed and deleted batches in the ingest queue.
         method: post
       - title: Ingest Folders
         route: /ops/zk/ingest/folders
@@ -483,17 +486,22 @@ items:
         items:
         - title: Estimating
           route: /ops/zk/ingest/force-failure/estimating
+          confmsg: This will cause all Estimating jobs to fail until the failure file is removed from the ingest queue.
           method: post
         - title: Download
           route: /ops/zk/ingest/force-failure/download
+          confmsg: This will cause all Downloading jobs to fail until the failure file is removed from the ingest queue.
           method: post
         - title: Notify
           route: /ops/zk/ingest/force-failure/notify
+          confmsg: This will cause all Notify jobs to fail until the failure file is removed from the ingest queue.
           method: post
         - title: Provisioning
+          confmsg: This will cause all Provisioning jobs to fail until the failure file is removed from the ingest queue.
           route: /ops/zk/ingest/force-failure/provisioning
           method: post
         - title: Processing
+          confmsg: This will cause all Processing jobs to fail until the failure file is removed from the ingest queue.
           route: /ops/zk/ingest/force-failure/processing
           method: post
     - path: access-queue
@@ -503,20 +511,25 @@ items:
       items:
       - title: Pause Small Queue
         route: /ops/zk/access/pause-small
+        confmsg: This pause all processing of the small access queue.  Note that the large access queue may still process small items.
         method: post
       - title: Unpause Small Queue
+        confmsg: This resume processing of the small access queue if the queue is in a paused state.
         route: /ops/zk/access/unpause-small
         method: post
       - title: Pause Large Queue
         route: /ops/zk/access/pause-large
+        confmsg: This pause all processing of the large access queue.
         method: post
       - title: Unpause Large Queue
         route: /ops/zk/access/unpause-large
+        confmsg: This resume processing of the large access queue if the queue is in a paused state.
         method: post
       - title: View Queue
         route: /ops/zk/access/jobs
       - title: Cleanup Queue
         route: /ops/zk/access/cleanup-queue
+        confmsg: This will clean up all access jobs in a completed or deleted state.
         method: post
       - title: Create Fake Access Request
         route: /ops/zk/access/fake
@@ -670,6 +683,9 @@ items:
   - title: ECS Console
     route: https://us-west-2.console.aws.amazon.com/ecs/v2/clusters/mrt-ecs-stack/services?region=us-west-2
     external: true
+  - title: Cloudshell Tips
+    route: https://github.com/CDLUC3/mrt-doc-private/blob/main/docs/system-recovery/ecs.md
+    external: true
   - title: Deployment State
     route: /infra/ecs
   - title: Services
@@ -688,6 +704,7 @@ items:
         route: /json/ui/audit-replic
       - title: Redeploy UI
         route: /infra/ecs/redeploy/ui
+        confmsg: This will re-deploy the UI service in ECS.
         method: post
     - title: Ingest
       path: ingest
@@ -700,12 +717,15 @@ items:
         route: /json/ingest/tag
       - title: Redeploy Ingest
         route: /infra/ecs/redeploy/ingest
+        confmsg: This will re-deploy the Ingest service in ECS.
         method: post
       - title: Scale Up Ingest
         route: /infra/ecs/scale-up/ingest
+        confmsg: This will scale up the number of Ingest tasks running in ECS unless the maximum configured number has been reached.
         method: post
       - title: Scale Down Ingest
         route: /infra/ecs/scale-down/ingest
+        confmsg: This will scale down the number of Ingest tasks running in ECS unless the minimum configured number has been reached.
         method: post
     - title: Store
       path: store
@@ -722,12 +742,15 @@ items:
         route: /json/store/hostname
       - title: Redeploy Store
         route: /infra/ecs/redeploy/store
+        confmsg: This will re-deploy the Store service in ECS.
         method: post
       - title: Scale Up Store
         route: /infra/ecs/scale-up/store
+        confmsg: This will scale up the number of Store tasks running in ECS unless the maximum configured number has been reached.
         method: post
       - title: Scale Down Store
         route: /infra/ecs/scale-down/store
+        confmsg: This will scale down the number of Store tasks running in ECS unless the minimum configured number has been reached.
         method: post
     - title: Inventory
       path: inventory
@@ -739,13 +762,16 @@ items:
       - title: Inventory Build Tag
         route: /json/inventory/tag
       - title: Inventory Start
+        confmsg: This will signal the Inventory service to process items in the database queue.
         method: post
         route: /json/inventory/start
       - title: Inventory Stop
         route: /json/inventory/stop
+        confmsg: This will signal the Inventory service to stop processing items in the database queue.
         method: post
       - title: Redeploy Inventory
         route: /infra/ecs/redeploy/inventory
+        confmsg: This will re-deploy the Inventory service in ECS.
         method: post
     - title: Audit
       path: audit
@@ -758,12 +784,15 @@ items:
         route: /json/audit/tag
       - title: Audit Start
         route: /json/audit/start
+        confmsg: This will signal the Audit service to process items in the database queue.
         method: post
       - title: Audit Stop
         route: /json/audit/stop
+        confmsg: This will signal the Audit service to stop processing items in the database queue.
         method: post
       - title: Redeploy Audit
         route: /infra/ecs/redeploy/audit
+        confmsg: This will re-deploy the Audit service in ECS.
         method: post
     - title: Replic
       path: replic
@@ -776,12 +805,15 @@ items:
         route: /json/replic/tag
       - title: Replic Start
         route: /json/replic/start
+        confmsg: This will signal the Replic service to process items in the database queue.
         method: post
       - title: Replic Pause
         route: /json/replic/pause
+        confmsg: This will signal the Replic service to stop processing items in the database queue.
         method: post
       - title: Redeploy Replic
         route: /infra/ecs/redeploy/replic
+        confmsg: This will re-deploy the Recplic service in ECS.
         method: post
     - title: Access
       path: access
@@ -796,6 +828,7 @@ items:
         route: /json/access/nodes
     - title: Stack init 
       route: /stack-init
+      confmsg: This will signal the Admin tool to perform any stack initialization functions required by a fresh test environment.
       method: post
 - path: resources
   title: AWS

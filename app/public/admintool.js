@@ -160,10 +160,15 @@ function showTotals() {
 
 function applyMenuPost() {
   $("a.post-link").on("click", function() {
-    const route = $(this).attr('data-route');
-    const form = $('<form></form>').attr('method', 'POST').attr('action', route);
-    form.appendTo('body');
-    form.submit();
+    var confmsg = $(this).attr('confmsg') || '';
+    confmsg += "\n\nAre you sure you want to proceed?";
+
+    if (confirm(confmsg)) {
+      const route = $(this).attr('data-route');
+      const form = $('<form></form>').attr('method', 'POST').attr('action', route);
+      form.appendTo('body');
+      form.submit();  
+    }
     return false;
   });
 }

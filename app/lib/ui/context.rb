@@ -45,8 +45,8 @@ module AdminUI
       child
     end
 
-    def add_menu_item(route, title, description: '', tbd: false, breadcrumb: false, external: false, method: 'get')
-      mi = MenuItem.new(self, route, title, description: description, tbd: tbd, breadcrumb: breadcrumb, external: external, method: method)
+    def add_menu_item(route, title, description: '', tbd: false, breadcrumb: false, external: false, method: 'get', confmsg: '')
+      mi = MenuItem.new(self, route, title, description: description, tbd: tbd, breadcrumb: breadcrumb, external: external, method: method, confmsg: confmsg)
       @children << mi
       mi
     end
@@ -77,13 +77,13 @@ module AdminUI
       @instance
     end
 
-    def create_menu_item_for_path(path, route, title, description: '', tbd: false, breadcrumb: false, menu: false, external: false, method: 'get')
+    def create_menu_item_for_path(path, route, title, description: '', tbd: false, breadcrumb: false, menu: false, external: false, method: 'get', confmsg: '')
       parpath = path
       if @paths.key?(parpath)
         if menu
           @paths[parpath].add_submenu(path, title, description: description, breadcrumb: breadcrumb, route: route)
         else
-          @paths[parpath].add_menu_item(route, title, description: description, tbd: tbd, breadcrumb: breadcrumb, external: external, method: method)
+          @paths[parpath].add_menu_item(route, title, description: description, tbd: tbd, breadcrumb: breadcrumb, external: external, method: method, confmsg: confmsg)
         end
       else
         parpath = File.dirname(path) until @paths.key?(parpath)
@@ -92,7 +92,7 @@ module AdminUI
         else
           @paths[parpath].add_submenu(path, path, breadcrumb: breadcrumb, route: route)
           create_menu_item_for_path(path, route, title, description: description, tbd: tbd, breadcrumb: breadcrumb,
-            menu: menu, external: external, method: method)
+            menu: menu, external: external, method: method, confmsg: confmsg)
         end
       end
     end
@@ -167,7 +167,7 @@ module AdminUI
 
   ## Menu item (hash of title, description and full route (path and query string)
   class MenuItem
-    def initialize(parent, route, title, description: '', tbd: false, breadcrumb: false, external: false, method: 'get')
+    def initialize(parent, route, title, description: '', tbd: false, breadcrumb: false, external: false, method: 'get', confmsg: '')
       @parent = parent
       @title = title
       @route = route
@@ -176,11 +176,12 @@ module AdminUI
       @method = method
       @breadcrumb = breadcrumb
       @description = description
+      @confmsg = confmsg
 
       @parent.top.route_names[route_normalized] = { title: title, description: description, route: @route }
     end
 
-    attr_accessor :title, :route, :description, :tbd, :breadcrumb, :external, :method
+    attr_accessor :title, :route, :description, :tbd, :breadcrumb, :external, :method, :confmsg
 
     def route_normalized
       arr = @route.split('?')
@@ -215,6 +216,7 @@ module AdminUI
             <a role="none"
               class="post-link"
               data-route="#{route}"
+              confmsg="#{confmsg}"
               title="#{title}"
             >
             <span>#{title}#{icon}</span>

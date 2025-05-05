@@ -49,7 +49,7 @@ module Sinatra
 
       app.post '/ops/zk/ingest/cleanup-queue' do
         UC3Queue::ZKClient.new.cleanup_ingest_queue
-        redirect '/ops/zk/nodes/node-names?zkpath=/batches&mode=node'
+        redirect '/ops/zk/ingest/batches'
       end
 
       app.post '/ops/zk/access/pause-small' do

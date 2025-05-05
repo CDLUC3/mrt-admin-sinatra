@@ -17,6 +17,7 @@ module Sinatra
       leaf = item.fetch(:path, '')
       title = item.fetch(:title, '')
       route = item.fetch(:route, '')
+      confmsg = item.fetch(:confmsg, title)
       np.append(leaf) unless leaf.empty?
       items = item.fetch(:items, [])
       AdminUI::TopMenu.instance.create_menu_item_for_path(
@@ -24,6 +25,7 @@ module Sinatra
         route,
         title,
         description: item.fetch(:description, ''),
+        confmsg: confmsg,
         tbd: item.fetch(:tbd, false),
         external: item.fetch(:external, false),
         method: item.fetch(:method, 'get'),
