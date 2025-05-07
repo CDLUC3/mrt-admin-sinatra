@@ -1,0 +1,22 @@
+name: Rubocop
+
+on: [push, pull_request]
+
+jobs:
+  rubocop:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Checkout the repo
+    - uses: actions/checkout@v3
+
+    - name: 'remove .bundle/config'
+      run: rm .bundle/config
+
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: '3.2'
+        bundler-cache: true
+
+    - name: 'Run Rubocop'
+      run: bundle exec rubocop
