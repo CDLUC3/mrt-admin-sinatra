@@ -22,17 +22,19 @@ module UC3Resources
           digest = nil
           image = nil
           @client.list_service_deployments(
-            cluster: 'mrt-ecs-stack', 
-            service: arn, 
-            status: ["SUCCESSFUL"]
+            cluster: 'mrt-ecs-stack',
+            service: arn,
+            status: ['SUCCESSFUL']
           ).service_deployments.each do |sd|
-            @client.describe_service_revisions(service_revision_arns: [sd.target_service_revision_arn]).service_revisions.each do |sr|
+            @client.describe_service_revisions(
+              service_revision_arns: [sd.target_service_revision_arn]
+            ).service_revisions.each do |sr|
               sr.container_images.each do |ci|
                 digest = ci.image_digest
-                image = ci.image.to_s.gsub(/^.*amazonaws.com\//, '')
+                image = ci.image.to_s.gsub(%r{^.*amazonaws.com/}, '')
               end
             end
-            break
+            break unless image.nil?
           end
 
           dep = svc.deployments ? svc.deployments[0] : {}

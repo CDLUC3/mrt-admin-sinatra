@@ -45,8 +45,10 @@ module AdminUI
       child
     end
 
-    def add_menu_item(route, title, description: '', tbd: false, breadcrumb: false, external: false, method: 'get', confmsg: '')
-      mi = MenuItem.new(self, route, title, description: description, tbd: tbd, breadcrumb: breadcrumb, external: external, method: method, confmsg: confmsg)
+    def add_menu_item(route, title, description: '', tbd: false, breadcrumb: false, external: false, method: 'get',
+      confmsg: '')
+      mi = MenuItem.new(self, route, title, description: description, tbd: tbd, breadcrumb: breadcrumb,
+        external: external, method: method, confmsg: confmsg)
       @children << mi
       mi
     end
@@ -77,13 +79,15 @@ module AdminUI
       @instance
     end
 
-    def create_menu_item_for_path(path, route, title, description: '', tbd: false, breadcrumb: false, menu: false, external: false, method: 'get', confmsg: '')
+    def create_menu_item_for_path(path, route, title, description: '', tbd: false, breadcrumb: false, menu: false,
+      external: false, method: 'get', confmsg: '')
       parpath = path
       if @paths.key?(parpath)
         if menu
           @paths[parpath].add_submenu(path, title, description: description, breadcrumb: breadcrumb, route: route)
         else
-          @paths[parpath].add_menu_item(route, title, description: description, tbd: tbd, breadcrumb: breadcrumb, external: external, method: method, confmsg: confmsg)
+          @paths[parpath].add_menu_item(route, title, description: description, tbd: tbd, breadcrumb: breadcrumb,
+            external: external, method: method, confmsg: confmsg)
         end
       else
         parpath = File.dirname(path) until @paths.key?(parpath)
@@ -167,7 +171,8 @@ module AdminUI
 
   ## Menu item (hash of title, description and full route (path and query string)
   class MenuItem
-    def initialize(parent, route, title, description: '', tbd: false, breadcrumb: false, external: false, method: 'get', confmsg: '')
+    def initialize(parent, route, title, description: '', tbd: false, breadcrumb: false, external: false,
+      method: 'get', confmsg: '')
       @parent = parent
       @title = title
       @route = route
@@ -186,7 +191,8 @@ module AdminUI
     def route_normalized
       arr = @route.split('?')
       return @route if arr.length == 1
-      arr[1] = arr[1].gsub(/\//, '_')
+
+      arr[1] = arr[1].gsub('/', '_')
       arr.join('?')
     end
 
@@ -203,7 +209,7 @@ module AdminUI
               class="#{lclass}"
               href="#{route}"
               title="#{title}"
-              target="#{target}" 
+              target="#{target}"
             >
             <span>#{title}#{icon}</span>
             </a>

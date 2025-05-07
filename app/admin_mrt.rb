@@ -120,5 +120,5 @@ end
 
 post '/hello' do
   content_type :json
-  {message: "Hello"}.to_json
+  { message: 'Hello' }.to_json
 end

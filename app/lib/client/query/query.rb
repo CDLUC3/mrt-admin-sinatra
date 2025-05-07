@@ -157,9 +157,9 @@ module UC3Query
       stmt.execute
       stmt = @client.prepare('call update_billing_range()')
       stmt.execute
-      stmt = @client.prepare('call clear_range(date(now()), date_add(date(now()), interval 1 day))') 
+      stmt = @client.prepare('call clear_range(date(now()), date_add(date(now()), interval 1 day))')
       stmt.execute
-      stmt = @client.prepare('call pull_range(date(now()), date_add(date(now()), interval 1 day))') 
+      stmt = @client.prepare('call pull_range(date(now()), date_add(date(now()), interval 1 day))')
       stmt.execute
       stmt = @client.prepare('call update_audits_processed()')
       stmt.execute

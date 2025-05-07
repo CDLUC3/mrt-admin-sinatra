@@ -38,7 +38,14 @@ module UC3Code
           tag = img.image_tag
           next if tag.nil?
 
-          rec = {tag: tag, digest: img.image_digest, image: image, pushed: nil, pulled: nil, matching_tags: [], actions: []}
+          rec = { tag: tag,
+                  digest: img.image_digest,
+                  image: image,
+                  pushed: nil,
+                  pulled: nil,
+                  matching_tags: [],
+                  actions: []
+}
           dig[img.image_digest] = dig.fetch(img.image_digest, [])
           dig[img.image_digest] << tag
           @client.describe_images(
@@ -61,33 +68,34 @@ module UC3Code
           image = rec[:image]
           dig[rec[:digest]].each do |t|
             next if t == tag
+
             rec[:matching_tags] << t
           end
-        
+
           rec[:deployed] = UC3::UC3Client.deployed_tag?(tag, rec[:matching_tags])
 
-          if rec[:matching_tags].include?(TAG_ECS_DEV)
-            rec[:actions] << {
-              value: "Untag #{TAG_ECS_DEV}",
-              href: "/source/images/untag/#{TAG_ECS_DEV}",
-              cssclass: 'button',
-              post: true,
-              disabled: false,
-              data: tagimages.join("\n")
-            }
-          else
-            rec[:actions] << {
-              value: "Tag #{TAG_ECS_DEV}",
-              href: "/source/images/retag/#{tag}/#{TAG_ECS_DEV}",
-              cssclass: 'button',
-              post: true,
-              disabled: false,
-              data: tagimages.join("\n")
-            }
-          end
-  
+          rec[:actions] << if rec[:matching_tags].include?(TAG_ECS_DEV)
+                             {
+                               value: "Untag #{TAG_ECS_DEV}",
+                               href: "/source/images/untag/#{TAG_ECS_DEV}",
+                               cssclass: 'button',
+                               post: true,
+                               disabled: false,
+                               data: tagimages.join("\n")
+                             }
+                           else
+                             {
+                               value: "Tag #{TAG_ECS_DEV}",
+                               href: "/source/images/retag/#{tag}/#{TAG_ECS_DEV}",
+                               cssclass: 'button',
+                               post: true,
+                               disabled: false,
+                               data: tagimages.join("\n")
+                             }
+                           end
+
           next if rec[:deployed]
-  
+
           rec[:actions] << [
             {
               value: 'Delete',
@@ -98,7 +106,6 @@ module UC3Code
               data: image
             }
           ]
-  
         end
       end
       res
@@ -115,8 +122,9 @@ module UC3Code
           AdminUI::Column.new(:actions, header: 'Actions')
         ]
       )
-      res.keys.each do |tag|
+      res.each_key do |tag|
         next if UC3::UC3Client.semantic_prefix_tag?(tag)
+
         res.fetch(tag, []).each do |rec|
           table.add_row(
             AdminUI::Row.make_row(
@@ -164,6 +172,7 @@ module UC3Code
       arr = []
       return arr unless enabled
       return arr unless image =~ /^mrt-(dashboard|ingest|store|inventory|audit|replic|admin-sinatra)$/
+
       begin
         resp = @client.describe_images(
           repository_name: image,
@@ -178,8 +187,10 @@ module UC3Code
         )
         resp.image_details.each do |img|
           next if img.image_tags.nil?
+
           img.image_tags.each do |t|
             next if t == tag
+
             arr << t
           end
         end

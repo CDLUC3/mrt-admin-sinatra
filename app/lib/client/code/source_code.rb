@@ -49,17 +49,22 @@ module UC3Code
         columns: [
           AdminUI::Column.new(:repo, header: 'Repo'),
           AdminUI::Column.new(:tags, header: 'Tags'),
-          AdminUI::Column.new(:artifacts, header: 'Artifacts'),
+          AdminUI::Column.new(:artifacts, header: 'Artifacts')
         ]
       )
-      @repos.keys.each do |repo|
-        artifacts = repo_config(repo).fetch(:artifacts, []).empty? ? {} : {value: repo, href: "/source/artifacts/#{repo}"}
+      @repos.each_key do |repo|
+        artifacts = if repo_config(repo).fetch(:artifacts,
+          []).empty?
+                      {}
+                    else
+                      { value: repo, href: "/source/artifacts/#{repo}" }
+                    end
         table.add_row(
           AdminUI::Row.make_row(
             table.columns,
             {
               repo: repo,
-              tags: {value: repo, href: "/source/#{repo}"},
+              tags: { value: repo, href: "/source/#{repo}" },
               artifacts: artifacts
             }
           )

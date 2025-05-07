@@ -1,3 +1,4 @@
 ---
 BUNDLE_PATH: "vendor/bundle"
 BUNDLE_FORCE_RUBY_PLATFORM: "true"
+BUNDLE_BUILD__MYSQL2: " --with-mysql-lib=/opt/homebrew/Cellar/mysql/9.3.0/lib --with-mysql-dir=/opt/homebrew/Cellar/mysql/9.3.0 --with-mysql-config=/opt/homebrew/Cellar/mysql/9.3.0/bin/mysql_config --with-mysql-include=/opt/homebrew/Cellar/mysql/9.3.0/include"

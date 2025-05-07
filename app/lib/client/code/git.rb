@@ -119,34 +119,36 @@ module UC3Code
       end
 
       unless tagimages.empty?
-        actions << {
-          value: 'Delete Images',
-          href: "/source/images/delete/#{tag}",
-          cssclass: 'button',
-          post: true,
-          disabled: false,
-          data: tagimages.join("\n")
-        } unless deployed
-
-        if matching_tags.include?(TAG_ECS_DEV)
+        unless deployed
           actions << {
-            value: "Untag #{TAG_ECS_DEV}",
-            href: "/source/images/untag/#{TAG_ECS_DEV}",
-            cssclass: 'button',
-            post: true,
-            disabled: false,
-            data: tagimages.join("\n")
-          }
-        else
-          actions << {
-            value: "Tag #{TAG_ECS_DEV}",
-            href: "/source/images/retag/#{tag}/#{TAG_ECS_DEV}",
+            value: 'Delete Images',
+            href: "/source/images/delete/#{tag}",
             cssclass: 'button',
             post: true,
             disabled: false,
             data: tagimages.join("\n")
           }
         end
+
+        actions << if matching_tags.include?(TAG_ECS_DEV)
+                     {
+                       value: "Untag #{TAG_ECS_DEV}",
+                       href: "/source/images/untag/#{TAG_ECS_DEV}",
+                       cssclass: 'button',
+                       post: true,
+                       disabled: false,
+                       data: tagimages.join("\n")
+                     }
+                   else
+                     {
+                       value: "Tag #{TAG_ECS_DEV}",
+                       href: "/source/images/retag/#{tag}/#{TAG_ECS_DEV}",
+                       cssclass: 'button',
+                       post: true,
+                       disabled: false,
+                       data: tagimages.join("\n")
+                     }
+                   end
 
         if matching_tags.include?(TAG_ECS_STG)
           actions << {
@@ -231,7 +233,7 @@ module UC3Code
 
         commit = commits.fetch(tag.commit.sha, {})
         next if commit.empty?
- 
+
         tagrelease = releases.fetch(tag.name, {})
         tagartifacts = artifacts.fetch(tag.name, [])
         tagimagerecs = ecrimages.fetch(tag.name, [])
@@ -245,6 +247,8 @@ module UC3Code
           matching_tags.flatten!
         end
 
+        next unless UC3::UC3Client.semantic_prefix_tag?(tag.name) || !tagartifacts.empty? || !tagimages.empty?
+
         @tags[tag.name] = {
           cssclass: css_classes(tag.name, commit, tagrelease, tagartifacts, tagimages).join(' '),
           tag: tag.name,
@@ -255,7 +259,7 @@ module UC3Code
           images: tagimages,
           matching_tags: matching_tags,
           actions: actions(repohash, tag.name, commit, tagrelease, tagartifacts, tagimages, deployed, matching_tags)
-        } if UC3::UC3Client.semantic_prefix_tag?(tag.name) || !tagartifacts.empty? || !tagimages.empty?
+        }
       end
 
       tags.each_value do |data|

@@ -129,7 +129,8 @@ module AdminUI
     def render_description
       return '' if @description.empty?
 
-      %(<div class='description'>#{Redcarpet::Markdown.new(Redcarpet::Render::HTML.new, fenced_code_blocks: true).render(@description)}</div>)
+      %(<div class='description'>#{Redcarpet::Markdown.new(Redcarpet::Render::HTML.new,
+        fenced_code_blocks: true).render(@description)}</div>)
     end
 
     attr_accessor :columns, :data, :filters, :filterable, :totals
@@ -247,9 +248,23 @@ module AdminUI
     def render_link(val, href, cssclass: '', title: '', disabled: false, post: false, data: '')
       dis = disabled ? 'disabled' : ''
       if post
-        "<a href='javascript:void(0)' url='#{href}' data='#{data}' class='post #{cssclass}' title='#{title}' #{dis}>#{val}</a>"
+        %{
+        <a href='javascript:void(0)'
+           url='#{href}'
+           data='#{data}'
+           class='post #{cssclass}'
+          title='#{title}'
+          #{dis}
+        >#{val}</a>
+        }
       else
-        "<a href='#{href}' class='#{cssclass}' title='#{title}' #{dis}>#{val}</a>"
+        %(
+        <a href='#{href}'
+           class='#{cssclass}'
+          title='#{title}'
+          #{dis}
+        >#{val}</a>
+        )
       end
     end
 

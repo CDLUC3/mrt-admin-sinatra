@@ -93,10 +93,10 @@ module Sinatra
         begin
           UC3Queue::ZKClient.new.delete_access(qn, id)
           content_type :json
-          {message: "#{path} marked for deletion"}.to_json
+          { message: "#{path} marked for deletion" }.to_json
         rescue StandardError => e
           content_type :json
-          {path: path, message: "ERROR: #{e.class}: #{e.message}"}.to_json
+          { path: path, message: "ERROR: #{e.class}: #{e.message}" }.to_json
         end
       end
 
@@ -105,10 +105,10 @@ module Sinatra
         begin
           UC3Queue::ZKClient.new.delete_ingest_job(id)
           content_type :json
-          {message: "#{id} marked for deletion"}.to_json
+          { message: "#{id} marked for deletion" }.to_json
         rescue StandardError => e
           content_type :json
-          {job: id, message: "ERROR: #{e.class}: #{e.message}"}.to_json
+          { job: id, message: "ERROR: #{e.class}: #{e.message}" }.to_json
         end
       end
 
@@ -117,10 +117,10 @@ module Sinatra
         begin
           UC3Queue::ZKClient.new.requeue_ingest_job(id)
           content_type :json
-          {message: "#{id} requeued"}.to_json
+          { message: "#{id} requeued" }.to_json
         rescue StandardError => e
           content_type :json
-          {job: id, message: "ERROR: #{e.class}: #{e.message}"}.to_json
+          { job: id, message: "ERROR: #{e.class}: #{e.message}" }.to_json
         end
       end
 
@@ -129,10 +129,10 @@ module Sinatra
         begin
           UC3Queue::ZKClient.new.hold_ingest_job(id)
           content_type :json
-          {message: "#{id} held"}.to_json
+          { message: "#{id} held" }.to_json
         rescue StandardError => e
           content_type :json
-          {job: id, message: "ERROR: #{e.class}: #{e.message}"}.to_json
+          { job: id, message: "ERROR: #{e.class}: #{e.message}" }.to_json
         end
       end
 
@@ -141,10 +141,10 @@ module Sinatra
         begin
           UC3Queue::ZKClient.new.release_ingest_job(id)
           content_type :json
-          {message: "#{id} released"}.to_json
+          { message: "#{id} released" }.to_json
         rescue StandardError => e
           content_type :json
-          {job: id, message: "ERROR: #{e.class}: #{e.message}"}.to_json
+          { job: id, message: "ERROR: #{e.class}: #{e.message}" }.to_json
         end
       end
 
@@ -153,10 +153,10 @@ module Sinatra
         begin
           UC3Queue::ZKClient.new.delete_ingest_batch(id)
           content_type :json
-          {message: "#{id} marked for deletion"}.to_json
+          { message: "#{id} marked for deletion" }.to_json
         rescue StandardError => e
           content_type :json
-          {batch: id, message: "ERROR: #{e.class}: #{e.message}"}.to_json
+          { batch: id, message: "ERROR: #{e.class}: #{e.message}" }.to_json
         end
       end
 
@@ -165,10 +165,10 @@ module Sinatra
         begin
           UC3Queue::ZKClient.new.update_reporting_ingest_batch(id)
           content_type :json
-          {message: "#{id} marked for update reporting"}.to_json
+          { message: "#{id} marked for update reporting" }.to_json
         rescue StandardError => e
           content_type :json
-          {batch: id, message: "ERROR: #{e.class}: #{e.message}"}.to_json
+          { batch: id, message: "ERROR: #{e.class}: #{e.message}" }.to_json
         end
       end
 
@@ -179,15 +179,15 @@ module Sinatra
         begin
           UC3Queue::ZKClient.new.requeue_access(qn, id)
           content_type :json
-          {path: path, message: "Requeued #{path}"}.to_json
+          { path: path, message: "Requeued #{path}" }.to_json
         rescue StandardError => e
           content_type :json
-          {path: path, message: "ERROR: #{e.class}: #{e.message}"}.to_json
+          { path: path, message: "ERROR: #{e.class}: #{e.message}" }.to_json
         end
       end
 
       app.post '/ops/zk/access/fake' do
-        j = UC3Queue::ZKClient.new.fake_access
+        UC3Queue::ZKClient.new.fake_access
         redirect '/ops/zk/access/jobs'
       end
 
@@ -201,20 +201,18 @@ module Sinatra
       end
 
       app.post '/ops/zk/ingest/folder/delete' do
-        begin
-          f = request.body.read
-          unless f.empty?
-            File.delete("#{UC3::FileSystemClient::DIR}/#{f}")
-            content_type :json
-            {message: "#{f} deleted"}.to_json
-          else
-            content_type :json
-            {message: 'No file specified'}.to_json
-          end
-        rescue StandardError => e
+        f = request.body.read
+        if f.empty?
           content_type :json
-          {message: "ERROR: #{e.class}: #{e.message}"}.to_json
+          { message: 'No file specified' }.to_json
+        else
+          File.delete("#{UC3::FileSystemClient::DIR}/#{f}")
+          content_type :json
+          { message: "#{f} deleted" }.to_json
         end
+      rescue StandardError => e
+        content_type :json
+        { message: "ERROR: #{e.class}: #{e.message}" }.to_json
       end
 
       app.post '/ops/zk/ingest/force-failure/estimating' do

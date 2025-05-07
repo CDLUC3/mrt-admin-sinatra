@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'net/ldap'
 
 module UC3Ldap
@@ -47,48 +49,48 @@ module UC3Ldap
 
     def user_displayname(uid)
       return uid unless @users.key?(uid)
-  
+
       @users[uid].displayname
     end
-  
+
     def user_detail_records(uid)
       return [] unless @users.key?(uid)
-  
+
       @users.fetch(uid).detail_records
     end
-  
+
     def coll_displayname(coll)
       return col unless @collections.key?(coll)
-  
+
       @collections[coll].description
     end
-  
+
     def collection_detail_records(coll)
       return [] unless @collections.key?(coll)
-  
+
       @collections.fetch(coll).detail_records
     end
-  
+
     def collection_detail_records_for_ark(ark)
       return [] unless @collection_arks.key?(ark)
-  
+
       @collection_arks.fetch(ark).detail_records
     end
-  
+
     def user_base
       @ldapconf.fetch('user_base', '')
     end
-  
+
     def group_base
       @ldapconf.fetch('group_base', '')
     end
-  
+
     def load
       load_users
       load_collections
       load_roles
     end
-  
+
     def load_users
       attr = %i[
         dn objectclass mail sn tzregion cn arkid givenname userpassword displayname uid
@@ -102,7 +104,7 @@ module UC3Ldap
         @users[user.uid] = user
       end
     end
-  
+
     def load_collections
       @ldap.search(base: group_base, filter: Net::LDAP::Filter.eq('arkId', '*')) do |entry|
         coll = LdapCollection.new(entry)
@@ -110,7 +112,7 @@ module UC3Ldap
         @collection_arks[coll.ark] = coll
       end
     end
-  
+
     def load_roles
       @ldap.search(base: group_base, filter: Net::LDAP::Filter.eq('uniquemember', '*')) do |entry|
         role = LdapRole.new(entry)
@@ -124,7 +126,7 @@ module UC3Ldap
           LambdaBase.log("Not found: [#{role.coll}]")
         end
         role.set_collection(coll)
-  
+
         role.users.each do |u|
           user = nil
           if @users.key?(u)
@@ -140,7 +142,7 @@ module UC3Ldap
         @roles[role.dn] = role
       end
     end
-  
+
     # https://github.com/CDLUC3/mrt-dashboard/blob/master/app/lib/group_ldap.rb
     # https://github.com/CDLUC3/mrt-dashboard/blob/master/app/lib/institution_ldap.rb
     # https://github.com/CDLUC3/mrt-dashboard/blob/master/app/lib/user_ldap.rb
@@ -148,7 +150,7 @@ module UC3Ldap
     # users: dn,objectclass,mail,sn,tzregion,cn,arkid,givenname,telephonenumber,userpassword,displayname,uid
     def search(treebase, ldapattrs)
       rows = []
-  
+
       @ldap.search(base: treebase) do |entry|
         row = []
         ldapattrs.each do |attr|
@@ -159,29 +161,29 @@ module UC3Ldap
       end
       rows
     end
-  
-    def normalize_dn(s)
-      s.gsub(',', '/').gsub('cn=', '').gsub('ou=', '').gsub('dc=', '').gsub('uid=', '')
+
+    def normalize_dn(dispname)
+      dispname.gsub(',', '/').gsub('cn=', '').gsub('ou=', '').gsub('dc=', '').gsub('uid=', '')
     end
-  
-    def format(attr, v)
+
+    def format(attr, val)
       if attr == 'uniquemember'
         str = ''
-        v.entries.each do |entry|
+        val.entries.each do |entry|
           str = "#{str}," unless str.empty?
           str = "#{str}#{normalize_dn(entry)}"
         end
         return str
       end
-      v = normalize_dn(v.to_s) if %w[uniquemember dn].include?(attr)
-      v
+      val = normalize_dn(v.to_s) if %w[uniquemember dn].include?(attr)
+      val
     end
 
     def users_table_data
       arr = []
       @users.each_value do |user|
         arr.append({
-          uid: {value: user.uid, href: "/ldap/users/#{user.uid}"},
+          uid: { value: user.uid, href: "/ldap/users/#{user.uid}" },
           unlinked: user.unlinked,
           email: user.email,
           displayname: user.displayname,
@@ -195,7 +197,7 @@ module UC3Ldap
       end
       arr
     end
-    
+
     def users_table
       table = AdminUI::FilterTable.new(
         columns: [
@@ -210,7 +212,7 @@ module UC3Ldap
           AdminUI::Column.new(:download_count, header: 'Download Count'),
           AdminUI::Column.new(:admin_count, header: 'Admin Count')
         ]
-      ) 
+      )
       users_table_data.each do |user|
         table.add_row(AdminUI::Row.make_row(table.columns, user))
       end
@@ -221,7 +223,7 @@ module UC3Ldap
       arr = []
       @collections.each_value do |coll|
         arr.append({
-          mnemonic: {value: coll.mnemonic, href: "/ldap/collections/#{coll.mnemonic}"},
+          mnemonic: { value: coll.mnemonic, href: "/ldap/collections/#{coll.mnemonic}" },
           unlinked: coll.unlinked,
           description: coll.description,
           profile: coll.profile,
@@ -248,7 +250,7 @@ module UC3Ldap
           AdminUI::Column.new(:download_count, header: 'Download Count'),
           AdminUI::Column.new(:admin_count, header: 'Admin Count')
         ]
-      ) 
+      )
       collections_table_data.each do |coll|
         table.add_row(AdminUI::Row.make_row(table.columns, coll))
       end
@@ -260,7 +262,7 @@ module UC3Ldap
         columns: [
           AdminUI::Column.new(:perm, header: 'Permission'),
           AdminUI::Column.new(:collection_name, header: 'collection'),
-          AdminUI::Column.new(:user_names, header: 'Users'),
+          AdminUI::Column.new(:user_names, header: 'Users')
         ]
       )
       roles.each_value do |role|
@@ -280,16 +282,16 @@ module UC3Ldap
           AdminUI::Column.new(:read, header: 'Read'),
           AdminUI::Column.new(:write, header: 'Write'),
           AdminUI::Column.new(:download, header: 'Download'),
-          AdminUI::Column.new(:admin, header: 'Admin'),
+          AdminUI::Column.new(:admin, header: 'Admin')
         ]
       )
       roles.each_value do |role|
         table.add_row(AdminUI::Row.make_row(table.columns, {
-          collection: {value: role.collection, href: "/ldap/collections/#{role.collection}"},
+          collection: { value: role.collection, href: "/ldap/collections/#{role.collection}" },
           read: role.read,
           write: role.write,
           download: role.download,
-          admin: role.admin,
+          admin: role.admin
         }))
       end
       table
@@ -302,27 +304,28 @@ module UC3Ldap
           AdminUI::Column.new(:read, header: 'Read'),
           AdminUI::Column.new(:write, header: 'Write'),
           AdminUI::Column.new(:download, header: 'Download'),
-          AdminUI::Column.new(:admin, header: 'Admin'),
+          AdminUI::Column.new(:admin, header: 'Admin')
         ]
       )
       roles.each_value do |role|
         table.add_row(AdminUI::Row.make_row(table.columns, {
-          user: {value: role.user, href: "/ldap/users/#{role.user}"},
+          user: { value: role.user, href: "/ldap/users/#{role.user}" },
           read: role.read,
           write: role.write,
           download: role.download,
-          admin: role.admin,
+          admin: role.admin
         }))
       end
       table
     end
   end
 
+  # base class ldap record
   class LdapRecord
     def initialize
       # reserve
     end
-  
+
     def find_part(entry, part, defval)
       part = "#{part}="
       entry.to_s.split(',').each do |s|
@@ -332,7 +335,7 @@ module UC3Ldap
       defval
     end
   end
-  
+
   # ldap record linked to roles
   class LdapLinkedRecord < LdapRecord
     def initialize(islinked)
@@ -341,20 +344,20 @@ module UC3Ldap
       @perms = {}
       super()
     end
-  
+
     def unlinked
       @islinked ? '' : 'unlinked'
     end
-  
+
     def add_role(role, inc)
       @roles.append(role)
       @perms[role.perm] = perm_count(role.perm) + inc
     end
-  
+
     def perm_count(perm)
       @perms.fetch(perm, 0)
     end
-  
+
     def find_part(entry, part, defval)
       part = "#{part}="
       entry.to_s.split(',').each do |s|
@@ -379,9 +382,8 @@ module UC3Ldap
     def admin_count
       perm_count('admin')
     end
-
   end
-  
+
   # ldap user record
   class LdapUser < LdapLinkedRecord
     def initialize(entry, uid = '')
@@ -405,27 +407,27 @@ module UC3Ldap
         super(true)
       end
     end
-  
+
     def displayname
       "#{@displayname.nil? ? '' : @displayname.gsub(',', '')} (#{uid})"
     end
-  
+
     def ark
       @arkid.nil? ? '' : @arkid
     end
-  
+
     def uid
       @uid.nil? ? '' : @uid
     end
-  
+
     def detail_records
       LdapUserDetailed.load(self, @roles)
     end
 
-    attr_reader :uid, :email, :arkid, :lastaccess, :displayname
-
+    attr_reader :email, :arkid, :lastaccess
   end
 
+  # ldap representation of a merritt collection
   class LdapCollection < LdapLinkedRecord
     def initialize(entry, mnemonic = '')
       if entry.nil?
@@ -442,25 +444,24 @@ module UC3Ldap
         super(true)
       end
     end
-  
+
     def ark
       @ark_id.nil? ? '' : @ark_id
     end
-  
+
     def mnemonic
       @mnemonic.nil? ? '' : @mnemonic
     end
-  
+
     def description
       @description.nil? ? '' : @description
     end
-  
+
     def detail_records
       LdapCollectionDetailed.load(self, @roles)
     end
 
-    attr_reader :mnemonic, :ark_id, :description, :profile
-
+    attr_reader :ark_id, :profile
   end
 
   # ldap role
@@ -478,21 +479,21 @@ module UC3Ldap
       @collection_rec = nil
       super()
     end
-  
+
     def set_collection(coll)
       @collection_rec = coll
     end
-  
+
     def collection_name
       @collection_rec.nil? ? '' : "#{@collection_rec.description} (#{@collection_rec.mnemonic})"
     end
-  
+
     attr_reader :users, :user_rec, :dn, :coll, :perm
-  
+
     def add_user(user)
       @user_rec.append(user)
     end
-  
+
     def user_names
       @names = []
       @user_rec.each do |user|
@@ -500,11 +501,10 @@ module UC3Ldap
       end
       @names.sort.join(',')
     end
-  
+
     def role_description
       "#{@perm} - #{collection_name}"
     end
-  
   end
 
   # detailed ldap information for a user including permissions
@@ -527,7 +527,7 @@ module UC3Ldap
       end
       recs
     end
-  
+
     def initialize(collection, read, write, download, admin)
       @collection = collection
       @read = read
@@ -538,7 +538,6 @@ module UC3Ldap
     end
 
     attr_reader :collection, :read, :write, :download, :admin
-
   end
 
   # detailed ldap information for a collection including permissions
@@ -563,7 +562,7 @@ module UC3Ldap
       end
       recs
     end
-  
+
     def initialize(user, read, write, download, admin)
       @user = user
       @read = read

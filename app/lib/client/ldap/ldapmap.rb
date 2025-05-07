@@ -1,7 +1,10 @@
+# frozen_string_literal: true
+
 require_relative 'ldap'
 require_relative '../query/query'
 
 module UC3Ldap
+  # map of ldap collection to collection
   class LDAPCollectionMapList
     def initialize
       @colltable = UC3Query::QueryClient.client.query('/queries/misc/collections', {})
@@ -16,7 +19,7 @@ module UC3Ldap
           AdminUI::Column.new(:ark, header: 'Ark'),
           AdminUI::Column.new(:mnemonic, header: 'Mnemonic'),
           AdminUI::Column.new(:coll, header: 'LDAP Coll'),
-          AdminUI::Column.new(:status, header: 'Status'),
+          AdminUI::Column.new(:status, header: 'Status')
         ]
       )
       map = {}
@@ -24,11 +27,12 @@ module UC3Ldap
         m = row[:mnemonic]
         ark = row[:ark]
         next if ark.nil?
+
         map[ark] = {
           ark: ark,
           mnemonic: m,
           coll: '',
-          status: 'FAIL',
+          status: 'FAIL'
         }
       end
 
@@ -37,6 +41,7 @@ module UC3Ldap
         m = coll[:mnemonic]
         next if ark.nil?
         next if m.nil?
+
         if map.key?(ark)
           map[ark][:status] = 'PASS'
           map[ark][:coll] = m
@@ -62,5 +67,4 @@ module UC3Ldap
       table
     end
   end
-
 end

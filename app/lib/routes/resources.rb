@@ -82,8 +82,6 @@ module Sinatra
         UC3Resources::ServicesClient.new.scale_down_service(service)
         redirect '/infra/ecs'
       end
-
-
     end
   end
   register UC3ResourcesRoutes

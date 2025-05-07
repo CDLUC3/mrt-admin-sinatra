@@ -112,7 +112,6 @@ module Sinatra
       app.post '/stack-init' do
         stack_init
       end
-
     end
 
     def stack_init
@@ -148,7 +147,6 @@ module Sinatra
       content_type :json
       { uri: uri, error: e.to_s }.to_json
     end
-
   end
   register UC3ServicesRoutes
 end

@@ -34,7 +34,7 @@ module UC3Queue
           AdminUI::Column.new(:type, header: 'Type'),
           AdminUI::Column.new(:jobdata, header: 'Job Data'),
           AdminUI::Column.new(:status, header: 'Status'),
-          AdminUI::Column.new(:actions, header: 'Actions'),
+          AdminUI::Column.new(:actions, header: 'Actions')
         ]
       )
       batches.each do |batch|
@@ -42,7 +42,7 @@ module UC3Queue
 
         id = batch[:id]
         batch[:id] = {
-          href: "/ops/zk/nodes/node-names?zkpath=/batches/#{batch[:id]}&mode=data", 
+          href: "/ops/zk/nodes/node-names?zkpath=/batches/#{batch[:id]}&mode=data",
           value: batch[:id]
         }
         batch[:submissionDate] = date_format(batch[:submissionDate])
@@ -75,7 +75,6 @@ module UC3Queue
       end
       table
     end
-
 
     def jobs_by_collection(params)
       return jobs(params) unless params.empty?
@@ -133,7 +132,7 @@ module UC3Queue
           AdminUI::Column.new(:jobdata, header: 'Job Data'),
           AdminUI::Column.new(:priority, header: 'Priority', cssclass: 'int'),
           AdminUI::Column.new(:space_needed, header: 'Space Needed GB', cssclass: 'float'),
-          AdminUI::Column.new(:actions, header: 'Actions'),
+          AdminUI::Column.new(:actions, header: 'Actions')
         ]
       )
       jobs.each do |job|
@@ -144,11 +143,11 @@ module UC3Queue
         status = job[:status].to_s
 
         job[:id] = {
-          href: "/ops/zk/nodes/node-names?zkpath=/jobs/#{job[:id]}&mode=data", 
+          href: "/ops/zk/nodes/node-names?zkpath=/jobs/#{job[:id]}&mode=data",
           value: job[:id]
         }
         job[:bid] = {
-          href: "/ops/zk/nodes/node-names?zkpath=/batches/#{job[:bid]}&mode=data", 
+          href: "/ops/zk/nodes/node-names?zkpath=/batches/#{job[:bid]}&mode=data",
           value: job[:bid]
         }
         job[:submissionDate] = date_format(job[:submissionDate])
@@ -208,16 +207,16 @@ module UC3Queue
           AdminUI::Column.new(:queue_status, header: 'Queue Status'),
           AdminUI::Column.new(:date, header: 'DateTime', cssclass: 'date'),
           AdminUI::Column.new(:actions, header: 'Actions'),
-          AdminUI::Column.new(:status, header: 'Status'),
+          AdminUI::Column.new(:status, header: 'Status')
         ]
       )
       jobs.each do |job|
         status = job[:status].to_s
-        qn = job[:queueNode].gsub(/\/access\//, '')
+        qn = job[:queueNode].gsub('/access/', '')
         id = job[:id]
         job[:queue_status] = status
         job[:id] = {
-          href: "/ops/zk/nodes/node-names?zkpath=#{job[:queueNode]}/#{job[:id]}&mode=data", 
+          href: "/ops/zk/nodes/node-names?zkpath=#{job[:queueNode]}/#{job[:id]}&mode=data",
           value: "#{qn} #{job[:id]}"
         }
         job[:date] = date_format(job[:date])
@@ -259,6 +258,7 @@ module UC3Queue
       )
       nodedump.each do |node|
         next unless node.is_a?(String)
+
         table.add_row(
           AdminUI::Row.make_row(
             table.columns,
@@ -270,7 +270,7 @@ module UC3Queue
         )
       end
       table
-    end  
+    end
 
     def dump_node_data_table(nodedump)
       table = AdminUI::FilterTable.new(
@@ -282,7 +282,8 @@ module UC3Queue
       )
       nodedump.each do |row|
         row.each do |node, value|
-          next if node == "Status"
+          next if node == 'Status'
+
           table.add_row(
             AdminUI::Row.make_row(
               table.columns,
@@ -296,7 +297,7 @@ module UC3Queue
         end
       end
       table
-    end  
+    end
 
     def dump_node_test_table(nodedump)
       table = AdminUI::FilterTable.new(
@@ -311,6 +312,7 @@ module UC3Queue
       nodedump.each do |node|
         value = node.values.first
         next unless value.is_a?(Array)
+
         table.add_row(
           AdminUI::Row.make_row(
             table.columns,
@@ -328,16 +330,18 @@ module UC3Queue
     end
 
     def make_ref(node)
-      return "" unless node.is_a?(String)
+      return '' unless node.is_a?(String)
 
       m = /(bid[0-9]+)$/.match(node)
-      return {href: "/ops/zk/nodes/node-names?zkpath=/batches/#{m[1]}&mode=data", value: "/batches/#{m[1]}"} if m
-      m = /(jid[0-9]+)$/.match(node)
-      return {href: "/ops/zk/nodes/node-names?zkpath=/jobs/#{m[1]}&mode=data", value: "/jobs/#{m[1]}"} if m
-      m = /(qid[0-9]+)$/.match(node)
-      return {href: "/ops/zk/nodes/node-names?zkpath=#{node}&mode=data", value: "#{m[1]}"} if m
+      return { href: "/ops/zk/nodes/node-names?zkpath=/batches/#{m[1]}&mode=data", value: "/batches/#{m[1]}" } if m
 
-      ""
+      m = /(jid[0-9]+)$/.match(node)
+      return { href: "/ops/zk/nodes/node-names?zkpath=/jobs/#{m[1]}&mode=data", value: "/jobs/#{m[1]}" } if m
+
+      m = /(qid[0-9]+)$/.match(node)
+      return { href: "/ops/zk/nodes/node-names?zkpath=#{node}&mode=data", value: m[1].to_s } if m
+
+      ''
     end
 
     def dump_nodes(params)
@@ -346,20 +350,19 @@ module UC3Queue
 
       case params.fetch('mode', 'node')
       when 'data'
-        table = dump_node_data_table(nodedump)
+        dump_node_data_table(nodedump)
       when 'test'
-        table = dump_node_test_table(nodedump)
-      else 
-        table = dump_node_table(nodedump)
+        dump_node_test_table(nodedump)
+      else
+        dump_node_table(nodedump)
       end
-      table
     end
     attr_reader :zk
 
     def pause_ingest
       MerrittZK::Locks.lock_ingest_queue(@zk)
     end
-  
+
     def unpause_ingest
       MerrittZK::Locks.unlock_ingest_queue(@zk)
     end
@@ -371,7 +374,7 @@ module UC3Queue
     def pause_access_small
       MerrittZK::Locks.lock_small_access_queue(@zk)
     end
-  
+
     def unpause_access_small
       MerrittZK::Locks.unlock_small_access_queue(@zk)
     end
@@ -379,13 +382,13 @@ module UC3Queue
     def pause_access_large
       MerrittZK::Locks.lock_large_access_queue(@zk)
     end
-  
+
     def unpause_access_large
       MerrittZK::Locks.unlock_large_access_queue(@zk)
     end
 
     def cleanup_access_queue
-      puts "Cleaning up access jobs"
+      puts 'Cleaning up access jobs'
       MerrittZK::Access.list_jobs_as_json(@zk).each do |job|
         qn = job.fetch(:queueNode, MerrittZK::Access::SMALL).gsub(%r{^/access/}, '')
         j = MerrittZK::Access.new(qn, job.fetch(:id, ''))
@@ -396,20 +399,20 @@ module UC3Queue
       end
     end
 
-    def delete_access(qn, id)
-      j = MerrittZK::Access.new(qn, id)
+    def delete_access(queuename, queueid)
+      j = MerrittZK::Access.new(queuename, queueid)
       j.load(@zk)
       j.set_status(@zk, MerrittZK::AccessState::Deleted)
     end
 
-    def delete_ingest_job(id)
-      j = MerrittZK::Job.new(id)
+    def delete_ingest_job(queueid)
+      j = MerrittZK::Job.new(queueid)
       j.load(@zk)
       j.set_status(@zk, MerrittZK::JobState::Deleted)
     end
 
-    def requeue_ingest_job(id)
-      job = MerrittZK::Job.new(id)
+    def requeue_ingest_job(queueid)
+      job = MerrittZK::Job.new(queueid)
       job.load(@zk)
 
       js = job.json_property(@zk, MerrittZK::ZkKeys::STATUS)
@@ -435,48 +438,47 @@ module UC3Queue
       job.unlock(@zk)
     end
 
-    def hold_ingest_job(id)
-      j = MerrittZK::Job.new(id)
+    def hold_ingest_job(queueid)
+      j = MerrittZK::Job.new(queueid)
       j.load(@zk)
       j.set_status(@zk, MerrittZK::JobState::Held)
     end
 
-    def release_ingest_job(id)
-      j = MerrittZK::Job.new(id)
+    def release_ingest_job(queueid)
+      j = MerrittZK::Job.new(queueid)
       j.load(@zk)
       j.set_status(@zk, MerrittZK::JobState::Pending)
     end
 
-    def delete_ingest_batch(id)
-      b = MerrittZK::Batch.new(id)
+    def delete_ingest_batch(queueid)
+      b = MerrittZK::Batch.new(queueid)
       b.load(@zk)
       b.set_status(@zk, MerrittZK::BatchState::Deleted)
     end
 
-    def update_reporting_ingest_batch(id)
-      b = MerrittZK::Batch.new(id)
+    def update_reporting_ingest_batch(queueid)
+      b = MerrittZK::Batch.new(queueid)
       b.load(@zk)
       b.set_status(@zk, MerrittZK::BatchState::UpdateReporting)
     end
 
-    def requeue_access(qn, id)
-      j = MerrittZK::Access.new(qn, id)
+    def requeue_access(queuename, queueid)
+      j = MerrittZK::Access.new(queuename, queueid)
       j.load(@zk)
       j.set_status(@zk, MerrittZK::AccessState::Pending)
     end
 
     def fake_access
       MerrittZK::Access.create_assembly(
-        @zk, 
-        MerrittZK::Access::SMALL, 
+        @zk,
+        MerrittZK::Access::SMALL,
         {
-          "cloud-content-byte": 17079,
-          "delivery-node": 7777,
-          "status": 201,
-          "token": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"
+          'cloud-content-byte': 17_079,
+          'delivery-node': 7777,
+          status: 201,
+          token: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'
         }
       )
     end
   end
-
 end

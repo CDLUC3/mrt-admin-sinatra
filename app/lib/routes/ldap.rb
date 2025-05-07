@@ -18,7 +18,7 @@ module Sinatra
           :layout => :page_layout,
           :locals => {
             context: AdminUI::Context.new(request.path),
-            table: ldap.users_table,
+            table: ldap.users_table
           }
       end
 
@@ -31,7 +31,7 @@ module Sinatra
           :layout => :page_layout,
           :locals => {
             context: AdminUI::Context.new(request.path),
-            table: ldap.user_details_table(roles),
+            table: ldap.user_details_table(roles)
           }
       end
 
@@ -44,7 +44,7 @@ module Sinatra
           :layout => :page_layout,
           :locals => {
             context: AdminUI::Context.new(request.path),
-            table: ldap.collection_details_table(roles),
+            table: ldap.collection_details_table(roles)
           }
       end
 
@@ -55,7 +55,7 @@ module Sinatra
           :layout => :page_layout,
           :locals => {
             context: AdminUI::Context.new(request.path),
-            table: ldap.collections_table,
+            table: ldap.collections_table
           }
       end
 
@@ -66,7 +66,7 @@ module Sinatra
           :layout => :page_layout,
           :locals => {
             context: AdminUI::Context.new(request.path),
-            table: ldap.roles_table,
+            table: ldap.roles_table
           }
       end
 
@@ -75,7 +75,7 @@ module Sinatra
           :layout => :page_layout,
           :locals => {
             context: AdminUI::Context.new(request.path),
-            table: UC3Ldap::LDAPCollectionMapList.new.ldap_collection_map,
+            table: UC3Ldap::LDAPCollectionMapList.new.ldap_collection_map
           }
       end
     end

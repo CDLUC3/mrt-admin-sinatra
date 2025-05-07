@@ -68,7 +68,7 @@ module UC3Code
           return res
         end
         pv.versions.each do |v|
-          rec = { 
+          rec = {
             status: v.status,
             version: v.version,
             semantic: UC3::UC3Client.semantic_prefix_tag?(v.version),
@@ -114,14 +114,16 @@ module UC3Code
                   cssclass: 'button'
                 }
               ]
-              rec[:command] << {
-                value: 'Delete',
-                href: "/source/artifacts/delete/#{v.version}",
-                cssclass: 'button',
-                post: true,
-                disabled: false,
-                data: artifact
-              } unless UC3::UC3Client.keep_artifact_version?(v.version)
+              unless UC3::UC3Client.keep_artifact_version?(v.version)
+                rec[:command] << {
+                  value: 'Delete',
+                  href: "/source/artifacts/delete/#{v.version}",
+                  cssclass: 'button',
+                  post: true,
+                  disabled: false,
+                  data: artifact
+                }
+              end
             else
               rec[:assets] << asset.name
             end
@@ -143,7 +145,8 @@ module UC3Code
         asset: asset
       )
       return '' if res.nil?
-      return res.asset
+
+      res.asset
     end
 
     def artifact_table(arr)
@@ -174,6 +177,7 @@ module UC3Code
       Zip::File.open_buffer(artifact(artifact, version, asset)) do |z|
         z.each do |entry|
           next if entry.name.end_with?('/')
+
           res[entry.name] = {
             dir: File.dirname(entry.name),
             name: File.basename(entry.name),
@@ -183,7 +187,7 @@ module UC3Code
           }
         end
       end
-      return res
+      res
     end
 
     def artifact_manifest_table(res)
@@ -193,7 +197,7 @@ module UC3Code
           AdminUI::Column.new(:name, header: 'Name'),
           AdminUI::Column.new(:ext, header: 'Ext', filterable: true),
           AdminUI::Column.new(:mrt, header: 'Merritt', filterable: true),
-          AdminUI::Column.new(:size, header: 'Size'),
+          AdminUI::Column.new(:size, header: 'Size')
         ]
       )
       res.keys.sort.each do |path|

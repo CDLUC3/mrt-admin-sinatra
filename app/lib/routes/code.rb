@@ -60,14 +60,14 @@ module Sinatra
       end
 
       app.get '/source/artifact_command/*/*/*' do |artifact, version, asset|
-        data = <<~EOF
-        aws codeartifact get-package-version-asset \\
-          --domain=cdlib-uc3-mrt --repository=uc3-mrt-java \\
-          --package=#{artifact} --package-version=#{version} \\
-          --format=maven --namespace=org.cdlib.mrt \\
-          --asset=#{asset} \\
-          #{artifact}.war
-        EOF
+        data = <<~EOF_CMD
+          aws codeartifact get-package-version-asset \\
+            --domain=cdlib-uc3-mrt --repository=uc3-mrt-java \\
+            --package=#{artifact} --package-version=#{version} \\
+            --format=maven --namespace=org.cdlib.mrt \\
+            --asset=#{asset} \\
+            #{artifact}.war
+        EOF_CMD
         erb :pre,
           :layout => :page_layout,
           :locals => {
@@ -89,7 +89,7 @@ module Sinatra
         erb :markdown,
           :layout => :page_layout,
           :locals => {
-            md_file: "app/markdown/mrt/source.md",
+            md_file: 'app/markdown/mrt/source.md',
             context: AdminUI::Context.new(request.path)
           }
       end
@@ -104,63 +104,55 @@ module Sinatra
       end
 
       app.post '/source/artifacts/delete/*' do |tag|
-        begin
-          srccode = UC3Code::SourceCodeClient.new
-          arr = []
-          request.body.each_line do |line|
-            srccode.delete_artifact(tag, line.strip)
-            arr << line.strip
-          end
-          {message: "Deleted: #{arr.join(', ')} for tag #{tag}"}.to_json
-        rescue StandardError => e
-          content_type :json
-          {message: "ERROR: #{e.class}: #{e.message}"}.to_json
+        srccode = UC3Code::SourceCodeClient.new
+        arr = []
+        request.body.each_line do |line|
+          srccode.delete_artifact(tag, line.strip)
+          arr << line.strip
         end
+        { message: "Deleted: #{arr.join(', ')} for tag #{tag}" }.to_json
+      rescue StandardError => e
+        content_type :json
+        { message: "ERROR: #{e.class}: #{e.message}" }.to_json
       end
 
       app.post '/source/images/delete/*' do |tag|
-        begin
-          srccode = UC3Code::SourceCodeClient.new
-          arr = []
-          request.body.each_line do |line|
-            srccode.delete_image(tag, line.strip)
-            arr << line.strip
-          end
-          {message: "Deleted: #{arr.join(', ')} for tag #{tag}"}.to_json
-        rescue StandardError => e
-          content_type :json
-          {message: "ERROR: #{e.class}: #{e.message}"}.to_json
+        srccode = UC3Code::SourceCodeClient.new
+        arr = []
+        request.body.each_line do |line|
+          srccode.delete_image(tag, line.strip)
+          arr << line.strip
         end
+        { message: "Deleted: #{arr.join(', ')} for tag #{tag}" }.to_json
+      rescue StandardError => e
+        content_type :json
+        { message: "ERROR: #{e.class}: #{e.message}" }.to_json
       end
 
       app.post '/source/images/retag/*/*' do |tag, newtag|
-        begin
-          srccode = UC3Code::SourceCodeClient.new
-          arr = []
-          request.body.each_line do |line|
-            srccode.retag_image(tag, newtag, line.strip)
-            arr << line.strip
-          end
-          {message: "Retagged: #{arr.join(', ')} for tag #{tag} --> #{newtag}"}.to_json
-        rescue StandardError => e
-          content_type :json
-          {message: "ERROR: #{e.class}: #{e.message}"}.to_json
+        srccode = UC3Code::SourceCodeClient.new
+        arr = []
+        request.body.each_line do |line|
+          srccode.retag_image(tag, newtag, line.strip)
+          arr << line.strip
         end
+        { message: "Retagged: #{arr.join(', ')} for tag #{tag} --> #{newtag}" }.to_json
+      rescue StandardError => e
+        content_type :json
+        { message: "ERROR: #{e.class}: #{e.message}" }.to_json
       end
 
       app.post '/source/images/untag/*' do |tag|
-        begin
-          srccode = UC3Code::SourceCodeClient.new
-          arr = []
-          request.body.each_line do |line|
-            srccode.untag_image(tag, line.strip)
-            arr << line.strip
-          end
-          {message: "Untag: #{arr.join(', ')} for tag #{tag}"}.to_json
-        rescue StandardError => e
-          content_type :json
-          {message: "ERROR: #{e.class}: #{e.message}"}.to_json
+        srccode = UC3Code::SourceCodeClient.new
+        arr = []
+        request.body.each_line do |line|
+          srccode.untag_image(tag, line.strip)
+          arr << line.strip
         end
+        { message: "Untag: #{arr.join(', ')} for tag #{tag}" }.to_json
+      rescue StandardError => e
+        content_type :json
+        { message: "ERROR: #{e.class}: #{e.message}" }.to_json
       end
     end
   end
