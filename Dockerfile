@@ -19,5 +19,5 @@ COPY Gemfile* /var/task/
 RUN bundle install
 
 COPY . /var/task
-COPY .bundle/config.docker /var/task/.bundle/config
+COPY .bundle/config /var/task/.bundle/config
 RUN bundle install
