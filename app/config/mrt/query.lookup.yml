@@ -9,6 +9,17 @@ docker:
     val: password
   base_url:
     env: base_url
+dockerlocal:
+  host: 
+    val: 127.0.0.1
+  database: 
+    val: billing
+  username: 
+    val: user
+  password: 
+    val: password
+  base_url:
+    env: base_url
 ecs:
   host: 
     ssm: /uc3/mrt/ecs/billing/db-host
