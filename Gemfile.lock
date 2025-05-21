@@ -55,13 +55,23 @@ GEM
       aws-eventstream (~> 1, >= 1.0.2)
     base64 (0.2.0)
     bigdecimal (3.1.9)
+    date (3.4.1)
+    debug (1.10.0)
+      irb (~> 1.10)
+      reline (>= 0.3.8)
     diff-lcs (1.6.2)
+    erb (5.0.1)
     faraday (2.13.1)
       faraday-net_http (>= 2.0, < 3.5)
       json
       logger
     faraday-net_http (3.4.0)
       net-http (>= 0.5.0)
+    io-console (0.8.0)
+    irb (1.15.2)
+      pp (>= 0.6.0)
+      rdoc (>= 4.0.0)
+      reline (>= 0.4.2)
     jmespath (1.6.2)
     json (2.12.0)
     language_server-protocol (3.17.0.5)
@@ -86,7 +96,13 @@ GEM
     parser (3.3.8.0)
       ast (~> 2.4.1)
       racc
+    pp (0.6.2)
+      prettyprint
+    prettyprint (0.2.0)
     prism (1.4.0)
+    psych (5.2.6)
+      date
+      stringio
     public_suffix (6.0.2)
     puma (6.6.0)
       nio4r (~> 2.0)
@@ -106,8 +122,13 @@ GEM
     rackup (2.2.1)
       rack (>= 3)
     rainbow (3.1.1)
+    rdoc (6.14.0)
+      erb
+      psych (>= 4.0.0)
     redcarpet (3.6.1)
     regexp_parser (2.10.0)
+    reline (0.6.1)
+      io-console (~> 0.5)
     rspec (3.13.0)
       rspec-core (~> 3.13.0)
       rspec-expectations (~> 3.13.0)
@@ -149,6 +170,7 @@ GEM
       rack-protection (= 4.1.1)
       rack-session (>= 2.0.0, < 3)
       tilt (~> 2.0)
+    stringio (3.1.7)
     tilt (2.6.0)
     unicode-display_width (3.1.4)
       unicode-emoji (~> 4.0, >= 4.0.4)
@@ -173,6 +195,7 @@ DEPENDENCIES
   aws-sdk-s3
   aws-sdk-ssm
   bigdecimal
+  debug
   json
   mrt-zk!
   mustache

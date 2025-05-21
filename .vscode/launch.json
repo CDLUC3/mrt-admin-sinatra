@@ -1,0 +1,47 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+
+
+        {
+            "type": "ruby_lsp",
+            "name": "Debug script",
+            "request": "launch",
+            "program": "ruby ${file}"
+        },
+        {
+            "type": "ruby_lsp",
+            "name": "Debug test",
+            "request": "launch",
+            "program": "ruby -Itest ${relativeFile}"
+        },
+        {
+            "type": "ruby_lsp",
+            "name": "Attach debugger 8000",
+            "request": "attach",
+            "debugPort": 8000
+        },
+        {
+            "type": "ruby_lsp",
+            "name": "Attach debugger 8001",
+            "request": "attach",
+            "debugPort": 8001
+        },
+        {
+            "type": "rdbg",
+            "name": "rdbg attach - set RUBY_DEBUG_PORT=",
+            "request": "attach",
+            "debugPort": "localhost:8001"
+
+       },
+        {
+            "type": "ruby_lsp",
+            "name": "Attach debugger socket",
+            "request": "attach",
+            "debugSocketPath": "/tmp/ruby-debug.sock"
+        }
+    ]
+}
