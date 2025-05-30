@@ -1,2 +1,3 @@
 zkconn: 
-  val: zoo:2181
+  env: ZKCONN
+  default: zoo:2181
