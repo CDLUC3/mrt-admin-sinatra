@@ -1,4 +1,3 @@
-version: '3.9'
 services:
   reveal-md:
     image: webpronl/reveal-md
