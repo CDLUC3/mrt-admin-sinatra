@@ -17,8 +17,12 @@ module UC3Queue
 
     def initialize
       map = UC3::UC3Client.lookup_map_by_filename('app/config/mrt/zk.yml')
-      @zk = ZK.new(map.fetch('zkconn', ''), timeout: 1)
-      @admin_host = map.fetch('admin_host', 8080)
+      zkconn = map.fetch('zkconn', '')
+      @zk = ZK.new(zkconn, timeout: 1)
+      @zk_hosts = []
+      zkconn.split(',').each do |zkhost|
+        @zk_hosts << zkhost.split(':').first
+      end
       @admin_port = map.fetch('admin_port', 8080)
       @admin_user = map.fetch('admin_user', 'root')
       @admin_passwd = map.fetch('admin_passwd', 'root_passwd')
@@ -487,9 +491,10 @@ module UC3Queue
     end
 
     def save_snapshot
+      
       %x[ mkdir -p #{@snapshot_path} ]
       auth = "'Authorization: digest #{@admin_user}:#{@admin_passwd}'"
-      url = "http://#{@admin_host}:#{@admin_port}/commands/snapshot?streaming=true"
+      url = "http://#{@zk_hosts.first}:#{@admin_port}/commands/snapshot?streaming=true"
       path = "#{@snapshot_path}/latest_snapshot.out"
       puts %x[ curl -H #{auth} #{url} --output #{path} ]  
     end
@@ -497,9 +502,11 @@ module UC3Queue
     def restore_from_snapshot
       ct = "'Content-Type:application/octet-stream'"
       auth = "'Authorization: digest #{@admin_user}:#{@admin_passwd}'"
-      url = "http://#{@admin_host}:#{@admin_port}/commands/restore"
       path = "#{@snapshot_path}/latest_snapshot.out"
-      %x[ curl -H #{ct} -H #{auth} -POST #{url} --data-binary "@#{path}" ]
+      @zk_hosts.each do |zkhost|
+        url = "http://#{zkhost}:#{@admin_port}/commands/restore"
+        puts %x[ curl -H #{ct} -H #{auth} -POST #{url} --data-binary "@#{path}" ]
+      end
     end
   end
 end

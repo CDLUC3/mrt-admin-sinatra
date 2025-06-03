@@ -1,9 +1,6 @@
 zkconn: 
   env: ZKCONN
   default: zoo:2181
-admin_host:
-  env: ZK_ADMIN_HOST
-  default: zoo1
 admin_port:
   env: ZK_ADMIN_PORT
   default: 8080
