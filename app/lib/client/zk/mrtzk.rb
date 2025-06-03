@@ -491,8 +491,8 @@ module UC3Queue
       auth = "'Authorization: digest #{@admin_user}:#{@admin_passwd}'"
       url = "http://#{@admin_host}:#{@admin_port}/commands/snapshot?streaming=true"
       path = "#{@snapshot_path}/latest_snapshot.out"
-      %x[ echo -H #{auth} #{url} --output #{path} ]  
-      %x[ curl -H #{auth} #{url} --output #{path} ]  
+      puts %x[ echo -H #{auth} #{url} --output #{path} ]  
+      puts %x[ curl -H #{auth} #{url} --output #{path} ]  
     end
 
     def restore_from_snapshot
