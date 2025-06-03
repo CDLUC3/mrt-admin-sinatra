@@ -534,6 +534,14 @@ items:
       - title: Create Fake Access Request
         route: /ops/zk/access/fake
         method: post
+    - title: Snapshot ZooKeeper
+      route: /ops/zk/snapshot
+      confmsg: This will snapshot ZooKeeper and save to EFS
+      method: post
+    - title: Restore ZooKeeper
+      route: /ops/zk/restore
+      confmsg: This will restore ZooKeeper from a snapshot saved to EFS
+      method: post
   - path: db-queue
     title: Database Queues
     route: /ops/db-queue

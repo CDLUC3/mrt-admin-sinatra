@@ -239,6 +239,17 @@ module Sinatra
         File.new('/tdr/ingest/queue/Notify_FAIL', 'w')
         redirect '/ops/zk/ingest/folders'
       end
+
+      app.post '/ops/zk/snapshot' do
+        UC3Queue::ZKClient.new.save_snapshot
+        redirect "/ops/zk/ingest/folders?path=/zk-snapshots"    
+      end
+
+      app.post '/ops/zk/restore' do
+        UC3Queue::ZKClient.new.restore_from_snapshot
+        redirect '/ops/zk/nodes/node-names?zkpath=/&mode=node'
+      end
+
     end
   end
 

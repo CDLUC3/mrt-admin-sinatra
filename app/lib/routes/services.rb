@@ -112,6 +112,7 @@ module Sinatra
       app.post '/stack-init' do
         stack_init
       end
+
     end
 
     def stack_init
