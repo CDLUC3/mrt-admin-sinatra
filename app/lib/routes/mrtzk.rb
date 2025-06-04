@@ -250,6 +250,11 @@ module Sinatra
         redirect '/ops/zk/nodes/node-names?zkpath=/&mode=node'
       end
 
+      app.get '/ops/zk/stat' do
+        content_type :json
+        UC3Queue::ZKClient.new.zk_stat.to_json
+      end
+
     end
   end
 

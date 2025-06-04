@@ -542,6 +542,8 @@ items:
       route: /ops/zk/restore
       confmsg: This will restore ZooKeeper from a snapshot saved to EFS
       method: post
+    - title: ZooKeeper Stat
+      route: /ops/zk/stat
   - path: db-queue
     title: Database Queues
     route: /ops/db-queue
