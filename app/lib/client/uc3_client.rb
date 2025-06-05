@@ -200,6 +200,7 @@ module UC3
 
     def cleanup_ingest_folders
       %x[ find #{DIR} -maxdepth 1  -name "bid-*" -mtime +30 | xargs rm -rf ]
+      %x[ find #{DIR}/FAILED -maxdepth 1  -name "bid-*" -mtime +30 | xargs rm -rf ]
       %x[ find #{DIR}/RecycleBin -maxdepth 1  -name "jid-*" -mtime +3 | xargs rm -rf ]
       %x[ find #{DIR}/zk-snapshots -maxdepth 1  -name "latest-snapshot.20-*" -mtime +3 | xargs rm -rf ]
     end
