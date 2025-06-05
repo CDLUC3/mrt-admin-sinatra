@@ -116,6 +116,7 @@ module Sinatra
     end
 
     def stack_init
+      UC3::FileSystemClient.new.cleanup_ingest_folders
       resp = []
       resp << JSON.parse(post_url('http://inventory:8080/inventory/service/start?t=json'))
       resp << JSON.parse(post_url('http://replic:8080/replic/service/start?t=json'))

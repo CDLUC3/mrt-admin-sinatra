@@ -480,6 +480,10 @@ items:
         method: post
       - title: Ingest Folders
         route: /ops/zk/ingest/folders
+      - title: Cleanup Ingest Folders
+        route: /ops/zk/ingest/folders/cleanup
+        confmsg: This will cleanup ingest batches older than 30 days, RecycleBin items older than 3 days and ZK snapshots older than 3 days.
+        method: post
       - path: force-failure
         title: Force Failure
         route: /ops/zk/ingest/force-failure

@@ -200,6 +200,11 @@ module Sinatra
           }
       end
 
+      app.post '/ops/zk/ingest/folders/cleanup' do
+        UC3::FileSystemClient.new.cleanup_ingest_folders
+        redirect '/ops/zk/ingest/folders'
+      end
+
       app.post '/ops/zk/ingest/folder/delete' do
         f = request.body.read
         if f.empty?
