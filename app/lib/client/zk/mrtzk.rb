@@ -499,8 +499,7 @@ module UC3Queue
       url = "http://#{@zk_hosts.first}:#{@admin_port}/commands/snapshot?streaming=true"
       path = "#{@snapshot_path}/latest_snapshot.#{Date.today.strftime('%Y-%m-%d_%H:%M:%S')}.out"
       path_ln = "#{@snapshot_path}/latest_snapshot.out"
-      puts %x[ curl -H #{zk_auth} #{url} --output #{path} ]  
-      puts %x[ ln -s #{path} #{path_ln} ]  
+      puts %x[ curl -H #{zk_auth} #{url} --output #{path} && rm #{path_ln} && ln -s #{path} #{path_ln} ]  
     end
 
     def restore_from_snapshot
@@ -510,17 +509,17 @@ module UC3Queue
         url = "http://#{zkhost}:#{@admin_port}/commands/restore"
         puts %x[ curl -H #{ct} -H #{zk_auth} -POST #{url} --data-binary "@#{path}" ]
       end
+    end
 
-      def zk_stat
-        data = []
-        @zk_hosts.each do |zkhost|
-          url = "http://#{zkhost}:#{@admin_port}/commands/stat"
-          data << JSON.parse(%x[ curl -H #{zk_auth} #{url} ])
-        rescue StandardError => e
-          data << { error: "Error connecting to ZK host #{zkhost}: #{e.message}" }
-        end
-        data
+    def zk_stat
+      data = []
+      @zk_hosts.each do |zkhost|
+        url = "http://#{zkhost}:#{@admin_port}/commands/stat"
+        data << JSON.parse(%x[ curl -H #{zk_auth} #{url} ])
+      rescue StandardError => e
+        data << { error: "Error connecting to ZK host #{zkhost}: #{e.message}" }
       end
+      data
     end
   end
 end
