@@ -514,8 +514,11 @@ module UC3Queue
     def zk_stat
       data = []
       @zk_hosts.each do |zkhost|
-        url = "http://#{zkhost}:#{@admin_port}/commands/stat"
-        data << JSON.parse(%x[ curl -H #{zk_auth} #{url} ])
+        data << { 
+          conf: JSON.parse(%x[ curl -H #{zk_auth} http://#{zkhost}:#{@admin_port}/commands/conf ]),
+          lead: JSON.parse(%x[ curl -H #{zk_auth} http://#{zkhost}:#{@admin_port}/commands/lead ]),
+          lsnp: JSON.parse(%x[ curl -H #{zk_auth} http://#{zkhost}:#{@admin_port}/commands/lsnp ])
+        }
       rescue StandardError => e
         data << { error: "Error connecting to ZK host #{zkhost}: #{e.message}" }
       end
