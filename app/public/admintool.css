@@ -198,3 +198,19 @@ th.blank, td.blank {
 th.select {
   width: 90%;
 }
+
+div.PASS, span.PASS {
+  color: green;
+}
+
+div.WARN, span.WARN {
+  color: orange;
+}
+
+div.FAIL, span.FAIL{
+  color: red;
+}
+
+div.INFO, span.INFO {
+  color: blue;
+}

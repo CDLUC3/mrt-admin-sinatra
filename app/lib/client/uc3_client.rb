@@ -37,9 +37,9 @@ module UC3
       status_index(s1) > status_index(s2) ? s1 : s2     
     end
 
-    def self.check_status(path, row, status)
+    def self.check_status(row, status)
       return status if row.nil?
-      stat = status_resolve(row.fetch(:status, 'SKIP'))
+      stat = status_resolve(row.fetch('status', 'SKIP'))
       status_compare(stat, status)
     end
 

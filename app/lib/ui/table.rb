@@ -17,7 +17,7 @@ module AdminUI
       )
     end
 
-    def initialize(columns: [], data: [], filters: [], totals: false, description: '')
+    def initialize(columns: [], data: [], filters: [], totals: false, description: '', status: nil)
       @columns = columns
       @rows = data
       @filters = filters
@@ -27,6 +27,7 @@ module AdminUI
       @columns.each do |col|
         @filterable = true if col.filterable
       end
+      @status = status
     end
 
     def table_data
@@ -83,10 +84,15 @@ module AdminUI
       s
     end
 
+    def render_status
+      %{<div class="#{@status}">#{@status}</div>} if @status
+    end
+
     def render
       s = %(
     <table class='data sortable'>
     <caption>
+      #{render_status}
       #{render_description}
       #{render_filters}
     </caption>
@@ -133,7 +139,7 @@ module AdminUI
         fenced_code_blocks: true).render(@description)}</div>)
     end
 
-    attr_accessor :columns, :data, :filters, :filterable, :totals
+    attr_accessor :columns, :data, :filters, :filterable, :totals, :status
   end
 
   # Table rendering classes
@@ -236,6 +242,8 @@ module AdminUI
         else
           cellval.fetch(:value, '').to_s
         end
+      elsif @cssclass.split(' ').include?('status')
+        render_span(cellval, cssclass: cellval)
       else
         render_string(cellval.to_s)
       end
