@@ -9,10 +9,43 @@ require_relative '../ui/table'
 module UC3
   # Base class for UC3 client classes
   class UC3Client
+    STATUS = [:SKIP, :PASS, :INFO, :WARN, :FAIL].freeze
+    STATHASH = {
+      SKIP: 0,
+      PASS: 1,
+      INFO: 2,
+      WARN: 3,
+      FAIL: 4
+    }
+
     @clients = {}
+    @status = :SKIP
 
     def initialize(enabled: true, message: '')
       UC3Client.clients[self.class.to_s] = { name: self.class.to_s, enabled: enabled, message: message }
+    end
+    
+    def self.status_index(s)
+      STATHASH.fetch(s.to_sym, 0)
+    end
+
+    def self.status_resolve(s)
+      STATUS[status_index(s)]
+    end
+
+    def self.status_compare(s1, s2)
+      status_index(s1) > status_index(s2) ? s1 : s2     
+    end
+
+    def self.check_status(path, row, status)
+      return status if row.nil?
+      stat = status_resolve(row.fetch(:status, 'SKIP'))
+      status_compare(stat, status)
+    end
+
+    def record_status(path, status)
+      @status = status
+      puts "Status for #{path} is #{status}"
     end
 
     def date_format(date, convert_timezone: false)
@@ -127,6 +160,7 @@ module UC3
     def self.keep_artifact_version?(ver)
       ver =~ /^\d+\.\d+-SNAPSHOT$/
     end
+
   end
 
   # browse ingest folder file system

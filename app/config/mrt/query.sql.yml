@@ -1308,6 +1308,7 @@ queries:
       - [Object List: Any time](/queries/consistency/replication/objects-2/objlist?days=0)
     template-params:
       COPIES: 2
+    status_check: true
     totals: true
     sql: |
       {{{REPSQL}}}
@@ -1733,6 +1734,7 @@ queries:
   /queries/consistency/obj-comp/objects-no-local-id:
     description: |
       - [Object List](/queries/consistency/obj-comp/objects-no-local-id/objlist)
+    status_check: true
     sql: |
       select
         case

@@ -131,10 +131,14 @@ module UC3Query
           totals: query.fetch(:totals, false),
           description: description
         )
+        status = 'SKIP'
+        status_check = query.fetch(:status_check, false)
         params = resolve_parameters(query.fetch(:parameters, []), urlparams)
         stmt.execute(*params).each do |row|
           table.add_row(AdminUI::Row.make_row(table.columns, row))
+          status = UC3::UC3Client.check_status(path, row, status) if status_check
         end
+        record_status(path, status) if status_check
       rescue StandardError => e
         arr = [
           "#{e.class}: #{e}",
