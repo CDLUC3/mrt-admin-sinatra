@@ -58,11 +58,11 @@ module UC3Query
       vals
     end
 
-    def run_sql(sql)
+    def run_sql(sql, args = [])
       hasharr = []
       begin
         stmt = @client.prepare(Mustache.render(sql, @fragments))
-        stmt.execute.each do |row|
+        stmt.execute(*args).each do |row|
           hasharr << row.to_h
         end
       rescue StandardError => e

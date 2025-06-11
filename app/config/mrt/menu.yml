@@ -11,7 +11,6 @@ items:
       _Daily Consistency Report Checks have not yet been implemented._
   - title: Daily Consistency Checks
     route: /queries/consistency/daily
-    tbd: true
   - title: Batches
     route: /ops/zk/ingest/batches
   - title: Jobs

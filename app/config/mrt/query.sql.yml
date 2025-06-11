@@ -1301,6 +1301,31 @@ queries:
         order by
           ogroup,
           own_name
+  /queries/consistency/daily:
+    sql: |
+      select
+        dcc.check_name,
+        dcc.updated,
+        dcc.status as check_status,
+        case 
+          when updated > date(now()) then dcc.status
+          else 'SKIP'
+        end as status
+      from
+        daily_consistency_checks dcc,
+        (
+          select 
+            dcc2.check_name, 
+            max(dcc2.updated) as last_updated
+          from
+            daily_consistency_checks dcc2
+          group by
+            dcc2.check_name
+        ) as dcclatest
+      where 
+        dcc.check_name = dcclatest.check_name
+      and 
+        dcc.updated = dcclatest.last_updated
   /queries/consistency/replication/objects-2:
     description: |
       - [Object List: Older than 2 days](/queries/consistency/replication/objects-2/objlist?days=2)

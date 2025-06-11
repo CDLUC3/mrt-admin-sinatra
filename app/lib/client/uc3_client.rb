@@ -45,7 +45,7 @@ module UC3
               insert into daily_consistency_checks(check_name, status)
               values(?, ?)
             }
-            qc.run_sql(sql, [path, status])
+            qc.run_sql(sql, [path, status.to_s])
           rescue StandardError => e
             puts "Error recording status for #{path}: #{e.message}"
           end
