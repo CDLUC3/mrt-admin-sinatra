@@ -17,7 +17,7 @@ module AdminUI
       )
     end
 
-    def initialize(columns: [], data: [], filters: [], totals: false, description: '', status: nil)
+    def initialize(columns: [], data: [], filters: [], totals: false, description: '', status: :SKIP)
       @columns = columns
       @rows = data
       @filters = filters
@@ -42,12 +42,24 @@ module AdminUI
       d
     end
 
+    def get_column_index(c)
+      @columns.each_with_index do |col, i|
+        return i if col.sym.to_sym == c.to_sym
+      end
+      return -1
+    end
+
     def add_filter(filter)
       @filters.push(filter)
     end
 
     def add_row(row)
       @rows.push(row)
+      i = get_column_index(:status)
+      return if i < 0
+
+      statval = UC3::UC3Client.status_resolve(row.cols[i])
+      @status = UC3::UC3Client.status_compare(statval, @status)
     end
 
     def add_column(column)

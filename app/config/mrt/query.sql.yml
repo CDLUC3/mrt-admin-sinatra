@@ -1330,6 +1330,7 @@ queries:
       - [Object List: Any time](/queries/consistency/replication/objects-1/objlist?days=0)
     template-params:
       COPIES: 1
+    status_check: true
     totals: true
     sql: |
       {{{REPSQL}}}
@@ -1351,6 +1352,7 @@ queries:
       - [Object List: Any time](/queries/consistency/replication/objects-4/objlist?days=0)
     template-params:
       COPIES: 4
+    status_check: true
     totals: true
     sql: |
       {{{REPSQL}}}
@@ -1372,6 +1374,7 @@ queries:
       - [Object List: Any time](/queries/consistency/replication/files-2/objlist?days=0)
     template-params:
       COPIES: 2
+    status_check: true
     totals: true
     sql: |
       {{{REPSQLFILE}}}
@@ -1393,6 +1396,7 @@ queries:
       - [Object List: Any time](/queries/consistency/replication/files-1/objlist?days=0)
     template-params:
       COPIES: 1
+    status_check: true
     totals: true
     sql: |
       {{{REPSQLFILE}}}
@@ -1414,6 +1418,7 @@ queries:
       - [Object List: Any time](/queries/consistency/replication/files-4/objlist?days=0)
     template-params:
       COPIES: 4
+    status_check: true
     totals: true
     sql: |
       {{{REPSQLFILE}}}
@@ -1549,6 +1554,7 @@ queries:
     sql: |
       {{{MIME}}}
   /queries/consistency/obj-comp/mult-colls:
+    status_check: true
     totals: true
     description: |
       - [Object List](/queries/consistency/obj-comp/mult-colls/objlist)
@@ -1694,6 +1700,7 @@ queries:
             'ucb_lib_prechmat', 'ucb_lib_stone_rubbings'
           )
   /queries/consistency/obj-comp/version-clobber:
+    status_check: true
     description: |
       - [Object List](/queries/consistency/obj-comp/version-clobber/objlist )
     sql: |
@@ -2256,6 +2263,7 @@ queries:
       order by 
         start
   /ops/db-queue/replication/required:
+    status_check: true
     sql: |
       select
         case
@@ -2356,6 +2364,7 @@ queries:
       group by
         category
   /ops/db-queue/replication/in-progress:
+    status_check: true
     sql: |
       select
         case
@@ -2416,6 +2425,7 @@ queries:
         bytes,
         status
   /ops/db-queue/replication/failed:
+    status_check: true
     sql: |
       select
         case
@@ -2567,6 +2577,7 @@ queries:
       DATES: |
         {{{30TO60DAYS}}}
   /ops/db-queue/audit/oldest-audit-check:
+    status_check: true
     sql: |
       select
         date(verified) as date,
@@ -2585,6 +2596,7 @@ queries:
         verified
       LIMIT 1
   /ops/db-queue/audit/active-batches:
+    status_check: true
     sql: |
       select
         verified,
@@ -2620,6 +2632,7 @@ queries:
       group by
         verified
   /ops/db-queue/audit/counts-by-state:
+    status_check: true
     sql: |
       select
         'unverified' as astatus,
@@ -2774,6 +2787,7 @@ queries:
       DATES: |
         {{{30TO60DAYS}}}
   /ops/db-queue/audit/30-days:
+    status_check: true
     sql: |
       select
         audit_date,
@@ -2856,6 +2870,7 @@ queries:
           c.name,
           status
   /ops/collections/db/primary-config:
+    status_check: true
     sql: |
       select
         n.number as nodenum,
@@ -2908,6 +2923,7 @@ queries:
         nodename,
         collection
   /ops/collections/db/secondary-config:
+    status_check: true
     sql: |
       select
         c.id as collid,
@@ -2963,6 +2979,7 @@ queries:
       order by
         ncount desc, c.name
   /ops/storage/db/nodes:
+    status_check: true
     sql: |
       select
         n.number as node_number,

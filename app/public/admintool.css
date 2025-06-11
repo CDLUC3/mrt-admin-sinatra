@@ -214,3 +214,11 @@ div.FAIL, span.FAIL{
 div.INFO, span.INFO {
   color: blue;
 }
+
+span.SKIP {
+  color: gray;
+}
+
+div.SKIP {
+  display: none;
+}

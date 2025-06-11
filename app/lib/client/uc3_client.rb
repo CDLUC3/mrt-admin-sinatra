@@ -19,7 +19,6 @@ module UC3
     }
 
     @clients = {}
-    @status = :SKIP
 
     def initialize(enabled: true, message: '')
       UC3Client.clients[self.class.to_s] = { name: self.class.to_s, enabled: enabled, message: message }
@@ -37,14 +36,22 @@ module UC3
       status_index(s1) > status_index(s2) ? s1 : s2     
     end
 
-    def self.check_status(row, status)
-      return status if row.nil?
-      stat = status_resolve(row.fetch('status', 'SKIP'))
-      status_compare(stat, status)
-    end
-
     def record_status(path, status)
-      @status = status
+      qc = UC3Query::QueryClient.client
+      unless qc.nil?
+        if qc.enabled
+          begin
+            sql = %{
+              insert into daily_consistency_checks(check_name, status)
+              values(?, ?)
+            }
+            qc.run_sql(sql, [path, status])
+          rescue StandardError => e
+            puts "Error recording status for #{path}: #{e.message}"
+          end
+          return
+        end
+      end
       puts "Status for #{path} is #{status}"
     end
 
