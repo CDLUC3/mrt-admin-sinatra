@@ -136,6 +136,8 @@ module UC3Query
         stmt.execute(*params).each do |row|
           table.add_row(AdminUI::Row.make_row(table.columns, row))
         end
+        msg = { path: path, 'status': table.status }
+        puts msg.to_json
         record_status(path, table.status) if query.fetch(:status_check, false)
       rescue StandardError => e
         arr = [
