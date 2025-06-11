@@ -342,7 +342,6 @@ items:
     items:
     - title: Daily Checks
       route: /queries/consistency/daily
-      tbd: true
     - path: replication
       title: Replication
       route: /queries/consistency/replication
