@@ -1,0 +1,652 @@
+fragments:
+  MIME:
+    select
+      distinct
+        ogroup,
+        inv_collection_id,
+        mnemonic,
+        collection_name,
+        mime_group,
+        mime_type,
+        sum(count_files) files,
+        sum(billable_size) / 1000000000.0 size_gb
+    from
+      owner_coll_mime_use_details
+    {{{WHERE}}}
+    group by
+      ogroup,
+      inv_collection_id,
+      mnemonic,
+      collection_name,
+      mime_group,
+      mime_type
+    order by
+      ogroup,
+      mnemonic
+queries:
+  /queries/repository/campus/bytes:
+    totals: true
+    sql: |
+      select
+        distinct
+        ogroup as campus,
+        count(distinct inv_collection_id) num_colls,
+        sum(count_files) files,
+        sum(billable_size) / 1000000000.0 size_gb
+      from
+        owner_coll_mime_use_details ocmud
+      group by
+        ogroup
+      order by
+        ogroup
+  /queries/repository/campus/objects:
+    totals: true
+    sql: |
+      select
+        distinct
+        ogroup as campus,
+        count(distinct inv_collection_id) num_colls,
+        sum(count_objects) num_objs
+      from
+        owner_collections_objects
+      group by
+        ogroup
+      order by
+        ogroup
+  /queries/repository/collections/bytes:
+    totals: true
+    sql: |
+      select
+        distinct
+        ogroup,
+        inv_collection_id,
+        mnemonic,
+        collection_name,
+        sum(count_files) files,
+        sum(billable_size) / 1000000000.0 size_gb
+      from
+        owner_coll_mime_use_details
+      group by
+        ogroup,
+        inv_collection_id,
+        mnemonic,
+        collection_name
+      order by
+        ogroup,
+        mnemonic
+  /queries/repository/collection:
+    sql: |
+      {{{COLLQ}}}
+    template-params:
+      WHERE: where c.id = ?
+    parameters:
+    - name: inv_collection_id
+      type: integer
+  /queries/repository/collection-mnemonic:
+    sql: |
+      {{{COLLQ}}}
+    template-params:
+      WHERE: where c.mnemonic = ?
+    parameters:
+    - name: mnemonic
+      type: string
+  /queries/repository/object:
+    sql: |
+      {{{OBJQ}}}
+    template-params:
+      WHERE: where o.id = ?
+    files_sql: |
+      {{{OBJFILES}}}
+    repl_sql: |
+      {{{OBJREPL}}}
+    parameters:
+    - name: inv_object_id
+      type: integer
+  /queries/repository/object-ark:
+    sql: |
+      {{{OBJQ}}}
+    template-params:
+      WHERE: where o.ark = ?
+    files_sql: |
+      {{{OBJFILES}}}
+    repl_sql: |
+      {{{OBJREPL}}}
+    parameters:
+    - name: ark
+      type: string
+  /queries/recent/objects:
+    sql: |
+      {{{OBJQ}}}
+    template-params:
+      WHERE: |
+        where o.id >= (select max(id)-10 from inv.inv_objects)
+  /queries/repository/objects-localid:
+    sql: |
+      {{{OBJQ}}}
+    template-params:
+      WHERE: |
+        where exists (
+          select 1 from inv.inv_localids loc
+          where loc.inv_object_ark = o.ark
+          and loc.local_id = ?
+        )
+    parameters:
+    - name: localid
+      type: string
+  /queries/repository/objects-erc-who:
+    sql: |
+      {{{OBJQ}}}
+    template-params:
+      WHERE: |
+        where o.erc_who like ?
+    parameters:
+    - name: term
+      type: string
+  /queries/repository/objects-erc-what:
+    sql: |
+      {{{OBJQ}}}
+    template-params:
+      WHERE: |
+        where o.erc_what like ?
+    parameters:
+    - name: term
+      type: string
+  /queries/repository/objects-erc-when:
+    sql: |
+      {{{OBJQ}}}
+    template-params:
+      WHERE: |
+        where o.erc_when like ?
+    parameters:
+    - name: term
+      type: string
+  /queries/repository/objects-by-filename:
+    sql: |
+      {{{OBJQ}}}
+    template-params:
+      WHERE: |
+        where exists (
+          select 1 from inv.inv_files f
+          where pathname like ?
+          and f.inv_object_id = o.id
+        )
+    parameters:
+    - name: term
+      type: string
+  /queries/repository/objects-by-container:
+    sql: |
+      {{{OBJQ}}}
+    template-params:
+      WHERE: |
+        where exists (
+          select 1 from inv.inv_ingests ing
+          where filename = ?
+          and ing.inv_object_id = o.id
+        )
+    parameters:
+    - name: term
+      type: string
+  /queries/repository/collections/objects:
+    totals: true
+    sql: |
+      select
+        distinct
+        ogroup,
+        inv_collection_id,
+        (select mnemonic from inv.inv_collections where id=inv_collection_id) mnemonic,
+        collection_name,
+        sum(count_objects) num_objs
+      from
+        owner_collections_objects
+      group by
+        ogroup,
+        inv_collection_id,
+        mnemonic,
+        collection_name
+      order by
+        ogroup,
+        mnemonic
+  /queries/repository/owners:
+    totals: true
+    sql: |
+      select
+          ogroup,
+          inv_owner_id as owner_id,
+          own_name,
+          (select ark from inv.inv_owners where id=inv_owner_id) owner_ark,
+          sum(count_files) files,
+          sum(billable_size) / 1000000000.0 size_gb
+        from
+          owner_coll_mime_use_details
+        group by
+          ogroup,
+          owner_id,
+          own_name
+        order by
+          ogroup,
+          own_name
+    /queries/repository/mimes/campus/CDL:
+    template-params:
+      WHERE: where ogroup = CDL
+    totals: true
+    sql: |
+      {{{MIME}}}
+  /queries/repository/mimes/campus/CDL:
+    template-params:
+      WHERE: where ogroup = CDL
+    totals: true
+    sql: |
+      {{{MIME}}}
+  /queries/repository/mimes/campus/UCB:
+    template-params:
+      WHERE: where ogroup = 'UCB'
+    totals: true
+    sql: |
+      {{{MIME}}}
+  /queries/repository/mimes/campus/UCD:
+    template-params:
+      WHERE: where ogroup = 'UCD'
+    totals: true
+    sql: |
+      {{{MIME}}}
+  /queries/repository/mimes/campus/UCI:
+    template-params:
+      WHERE: where ogroup = 'UCI'
+    totals: true
+    sql: |
+      {{{MIME}}}
+  /queries/repository/mimes/campus/UCLA:
+    template-params:
+      WHERE: where ogroup = 'UCLA'
+    totals: true
+    sql: |
+      {{{MIME}}}
+  /queries/repository/mimes/campus/UCM:
+    template-params:
+      WHERE: where ogroup = 'UCM'
+    totals: true
+    sql: |
+      {{{MIME}}}
+  /queries/repository/mimes/campus/UCSB:
+    template-params:
+      WHERE: where ogroup = 'UCSB'
+    totals: true
+    sql: |
+      {{{MIME}}}
+  /queries/repository/mimes/campus/UCSC:
+    template-params:
+      WHERE: where ogroup = 'UCSC'
+    totals: true
+    sql: |
+      {{{MIME}}}
+  /queries/repository/mimes/campus/UCSD:
+    template-params:
+      WHERE: where ogroup = 'UCSD'
+    totals: true
+    sql: |
+      {{{MIME}}}
+  /queries/repository/mimes/campus/UCSF:
+    template-params:
+      WHERE: where ogroup = 'UCSF'
+    totals: true
+    sql: |
+      {{{MIME}}}
+  /queries/repository/mimes/campus/Other:
+    template-params:
+      WHERE: where ogroup = 'Other'
+    totals: true
+    sql: |
+      {{{MIME}}}
+  /queries/repository/mimes/group/audio:
+    template-params:
+      WHERE: where mime_group = 'audio'
+    totals: true
+    sql: |
+      {{{MIME}}}
+  /queries/repository/mimes/group/container:
+    template-params:
+      WHERE: where mime_group = 'container'
+    totals: true
+    sql: |
+      {{{MIME}}}
+  /queries/repository/mimes/group/data:
+    template-params:
+      WHERE: where mime_group = 'data'
+    totals: true
+    sql: |
+      {{{MIME}}}
+  /queries/repository/mimes/group/geo:
+    template-params:
+      WHERE: where mime_group = 'geo'
+    totals: true
+    sql: |
+      {{{MIME}}}
+  /queries/repository/mimes/group/image:
+    template-params:
+      WHERE: where mime_group = 'image'
+    totals: true
+    sql: |
+      {{{MIME}}}
+  /queries/repository/mimes/group/software:
+    template-params:
+      WHERE: where mime_group = 'software'
+    totals: true
+    sql: |
+      {{{MIME}}}
+  /queries/repository/mimes/group/text:
+    template-params:
+      WHERE: where mime_group = 'textt'
+    totals: true
+    sql: |
+      {{{MIME}}}
+  /queries/repository/mimes/group/video:
+    template-params:
+      WHERE: where mime_group = 'video'
+    totals: true
+    sql: |
+      {{{MIME}}}
+  /queries/repository/mimes/group/web:
+    template-params:
+      WHERE: where mime_group = 'web'
+    totals: true
+    sql: |
+      {{{MIME}}}
+  /queries/use-cases/largest-objects:
+    totals: true
+    sql: |
+      {{{OBJSUBQ}}}
+    template-params:
+      SUBWHERE: |
+        select
+          inv_object_id
+        from
+          object_size os
+        inner join
+          inv.inv_objects oo
+        on
+          os.inv_object_id = oo.id
+        order by
+          billable_size desc
+  /queries/use-cases/most-files:
+    totals: true
+    sql: |
+      {{{OBJSUBQ}}}
+    template-params:
+      SUBWHERE: |
+        select
+          inv_object_id
+        from
+          object_size os
+        inner join
+          inv.inv_objects o
+        on
+          os.inv_object_id = o.id
+        order by
+          file_count desc
+  /queries/use-cases/largest-files:
+    totals: true
+    sql: |
+      {{{OBJSUBQ}}}
+    template-params:
+      SUBWHERE: |
+        select
+          inv_object_id
+        from
+          object_size os
+        inner join
+          inv.inv_objects o
+        on
+          os.inv_object_id = o.id
+        order by
+          max_size desc
+  /queries/use-cases/non-ascii-erc-what-mrt-demo:
+    totals: true
+    sql: |
+      {{{OBJSUBQ}}}
+    template-params:
+      SUBWHERE: |
+        select distinct
+          o.id as inv_object_id
+        from
+          inv.inv_objects o
+        inner join inv.inv_collections_inv_objects icio
+          on o.id = icio.inv_object_id
+        inner join inv.inv_collections c
+          on icio.inv_collection_id = c.id
+        where
+          erc_what <> CONVERT(erc_what USING ASCII)
+        and
+          c.mnemonic = 'mrt-demo'
+  /queries/use-cases/long-mime-type-selected-collections:
+    totals: true
+    sql: |
+      {{{OBJSUBQ}}}
+    template-params:
+      SUBWHERE: |
+        select distinct
+          o.id as inv_object_id
+        from
+          inv.inv_objects o
+        inner join inv.inv_collections_inv_objects icio
+          on o.id = icio.inv_object_id
+        inner join inv.inv_collections c
+          on icio.inv_collection_id = c.id
+        where
+          length(mime_type) > 70 and source = 'producer'
+        and
+          c.mnemonic = 'mrt-demo'
+  /queries/use-cases/non-ascii-pathname-mrt-demo:
+    totals: true
+    sql: |
+      {{{OBJSUBQ}}}
+    template-params:
+      SUBWHERE: |
+        select distinct
+          f.inv_object_id
+        from
+          inv.inv_files f
+        inner join inv.inv_objects o
+          on f.inv_object_id = o.id
+        inner join inv.inv_collections_inv_objects icio
+          on o.id = icio.inv_object_id
+        inner join inv.inv_collections c
+          on icio.inv_collection_id = c.id
+        where
+          pathname <> CONVERT(pathname USING ASCII) and source = 'producer'
+        and
+          c.mnemonic in (
+            'mrt-demo', 'escholarship', 'ucb_lib_cal_cultures', 
+            'ucb_lib_dcpp', 'ucb_lib_metcalf', 'ucb_lib_jar',
+            'ucb_lib_prechmat', 'ucb_lib_stone_rubbings'
+          )
+  /queries/use-cases/long-pathname-selected-collections:
+    totals: true
+    sql: |
+      {{{OBJSUBQ}}}
+    template-params:
+      SUBWHERE: |
+        select distinct
+          f.inv_object_id
+        from
+          inv.inv_files f
+        inner join inv.inv_objects o
+          on f.inv_object_id = o.id
+        inner join inv.inv_collections_inv_objects icio
+          on o.id = icio.inv_object_id
+        inner join inv.inv_collections c
+          on icio.inv_collection_id = c.id
+        where
+          length(SUBSTRING_INDEX(pathname,'/',-1)) > 80 and source = 'producer'
+        and
+          c.mnemonic in (
+            'mrt-demo', 'escholarship', 'ucb_lib_cal_cultures', 
+            'ucb_lib_dcpp', 'ucb_lib_metcalf', 'ucb_lib_jar',
+            'ucb_lib_prechmat', 'ucb_lib_stone_rubbings'
+          )
+  /ops/storage/db/nodes:
+    status_check: true
+    # TODO: try with query
+    sql: |
+      select
+        n.number as node_number,
+        n.description,
+        nc.object_count as object_count,
+        nc.object_count_primary,
+        nc.object_count_secondary,
+        nc.file_count,
+        nc.billable_size / 1000000000.0 as size_gb,
+        ifnull(lim.tb, 0) * 1000 lim_gb,
+        case
+          when ifnull(lim.tb, 0) * 1000000000000 = 0 then 'SKIP'
+          when nc.billable_size > ifnull(lim.tb, 0) * 1000000000000 * .95 then 'FAIL'
+          when nc.billable_size > ifnull(lim.tb, 0) * 1000000000000 * .9 then 'WARN'
+          else 'PASS'
+        end status
+      from
+        inv.inv_nodes n
+      left join node_counts nc
+        on n.id = nc.inv_node_id
+      left join (
+        select
+          9501 as node, 650 as tb
+      ) lim
+        on n.number = lim.node
+      where
+        ifnull(nc.object_count, 0) > 0
+      order by
+        n.number
+  /queries/collections:
+    description: |
+      _Please Choose the Collection for this Report_
+    sql: |
+      select
+        mnemonic as mnemonic_choice,
+        ifnull(name, mnemonic) as collection_name
+      from
+        inv.inv_collections
+      where
+        mnemonic is not null
+      and 
+        mnemonic not like '%_sla'
+      and 
+        mnemonic not like '%_service_level_agreement'
+      and 
+        mnemonic not like 'mrt_%_classes'
+      order By
+        mnemonic
+  /queries/content/producer-files:
+    # TODO: try with query
+    sql: |
+      select
+        distinct o.ark,
+        v.number,
+        substr(f.pathname, 10) as fname,
+        billable_size,
+        digest_value,
+        f.created,
+        loc.loc_id_agg
+      from
+        inv.inv_objects o
+      inner join inv.inv_files f
+        on f.inv_object_id = o.id and source = 'producer'
+      inner join inv.inv_versions v
+        on f.inv_version_id = v.id
+      left join
+        (
+          select inv_object_ark, group_concat(local_id) as loc_id_agg
+          from inv.inv_localids
+          group by inv_object_ark
+        ) loc
+        on o.ark = inv_object_ark
+      where exists (
+        select 1
+        from
+          inv.inv_collections_inv_objects icio
+        where
+          icio.inv_object_id = o.id
+        and
+          icio.inv_collection_id = (
+            select
+              id
+            from
+              inv.inv_collections c
+            where
+              c.mnemonic = ?
+          )
+      )
+      order by
+        o.ark,
+        fname
+    parameters:
+      - name: mnemonic
+        type: string
+  /queries/content/ucsc-objects:
+    # TODO: try with query
+    sql: |
+      select
+        distinct o.ark,
+        loc.loc_id_agg,
+        replace(o.erc_what, '"', "'") as erc_what,
+        replace(o.erc_when, '"', "'") as erc_when,
+        replace(o.erc_who, '"', "'") as erc_who,
+        (
+          select count(*)
+          from inv.inv_versions v
+          inner join inv.inv_files f
+            on f.inv_object_id = o.id and f.inv_version_id = v.id
+            and f.source='producer' and o.version_number = v.number
+          where v.inv_object_id = o.id
+        ) as file_count,
+        os.billable_size,
+        concat('http://n2t.net/', o.ark) as permalink,
+        (
+          select group_concat(distinct f.mime_type)
+          from inv.inv_files f
+          where inv_object_id=o.id and source='producer'
+        ) as mimetypes
+      from
+        inv.inv_objects o
+      inner join billing.object_size os
+        on os.inv_object_id = o.id
+      left join
+        (
+          select inv_object_ark, group_concat(local_id) as loc_id_agg
+          from inv.inv_localids
+          group by inv_object_ark
+        ) loc
+        on o.ark = inv_object_ark
+      where exists (
+        select 1
+        from
+          inv.inv_collections_inv_objects icio
+        where
+          icio.inv_object_id = o.id
+        and
+          icio.inv_collection_id = (
+            select
+              id
+            from
+              inv.inv_collections c
+            where
+              c.mnemonic = ?
+          )
+      )
+      order by
+        o.ark
+    parameters:
+    - name: mnemonic
+      type: string
+  /queries/misc/collections:
+    totals: true
+    sql: |
+      select
+        id as inv_collection_id,
+        mnemonic,
+        name as collection_name,
+        ark
+      from
+        inv.inv_collections
+      where
+        mnemonic is not null
+      order by
+        mnemonic

@@ -1,0 +1,1394 @@
+fragments:
+  # count(*) = {{{COPIES}}}: consider this as a with query instead
+  #   one for files, one for objects
+  COLLQ: |
+    select
+      c.id inv_collection_id,
+      mnemonic,
+      ark collection_ark,
+      name,
+      count(*) num_objs,
+      inio.role as role,
+      n.number as node_number,
+      n.description as node_description
+    from
+      inv.inv_collections c
+    inner join inv.inv_collections_inv_objects icio
+      on c.id = icio.inv_collection_id
+    inner join inv.inv_nodes_inv_objects inio
+      on icio.inv_object_id = inio.inv_object_id
+    inner join inv.inv_nodes n
+      on inio.inv_node_id = n.id
+    {{{WHERE}}}
+    group by
+      inv_collection_id,
+      mnemonic,
+      collection_ark,
+      name,
+      role,
+      node_number,
+      node_description
+  OBJQ: |
+    {{{OBJQPRE}}}
+    {{{WHERE}}}
+    {{{OBJQPOST}}} 
+  OBJSUBQ: |
+    {{{OBJQPRE}}}
+    where exists (
+      select 1
+      from (
+        {{{SUBWHERE}}}
+        limit 25
+      ) as q
+      where q.inv_object_id = o.id
+    )
+    {{{OBJQPOST}}} 
+  OBJQPRE: |
+    select
+      o.id inv_object_id,
+      o.ark,
+      o.version_number,
+      group_concat(c.mnemonic) as mnemonics,
+      own.name,
+      erc_what,
+      erc_who,
+      erc_when,
+      (select group_concat(local_id) from inv.inv_localids loc where loc.inv_object_ark = o.ark and loc.inv_owner_ark = own.ark) as local_ids,
+      o.created,
+      billable_size,
+      file_count
+    from
+      inv.inv_objects o
+    left join inv.inv_collections_inv_objects icio
+      on o.id = icio.inv_object_id
+    left join inv.inv_collections c
+      on icio.inv_collection_id = c.id
+    left join inv.inv_owners own
+      on o.inv_owner_id = own.id
+    left join billing.object_size os 
+      on o.id = os.inv_object_id
+  OBJQPOST: |
+    group by
+      inv_object_id,
+      o.ark,
+      o.version_number,
+      own.name,
+      erc_what,
+      erc_who,
+      erc_when,
+      created,
+      billable_size,
+      file_count
+    order by o.id desc
+      limit 10
+  # TODO - window function to get max version
+  OBJFILES: |
+    select
+      o.ark,
+      v.number,
+      (
+        select max(vv.number)
+        from inv.inv_files ff
+        inner join inv.inv_versions vv
+          on ff.inv_version_id = vv.id
+        where
+          ff.inv_object_id = o.id
+        and exists (
+          select 1 where ff.pathname=f.pathname
+        )
+      ) as maxv,
+      f.source,
+      binary f.pathname,
+      f.full_size,
+      f.created,
+      ifnull(group_concat(n.number), '') as nodelist,
+      ifnull(
+        group_concat(
+          case
+            when a.status = 'verified' then null
+            else n.number
+          end
+        ),
+        ''
+      ) as unverified
+    from
+      inv.inv_objects o
+    inner join inv.inv_versions v
+      on o.id = v.inv_object_id
+    inner join inv.inv_files f
+      on o.id = f.inv_object_id
+      and v.id = f.inv_version_id
+    left join inv.inv_audits a
+      on
+        o.id = a.inv_object_id
+      and
+        f.id = a.inv_file_id
+    left join inv.inv_nodes n
+      on a.inv_node_id = n.id
+    {{{WHERE}}}
+    and
+      f.billable_size = f.full_size
+    group by
+      o.ark,
+      v.number,
+      f.source,
+      binary f.pathname,
+      f.full_size,
+      f.created
+    order by
+      f.created desc,
+      source,
+      pathname
+    limit 2000
+  OBJREPL: |
+    select
+      nn.role,
+      nn.node_id,
+      nn.node_number,
+      nn.description,
+      nn.access_mode,
+      nn.created,
+      nn.replicated,
+      (
+        select count(*) from inv.inv_audits a
+        where 
+          a.inv_object_id = nn.inv_object_id and a.inv_node_id=nn.node_id 
+          and status != 'verified'
+      ) as unverified,
+      (
+        select max(verified) from inv.inv_audits a
+        where a.inv_object_id = nn.inv_object_id and a.inv_node_id=nn.node_id
+      ) as last_verified,
+      nn.version_number
+    from (
+      select
+        inio.role,
+        n.id node_id,
+        n.number node_number,
+        n.description,
+        n.access_mode,
+        o.created,
+        inio.created as replicated,
+        o.id as inv_object_id,
+        o.ark as ark,
+        o.version_number
+      from
+        inv.inv_objects o
+      inner join inv.inv_nodes_inv_objects inio
+        on o.id = inio.inv_object_id
+      inner join inv.inv_nodes n
+        on inio.inv_node_id = n.id
+      {{{WHERE}}}
+    ) as nn
+  OBJREPLQLIST:
+    where exists (
+      select
+        1
+      from (
+        select
+          inio.inv_object_id,
+          min(created) as init_created
+        from
+          inv.inv_nodes_inv_objects inio
+        inner join (
+          select
+            inv_object_id,
+            count(*)
+          from
+            inv.inv_nodes_inv_objects
+          group by
+            inv_object_id
+          having
+            count(*) = {{{COPIES}}}
+        ) as copies
+        on copies.inv_object_id = inio.inv_object_id
+         group by
+          inv_object_id
+      ) as age      
+      where
+        age.init_created < date_add(now(), INTERVAL -? DAY)
+      and 
+        age.inv_object_id = o.id
+    )
+  FILEREPLQLIST:
+    where exists (
+      select
+        1
+      from (
+        select
+          a.inv_object_id,
+          a.inv_file_id,
+          min(created) as init_created
+        from
+          inv.inv_audits a
+        inner join (
+          select
+            inv_file_id,
+            count(*)
+          from
+            inv.inv_audits
+          group by
+            inv_file_id
+          having
+            count(*) = {{{COPIES}}}
+        ) as copies
+          on copies.inv_file_id = a.inv_file_id
+        group by
+          inv_object_id,
+          inv_file_id
+      ) as age      
+      where
+        age.init_created < date_add(now(), INTERVAL -? DAY)
+      and 
+        age.inv_object_id = o.id
+    )
+  REPSQL: |
+    select
+      case
+        when ifnull(c.mnemonic, '') = '' then 'No Mnemonic'
+        when c.name = 'Merritt curatorial classes' then 'Stage Exception'
+        else 'Default'
+      end as category,
+      count(*) as num_objs,
+      ifnull(
+        sum(
+          case
+            when age.init_created < date_add(now(), INTERVAL -2 DAY) then 1
+            else 0
+          end
+        ),
+        0
+      ) as num_objs_2day,
+      ifnull(
+        sum(
+          case
+            when age.init_created < date_add(now(), INTERVAL -2 DAY) then 0
+            when age.init_created < date_add(now(), INTERVAL -1 DAY) then 1
+            else 0
+          end
+        ),
+        0
+      ) as num_objs_1day,
+      ifnull(
+        sum(
+          case
+            when age.init_created < date_add(now(), INTERVAL -2 DAY) then 0
+            when age.init_created < date_add(now(), INTERVAL -1 DAY) then 0
+            else 1
+          end
+        ),
+        0
+      ) as num_objs_0day,
+      case
+        when count(*) = 0 then 'PASS'
+        when {{{COPIES}}} = 3 then 'PASS'
+        when ifnull(
+          sum(
+            case
+              when age.init_created < date_add(now(), INTERVAL -2 DAY) then 1
+              else 0
+            end
+          ),
+          0
+        ) > 0 then
+          case
+            when c.mnemonic = 'oneshare_dataup' then 'INFO'
+            when c.mnemonic = 'dataone_dash' then 'INFO'
+            when ifnull(c.mnemonic, '') = '' then 'INFO'
+            when {{{COPIES}}} != 2 then 'FAIL'
+            else 'FAIL'
+          end
+        when ifnull(
+          sum(
+            case
+              when age.init_created < date_add(now(), INTERVAL -2 DAY) then 0
+              when age.init_created < date_add(now(), INTERVAL -1 DAY) then 1
+              else 0
+            end
+          ),
+          0
+        ) > 0 then 'WARN'
+        else 'PASS'
+      end as status
+      from (
+        select
+          inio.inv_object_id,
+          min(created) as init_created
+        from
+          inv.inv_nodes_inv_objects inio
+        inner join (
+          select
+            inv_object_id,
+            count(*)
+          from
+            inv.inv_nodes_inv_objects
+          group by
+            inv_object_id
+          having
+            count(*) = {{{COPIES}}}
+        ) as copies
+        on copies.inv_object_id = inio.inv_object_id
+        group by
+          inv_object_id
+      ) as age      
+      inner join inv.inv_collections_inv_objects icio
+        on age.inv_object_id = icio.inv_object_id
+      inner join inv.inv_collections c
+        on icio.inv_collection_id = c.id
+      inner join inv.inv_objects o
+        on c.inv_object_id = o.id and o.aggregate_role = 'MRT-collection'
+      group by
+        category
+  REPSQLFILE: |
+    select
+      case
+        when ifnull(c.mnemonic, '') = ''
+          then 'No Mnemonic'
+        when age.inv_object_id = (
+          select -1 /*id from inv.inv_objects where ark = '...'*/
+        )
+          then '...'
+        when c.name = 'Merritt curatorial classes'
+          then 'Stage Exception'
+        else
+          'Default'
+      end as category,
+      count(*),
+      ifnull(
+        sum(
+          case
+            when age.init_created < date_add(now(), INTERVAL -2 DAY)
+              then 1
+            else 0
+          end
+        ),
+        0
+      ) as num_objs_2day,
+      ifnull(
+        sum(
+          case
+            when age.init_created < date_add(now(), INTERVAL -2 DAY)
+              then 0
+            when age.init_created < date_add(now(), INTERVAL -1 DAY)
+              then 1
+            else 0
+          end
+        ),
+        0
+      ) as num_objs_1day,
+      ifnull(
+        sum(
+          case
+            when age.init_created < date_add(now(), INTERVAL -2 DAY)
+              then 0
+            when age.init_created < date_add(now(), INTERVAL -1 DAY)
+              then 0
+            else 1
+          end
+        ),
+        0
+      ) as num_objs_0day,
+      case
+        when count(*) = 0 then 'PASS'
+        when {{{COPIES}}} = 3 then 'PASS'
+        when ifnull(
+          sum(
+            case
+              when age.init_created < date_add(now(), INTERVAL -2 DAY)
+                then 1
+              else 0
+            end
+          ),
+          0
+        ) > 0 then
+          case
+            when c.mnemonic = 'oneshare_dataup' then 'INFO'
+            when c.mnemonic = 'dataone_dash' then 'INFO'
+            when ifnull(c.mnemonic, '') = '' then 'INFO'
+            when {{{COPIES}}} != 2 then 'FAIL'
+            else 'FAIL'
+          end
+        when ifnull(
+          sum(
+            case
+              when age.init_created < date_add(now(), INTERVAL -2 DAY)
+                then 0
+              when age.init_created < date_add(now(), INTERVAL -1 DAY)
+                then 1
+              else 0
+            end
+          ),
+          0
+        ) > 0 then 'WARN'
+        else 'PASS'
+      end as status
+    from (
+      select
+        a.inv_object_id,
+        a.inv_file_id,
+        min(created) as init_created
+      from
+        inv.inv_audits a
+      inner join (
+        select
+          inv_file_id,
+          count(*)
+        from
+          inv.inv_audits
+        group by
+          inv_file_id
+        having
+          count(*) = {{{COPIES}}}
+      ) as copies
+        on copies.inv_file_id = a.inv_file_id
+      group by
+        inv_object_id,
+        inv_file_id
+    ) as age
+    inner join inv.inv_collections_inv_objects icio
+      on age.inv_object_id = icio.inv_object_id
+    inner join inv.inv_collections c
+      on icio.inv_collection_id = c.id
+    inner join inv.inv_objects o
+      on c.inv_object_id = o.id and o.aggregate_role = 'MRT-collection'
+    group by
+      category
+    select
+      distinct
+        ogroup,
+        inv_collection_id,
+        mnemonic,
+        collection_name,
+        mime_group,
+        mime_type,
+        sum(count_files) files,
+        sum(billable_size) / 1000000000.0 size_gb
+    from
+      owner_coll_mime_use_details
+    {{{WHERE}}}
+    group by
+      ogroup,
+      inv_collection_id,
+      mnemonic,
+      collection_name,
+      mime_group,
+      mime_type
+    order by
+      ogroup,
+      mnemonic
+  MULTCOLL:
+    where o.id in (
+      select
+        inv_object_id
+      from
+        inv.inv_collections_inv_objects
+      group by
+        inv_object_id
+      having
+        count(*) > 1
+    )
+    and
+      o.aggregate_role = 'MRT-none'
+  MULTCOLLQ:
+    select
+      year(o.created) as year,
+      count(*) as count,
+      case
+        when year(now()) - year(o.created) <= 1 then 'WARN'
+        else 'SKIP'
+      end as status
+    from
+      inv.inv_objects o
+    {{{MULTCOLL}}}
+    group by
+      year
+  VERCLOBBER: |
+    select
+      inv_object_id,
+      number,
+      count(*)
+    from
+      inv.inv_versions
+    group by
+      inv_object_id,
+      number
+    having
+      count(*) > 1
+queries:
+  /queries/consistency/daily:
+    # TODO: try with query or other window function
+    sql: |
+      select
+        dcc.check_name,
+        dcc.updated,
+        dcc.status as check_status,
+        case 
+          when updated > date(now()) then dcc.status
+          else 'SKIP'
+        end as status
+      from
+        daily_consistency_checks dcc,
+        (
+          select 
+            dcc2.check_name, 
+            max(dcc2.updated) as last_updated
+          from
+            daily_consistency_checks dcc2
+          group by
+            dcc2.check_name
+        ) as dcclatest
+      where 
+        dcc.check_name = dcclatest.check_name
+      and 
+        dcc.updated = dcclatest.last_updated
+  /queries/consistency/replication/objects-2:
+    description: |
+      - [Object List: Older than 2 days](/queries/consistency/replication/objects-2/objlist?days=2)
+      - [Object List: Older than 1 day](/queries/consistency/replication/objects-2/objlist?days=1)
+      - [Object List: Any time](/queries/consistency/replication/objects-2/objlist?days=0)
+    template-params:
+      COPIES: 2
+    status_check: true
+    totals: true
+    sql: |
+      {{{REPSQL}}}
+  /queries/consistency/replication/objects-2/objlist:
+    template-params:
+      COPIES: 2
+    totals: true
+    sql: |
+      {{{OBJQPRE}}}
+      {{{OBJREPLQLIST}}}
+      {{{OBJQPOST}}}
+    parameters:
+    - name: days
+      type: integer
+  /queries/consistency/replication/objects-1:
+    description: |
+      - [Object List: Older than 2 days](/queries/consistency/replication/objects-1/objlist?days=2)
+      - [Object List: Older than 1 day](/queries/consistency/replication/objects-1/objlist?days=1)
+      - [Object List: Any time](/queries/consistency/replication/objects-1/objlist?days=0)
+    template-params:
+      COPIES: 1
+    status_check: true
+    totals: true
+    sql: |
+      {{{REPSQL}}}
+  /queries/consistency/replication/objects-1/objlist:
+    template-params:
+      COPIES: 1
+    totals: true
+    sql: |
+      {{{OBJQPRE}}}
+      {{{OBJREPLQLIST}}}
+      {{{OBJQPOST}}}
+    parameters:
+    - name: days
+      type: integer
+  /queries/consistency/replication/objects-4:
+    description: |
+      - [Object List: Older than 2 days](/queries/consistency/replication/objects-4/objlist?days=2)
+      - [Object List: Older than 1 day](/queries/consistency/replication/objects-4/objlist?days=1)
+      - [Object List: Any time](/queries/consistency/replication/objects-4/objlist?days=0)
+    template-params:
+      COPIES: 4
+    status_check: true
+    totals: true
+    sql: |
+      {{{REPSQL}}}
+  /queries/consistency/replication/objects-4/objlist:
+    template-params:
+      COPIES: 4
+    totals: true
+    sql: |
+      {{{OBJQPRE}}}
+      {{{OBJREPLQLIST}}}
+      {{{OBJQPOST}}}
+    parameters:
+    - name: days
+      type: integer
+  /queries/consistency/replication/files-2:
+    description: |
+      - [Object List: Older than 2 days](/queries/consistency/replication/files-2/objlist?days=2)
+      - [Object List: Older than 1 day](/queries/consistency/replication/files-2/objlist?days=1)
+      - [Object List: Any time](/queries/consistency/replication/files-2/objlist?days=0)
+    template-params:
+      COPIES: 2
+    status_check: true
+    totals: true
+    sql: |
+      {{{REPSQLFILE}}}
+  /queries/consistency/replication/files-2/objlist:
+    template-params:
+      COPIES: 2
+    totals: true
+    sql: |
+      {{{OBJQPRE}}}
+      {{{FILEREPLQLIST}}}
+      {{{OBJQPOST}}}
+    parameters:
+    - name: days
+      type: integer
+  /queries/consistency/replication/files-1:
+    description: |
+      - [Object List: Older than 2 days](/queries/consistency/replication/files-1/objlist?days=2)
+      - [Object List: Older than 1 day](/queries/consistency/replication/files-1/objlist?days=1)
+      - [Object List: Any time](/queries/consistency/replication/files-1/objlist?days=0)
+    template-params:
+      COPIES: 1
+    status_check: true
+    totals: true
+    sql: |
+      {{{REPSQLFILE}}}
+  /queries/consistency/replication/files-1/objlist:
+    template-params:
+      COPIES: 1
+    totals: true
+    sql: |
+      {{{OBJQPRE}}}
+      {{{FILEREPLQLIST}}}
+      {{{OBJQPOST}}}
+    parameters:
+    - name: days
+      type: integer
+  /queries/consistency/replication/files-4:
+    description: |
+      - [Object List: Older than 2 days](/queries/consistency/replication/files-4/objlist?days=2)
+      - [Object List: Older than 1 day](/queries/consistency/replication/files-4/objlist?days=1)
+      - [Object List: Any time](/queries/consistency/replication/files-4/objlist?days=0)
+    template-params:
+      COPIES: 4
+    status_check: true
+    totals: true
+    sql: |
+      {{{REPSQLFILE}}}
+  /queries/consistency/replication/files-4/objlist:
+    template-params:
+      COPIES: 4
+    totals: true
+    sql: |
+      {{{OBJQPRE}}}
+      {{{FILEREPLQLIST}}}
+      {{{OBJQPOST}}}
+    parameters:
+    - name: days
+      type: integer
+  /queries/consistency/obj-comp/mult-colls:
+    status_check: true
+    totals: true
+    description: |
+      - [Object List](/queries/consistency/obj-comp/mult-colls/objlist)
+    sql: |
+      {{{MULTCOLLQ}}}
+  /queries/consistency/obj-comp/mult-colls/objlist:
+    totals: true
+    sql: |
+      {{{OBJQ}}}
+    template-params:
+      WHERE: |
+        {{{MULTCOLL}}}
+  /queries/consistency/obj-comp/version-clobber:
+    status_check: true
+    description: |
+      - [Object List](/queries/consistency/obj-comp/version-clobber/objlist )
+    # TODO: try with query
+    sql: |
+      select
+        'Version Clobber (Duplicate Version Num)',
+        ifnull(count(distinct inv_object_id), 0),
+        case
+          when count(*) = 0 then 'PASS'
+          else 'FAIL'
+        end as status
+      from (
+        {{{VERCLOBBER}}}
+      ) as clobber
+      union
+      select
+        'Version Number Gap',
+        ifnull(count(distinct inv_object_id), 0),
+        case
+          when count(*) = 0 then 'PASS'
+          else 'FAIL'
+        end as status
+      from (
+        select
+          inv_object_id
+        from
+          inv.inv_versions
+        group by
+          inv_object_id
+        having
+          count(distinct number) != max(number)
+      ) as gap
+  /queries/consistency/obj-comp/version-clobber/objlist:
+    sql: |
+      {{{OBJSUBQ}}}
+    template-params:
+      SUBWHERE: |
+        {{{VERCLOBBER}}}
+  /queries/consistency/obj-comp/objects-no-local-id:
+    description: |
+      - [Object List](/queries/consistency/obj-comp/objects-no-local-id/objlist)
+    status_check: true
+    sql: |
+      select
+        case
+          when modified < date_add(now(), interval -1 YEAR)
+            then concat(c.mnemonic, ' - Older Than 1 Year')
+          when modified < date_add(now(), interval -1 MONTH)
+            then concat(c.mnemonic, ' - Older Than 1 Month')
+          else
+            c.mnemonic
+        end as category,
+        count(*),
+        case
+          when count(*) = 0 then 'PASS'
+          when c.mnemonic = 'merritt_demo' then 'INFO'
+          when modified < date_add(now(), interval -1 YEAR) then 'INFO'
+          when modified < date_add(now(), interval -1 MONTH) then 'WARN'
+          else 'FAIL'
+        end as status
+        from inv.inv_objects o
+        inner join inv.inv_collections_inv_objects icio
+          on o.id = icio.inv_object_id
+        inner join inv.inv_collections c
+          on icio.inv_collection_id = c.id
+        where
+          not exists (select 1 from inv.inv_localids loc where o.ark = loc.inv_object_ark)
+          and
+            o.erc_where != concat(o.ark, ' ; (:unas)')
+        group by
+          category
+        order by
+          category
+  /queries/consistency/obj-comp/objects-no-local-id/objlist:
+    sql: |
+      {{{OBJQ}}}
+    template-params:
+      WHERE: |
+        where not exists (
+          select
+            1
+          from
+            inv.inv_localids x
+          where
+            o.ark = x.inv_object_ark
+        )
+        and
+          erc_where != concat(o.ark, ' ; (:unas)')
+  /queries/consistency/obj-comp/local-id-no-ark:
+    sql: |
+      SELECT
+        replace(loc.inv_owner_ark, '%2F', '/') as ownark,
+        own.name,
+        count(*) as count_ids,
+        'INFO' as status
+      FROM
+        inv.inv_localids loc
+      LEFT JOIN
+        inv.inv_objects o ON o.ark = loc.inv_object_ark
+      LEFT JOIN
+        inv.inv_owners own ON replace(loc.inv_owner_ark, '%2F', '/') = own.ark
+      WHERE
+        o.ark IS null
+      group by
+        ownark, own.name
+  /queries/recent/by-collection:
+    sql:
+      select
+        c.id inv_collection_id,
+        c.name,
+        c.mnemonic,
+        (
+          select
+            max(o.modified)
+          from
+            inv.inv_objects o
+          inner join inv.inv_collections_inv_objects icio
+            on o.id = icio.inv_object_id
+          where
+            c.id = icio.inv_collection_id
+        ) as modified
+      from
+        inv.inv_collections c
+      order by
+        modified desc
+  /ops/db-queue/replication/required:
+    status_check: true
+    sql: |
+      select
+        case
+          when u.inv_object_id = (
+            select id from inv.inv_objects where ark = 'ark:/99999/fk4t15qn1'
+          )
+            then 'Stage Exception'
+          else
+            'Default'
+        end as category,
+        count(u.inv_object_id) as obj,
+        (select sum(ifnull(os.billable_size,0)) from object_size os where os.inv_object_id = u.inv_object_id) as fbytes,
+        ifnull(
+          sum(
+            case
+              when u.modified < date_add(now(), INTERVAL -2 DAY)
+                then 1
+              else 0
+            end
+          ),
+          0
+        ) as day2,
+        ifnull(
+          sum(
+            case
+              when u.modified < date_add(now(), INTERVAL -2 DAY)
+                then 0
+              when u.modified < date_add(now(), INTERVAL -1 DAY)
+                then 1
+              else 0
+            end
+          ),
+          0
+        ) as day1,
+        ifnull(
+          sum(
+            case
+              when u.modified < date_add(now(), INTERVAL -2 DAY)
+                then 0
+              when u.modified < date_add(now(), INTERVAL -1 DAY)
+                then 0
+              when u.modified is null
+                then 0
+              else 1
+            end
+          ),
+          0
+        ) as day0,
+        case
+          when count(distinct u.inv_object_id) = 0 then 'PASS'
+          when
+            sum(
+              case
+                when u.modified < date_add(now(), INTERVAL -2 DAY)
+                  then 1
+                else 0
+              end
+            ) > 0 then 'FAIL'
+          when
+            sum(
+              case
+                when u.modified < date_add(now(), INTERVAL -2 DAY)
+                  then 0
+                when u.modified < date_add(now(), INTERVAL -1 DAY)
+                  then 1
+                else 0
+              end
+            ) > 0 then 'WARN'
+         else 'PASS'
+        end as status
+      from (
+        select
+          p.inv_object_id,
+          o.created,
+          o.modified
+        from
+          inv.inv_nodes_inv_objects p
+        inner join
+          inv.inv_objects o
+        on
+          o.id = p.inv_object_id
+        where
+          p.role='primary'
+        and
+          not exists(
+            select
+              1
+            from
+              inv.inv_nodes_inv_objects s
+            where
+              s.role='secondary'
+            and
+              p.inv_object_id = s.inv_object_id
+            and
+              s.version_number = o.version_number
+          )
+      ) as u
+      group by
+        category
+  /ops/db-queue/replication/in-progress:
+    status_check: true
+    sql: |
+      select
+        case
+          when o.ark in (
+            'ark:/13030/m5v45qp2',
+            'ark:/13030/j2br86wx',
+            'ark:/13030/j21n79mc'
+          ) then 'Issue 951 - Admin Object'
+          else 'Default'
+        end as category,
+        inio.inv_object_id,
+        o.ark,
+        o.version_number,
+        o.created,
+        inio.replic_start,
+        ifnull(inio.replic_size,0) as bytes,
+        count(i2.created) as seccnt,
+        min(i2.version_number) as secmin,
+        max(i2.version_number) as secmax,
+        case
+          when inio.replic_start is null and o.modified > date_add(now(), INTERVAL -4 HOUR)
+            then 'PASS'
+          when inio.replic_start is null
+            then 'INFO'
+          when inio.replic_start > date_add(now(), INTERVAL -4 HOUR)
+            then 'PASS'
+          when inio.replic_start > date_add(now(), INTERVAL -24 HOUR)
+            then 'WARN'
+          else 'FAIL'
+        end as status
+      from
+        inv.inv_nodes_inv_objects inio
+      inner join
+        inv.inv_objects o
+      on
+        o.id = inio.inv_object_id
+      left join
+        inv.inv_nodes_inv_objects i2
+      on
+        inio.inv_object_id = i2.inv_object_id
+      and
+        i2.role = 'secondary'
+      where
+        inio.replic_start is not null
+      and
+        ifnull(inio.replicated, '1970-01-01') < '1971-01-01'
+      and
+        inio.role = 'primary'
+      and
+        ifnull(inio.completion_status, 'unknown') = 'unknown'
+      group by
+        category,
+        inio.inv_object_id,
+        o.ark,
+        o.version_number,
+        o.created,
+        inio.replic_start,
+        bytes,
+        status
+  /ops/db-queue/replication/failed:
+    status_check: true
+    # TODO: try with query
+    sql: |
+      select
+        case
+          when o.ark = '...' then '...'
+          else 'Default'
+        end as category,
+        inio.inv_object_id,
+        o.ark,
+        o.version_number,
+        o.created,
+        inio.replic_start,
+        ifnull(inio.replic_size,0) as bytes,
+        inio.completion_status,
+        (
+          select
+            group_concat(n.number)
+          from
+            inv.inv_nodes n
+          inner join
+            inv.inv_nodes_inv_objects i2
+          on
+            i2.inv_node_id = n.id
+          where
+            i2.role = 'secondary'
+          and
+            i2.inv_object_id = inio.inv_object_id
+          and
+            i2.completion_status = 'fail'
+        ) as nodes,
+        case
+          when o.ark = '...' then 'INFO'
+          else 'FAIL'
+        end as status
+      from
+        inv.inv_nodes_inv_objects inio
+      inner join
+        inv.inv_objects o
+      on
+        o.id = inio.inv_object_id
+      where
+        inio.replicated is not null
+      and
+        inio.replicated < '1971-01-01'
+      and
+        inio.role = 'primary'
+      and
+        inio.completion_status in ('fail')
+      union
+      select
+        case
+          when o.ark = '...' then '...'
+          else 'Default'
+        end as category,
+        inio.inv_object_id,
+        o.ark,
+        o.version_number,
+        o.created,
+        inio.replic_start,
+        ifnull(inio.replic_size,0) as bytes,
+        inio.completion_status,
+        (
+          select
+            group_concat(n.number)
+          from
+            inv.inv_nodes n
+          inner join
+            inv.inv_nodes_inv_objects i2
+          on
+            i2.inv_node_id = n.id
+          where
+            i2.role = 'secondary'
+          and
+            i2.inv_object_id = inio.inv_object_id
+          and
+            i2.completion_status = 'fail'
+        ) as nodes,
+        case
+          when o.ark = '...' then 'INFO'
+          else 'WARN'
+        end as status
+      from
+        inv.inv_nodes_inv_objects inio
+      inner join
+        inv.inv_objects o
+      on
+        o.id = inio.inv_object_id
+      where
+        inio.replicated is not null
+      and
+        inio.replicated < '1971-01-01'
+      and
+        inio.role = 'primary'
+      and
+        inio.completion_status in ('partial')
+      order by
+        replic_start desc
+  /ops/db-queue/audit/oldest-audit-check:
+    status_check: true
+    sql: |
+      select
+        date(verified) as date,
+        case
+          when date(verified) < date_add(now(), INTERVAL -90 DAY) then 'FAIL'
+          when date(verified) < date_add(now(), INTERVAL -60 DAY) then 'WARN'
+          else 'PASS'
+        end as status
+      from
+        inv.inv_audits
+      where
+        status != 'processing'
+      AND NOT
+        verified IS null
+      order by
+        verified
+      LIMIT 1
+  /ops/db-queue/audit/active-batches:
+    status_check: true
+    sql: |
+      select
+        verified,
+        count(a.id) as file_count,
+        ifnull(
+          sum(
+            case
+              when a.inv_node_id in (select id from inv.inv_nodes where access_mode != 'on-line')
+                then 0
+              else full_size
+            end
+          ),
+          0
+        ) as online_bytes,
+        case
+          when verified is null and min(f.created) < date_add(now(), INTERVAL -1 DAY) then 'FAIL'
+          when verified is null and min(f.created) < date_add(now(), INTERVAL -10 HOUR) then 'WARN'
+          when verified < date_add(now(), INTERVAL -1 DAY) then 'FAIL'
+          when verified < date_add(now(), INTERVAL -10 HOUR) then 'WARN'
+          else 'PASS'
+        end as status
+      from
+        inv.inv_files f
+      inner join inv.inv_audits a
+        on
+          f.id = a.inv_file_id
+        and
+          f.inv_object_id = a.inv_object_id
+        and
+          f.inv_version_id = a.inv_version_id
+      where
+        status='processing'
+      group by
+        verified
+  /ops/db-queue/audit/counts-by-state:
+    status_check: true
+    sql: |
+      select
+        'unverified' as astatus,
+        acount,
+        case
+          when acount > 0 then 'FAIL'
+          else 'PASS'
+        end as status
+      from
+        (
+          select
+            count(*) as acount
+          from
+            inv.inv_audits
+          where
+            status = 'unverified'
+        ) as qcount
+      union
+      select
+        'size-mismatch' as astatus,
+        acount,
+        case
+          when acount > 0 then 'FAIL'
+          else 'PASS'
+        end as status
+      from
+        (
+          select
+            count(*) as acount
+          from
+            inv.inv_audits
+          where
+            status = 'size-mismatch'
+          ) as qcount
+      union
+      select
+        'digest-mismatch' as astatus,
+        acount,
+        case
+          when acount > 0 then 'FAIL'
+          else 'PASS'
+        end as status
+      from
+        (
+          select
+            count(*) as acount
+          from
+            inv.inv_audits
+          where
+            status = 'digest-mismatch'
+        ) as qcount
+      union
+      select
+        'system-unavailable' as astatus,
+        acount,
+        case
+          when acount > 0 then 'WARN'
+          else 'PASS'
+        end as status
+      from
+        (
+          select
+            count(*) as acount
+          from
+            inv.inv_audits
+          where
+            status = 'system-unavailable'
+        ) as qcount
+      union
+      select
+        'processing' as astatus,
+        acount,
+        'PASS' as status
+      from
+        (
+          select
+            count(*) as acount
+          from
+            inv.inv_audits
+          where
+            status = 'processing'
+        ) as qcount
+      union
+      select
+        'unknown' as astatus,
+        acount,
+        case
+          when acount > 0 then 'PASS'
+          else 'PASS'
+        end as status
+      from
+        (
+          select
+            count(*) as acount
+          from
+            inv.inv_audits
+          where
+            status = 'unknown'
+        ) as qcount
+  /ops/collections/db/node-cleanup-needed:
+    sql: |
+      select
+          icio.inv_collection_id,
+          ifnull(c.name, concat('Coll', c.id)) as collection_name,
+          n.number node_number,
+          count(*) num_objects,
+          'FAIL' as status
+        from
+          inv.inv_nodes_inv_objects inio
+        inner join
+          inv.inv_collections_inv_objects icio
+        on
+          inio.inv_object_id = icio.inv_object_id
+        inner join
+          inv.inv_nodes n
+        on
+          n.id = inio.inv_node_id
+        inner join
+          inv.inv_collections c
+        on
+          c.id = icio.inv_collection_id
+        where
+          inio.role = 'secondary'
+        and
+          not exists (
+            select
+              1
+            from
+              inv.inv_collections_inv_nodes icin
+            where
+              icin.inv_collection_id = icio.inv_collection_id
+            and
+              icin.inv_node_id = inio.inv_node_id
+          )
+        and exists (
+          select
+            1
+          from
+            inv.inv_objects o
+          where
+            o.id = inio.inv_object_id
+          and
+            aggregate_role = 'MRT-none'
+        )
+        group by
+          inio.inv_node_id,
+          n.number,
+          icio.inv_collection_id,
+          c.name,
+          status
+  /ops/collections/db/primary-config:
+    status_check: true
+    sql: |
+      select
+        n.number as nodenum,
+        n.description as nodename,
+        c.name as collection,
+        (
+          select
+            group_concat(nn.number order by nn.number)
+          from
+            inv.inv_collections_inv_nodes icin
+          inner join
+            inv.inv_nodes nn
+          on
+            icin.inv_node_id = nn.id
+          where
+            icin.inv_collection_id = c.id
+        ),
+        case
+          when n.number = 4001 then 'SKIP'
+          when n.number = 5001 then 'INFO'
+          when c.name like 'CDL Wasabi Demo Collection' then 'INFO'
+          else 'FAIL'
+        end as status
+      from
+        inv.inv_nodes n
+      inner join
+        inv.inv_nodes_inv_objects inio
+      on
+        n.id = inio.inv_node_id
+      and
+        inio.role = 'primary'
+      inner join
+        inv.inv_collections_inv_objects icio
+      on
+        icio.inv_object_id = inio.inv_object_id
+      inner join
+        inv.inv_collections c
+      on
+        c.id = icio.inv_collection_id
+      inner join
+        inv.inv_objects o
+      on
+        c.inv_object_id = o.id
+      and
+        o.aggregate_role = 'MRT-collection'
+      where
+        n.number not in (9501, 9502)
+      group by
+        nodenum,
+        nodename,
+        collection
+  /ops/collections/db/secondary-config:
+    status_check: true
+    # TODO: try with query
+    sql: |
+      select
+        c.id as collid,
+        c.name as collection,
+        ifnull(icin.ncount, 0) ncount,
+        ifnull(icin.nodes, '') nodes,
+        case
+          when c.name like 'Merritt %' then 'INFO'
+          when lower(c.name) like '%service level agreement%' then 'INFO'
+          when c.name like '%SLA' then 'INFO'
+          when c.name like 'CDL Wasabi Demo Collection' then 'INFO'
+          when (
+            select 1 where not exists (
+              select 1 from inv.inv_collections_inv_objects icio
+              where icio.inv_collection_id = c.id
+            )
+          ) then 'WARN'
+          else 'FAIL'
+        end as status
+      from
+        inv.inv_collections c
+      left join (
+        select
+          icin.inv_collection_id,
+          count(*) as ncount,
+          ifnull(group_concat(n.number order by number), '') nodes
+        from
+          inv.inv_collections_inv_nodes icin
+        inner join
+          inv.inv_nodes n
+        on
+          icin.inv_node_id = n.id
+        group by
+          icin.inv_collection_id
+      ) icin
+      on
+        c.id = icin.inv_collection_id
+      where not exists (
+        select
+          1
+        from
+          inv.inv_objects o
+        where
+          c.inv_object_id = o.id
+        and
+          o.aggregate_role = 'MRT-service-level-agreement'
+      )
+      group by
+        collid,
+        collection
+      having
+        nodes not in ('2001,6001', '2001,9501', '2002,6001', '2002,9502')
+      order by
+        ncount desc, c.name

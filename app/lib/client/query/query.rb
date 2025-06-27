@@ -15,9 +15,21 @@ module UC3Query
     end
 
     def initialize
-      @columndefs = UC3::UC3Client.load_config('app/config/mrt/query.sql.yml').fetch(:columns, [])
-      @fragments = UC3::UC3Client.load_config('app/config/mrt/query.sql.yml').fetch(:fragments, [])
-      @queries = UC3::UC3Client.load_config('app/config/mrt/query.sql.yml').fetch(:queries, [])
+      @columndefs = {}
+      @fragments = {}
+      @queries = {}
+
+      Dir.glob('app/config/mrt/query/query.sql.*.yml').each do |file|
+        begin
+          config = UC3::UC3Client.load_config(file)
+          @columndefs.merge!(config.fetch(:columns, {}))
+          @fragments.merge!(config.fetch(:fragments, {}))
+          @queries.merge!(config.fetch(:queries, {}))
+        rescue StandardError => e
+          puts "#{e.class}: #{e} in #{file}"
+        end
+      end
+
       key = ENV.fetch('configkey', 'default')
       tmap = YAML.safe_load_file('app/config/mrt/query.lookup.yml', aliases: true)
       tmap = tmap.fetch(key, {})

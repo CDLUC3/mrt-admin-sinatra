@@ -1,0 +1,6 @@
+queries:
+  /queries/misc/now:
+    sql: |
+      select
+        now() as current
+ 

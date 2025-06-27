@@ -1,0 +1,620 @@
+fragments:
+  YEARS: |
+    select distinct 
+      date_add(
+        date(created), 
+        INTERVAL -(dayofyear(created)) + 1 DAY
+      ) start,
+      date_add(
+        date_add(
+          date(created), 
+          INTERVAL -(dayofyear(created)) + 1 DAY
+        ), 
+        INTERVAL +1 YEAR
+      ) end 
+    from inv.inv_objects
+    where created >= date_add(now(), INTERVAL -5 YEAR)
+    order by start
+  CUMLYEARS: |
+    select distinct 
+      date_add(
+        date_add(
+          date_add(
+            date_add(date(created), INTERVAL +6 MONTH), 
+            INTERVAL -(dayofyear(date_add(date(created), INTERVAL +6 MONTH))) + 1 DAY
+          ), 
+          INTERVAL -1 YEAR
+        ),
+        INTERVAL +6 MONTH
+      ) start,
+      date_add(
+        date_add(
+          date_add(
+            date_add(date(created), INTERVAL +6 MONTH), 
+            INTERVAL -(dayofyear(date_add(date(created), INTERVAL +6 MONTH))) + 1 DAY
+          ), 
+          INTERVAL -1 YEAR
+        ),
+        INTERVAL +18 MONTH
+      ) end
+    from inv.inv_objects 
+    where created >= date_add(now(), INTERVAL -3 YEAR)
+    union
+    select distinct 
+      date_add(
+        date_add(
+          date_add(
+            date_add(date(max(created)), INTERVAL +6 MONTH), 
+            INTERVAL -(dayofyear(date_add(date(max(created)), INTERVAL +6 MONTH))) + 1 DAY
+          ), 
+          INTERVAL -1 YEAR
+        ),
+        INTERVAL +18 MONTH
+      ) start,
+      date_add(
+        date_add(
+          date_add(
+            date_add(date(max(created)), INTERVAL +6 MONTH), 
+            INTERVAL -(dayofyear(date_add(date(max(created)), INTERVAL +6 MONTH))) + 1 DAY
+          ), 
+          INTERVAL -1 YEAR
+        ),
+        INTERVAL +30 MONTH
+      ) end
+    from inv.inv_objects 
+    union
+    select distinct 
+      date_add(
+        date_add(
+          date_add(
+            date_add(date(max(created)), INTERVAL +6 MONTH), 
+            INTERVAL -(dayofyear(date_add(date(max(created)), INTERVAL +6 MONTH))) + 1 DAY
+          ), 
+          INTERVAL -1 YEAR
+        ),
+        INTERVAL +30 MONTH
+      ) start,
+      date_add(
+        date_add(
+          date_add(
+            date_add(date(max(created)), INTERVAL +6 MONTH), 
+            INTERVAL -(dayofyear(date_add(date(max(created)), INTERVAL +6 MONTH))) + 1 DAY
+          ), 
+          INTERVAL -1 YEAR
+        ),
+        INTERVAL +42 MONTH
+      ) end
+    from inv.inv_objects 
+    order by start
+  WEEKS: |
+    select 
+      date_add(date(now()), INTERVAL -dayofweek(date(now())) +1 -21 DAY) start,
+      date_add(date(now()), INTERVAL -dayofweek(date(now())) +8 -21 DAY) end
+    union
+    select 
+      date_add(date(now()), INTERVAL -dayofweek(date(now())) +1 -14 DAY) start,
+      date_add(date(now()), INTERVAL -dayofweek(date(now())) +8 -14 DAY) end
+    union
+    select 
+      date_add(date(now()), INTERVAL -dayofweek(date(now())) +1 -7 DAY) start,
+      date_add(date(now()), INTERVAL -dayofweek(date(now())) +8 -7 DAY) end
+    union
+    select 
+      date_add(date(now()), INTERVAL -dayofweek(date(now())) +1 DAY) start,
+      date_add(date(now()), INTERVAL -dayofweek(date(now())) +8 DAY) end
+  COLLTOTAL: |
+    select
+      ogroup,
+      inv_collection_id,
+      mnemonic,
+      collection_name,
+      {{#RANGE}}
+      (
+        select 
+          {{{FIELD}}} 
+        from 
+          billing.owner_coll_mime_use_details ocmud
+        where 
+          ocmud.inv_collection_id = oc.inv_collection_id 
+        and 
+          ocmud.date_added >= '{{start}}'
+        and 
+          ocmud.date_added < '{{end}}'
+        and
+          source = 'producer'
+      ) as '{{start}}',
+      {{/RANGE}}
+      '' as blank
+    from 
+      billing.owner_collections oc
+    where 
+    (
+      select 
+        {{{FIELD}}} 
+      from 
+        billing.owner_coll_mime_use_details ocmud
+      where 
+        ocmud.inv_collection_id = oc.inv_collection_id
+      and 
+        ocmud.date_added >= date_add(now(), INTERVAL -6 YEAR)
+      {{{FILTER}}}
+    ) > 0
+    group by 
+      ogroup,
+      inv_collection_id,
+      mnemonic,
+      collection_name
+    order by 
+      ogroup,
+      inv_collection_id,
+      mnemonic,
+      collection_name
+  COLLTOTALCUML: |
+    select
+      ogroup,
+      inv_collection_id,
+      mnemonic,
+      collection_name,
+      {{#RANGE}}
+      (
+        select 
+          {{{FIELD}}}
+        from 
+          billing.owner_coll_mime_use_details ocmud
+        where 
+          ocmud.inv_collection_id = oc.inv_collection_id 
+        and 
+          ocmud.date_added < '{{end}}'
+        and
+          source = 'producer'
+      ) + (
+        select
+          case 
+          when '{{end}}' > now()
+            then ifnull(datediff('{{end}}', now()) * {{{FIELD}}} / 730, 0)
+            else 0
+          end
+        from
+          owner_coll_mime_use_details ocmud
+        where
+          oc.ogroup = ocmud.ogroup
+        and
+          oc.inv_collection_id = ocmud.inv_collection_id
+        and
+          date_added >= date_add(now(), interval - 730 day)
+        and source='producer'
+      ) as '{{end}}',
+      {{/RANGE}}
+      '' as blank
+    from 
+      billing.owner_collections oc
+    where exists
+    (
+      select 
+        {{{FIELD}}} 
+      from 
+        billing.owner_coll_mime_use_details ocmud
+      where 
+        ocmud.inv_collection_id = oc.inv_collection_id
+    )
+    group by 
+      ogroup,
+      inv_collection_id,
+      mnemonic,
+      collection_name
+    order by 
+      ogroup,
+      inv_collection_id,
+      mnemonic,
+      collection_name
+  REPLACT: |
+    {{#DATES}}
+    select
+      '{{title}}' as title,
+      count(inio.inv_object_id) as objs,
+      ifnull(sum(inio.replic_size), 0) / 1000000000.0 as bytes_gb,
+      datediff(drange.end, drange.start) as days,
+      case
+        when datediff(drange.end, drange.start) = 0 then 0
+        else ifnull(sum(inio.replic_size), 0) / 1000000000.0 / datediff(drange.end, drange.start)
+      end as bytes_gb_per_day
+    from
+      inv.inv_nodes_inv_objects inio,
+      (
+        select
+          '{{start}}' as start,
+          '{{end}}' as end
+      ) as drange
+    where
+      replicated >= drange.start
+    and
+      replicated < drange.end
+    {{/DATES}}
+  AUDITACT: |
+    {{#DATES}}
+    select
+      '{{title}}' as title,
+      status,
+      count(*)
+    from
+      inv.inv_audits
+    where
+      verified > '{{start}}'
+    and
+      verified < '{{end}}'
+    {{/DATES}}
+  LASTMIN: |
+    select
+      'Last Minute' as title,
+      date_add(now(), interval -1 minute) as start,
+      now() as end
+  LAST5MIN: |
+    select
+      'Last 5 Minutes' as title,
+      date_add(now(), interval -5 minute) as start,
+      now() as end
+  LASTHOUR: |
+    select
+      'Last Hour' as title,
+      date_add(now(), interval -1 hour) as start,
+      now() as end
+  SINCEMIDNIGHT: |
+    select
+      'Since midnight' as title,
+      date(now()) start,
+      now() as end
+  YESTERDAY: |
+    select
+      'Yesterday' as title,
+      date_add(date(now()), INTERVAL -1 DAY) as start,
+      date(now()) as end
+  2DAYS: |
+    select
+      '2 Days Ago' as title,
+      date_add(date(now()), INTERVAL -2 DAY) as start,
+      date_add(date(now()), INTERVAL -1 DAY) as end
+  7DAYS: |
+    select
+      'Last 7 days' as title,
+      date_add(now(), INTERVAL -7 DAY) as start,
+      now() as end
+  30DAYS: |
+    select
+      'Last 30 days' as title,
+      date_add(date(now()), INTERVAL -30 DAY) as start,
+      now() as end
+  30TO60DAYS: |
+    select
+      '30 - 60 days ago' as title,
+      date_add(date(now()), INTERVAL -60 DAY) as start,
+      date_add(date(now()), INTERVAL -30 DAY) as end
+  ITER72HOURS: |
+    with recursive rnums as (
+      select 0 as n
+      union all
+      select n+1 as n from rnums where n < 71
+    )
+    select 
+      str_to_date(
+        date_format(
+          date_add(date(now()), interval -rnums.n HOUR),
+          '%Y-%m-%d %H:00'
+        ),
+        '%Y-%m-%d %H:%i:%s'
+      ) as start,
+      date_add(
+        str_to_date(
+          date_format(
+            date_add(date(now()), interval -rnums.n HOUR),
+            '%Y-%m-%d %H:00'
+          ),
+          '%Y-%m-%d %H:%i:%s'
+        ), 
+        interval 1 HOUR
+      ) as end
+    from
+      rnums
+  ITER30DAYS: |
+    with recursive rnums as (
+      select 0 as n
+      union all
+      select n+1 as n from rnums where n < 29
+    )
+    select 
+      date_add(date(now()), interval -rnums.n DAY) as start,
+      date_add(date(now()), interval -rnums.n +1 DAY) as end
+    from
+      rnums
+  ITER52WEEKS: |
+    with recursive rnums as (
+      select 0 as n
+      union all
+      select n+1 as n from rnums where n < 51
+    )
+    select 
+      date_add(date_add(date(now()), interval -dayofweek(date(now())) + 1 DAY), interval -rnums.n WEEK) as start,
+      date_add(date_add(date(now()), interval -dayofweek(date(now())) + 1 DAY), interval -rnums.n +1 WEEK) as end
+    from
+      rnums
+  ITER12MONTHS: |
+    with recursive rnums as (
+      select 0 as n
+      union all
+      select n+1 as n from rnums where n < 11
+    )
+    select 
+      date_add(date_add(date(now()), interval -dayofmonth(date(now())) + 1 DAY), interval -rnums.n MONTH) as start,
+      date_add(date_add(date(now()), interval -dayofmonth(date(now())) + 1 DAY), interval -rnums.n +1 MONTH) as end
+    from
+      rnums
+  RECENTBYTES: |
+    {{#DATES}}
+    select
+      '{{{start}}}' as start,
+      sum(f.billable_size) / 1000000000.0 as size_gb
+    from
+      inv.inv_files f
+    where
+      created >= '{{{start}}}'
+    and
+      created < '{{{end}}}'
+    union all
+    {{/DATES}}
+    select '' start, 0 size_gb where false
+    order by 
+      start
+queries:
+  /queries/recent/ingests:
+    sql: |
+      select
+        profile,
+        batch_id,
+        max(submitted) date_submitted,
+        count(*) as object_count,
+        ifnull(sum(os.billable_size), 0) as total_size,
+        ifnull(sum(os.file_count), 0) as total_files
+      from
+        inv.inv_ingests ing
+      left join billing.object_size os
+        on ing.inv_object_id = os.inv_object_id
+      where
+        date(submitted) = ?
+      group by
+        profile,
+        batch_id
+      order by
+        max(submitted) desc
+    parameters:
+    - name: date
+      type: date
+  /queries/recent/bytes-by-hour:
+    totals: true
+    template-sql: 
+      DATES: |
+        {{{ITER72HOURS}}}
+    sql: |
+      {{{RECENTBYTES}}}
+  /queries/recent/bytes-by-day:
+    totals: true
+    template-sql: 
+      DATES: |
+        {{{ITER30DAYS}}}
+    sql: |
+      {{{RECENTBYTES}}}
+  /queries/recent/bytes-by-week:
+    totals: true
+    template-sql: 
+      DATES: |
+        {{{ITER52WEEKS}}}
+    sql: |
+      {{{RECENTBYTES}}}
+  /queries/recent/bytes-by-month:
+    totals: true
+    template-sql: 
+      DATES: |
+        {{{ITER12MONTHS}}}
+    sql: |
+      {{{RECENTBYTES}}}
+  /queries/recent/bytes-by-years:
+    sql: |
+      select 
+        distinct date_add(date(date_added), interval -dayofyear(date(date_added)) + 1 DAY) as start,
+        sum(f.billable_size) / 1000000000.0 as size_gb
+      from
+        billing.owner_coll_mime_use_details f
+      group by
+        start
+      order by 
+        start
+  /ops/db-queue/replication/activity/last-min:
+    sql: |
+      {{{REPLACT}}}
+    template-sql:
+      DATES: |
+        {{{LASTMIN}}}
+  /ops/db-queue/replication/activity/last-5min:
+    sql: |
+      {{{REPLACT}}}
+    template-sql:
+      DATES: |
+        {{{LAST5MIN}}}
+  /ops/db-queue/replication/activity/last-hour:
+    sql: |
+      {{{REPLACT}}}
+    template-sql:
+      DATES: |
+        {{{LASTHOUR}}}
+  /ops/db-queue/replication/activity/since-midnight:
+    sql: |
+      {{{REPLACT}}}
+    template-sql:
+      DATES: |
+        {{{SINCEMIDNIGHT}}}
+  /ops/db-queue/replication/activity/yesterday:
+    sql: |
+      {{{REPLACT}}}
+    template-sql:
+      DATES: |
+        {{{YESTERDAY}}}
+  /ops/db-queue/replication/activity/2days-ago:
+    sql: |
+      {{{REPLACT}}}
+    template-sql:
+      DATES: |
+        {{{2DAYS}}}
+  /ops/db-queue/replication/activity/7days:
+    sql: |
+      {{{REPLACT}}}
+    template-sql:
+      DATES: |
+        {{{7DAYS}}}
+  /ops/db-queue/replication/activity/30days:
+    sql: |
+      {{{REPLACT}}}
+    template-sql:
+      DATES: |
+        {{{30DAYS}}}
+  /ops/db-queue/replication/activity/30-60-days-ago:
+    sql: |
+      {{{REPLACT}}}
+    template-sql:
+      DATES: |
+        {{{30TO60DAYS}}}
+  /ops/db-queue/audit/activity/last-min:
+    sql: |
+      {{{AUDITACT}}}
+    template-sql:
+      DATES: |
+        {{{LASTMIN}}}
+  /ops/db-queue/audit/activity/last-5min:
+    sql: |
+      {{{AUDITACT}}}
+    template-sql:
+      DATES: |
+        {{{LAST5MIN}}}
+  /ops/db-queue/audit/activity/last-hour:
+    sql: |
+      {{{AUDITACT}}}
+    template-sql:
+      DATES: |
+        {{{LASTHOUR}}}
+  /ops/db-queue/audit/activity/since-midnight:
+    sql: |
+      {{{AUDITACT}}}
+    template-sql:
+      DATES: |
+        {{{SINCEMIDNIGHT}}}
+  /ops/db-queue/audit/activity/yesterday:
+    sql: |
+      {{{AUDITACT}}}
+    template-sql:
+      DATES: |
+        {{{YESTERDAY}}}
+  /ops/db-queue/audit/activity/2days-ago:
+    sql: |
+      {{{AUDITACT}}}
+    template-sql:
+      DATES: |
+        {{{2DAYS}}}
+  /ops/db-queue/audit/activity/7days:
+    sql: |
+      {{{AUDITACT}}}
+    template-sql:
+      DATES: |
+        {{{7DAYS}}}
+  /ops/db-queue/audit/activity/30days:
+    sql: |
+      {{{AUDITACT}}}
+    template-sql:
+      DATES: |
+        {{{30DAYS}}}
+  /ops/db-queue/audit/activity/30-60-days-ago:
+    sql: |
+      {{{AUDITACT}}}
+    template-sql:
+      DATES: |
+        {{{30TO60DAYS}}}
+  /ops/db-queue/audit/30-days:
+    status_check: true
+    sql: |
+      select
+        audit_date,
+        all_files,
+        online_files,
+        online_bytes / 1000000000.0 as online_bytes_gb,
+        s3_files,
+        s3_bytes / 1000000000.0 as s3_bytes_gb,
+        glacier_files,
+        sdsc_files,
+        sdsc_bytes / 1000000000.0 as sdsc_bytes_gb,
+        wasabi_files,
+        wasabi_bytes / 1000000000.0 as wasabi_bytes_gb,
+        case
+          when (all_files > 2300000 and online_bytes > 12000000000000)
+            then 'PASS'
+          when (all_files > 1550000 and online_bytes >  8000000000000)
+            then 'INFO'
+          when (all_files < 1550000 and online_bytes <  8000000000000)
+            then 'FAIL'
+          when (audit_date < date_add(now(), INTERVAL -6 DAY))
+            then 'INFO'
+          else 'WARN'
+        end as status
+      from
+        audits_processed
+      where
+        audit_date > date_add(now(), INTERVAL -30 DAY)
+      order by
+        audit_date desc
+  /queries/repository/last-month/producer-files:
+    totals: true
+    template-params:
+      FIELD: cast(ifnull(sum(ocmud.count_files), 0) as signed)
+      FILTER: |
+        and 
+          ocmud.date_added >= date_add(date(now()), INTERVAL -DAYOFWEEK(date(now())) +1 -21 DAY)
+    template-sql:
+      RANGE: |
+        {{{WEEKS}}}
+    sql: |
+      {{{COLLTOTAL}}}
+  /queries/repository/all-time/producer-files:
+    totals: true
+    template-params:
+      FIELD: cast(sum(ocmud.count_files) as signed)
+    template-sql:
+      RANGE: |
+        {{{YEARS}}}
+    sql: |
+      {{{COLLTOTAL}}}
+  /queries/repository/last-month/file-size:
+    totals: true
+    template-params:
+      FIELD: sum(ocmud.billable_size) / 1000000000.0
+      FILTER: |
+        and 
+          ocmud.date_added >= date_add(date(now()), INTERVAL -DAYOFWEEK(date(now())) +1 -21 DAY)
+    template-sql:
+      RANGE: |
+        {{{WEEKS}}}
+    sql: |
+      {{{COLLTOTAL}}}
+  /queries/repository/all-time/file-size:
+    totals: true
+    template-params:
+      FIELD: sum(ocmud.billable_size) / 1000000000.0
+    template-sql:
+      RANGE: |
+        {{{YEARS}}}
+    sql: |
+      {{{COLLTOTAL}}}
+  /queries/repository/all-time/cuml-file-size:
+    totals: true
+    template-params:
+      FIELD: sum(ocmud.billable_size) / 1000000000.0
+    template-sql:
+      RANGE: |
+        {{{CUMLYEARS}}}
+    sql: |
+      {{{COLLTOTALCUML}}}
+ 

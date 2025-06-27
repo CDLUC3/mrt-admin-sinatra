@@ -1,0 +1,80 @@
+columns:
+  names:
+    inv_object_id: 
+      id: true,
+      prefix: '/queries/repository/object?inv_object_id='
+      header: Obj ID
+    inv_owner_id:
+      id: true
+    node_number:
+      id: true
+    year:
+      id: true
+    collection_name:
+      header: Coll Name
+    inv_collection_id:
+      header: Coll ID
+      id: true
+      prefix: '/queries/repository/collection?inv_collection_id='
+    mnemonic:
+      header: Mnemonic
+      filterable: true
+      id: true
+      prefix: '/queries/repository/collection-mnemonic?mnemonic='
+    mnemonic_choice:
+      header: Mnemonic
+      filterable: true
+      id: true
+      prefix: '?mnemonic='
+    mnemonics:
+      header: Mnemonic
+      filterable: true
+      idlist: true
+      prefix: '/queries/repository/collection-mnemonic?mnemonic='
+    local_ids:
+      idlist: true
+    ogroup:
+      header: Campus
+      filterable: true
+    mime_group:
+      filterable: true
+    mime_type:
+      filterable: true
+    status:
+      filterable: true
+    own_name:
+      filterable: true
+    cost:
+      cssclass: float
+    size:
+      cssclass: float
+    daily_average_projected_gb:
+      cssclass: float
+    average_available_gb:
+      cssclass: float
+    size_gb:
+      cssclass: float
+    start_size_gb:
+      cssclass: float
+    ytd_size_gb:
+      cssclass: float
+    end_size_gb:
+      cssclass: float
+    diff_size_gb:
+      cssclass: float
+    bytes_gb:
+      cssclass: float
+    bytes_gb_per_day:
+      cssclass: float
+    online_bytes_gb:
+      cssclass: float
+    s3_bytes_gb:
+      cssclass: float
+    wasabi_bytes_gb:
+      cssclass: float
+    sdsc_bytes_gb:
+      cssclass: float
+  patterns:
+    '^\d{4}-\d{2}-\d{2}$':
+      cssclass: float
+ 
