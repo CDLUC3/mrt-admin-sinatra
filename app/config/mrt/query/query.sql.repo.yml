@@ -485,8 +485,11 @@ queries:
           )
   /ops/storage/db/nodes:
     status_check: true
-    # TODO: try with query
     sql: |
+      with lim as (
+        select
+          9501 as node, 650 as tb
+      )
       select
         n.number as node_number,
         n.description,
@@ -506,10 +509,7 @@ queries:
         inv.inv_nodes n
       left join node_counts nc
         on n.id = nc.inv_node_id
-      left join (
-        select
-          9501 as node, 650 as tb
-      ) lim
+      left join lim
         on n.number = lim.node
       where
         ifnull(nc.object_count, 0) > 0
@@ -535,8 +535,12 @@ queries:
       order By
         mnemonic
   /queries/content/producer-files:
-    # TODO: try with query
     sql: |
+      with loc as (
+        select inv_object_ark, group_concat(local_id) as loc_id_agg
+        from inv.inv_localids
+        group by inv_object_ark
+      )
       select
         distinct o.ark,
         v.number,
@@ -551,12 +555,7 @@ queries:
         on f.inv_object_id = o.id and source = 'producer'
       inner join inv.inv_versions v
         on f.inv_version_id = v.id
-      left join
-        (
-          select inv_object_ark, group_concat(local_id) as loc_id_agg
-          from inv.inv_localids
-          group by inv_object_ark
-        ) loc
+      left join loc
         on o.ark = inv_object_ark
       where exists (
         select 1
@@ -581,8 +580,12 @@ queries:
       - name: mnemonic
         type: string
   /queries/content/ucsc-objects:
-    # TODO: try with query
     sql: |
+      with loc as (
+        select inv_object_ark, group_concat(local_id) as loc_id_agg
+        from inv.inv_localids
+        group by inv_object_ark
+      )
       select
         distinct o.ark,
         loc.loc_id_agg,
@@ -608,13 +611,8 @@ queries:
         inv.inv_objects o
       inner join billing.object_size os
         on os.inv_object_id = o.id
-      left join
-        (
-          select inv_object_ark, group_concat(local_id) as loc_id_agg
-          from inv.inv_localids
-          group by inv_object_ark
-        ) loc
-        on o.ark = inv_object_ark
+      left join loc
+        on o.ark = loc.inv_object_ark
       where exists (
         select 1
         from

@@ -1,5 +1,5 @@
 fragments:
-  # count(*) = {{{COPIES}}}: consider this as a with query instead
+  # TODO: count(*) = {{{COPIES}}}: consider this as a with query instead
   #   one for files, one for objects
   COLLQ: |
     select
@@ -94,7 +94,7 @@ fragments:
         where
           ff.inv_object_id = o.id
         and exists (
-          select 1 where ff.pathname=f.pathname
+          select 1 where ff.pathname = f.pathname
         )
       ) as maxv,
       f.source,
@@ -516,8 +516,17 @@ fragments:
       count(*) > 1
 queries:
   /queries/consistency/daily:
-    # TODO: try with query or other window function
     sql: |
+      with latest_checks as (
+        select 
+          dcc.check_name, 
+          max(dcc.updated) as last_updated
+        from
+          daily_consistency_checks dcc
+        group by
+          dcc.check_name
+      )
+
       select
         dcc.check_name,
         dcc.updated,
@@ -528,15 +537,7 @@ queries:
         end as status
       from
         daily_consistency_checks dcc,
-        (
-          select 
-            dcc2.check_name, 
-            max(dcc2.updated) as last_updated
-          from
-            daily_consistency_checks dcc2
-          group by
-            dcc2.check_name
-        ) as dcclatest
+        latest_checks as dcclatest
       where 
         dcc.check_name = dcclatest.check_name
       and 
@@ -691,8 +692,18 @@ queries:
     status_check: true
     description: |
       - [Object List](/queries/consistency/obj-comp/version-clobber/objlist )
-    # TODO: try with query
     sql: |
+      with gap as (
+        select
+          inv_object_id
+        from
+          inv.inv_versions
+        group by
+          inv_object_id
+        having
+          count(distinct number) != max(number)
+      )
+
       select
         'Version Clobber (Duplicate Version Num)',
         ifnull(count(distinct inv_object_id), 0),
@@ -711,16 +722,7 @@ queries:
           when count(*) = 0 then 'PASS'
           else 'FAIL'
         end as status
-      from (
-        select
-          inv_object_id
-        from
-          inv.inv_versions
-        group by
-          inv_object_id
-        having
-          count(distinct number) != max(number)
-      ) as gap
+      from gap
   /queries/consistency/obj-comp/version-clobber/objlist:
     sql: |
       {{{OBJSUBQ}}}
@@ -978,7 +980,6 @@ queries:
         status
   /ops/db-queue/replication/failed:
     status_check: true
-    # TODO: try with query
     sql: |
       select
         case
@@ -1337,8 +1338,21 @@ queries:
         collection
   /ops/collections/db/secondary-config:
     status_check: true
-    # TODO: try with query
     sql: |
+      with icin as (
+        select
+          icin.inv_collection_id,
+          count(*) as ncount,
+          ifnull(group_concat(n.number order by number), '') nodes
+        from
+          inv.inv_collections_inv_nodes icin
+        inner join
+          inv.inv_nodes n
+        on
+          icin.inv_node_id = n.id
+        group by
+          icin.inv_collection_id
+      )
       select
         c.id as collid,
         c.name as collection,
@@ -1359,20 +1373,7 @@ queries:
         end as status
       from
         inv.inv_collections c
-      left join (
-        select
-          icin.inv_collection_id,
-          count(*) as ncount,
-          ifnull(group_concat(n.number order by number), '') nodes
-        from
-          inv.inv_collections_inv_nodes icin
-        inner join
-          inv.inv_nodes n
-        on
-          icin.inv_node_id = n.id
-        group by
-          icin.inv_collection_id
-      ) icin
+      left join icin
       on
         c.id = icin.inv_collection_id
       where not exists (
