@@ -17,6 +17,10 @@ module UC3Code
 
   # Load clients for retrieving source code information
   class SourceCodeClient < UC3::UC3Client
+    def self.client
+      UC3::UC3Client.clients.fetch(self.class.to_s, SourceCodeClient.new)
+    end
+
     def initialize
       @repos = UC3::UC3Client.load_config('app/config/mrt/source_code.yml').fetch(:repos, {})
       @github = UC3Code::GithubClient.new
@@ -42,6 +46,10 @@ module UC3Code
         artifacts: @codeartifact.list_package_versions(repohash: repohash),
         ecrimages: @ecrimages.list_images(repohash: repohash)
       )
+    end
+
+    def reponames
+      @repos.keys
     end
 
     def repos

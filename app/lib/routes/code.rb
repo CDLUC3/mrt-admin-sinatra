@@ -10,7 +10,7 @@ module Sinatra
   module UC3CodeRoutes
     def self.registered(app)
       app.get '/source/tags/*' do |repo|
-        srccode = UC3Code::SourceCodeClient.new
+        srccode = UC3Code::SourceCodeClient.client
 
         erb :table,
           :layout => :page_layout,
@@ -21,7 +21,7 @@ module Sinatra
       end
 
       app.get '/source/artifacts/*' do |repo|
-        srccode = UC3Code::SourceCodeClient.new
+        srccode = UC3Code::SourceCodeClient.client
 
         erb :table,
           :layout => :page_layout,
@@ -32,7 +32,7 @@ module Sinatra
       end
 
       app.get '/source/images/*' do |repo|
-        srccode = UC3Code::SourceCodeClient.new
+        srccode = UC3Code::SourceCodeClient.client
 
         erb :table,
           :layout => :page_layout,
@@ -43,13 +43,13 @@ module Sinatra
       end
 
       app.get '/source/artifact/*/*/*' do |artifact, version, asset|
-        srccode = UC3Code::SourceCodeClient.new
+        srccode = UC3Code::SourceCodeClient.client
         content_type :xml
         srccode.artifact(artifact, version, asset)
       end
 
       app.get '/source/artifact_manifest/*/*/*' do |artifact, version, asset|
-        srccode = UC3Code::SourceCodeClient.new
+        srccode = UC3Code::SourceCodeClient.client
         srccode.artifact_manifest(artifact, version, asset).to_json
         erb :table,
           :layout => :page_layout,
@@ -104,7 +104,7 @@ module Sinatra
       end
 
       app.post '/source/artifacts/delete/*' do |tag|
-        srccode = UC3Code::SourceCodeClient.new
+        srccode = UC3Code::SourceCodeClient.client
         arr = []
         request.body.each_line do |line|
           srccode.delete_artifact(tag, line.strip)
@@ -117,7 +117,7 @@ module Sinatra
       end
 
       app.post '/source/images/delete/*' do |tag|
-        srccode = UC3Code::SourceCodeClient.new
+        srccode = UC3Code::SourceCodeClient.client
         arr = []
         request.body.each_line do |line|
           srccode.delete_image(tag, line.strip)
@@ -130,7 +130,7 @@ module Sinatra
       end
 
       app.post '/source/images/retag/*/*' do |tag, newtag|
-        srccode = UC3Code::SourceCodeClient.new
+        srccode = UC3Code::SourceCodeClient.client
         arr = []
         request.body.each_line do |line|
           srccode.retag_image(tag, newtag, line.strip)
@@ -143,7 +143,7 @@ module Sinatra
       end
 
       app.post '/source/images/untag/*' do |tag|
-        srccode = UC3Code::SourceCodeClient.new
+        srccode = UC3Code::SourceCodeClient.client
         arr = []
         request.body.each_line do |line|
           srccode.untag_image(tag, line.strip)

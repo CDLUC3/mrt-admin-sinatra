@@ -236,11 +236,54 @@ module UC3
       table
     end
 
+    def self.client
+      UC3::UC3Client.clients.fetch(self.class.to_s, FileSystemClient.new)
+    end
+
     def cleanup_ingest_folders
       `find #{DIR} -maxdepth 1  -name "bid-*" -mtime +30 | xargs rm -rf`
       `find #{DIR}/FAILED -maxdepth 1  -name "bid-*" -mtime +30 | xargs rm -rf`
       `find #{DIR}/RecycleBin -maxdepth 1  -name "jid-*" -mtime +3 | xargs rm -rf`
       `find #{DIR}/zk-snapshots -maxdepth 1  -name "latest-snapshot.20-*" -mtime +3 | xargs rm -rf`
     end
+  end
+
+  class TestClient < UC3Client
+    def initialize
+      super(enabled: true, message: 'Test Client')
+      @test_paths = []
+      @consistency_checks = []
+
+      UC3Query::QueryClient.client.queries.each do |name, _query|
+        @test_paths << name.to_s
+      end
+
+      Sinatra::Application.routes["GET"].each do |path, _route|
+        path = path.to_s
+        if path.include? '**'
+        elsif path.include? '*/*'
+        elsif path.include? '*'
+          if path.start_with?('/source/')
+            UC3Code::SourceCodeClient.client.reponames.each do |repo|
+              @test_paths << path.gsub('*', repo.to_s)
+            end
+          end
+        else
+          @test_paths << path
+        end
+      end
+      @test_paths.sort!
+    end
+
+    def self.client
+      UC3::UC3Client.clients.fetch(self.class.to_s, TestClient.new)
+    end
+
+    attr_reader :test_paths, :consistency_checks
+
+    def enabled
+      true
+    end
+
   end
 end

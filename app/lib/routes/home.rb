@@ -42,7 +42,17 @@ module Sinatra
       end
     end
 
-    def self.registered(_app) end
+    def self.registered(app) 
+      app.get '/test/routes' do
+        content_type :json
+        UC3::TestClient.client.test_paths.to_json
+      end
+
+      app.get '/test/routes/count' do
+        content_type :text
+        UC3::TestClient.client.test_paths.length.to_s 
+      end
+    end
   end
   register UC3HomeRoutes
 end

@@ -196,12 +196,12 @@ module Sinatra
           :layout => :page_layout,
           :locals => {
             context: AdminUI::Context.new(request.path),
-            table: UC3::FileSystemClient.new.ingest_folders(request.params)
+            table: UC3::FileSystemClient.client.ingest_folders(request.params)
           }
       end
 
       app.post '/ops/zk/ingest/folders/cleanup' do
-        UC3::FileSystemClient.new.cleanup_ingest_folders
+        UC3::FileSystemClient.client.cleanup_ingest_folders
         redirect '/ops/zk/ingest/folders'
       end
 

@@ -43,10 +43,10 @@ end
 
 get '/clients' do
   UC3::UC3Client.new
-  UC3::FileSystemClient.new
+  UC3::FileSystemClient.client
   UC3Query::QueryClient.client
   UC3Queue::ZKClient.client
-  UC3Code::SourceCodeClient.new
+  UC3Code::SourceCodeClient.client
   UC3Resources::InstancesClient.new
   UC3Resources::ParametersClient.new
   UC3Resources::ServicesClient.new
@@ -54,6 +54,7 @@ get '/clients' do
   UC3Resources::FunctionsClient.new
   UC3Resources::LoadBalancerClient.new
   UC3Ldap::LDAPClient.client
+  UC3::TestClient.client
 
   erb :table,
     :layout => :page_layout,
