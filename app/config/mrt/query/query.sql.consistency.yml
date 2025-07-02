@@ -1,6 +1,4 @@
 fragments:
-  # TODO: count(*) = {{{COPIES}}}: consider this as a with query instead
-  #   one for files, one for objects
   COLLQ: |
     select
       c.id inv_collection_id,
@@ -180,7 +178,31 @@ fragments:
         on inio.inv_node_id = n.id
       {{{WHERE}}}
     ) as nn
-  OBJREPLQLIST:
+  OBJREPLPRE: |
+    with copies as (
+      select
+        inv_object_id,
+        count(*) as num_copies
+      from
+        inv.inv_nodes_inv_objects
+      group by
+        inv_object_id
+      having
+        count(*) = {{{COPIES}}}
+    )
+  FILEREPLPRE: |
+    with copies as (
+      select
+        inv_file_id,
+        count(*)
+      from
+        inv.inv_audits
+      group by
+        inv_file_id
+      having
+        count(*) = {{{COPIES}}}
+    )
+  OBJREPLQLIST: |
     where exists (
       select
         1
@@ -190,18 +212,8 @@ fragments:
           min(created) as init_created
         from
           inv.inv_nodes_inv_objects inio
-        inner join (
-          select
-            inv_object_id,
-            count(*)
-          from
-            inv.inv_nodes_inv_objects
-          group by
-            inv_object_id
-          having
-            count(*) = {{{COPIES}}}
-        ) as copies
-        on copies.inv_object_id = inio.inv_object_id
+        inner join copies
+          on copies.inv_object_id = inio.inv_object_id
          group by
           inv_object_id
       ) as age      
@@ -221,17 +233,7 @@ fragments:
           min(created) as init_created
         from
           inv.inv_audits a
-        inner join (
-          select
-            inv_file_id,
-            count(*)
-          from
-            inv.inv_audits
-          group by
-            inv_file_id
-          having
-            count(*) = {{{COPIES}}}
-        ) as copies
+        inner join copies
           on copies.inv_file_id = a.inv_file_id
         group by
           inv_object_id,
@@ -316,18 +318,8 @@ fragments:
           min(created) as init_created
         from
           inv.inv_nodes_inv_objects inio
-        inner join (
-          select
-            inv_object_id,
-            count(*)
-          from
-            inv.inv_nodes_inv_objects
-          group by
-            inv_object_id
-          having
-            count(*) = {{{COPIES}}}
-        ) as copies
-        on copies.inv_object_id = inio.inv_object_id
+        inner join copies
+          on copies.inv_object_id = inio.inv_object_id
         group by
           inv_object_id
       ) as age      
@@ -429,17 +421,7 @@ fragments:
         min(created) as init_created
       from
         inv.inv_audits a
-      inner join (
-        select
-          inv_file_id,
-          count(*)
-        from
-          inv.inv_audits
-        group by
-          inv_file_id
-        having
-          count(*) = {{{COPIES}}}
-      ) as copies
+      inner join copies
         on copies.inv_file_id = a.inv_file_id
       group by
         inv_object_id,
@@ -552,12 +534,14 @@ queries:
     status_check: true
     totals: true
     sql: |
+      {{{OBJREPLPRE}}}
       {{{REPSQL}}}
   /queries/consistency/replication/objects-2/objlist:
     template-params:
       COPIES: 2
     totals: true
     sql: |
+      {{{OBJREPLPRE}}}
       {{{OBJQPRE}}}
       {{{OBJREPLQLIST}}}
       {{{OBJQPOST}}}
@@ -574,12 +558,14 @@ queries:
     status_check: true
     totals: true
     sql: |
+      {{{OBJREPLPRE}}}
       {{{REPSQL}}}
   /queries/consistency/replication/objects-1/objlist:
     template-params:
       COPIES: 1
     totals: true
     sql: |
+      {{{OBJREPLPRE}}}
       {{{OBJQPRE}}}
       {{{OBJREPLQLIST}}}
       {{{OBJQPOST}}}
@@ -596,12 +582,14 @@ queries:
     status_check: true
     totals: true
     sql: |
+      {{{OBJREPLPRE}}}
       {{{REPSQL}}}
   /queries/consistency/replication/objects-4/objlist:
     template-params:
       COPIES: 4
     totals: true
     sql: |
+      {{{OBJREPLPRE}}}
       {{{OBJQPRE}}}
       {{{OBJREPLQLIST}}}
       {{{OBJQPOST}}}
@@ -618,12 +606,14 @@ queries:
     status_check: true
     totals: true
     sql: |
+      {{{FILEREPLPRE}}}
       {{{REPSQLFILE}}}
   /queries/consistency/replication/files-2/objlist:
     template-params:
       COPIES: 2
     totals: true
     sql: |
+      {{{FILEREPLPRE}}}
       {{{OBJQPRE}}}
       {{{FILEREPLQLIST}}}
       {{{OBJQPOST}}}
@@ -640,12 +630,14 @@ queries:
     status_check: true
     totals: true
     sql: |
+      {{{FILEREPLPRE}}}
       {{{REPSQLFILE}}}
   /queries/consistency/replication/files-1/objlist:
     template-params:
       COPIES: 1
     totals: true
     sql: |
+      {{{FILEREPLPRE}}}
       {{{OBJQPRE}}}
       {{{FILEREPLQLIST}}}
       {{{OBJQPOST}}}
@@ -662,12 +654,14 @@ queries:
     status_check: true
     totals: true
     sql: |
+      {{{FILEREPLPRE}}}
       {{{REPSQLFILE}}}
   /queries/consistency/replication/files-4/objlist:
     template-params:
       COPIES: 4
     totals: true
     sql: |
+      {{{FILEREPLPRE}}}
       {{{OBJQPRE}}}
       {{{FILEREPLQLIST}}}
       {{{OBJQPOST}}}
