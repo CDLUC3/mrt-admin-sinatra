@@ -20,14 +20,12 @@ module UC3Query
       @queries = {}
 
       Dir.glob('app/config/mrt/query/query.sql.*.yml').each do |file|
-        begin
-          config = UC3::UC3Client.load_config(file)
-          @columndefs.merge!(config.fetch(:columns, {}))
-          @fragments.merge!(config.fetch(:fragments, {}))
-          @queries.merge!(config.fetch(:queries, {}))
-        rescue StandardError => e
-          puts "#{e.class}: #{e} in #{file}"
-        end
+        config = UC3::UC3Client.load_config(file)
+        @columndefs.merge!(config.fetch(:columns, {}))
+        @fragments.merge!(config.fetch(:fragments, {}))
+        @queries.merge!(config.fetch(:queries, {}))
+      rescue StandardError => e
+        puts "#{e.class}: #{e} in #{file}"
       end
 
       key = ENV.fetch('configkey', 'default')
@@ -143,12 +141,12 @@ module UC3Query
           totals: query.fetch(:totals, false),
           description: description
         )
-        
+
         params = resolve_parameters(query.fetch(:parameters, []), urlparams)
         stmt.execute(*params).each do |row|
           table.add_row(AdminUI::Row.make_row(table.columns, row))
         end
-        msg = { path: path, 'status': table.status }
+        msg = { path: path, status: table.status }
         puts msg.to_json
         record_status(path, table.status) if query.fetch(:status_check, false)
       rescue StandardError => e

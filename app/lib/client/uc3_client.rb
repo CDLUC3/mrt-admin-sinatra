@@ -9,48 +9,46 @@ require_relative '../ui/table'
 module UC3
   # Base class for UC3 client classes
   class UC3Client
-    STATUS = [:SKIP, :PASS, :INFO, :WARN, :FAIL].freeze
+    STATUS = %i[SKIP PASS INFO WARN FAIL].freeze
     STATHASH = {
       SKIP: 0,
       PASS: 1,
       INFO: 2,
       WARN: 3,
       FAIL: 4
-    }
+    }.freeze
 
     @clients = {}
 
     def initialize(enabled: true, message: '')
       UC3Client.clients[self.class.to_s] = { name: self.class.to_s, enabled: enabled, message: message }
     end
-    
-    def self.status_index(s)
-      STATHASH.fetch(s.to_sym, 0)
+
+    def self.status_index(stat)
+      STATHASH.fetch(stat.to_sym, 0)
     end
 
-    def self.status_resolve(s)
-      STATUS[status_index(s)]
+    def self.status_resolve(stat)
+      STATUS[status_index(stat)]
     end
 
-    def self.status_compare(s1, s2)
-      status_index(s1) > status_index(s2) ? s1 : s2     
+    def self.status_compare(stat1, stat2)
+      status_index(stat1) > status_index(stat2) ? stat1 : stat2
     end
 
     def record_status(path, status)
       qc = UC3Query::QueryClient.client
-      unless qc.nil?
-        if qc.enabled
-          begin
-            sql = %{
+      if !qc.nil? && qc.enabled
+        begin
+          sql = %{
               insert into daily_consistency_checks(check_name, status)
               values(?, ?)
             }
-            qc.run_sql(sql, [path, status.to_s])
-          rescue StandardError => e
-            puts "Error recording status for #{path}: #{e.message}"
-          end
-          return
+          qc.run_sql(sql, [path, status.to_s])
+        rescue StandardError => e
+          puts "Error recording status for #{path}: #{e.message}"
         end
+        return
       end
       puts "Status for #{path} is #{status}"
     end
@@ -167,7 +165,6 @@ module UC3
     def self.keep_artifact_version?(ver)
       ver =~ /^\d+\.\d+-SNAPSHOT$/
     end
-
   end
 
   # browse ingest folder file system
@@ -240,10 +237,10 @@ module UC3
     end
 
     def cleanup_ingest_folders
-      %x[ find #{DIR} -maxdepth 1  -name "bid-*" -mtime +30 | xargs rm -rf ]
-      %x[ find #{DIR}/FAILED -maxdepth 1  -name "bid-*" -mtime +30 | xargs rm -rf ]
-      %x[ find #{DIR}/RecycleBin -maxdepth 1  -name "jid-*" -mtime +3 | xargs rm -rf ]
-      %x[ find #{DIR}/zk-snapshots -maxdepth 1  -name "latest-snapshot.20-*" -mtime +3 | xargs rm -rf ]
+      `find #{DIR} -maxdepth 1  -name "bid-*" -mtime +30 | xargs rm -rf`
+      `find #{DIR}/FAILED -maxdepth 1  -name "bid-*" -mtime +30 | xargs rm -rf`
+      `find #{DIR}/RecycleBin -maxdepth 1  -name "jid-*" -mtime +3 | xargs rm -rf`
+      `find #{DIR}/zk-snapshots -maxdepth 1  -name "latest-snapshot.20-*" -mtime +3 | xargs rm -rf`
     end
   end
 end

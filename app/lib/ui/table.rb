@@ -42,11 +42,11 @@ module AdminUI
       d
     end
 
-    def get_column_index(c)
+    def get_column_index(colsym)
       @columns.each_with_index do |col, i|
-        return i if col.sym.to_sym == c.to_sym
+        return i if col.sym.to_sym == colsym.to_sym
       end
-      return -1
+      -1
     end
 
     def add_filter(filter)
@@ -56,7 +56,7 @@ module AdminUI
     def add_row(row)
       @rows.push(row)
       i = get_column_index(:status)
-      return if i < 0
+      return if i.negative?
 
       statval = UC3::UC3Client.status_resolve(row.cols[i])
       @status = UC3::UC3Client.status_compare(statval, @status)
@@ -97,7 +97,7 @@ module AdminUI
     end
 
     def render_status
-      %{<div class="#{@status}">#{@status}</div>} if @status
+      %(<div class="#{@status}">#{@status}</div>) if @status
     end
 
     def render
@@ -254,7 +254,7 @@ module AdminUI
         else
           cellval.fetch(:value, '').to_s
         end
-      elsif @cssclass.split(' ').include?('status')
+      elsif @cssclass.split.include?('status')
         render_span(cellval, cssclass: cellval)
       else
         render_string(cellval.to_s)

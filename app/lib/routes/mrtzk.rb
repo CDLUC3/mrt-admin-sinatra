@@ -247,7 +247,7 @@ module Sinatra
 
       app.post '/ops/zk/snapshot' do
         UC3Queue::ZKClient.new.save_snapshot
-        redirect "/ops/zk/ingest/folders?path=/zk-snapshots"    
+        redirect '/ops/zk/ingest/folders?path=/zk-snapshots'
       end
 
       app.post '/ops/zk/restore' do
@@ -259,7 +259,6 @@ module Sinatra
         content_type :json
         UC3Queue::ZKClient.new.zk_stat.to_json
       end
-
     end
   end
 
