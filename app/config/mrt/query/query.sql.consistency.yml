@@ -435,6 +435,7 @@ fragments:
       on c.inv_object_id = o.id and o.aggregate_role = 'MRT-collection'
     group by
       category
+  MIME: |
     select
       distinct
         ogroup,
