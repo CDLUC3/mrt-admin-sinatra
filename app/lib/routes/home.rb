@@ -42,7 +42,7 @@ module Sinatra
       end
     end
 
-    def self.registered(app) 
+    def self.registered(app)
       app.get '/test/routes' do
         content_type :json
         UC3::TestClient.client.test_paths.to_json
@@ -50,7 +50,17 @@ module Sinatra
 
       app.get '/test/routes/count' do
         content_type :text
-        UC3::TestClient.client.test_paths.length.to_s 
+        UC3::TestClient.client.test_paths.length.to_s
+      end
+
+      app.get '/test/consistency' do
+        content_type :json
+        UC3::TestClient.client.consistency_checks.to_json
+      end
+
+      app.get '/test/consistency/count' do
+        content_type :text
+        UC3::TestClient.client.consistency_checks.length.to_s
       end
     end
   end

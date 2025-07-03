@@ -19,6 +19,10 @@ module Sinatra
           }
       end
 
+      app.get '/ops/zk/nodes/orphan' do
+        redirect '/ops/zk/nodes/node-names?zkpath=/&mode=test'
+      end
+
       app.get '/ops/zk/ingest/batches' do
         erb :table,
           :layout => :page_layout,

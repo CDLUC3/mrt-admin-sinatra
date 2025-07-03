@@ -248,21 +248,43 @@ module UC3
     end
   end
 
+  # Identify routes for Consistency Checks and for Unit Testing
   class TestClient < UC3Client
     def initialize
       super(enabled: true, message: 'Test Client')
+
       @test_paths = []
       @consistency_checks = []
 
-      UC3Query::QueryClient.client.queries.each do |name, _query|
-        @test_paths << name.to_s
+      UC3Query::QueryClient.client.queries.each_key do |name|
+        name = name.to_s
+        @test_paths << name
+        # TODO: audit_ucb
+        # TODO: audit_ucb_reset
+        %w[
+          /queries/consistency/.*/
+          /ops/collections/db/
+          /ops/db-queue/audit/counts-by-state
+          /ops/db-queue/audit/oldest-audit-check
+          /ops/db-queue/audit/30-days
+          /ops/db-queue/audit/active-batches
+          /ops/db-queue/replication/failed
+          /ops/db-queue/replication/in-progress
+          /ops/db-queue/replication/required
+          /ops/storage/db/nodes
+        ].each do |pattern|
+          next if name =~ %r{/objlist}
+
+          @consistency_checks << name if name =~ /#{pattern}/
+        end
       end
 
-      Sinatra::Application.routes["GET"].each do |path, _route|
+      Sinatra::Application.routes['GET'].each_key do |path|
         path = path.to_s
-        if path.include? '**'
-        elsif path.include? '*/*'
-        elsif path.include? '*'
+        next if path.include? '**'
+        next if path.include? '*/*'
+
+        if path.include? '*'
           if path.start_with?('/source/')
             UC3Code::SourceCodeClient.client.reponames.each do |repo|
               @test_paths << path.gsub('*', repo.to_s)
@@ -270,9 +292,21 @@ module UC3
           end
         else
           @test_paths << path
+          # TODO: SSM documentation
+          %w[
+            /ldap/collections-missing
+            /ops/zk/access/jobs
+            /ops/zk/ingest/jobs-by-collection
+            /ops/zk/ingest/batches
+            /ops/zk/nodes/orphan
+            /ops/zk/ingest/folders
+          ].each do |pattern|
+            @consistency_checks << path if path =~ /#{pattern}/
+          end
         end
       end
       @test_paths.sort!
+      @consistency_checks.sort!
     end
 
     def self.client
@@ -284,6 +318,5 @@ module UC3
     def enabled
       true
     end
-
   end
 end

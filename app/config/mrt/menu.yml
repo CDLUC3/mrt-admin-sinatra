@@ -454,7 +454,7 @@ items:
       - title: Access Nodes
         route: /ops/zk/nodes/node-names?zkpath=/access&mode=node
       - title: Orphan Report
-        route: /ops/zk/nodes/node-names?zkpath=/&mode=test
+        route: /ops/zk/nodes/orphan
     - path: ingest-queue
       title: Ingest Queue
       route: /ops/zk/ingest
