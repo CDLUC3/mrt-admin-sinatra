@@ -41,12 +41,12 @@ phases:
 
       if [[ "$ADMIN_MODE" == "consistency-check" ]]
       then
-        curl http://$(admintool_ip):9292/test/consistency
+        curl  --no-progress-meter http://$(admintool_ip):9292/test/consistency | jq
       fi
 
       if [[ "$ADMIN_MODE" == "unit-test" ]]
       then
-        curl http://$(admintool_ip):9292/test/routes
+        curl  --no-progress-meter http://$(admintool_ip):9292/test/routes | jq
       fi
     - |
       if [[ "$ADMIN_MODE" == "build" ]]
