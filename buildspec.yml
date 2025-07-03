@@ -41,12 +41,20 @@ phases:
 
       if [[ "$ADMIN_MODE" == "consistency-check" ]]
       then
-        curl  --no-progress-meter http://$(admintool_ip):9292/test/consistency | jq
+        admintool=$(admintool_ip):9292
+        for route in $(curl --no-progress-meter http://$admintool/test/consistency | jq -r '.[]')
+        do
+          curl -o /dev/null -s -w "%{http_code}\t%{size_download}\t%{time_total}\n" $(admintool)$(route)
+        done
       fi
 
       if [[ "$ADMIN_MODE" == "unit-test" ]]
       then
-        curl  --no-progress-meter http://$(admintool_ip):9292/test/routes | jq
+        admintool=$(admintool_ip):9292
+        for route in $(curl --no-progress-meter http://$admintool/test/routes | jq -r '.[]')
+        do
+          curl -o /dev/null -s -w "%{http_code}\t%{size_download}\t%{time_total}\n" $(admintool)$(route)
+        done
       fi
     - |
       if [[ "$ADMIN_MODE" == "build" ]]
