@@ -45,7 +45,7 @@ phases:
         for route in $(curl --no-progress-meter http://$admintool/test/consistency | jq -r '.[]')
         do
           echo $route
-          curl -o /dev/null -s -w "\t%{http_code}\t%{size_download}\t%{time_total}\n" $admintool$(route)
+          curl -o /dev/null -s -w "\t%{http_code}\t%{size_download}\t%{time_total}\n" ${admintool}${route}
         done
       fi
 
@@ -55,7 +55,7 @@ phases:
         for route in $(curl --no-progress-meter http://$admintool/test/routes | jq -r '.[]')
         do
           echo $route
-          curl -o /dev/null -s -w "\t%{http_code}\t%{size_download}\t%{time_total}\n" $admintool$(route)
+          curl -o /dev/null -s -w "\t%{http_code}\t%{size_download}\t%{time_total}\n" ${admintool}${route}
         done
       fi
     - |
