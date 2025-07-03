@@ -2,6 +2,7 @@
 
 require 'sinatra'
 require 'sinatra/base'
+require 'sinatra/contrib'
 require_relative 'lib/routes/home'
 require_relative 'lib/routes/code'
 require_relative 'lib/routes/resources'
@@ -23,22 +24,46 @@ Sinatra::UC3HomeRoutes.load_menu_file('app/config/mrt/menu.yml')
 AdminUI::Context.css = '/mrt/custom.css'
 AdminUI::Context.index_md = 'app/markdown/mrt/index.md'
 
+register Sinatra::Contrib
+
 get '/' do
-  erb :markdown,
-    :layout => :page_layout,
-    :locals => {
-      md_file: AdminUI::Context.index_md,
-      context: AdminUI::Context.new(request.path)
-    }
+  respond_to do |format|
+    format.html do
+      erb :markdown,
+        :layout => :page_layout,
+        :locals => {
+          md_file: AdminUI::Context.index_md,
+          context: AdminUI::Context.new(request.path)
+        }
+    end
+    format.json do
+      content_type :json
+      { 
+        context: AdminUI::Context.new(request.path).to_h,
+        markdown: AdminUI::Context.index_md
+      }.to_json
+    end
+  end
 end
 
 get '/context' do
-  erb :table,
-    :layout => :page_layout,
-    :locals => {
-      context: AdminUI::Context.new(request.path),
-      table: UC3::UC3Client.new.context
-    }
+  respond_to do |format|
+    format.html do
+      erb :table,
+        :layout => :page_layout,
+        :locals => {
+          context: AdminUI::Context.new(request.path),
+          table: UC3::UC3Client.new.context
+        }
+    end
+    format.json do
+      content_type :json
+      { 
+        context: AdminUI::Context.new(request.path).to_h,
+        table: UC3::UC3Client.new.context.table_data
+      }.to_json
+    end
+  end
 end
 
 get '/clients' do
