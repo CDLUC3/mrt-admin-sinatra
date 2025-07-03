@@ -279,7 +279,9 @@ module UC3
         end
       end
 
-      Sinatra::Application.routes['GET'].each_key do |path|
+      Sinatra::Application.routes['GET'].each do |path, route|
+        # .each_keys does not work, so make use of route object
+        puts "Route #{path}: #{route.inspect}" unless route.empty?
         path = path.to_s
         next if path.include? '**'
         next if path.include? '*/*'

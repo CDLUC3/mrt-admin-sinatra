@@ -57,5 +57,5 @@ Metrics/ModuleLength:
   Enabled: false
 Naming/AccessorMethodName:
   Enabled: false
-Naming/Naming/PredicateMethod:
+Naming/PredicateMethod:
   Enabled: false
