@@ -12,19 +12,15 @@ module Sinatra
   module UC3QueryRoutes
     def self.registered(app)
       app.get '/queries/repository' do
-        erb :none,
-          :layout => :page_layout,
-          :locals => {
-            context: AdminUI::Context.new(request.path)
-          }
+        adminui_show_none(
+          AdminUI::Context.new(request.path)
+        )
       end
 
       app.get '/queries/consistency' do
-        erb :none,
-          :layout => :page_layout,
-          :locals => {
-            context: AdminUI::Context.new(request.path)
-          }
+        adminui_show_none(
+          AdminUI::Context.new(request.path)
+        )
       end
 
       app.get '/queries/repository/object*' do

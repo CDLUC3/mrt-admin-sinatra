@@ -70,30 +70,24 @@ module Sinatra
       end
 
       app.get '/source' do
-        erb :markdown,
-          :layout => :page_layout,
-          :locals => {
-            md_file: 'app/markdown/mrt/source.md',
-            context: AdminUI::Context.new(request.path)
-          }
+        adminui_show_markdown(
+          AdminUI::Context.new(request.path),
+          'app/markdown/mrt/source.md'
+        )
       end
 
       app.get '/source/conventions' do
-        erb :markdown,
-          :layout => :page_layout,
-          :locals => {
-            md_file: 'app/markdown/mrt/source.md',
-            context: AdminUI::Context.new(request.path)
-          }
+        adminui_show_markdown(
+          AdminUI::Context.new(request.path),
+          'app/markdown/mrt/source.md'
+        )
       end
 
       app.get '/source/conventions/*' do |md|
-        erb :markdown,
-          :layout => :page_layout,
-          :locals => {
-            md_file: "app/markdown/mrt/conventions/#{md}",
-            context: AdminUI::Context.new(request.path)
-          }
+        adminui_show_markdown(
+          AdminUI::Context.new(request.path),
+          "app/markdown/mrt/conventions/#{md}"
+        )
       end
 
       app.post '/source/artifacts/delete/*' do |tag|

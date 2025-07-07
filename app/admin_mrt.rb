@@ -56,24 +56,49 @@ def adminui_show_table(context, table)
   end
 end
 
-get '/' do
+def adminui_show_markdown(context, md_file)
   respond_to do |format|
     format.html do
       erb :markdown,
         :layout => :page_layout,
         :locals => {
-          md_file: AdminUI::Context.index_md,
-          context: AdminUI::Context.new(request.path)
+          md_file: md_file,
+          context: context
         }
     end
     format.json do
       content_type :json
       {
-        context: AdminUI::Context.new(request.path).to_h,
-        markdown: AdminUI::Context.index_md
+        context: context.to_h,
+        markdown: md_file
       }.to_json
     end
   end
+end
+
+def adminui_show_none(context)
+  respond_to do |format|
+    format.html do
+      erb :none,
+        :layout => :page_layout,
+        :locals => {
+          context: context
+        }
+    end
+    format.json do
+      content_type :json
+      {
+        context: context.to_h
+      }.to_json
+    end
+  end
+end
+
+get '/' do
+  adminui_show_markdown(
+    AdminUI::Context.new(request.path),
+    AdminUI::Context.index_md
+  )
 end
 
 get '/context' do
@@ -129,30 +154,23 @@ get '/infra/clients-no-vpc' do
 end
 
 get '/ops/collections/**' do
-  erb :markdown,
-    :layout => :page_layout,
-    :locals => {
-      md_file: 'app/markdown/mrt/collections.md',
-      context: AdminUI::Context.new(request.path)
-    }
+  adminui_show_markdown(
+    AdminUI::Context.new(request.path),
+    'app/markdown/mrt/collections.md'
+  )
 end
 
 get '/ops/storage/scans' do
-  erb :markdown,
-    :layout => :page_layout,
-    :locals => {
-      md_file: 'app/markdown/mrt/storage_scans.md',
-      context: AdminUI::Context.new(request.path)
-    }
+  adminui_show_markdown(
+    AdminUI::Context.new(request.path),
+    'app/markdown/mrt/storage_scans.md'
+  )
 end
 
 get '/**' do
-  puts request.path
-  erb :none,
-    :layout => :page_layout,
-    :locals => {
-      context: AdminUI::Context.new(request.path)
-    }
+  adminui_show_none(
+    AdminUI::Context.new(request.path)
+  )
 end
 
 post '/hello' do
