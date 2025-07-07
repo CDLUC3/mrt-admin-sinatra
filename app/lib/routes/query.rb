@@ -10,27 +10,6 @@ require_relative '../ui/context'
 module Sinatra
   # client specific routes
   module UC3QueryRoutes
-
-    def adminui_show_table(context, table)
-      respond_to do |format|
-        format.html do
-          erb :table,
-            :layout => :page_layout,
-            :locals => {
-              context: context,
-              table: table
-           }
-        end
-        format.json do
-          content_type :json
-          { 
-            context: context.to_h,
-            table: table.table_data
-          }.to_json
-        end
-      end
-    end
-
     def self.registered(app)
       app.get '/queries/repository' do
         erb :none,
@@ -72,37 +51,29 @@ module Sinatra
 
       app.get '/queries/content/producer-files' do
         if request.params.key?('mnemonic')
-          erb :table,
-            layout: :page_layout,
-            locals: {
-              context: AdminUI::Context.new(request.path),
-              table: UC3Query::QueryClient.client.query(request.path, request.params)
-            }
+          adminui_show_table(
+            AdminUI::Context.new(request.path),
+            UC3Query::QueryClient.client.query(request.path, request.params)
+          )
         else
-          erb :table,
-            layout: :page_layout,
-            locals: {
-              context: AdminUI::Context.new(request.path),
-              table: UC3Query::QueryClient.client.query('/queries/collections', request.params)
-            }
+          adminui_show_table(
+            AdminUI::Context.new(request.path),
+            UC3Query::QueryClient.client.query('/queries/collections', request.params)
+          )
         end
       end
 
       app.get '/queries/content/ucsc-objects' do
         if request.params.key?('mnemonic')
-          erb :table,
-            layout: :page_layout,
-            locals: {
-              context: AdminUI::Context.new(request.path),
-              table: UC3Query::QueryClient.client.query(request.path, request.params)
-            }
+          adminui_show_table(
+            AdminUI::Context.new(request.path),
+            UC3Query::QueryClient.client.query(request.path, request.params)
+          )
         else
-          erb :table,
-            layout: :page_layout,
-            locals: {
-              context: AdminUI::Context.new(request.path),
-              table: UC3Query::QueryClient.client.query('/queries/collections', request.params)
-            }
+          adminui_show_table(
+            AdminUI::Context.new(request.path),
+            UC3Query::QueryClient.client.query('/queries/collections', request.params)
+          )
         end
       end
 
@@ -116,30 +87,24 @@ module Sinatra
       end
 
       app.get '/ops/db-queue/**' do
-        erb :table,
-          layout: :page_layout,
-          locals: {
-            context: AdminUI::Context.new(request.path),
-            table: UC3Query::QueryClient.client.query(request.path, request.params)
-          }
+        adminui_show_table(
+          AdminUI::Context.new(request.path),
+          UC3Query::QueryClient.client.query(request.path, request.params)
+        )
       end
 
       app.get '/ops/collections/db/**' do
-        erb :table,
-          layout: :page_layout,
-          locals: {
-            context: AdminUI::Context.new(request.path),
-            table: UC3Query::QueryClient.client.query(request.path, request.params)
-          }
+        adminui_show_table(
+          AdminUI::Context.new(request.path),
+          UC3Query::QueryClient.client.query(request.path, request.params)
+        )
       end
 
       app.get '/ops/storage/db/**' do
-        erb :table,
-          layout: :page_layout,
-          locals: {
-            context: AdminUI::Context.new(request.path),
-            table: UC3Query::QueryClient.client.query(request.path, request.params)
-          }
+        adminui_show_table(
+          AdminUI::Context.new(request.path),
+          UC3Query::QueryClient.client.query(request.path, request.params)
+        )
       end
 
       app.post '/search' do

@@ -26,6 +26,36 @@ AdminUI::Context.index_md = 'app/markdown/mrt/index.md'
 
 register Sinatra::Contrib
 
+def adminui_show_table_format(context, table, format)
+  if format == 'json'
+    content_type :json
+    {
+      context: context.to_h,
+      table: table.table_data
+    }.to_json
+  else
+    erb :table,
+      :layout => :page_layout,
+      :locals => {
+        context: context,
+        table: table
+      }
+  end
+end
+
+def adminui_show_table(context, table)
+  fmt = request.params.fetch('format', '')
+  adminui_show_table_format(context, table, fmt) unless fmt.empty?
+  respond_to do |format|
+    format.json do
+      adminui_show_table_format(context, table, 'json')
+    end
+    format.html do
+      adminui_show_table_format(context, table, 'html')
+    end
+  end
+end
+
 get '/' do
   respond_to do |format|
     format.html do
@@ -38,7 +68,7 @@ get '/' do
     end
     format.json do
       content_type :json
-      { 
+      {
         context: AdminUI::Context.new(request.path).to_h,
         markdown: AdminUI::Context.index_md
       }.to_json
@@ -47,23 +77,10 @@ get '/' do
 end
 
 get '/context' do
-  respond_to do |format|
-    format.html do
-      erb :table,
-        :layout => :page_layout,
-        :locals => {
-          context: AdminUI::Context.new(request.path),
-          table: UC3::UC3Client.new.context
-        }
-    end
-    format.json do
-      content_type :json
-      { 
-        context: AdminUI::Context.new(request.path).to_h,
-        table: UC3::UC3Client.new.context.table_data
-      }.to_json
-    end
-  end
+  adminui_show_table(
+    AdminUI::Context.new(request.path),
+    UC3::UC3Client.new.context
+  )
 end
 
 get '/clients' do
@@ -81,24 +98,20 @@ get '/clients' do
   UC3Ldap::LDAPClient.client
   UC3::TestClient.client
 
-  erb :table,
-    :layout => :page_layout,
-    :locals => {
-      context: AdminUI::Context.new(request.path),
-      table: UC3::UC3Client.new.client_list
-    }
+  adminui_show_table(
+    AdminUI::Context.new(request.path),
+    UC3::UC3Client.new.client_list
+  )
 end
 
 get '/clients-vpc' do
   UC3Query::QueryClient.client
   UC3Queue::ZKClient.client
 
-  erb :table,
-    :layout => :page_layout,
-    :locals => {
-      context: AdminUI::Context.new(request.path),
-      table: UC3::UC3Client.new.client_list
-    }
+  adminui_show_table(
+    AdminUI::Context.new(request.path),
+    UC3::UC3Client.new.client_list
+  )
 end
 
 get '/infra/clients-no-vpc' do
@@ -109,12 +122,10 @@ get '/infra/clients-no-vpc' do
   UC3Resources::FunctionsClient.new
   UC3Resources::LoadBalancerClient.new
 
-  erb :table,
-    :layout => :page_layout,
-    :locals => {
-      context: AdminUI::Context.new(request.path),
-      table: UC3::UC3Client.new.client_list
-    }
+  adminui_show_table(
+    AdminUI::Context.new(request.path),
+    UC3::UC3Client.new.client_list
+  )
 end
 
 get '/ops/collections/**' do

@@ -48,7 +48,7 @@ phases:
         for route in $(curl --no-progress-meter http://$admintool/test/consistency | jq -r '.[]')
         do
           echo $route
-          curl -o /tmp/curl.json -s -w "$(curl_format)" ${admintool}${route}
+          curl -o /tmp/curl.json -s -w "$(curl_format)" -H "Accept: application/json" ${admintool}${route}
           cat /tmp/curl.json|jq -r '.title // "na"'
         done
       fi
@@ -59,7 +59,7 @@ phases:
         for route in $(curl --no-progress-meter http://$admintool/test/routes | jq -r '.[]')
         do
           echo $route
-          curl -o /tmp/curl.json -s -w "$(curl_format)" ${admintool}${route}
+          curl -o /tmp/curl.json -s -w "$(curl_format)" -H "Accept: application/json" ${admintool}${route}
           cat /tmp/curl.json|jq -r '.title // "na"'
         done
       fi

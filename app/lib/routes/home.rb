@@ -64,7 +64,6 @@ module Sinatra
         UC3::TestClient.client.consistency_checks.length.to_s
       end
     end
-
   end
   register UC3HomeRoutes
 end
