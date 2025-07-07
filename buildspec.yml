@@ -49,7 +49,7 @@ phases:
         do
           echo $route
           curl -o /tmp/curl.json -s -w "$(curl_format)" -H "Accept: application/json" ${admintool}${route}
-          cat /tmp/curl.json|jq -r '.title // "na"'
+          cat /tmp/curl.json|jq -r '.context.title // "na"'
         done
       fi
 
@@ -60,7 +60,7 @@ phases:
         do
           echo $route
           curl -o /tmp/curl.json -s -w "$(curl_format)" -H "Accept: application/json" ${admintool}${route}
-          cat /tmp/curl.json|jq -r '.title // "na"'
+          cat /tmp/curl.json|jq -r '.context.title // "na"'
         done
       fi
     - |
