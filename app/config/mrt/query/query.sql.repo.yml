@@ -225,15 +225,9 @@ queries:
         order by
           ogroup,
           own_name
-    /queries/repository/mimes/campus/CDL:
-    template-params:
-      WHERE: where ogroup = CDL
-    totals: true
-    sql: |
-      {{{MIME}}}
   /queries/repository/mimes/campus/CDL:
     template-params:
-      WHERE: where ogroup = CDL
+      WHERE: where ogroup = 'CDL'
     totals: true
     sql: |
       {{{MIME}}}
