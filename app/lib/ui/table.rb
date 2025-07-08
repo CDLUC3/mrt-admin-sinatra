@@ -165,7 +165,7 @@ module AdminUI
             if col.is_a?(Hash)
               v = col.fetch(:value, '')
               if v.is_a?(BigDecimal)
-                v = col.cssclass.split.include?('float') ? format_float(v.to_f) : format_int(v.to_i)
+                v = v.to_s
               end
             else
               v = col.to_s
