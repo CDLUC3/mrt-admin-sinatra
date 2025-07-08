@@ -40,7 +40,7 @@ phases:
         curl -H "Accept: application/json" -o /tmp/curl.json -s -w "$(curl_format)" ${admintool}${route}
         cat /tmp/curl.json | jq -r '"\t\tTitle:\t" + .context.title // "na"' 2>/dev/null
         cat /tmp/curl.json | jq -r '"\t\tRows:\t" + (.table | length | tostring)' 2>/dev/null
-        cat /tmp/curl.json | jq -r '"\t\t" + (.status + ":\t" + .status_message)' 2>/dev/null
+        cat /tmp/curl.json | jq -r '"\t\t\t" + ((.status // "NA") + ":\t" + .status_message)' 2>/dev/null
       }
 
       if [[ "$ADMIN_MODE" == "build" ]]
@@ -56,6 +56,7 @@ phases:
 
       if [[ "$ADMIN_MODE" == "consistency-check" ]]
       then
+        echo "Search for 'Status: 4', 'Status: 5' or 'ERROR' to detect issues"
         echo "================================================="
         admintool=$(admintool_ip):9292
         for route in $(curl --no-progress-meter http://$admintool/test/consistency | jq -r '.[]')
@@ -67,6 +68,7 @@ phases:
 
       if [[ "$ADMIN_MODE" == "unit-test" ]]
       then
+        echo "Search for 'Status: 4', 'Status: 5' or 'ERROR' to detect issues"
         echo "================================================="
         admintool=$(admintool_ip):9292
         for route in $(curl --no-progress-meter http://$admintool/test/routes | jq -r '.[]')
