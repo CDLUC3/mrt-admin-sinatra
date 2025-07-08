@@ -3,7 +3,6 @@
 require 'sinatra/base'
 require 'net/http'
 require_relative '../ui/context'
-require 'json'
 
 # custom sinatra routes
 module Sinatra
@@ -118,9 +117,9 @@ module Sinatra
     def stack_init
       UC3::FileSystemClient.client.cleanup_ingest_folders
       resp = []
-      resp << JSON.parse(post_url('http://inventory:8080/inventory/service/start?t=json'))
-      resp << JSON.parse(post_url('http://replic:8080/replic/service/start?t=json'))
-      resp << JSON.parse(post_url('http://audit:8080/audit/service/start?t=json'))
+      resp << ::JSON.parse(post_url('http://inventory:8080/inventory/service/start?t=json'))
+      resp << ::JSON.parse(post_url('http://replic:8080/replic/service/start?t=json'))
+      resp << ::JSON.parse(post_url('http://audit:8080/audit/service/start?t=json'))
       resp.to_json
     end
 
