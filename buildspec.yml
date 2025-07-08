@@ -29,15 +29,15 @@ phases:
       }
 
       curl_format() {
-        echo "\t%{http_code}\t%{content_type}\t%{size_download}\t%{time_total}\n"
+        echo "\tStatus: %{http_code}\n\tContent-Type: %{content_type}\n\tSize: %{size_download}\n\tTime: %{time_total}\n"
       }
 
       test_route() {
         route=$1
         echo "\n\n$route"
         curl -H "Accept: application/json" -o /tmp/curl.json -s -w "$(curl_format)" ${admintool}${route} 2>/dev/null
-        cat /tmp/curl.json | jq -r '"\tTitle:\t" + .context.title // "na"'
-        cat /tmp/curl.json | jq -r '"\tRows:\t" + .table | length'
+        cat /tmp/curl.json | jq -r '"\t\tTitle:\t" + .context.title // "na"'
+        cat /tmp/curl.json | jq -r '"\t\tRows:\t" + .table | length'
       }
 
       if [[ "$ADMIN_MODE" == "build" ]]
