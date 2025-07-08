@@ -66,11 +66,13 @@ phases:
 
       if [[ "$ADMIN_MODE" == "unit-test" ]]
       then
+        echo "================================================="
         admintool=$(admintool_ip):9292
         for route in $(curl --no-progress-meter http://$admintool/test/routes | jq -r '.[]')
         do
           test_route $route
         done
+        echo "================================================="
       fi
     - |
       if [[ "$ADMIN_MODE" == "build" ]]
