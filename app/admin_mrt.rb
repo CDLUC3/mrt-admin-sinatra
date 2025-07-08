@@ -36,6 +36,9 @@ def adminui_show_table_format(context, table, format)
   elsif format == 'csv'
     content_type :text
     halt 200, {'Content-Type' => 'text/csv'}, table.to_csv
+  elsif format == 'text'
+    content_type :text
+    halt 200, table.to_csv
   else
     erb :table,
       :layout => :page_layout,

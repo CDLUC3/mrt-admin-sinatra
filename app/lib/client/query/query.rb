@@ -134,8 +134,19 @@ module UC3Query
           make_column(field)
         end
 
+        sep = path.index('?') ? '&' : '?'
         description = Mustache.render(query.fetch(:description, ''), tparm)
-        description += "<details><summary>SQL</summary><pre>#{@formatter.format(sql).gsub(' (', '(')}</pre></details>"
+        description += <<~HTML
+          <details>
+            <summary>SQL</summary>
+            <pre>#{@formatter.format(sql).gsub(' (', '(')}</pre>
+            <div>
+              <a href='#{path}#{sep}format=json'>JSON</a>
+              <a href='#{path}#{sep}format=csv'>CSV</a>
+              <a href='#{path}#{sep}format=text'>TEXT</a>
+            </div>
+          </details>
+        HTML
         table = AdminUI::FilterTable.new(
           columns: cols,
           totals: query.fetch(:totals, false),
