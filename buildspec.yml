@@ -32,6 +32,15 @@ phases:
         echo "\t%{http_code}\t%{content_type}\t%{size_download}\t%{time_total}\n"
       }
 
+      test_route() {
+        route=$1
+        echo $route
+        curl -H "Accept: application/json" -o /tmp/curl.json -s -w "$(curl_format)" ${admintool}${route} 2>/dev/null
+        cat /tmp/curl.json | jq
+        cat /tmp/curl.json | jq -r '.context.title // "na"'
+        cat /tmp/curl.json | jq -r '.table | length'
+      }
+
       if [[ "$ADMIN_MODE" == "build" ]]
       then
         docker build --quiet --push \
@@ -48,11 +57,7 @@ phases:
         admintool=$(admintool_ip):9292
         for route in $(curl --no-progress-meter http://$admintool/test/consistency | jq -r '.[]')
         do
-          echo $route
-          curl -o /tmp/curl.json -s -w "$(curl_format)" -H "Accept: application/json" ${admintool}${route}
-          cat /tmp/curl.json | jq
-          cat /tmp/curl.json | jq -r '.context.title // "na"'
-          cat /tmp/curl.json | jq -r '.table | length'
+          test_route $route
         done
       fi
 
@@ -61,11 +66,7 @@ phases:
         admintool=$(admintool_ip):9292
         for route in $(curl --no-progress-meter http://$admintool/test/routes | jq -r '.[]')
         do
-          echo $route
-          curl -o /tmp/curl.json -s -w "$(curl_format)" -H "Accept: application/json" ${admintool}${route}
-          cat /tmp/curl.json | jq
-          cat /tmp/curl.json | jq -r 'context.title // "na"'
-          cat /tmp/curl.json | jq -r '.table | length'
+          test_route $route
         done
       fi
     - |
