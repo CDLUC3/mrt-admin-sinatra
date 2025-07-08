@@ -34,8 +34,9 @@ def adminui_show_table_format(context, table, format)
       table: table.table_data
     }.to_json
   elsif format == 'csv'
+    fname = "mrt-admin#{context.route.gsub('/', '-')}.#{Time.now.strftime('%Y%m%d-%H%M%S')}.csv"
     content_type :text
-    halt 200, {'Content-Type' => 'text/csv'}, table.to_csv
+    halt 200, {'Content-Type' => 'text/csv', 'Content-Disposition' => "attachment; filename=\"#{fname}\"" }, table.to_csv
   elsif format == 'text'
     content_type :text
     halt 200, table.to_csv

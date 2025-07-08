@@ -139,12 +139,12 @@ module UC3Query
         description += <<~HTML
           <details>
             <summary>SQL</summary>
-            <pre>#{@formatter.format(sql).gsub(' (', '(')}</pre>
             <div>
               <a href='#{path}#{sep}format=json'>JSON</a>
               <a href='#{path}#{sep}format=csv'>CSV</a>
               <a href='#{path}#{sep}format=text'>TEXT</a>
             </div>
+            <pre>#{@formatter.format(sql).gsub(' (', '(')}</pre>
           </details>
         HTML
         table = AdminUI::FilterTable.new(
