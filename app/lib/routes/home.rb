@@ -63,6 +63,11 @@ module Sinatra
         content_type :text
         UC3::TestClient.client.consistency_checks.length.to_s
       end
+
+      app.get '/robots.txt' do
+        content_type :text
+        "User-agent: *\nDisallow: /"
+      end
     end
   end
   register UC3HomeRoutes
