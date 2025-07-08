@@ -425,6 +425,8 @@ queries:
           on o.id = icio.inv_object_id
         inner join inv.inv_collections c
           on icio.inv_collection_id = c.id
+        inner join inv.inv_files f
+          on f.inv_object_id = o.id
         where
           length(mime_type) > 70 and source = 'producer'
         and
