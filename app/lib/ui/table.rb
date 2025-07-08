@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require 'csv'
 
 # admin ui components
 module AdminUI
@@ -149,6 +150,31 @@ module AdminUI
 
       %(<div class='description'>#{Redcarpet::Markdown.new(Redcarpet::Render::HTML.new,
         fenced_code_blocks: true).render(@description)}</div>)
+    end
+
+    def to_csv
+      CSV.generate do |csv|
+        row = []
+        @columns.each do |col|
+          row << col.header
+        end
+        csv << row
+        @rows.each do |row|
+          data = []
+          row.cols.each_with_index do |col, i|
+            if col.is_a?(Hash)
+              v = col.fetch(:value, '')
+              if v.is_a?(BigDecimal)
+                v = col.cssclass.split.include?('float') ? format_float(v.to_f) : format_int(v.to_i)
+              end
+            else
+              v = col.to_s
+            end
+            data << v
+          end
+          csv << data
+        end
+      end
     end
 
     attr_accessor :columns, :data, :filters, :filterable, :totals, :status

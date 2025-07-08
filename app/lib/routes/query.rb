@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'sinatra/base'
+require 'sinatra/contrib'
 require 'uri'
 require_relative '../client/query/query'
 require_relative '../ui/context'
@@ -11,19 +12,15 @@ module Sinatra
   module UC3QueryRoutes
     def self.registered(app)
       app.get '/queries/repository' do
-        erb :none,
-          :layout => :page_layout,
-          :locals => {
-            context: AdminUI::Context.new(request.path)
-          }
+        adminui_show_none(
+          AdminUI::Context.new(request.path)
+        )
       end
 
       app.get '/queries/consistency' do
-        erb :none,
-          :layout => :page_layout,
-          :locals => {
-            context: AdminUI::Context.new(request.path)
-          }
+        adminui_show_none(
+          AdminUI::Context.new(request.path)
+        )
       end
 
       app.get '/queries/repository/object*' do
@@ -50,75 +47,60 @@ module Sinatra
 
       app.get '/queries/content/producer-files' do
         if request.params.key?('mnemonic')
-          erb :table,
-            layout: :page_layout,
-            locals: {
-              context: AdminUI::Context.new(request.path),
-              table: UC3Query::QueryClient.client.query(request.path, request.params)
-            }
+          adminui_show_table(
+            AdminUI::Context.new(request.path),
+            UC3Query::QueryClient.client.query(request.path, request.params)
+          )
         else
-          erb :table,
-            layout: :page_layout,
-            locals: {
-              context: AdminUI::Context.new(request.path),
-              table: UC3Query::QueryClient.client.query('/queries/collections', request.params)
-            }
+          adminui_show_table(
+            AdminUI::Context.new(request.path),
+            UC3Query::QueryClient.client.query('/queries/collections', request.params)
+          )
         end
       end
 
       app.get '/queries/content/ucsc-objects' do
         if request.params.key?('mnemonic')
-          erb :table,
-            layout: :page_layout,
-            locals: {
-              context: AdminUI::Context.new(request.path),
-              table: UC3Query::QueryClient.client.query(request.path, request.params)
-            }
+          adminui_show_table(
+            AdminUI::Context.new(request.path),
+            UC3Query::QueryClient.client.query(request.path, request.params)
+          )
         else
-          erb :table,
-            layout: :page_layout,
-            locals: {
-              context: AdminUI::Context.new(request.path),
-              table: UC3Query::QueryClient.client.query('/queries/collections', request.params)
-            }
+          adminui_show_table(
+            AdminUI::Context.new(request.path),
+            UC3Query::QueryClient.client.query('/queries/collections', request.params)
+          )
         end
       end
 
       app.get '/queries/**' do
         request.params[:term] = URI.decode_www_form_component(request.params[:term]) if request.params.key?(:term)
-        erb :table,
-          layout: :page_layout,
-          locals: {
-            context: AdminUI::Context.new(request.path),
-            table: UC3Query::QueryClient.client.query(request.path, request.params)
-          }
+
+        adminui_show_table(
+          AdminUI::Context.new(request.path),
+          UC3Query::QueryClient.client.query(request.path, request.params)
+        )
       end
 
       app.get '/ops/db-queue/**' do
-        erb :table,
-          layout: :page_layout,
-          locals: {
-            context: AdminUI::Context.new(request.path),
-            table: UC3Query::QueryClient.client.query(request.path, request.params)
-          }
+        adminui_show_table(
+          AdminUI::Context.new(request.path),
+          UC3Query::QueryClient.client.query(request.path, request.params)
+        )
       end
 
       app.get '/ops/collections/db/**' do
-        erb :table,
-          layout: :page_layout,
-          locals: {
-            context: AdminUI::Context.new(request.path),
-            table: UC3Query::QueryClient.client.query(request.path, request.params)
-          }
+        adminui_show_table(
+          AdminUI::Context.new(request.path),
+          UC3Query::QueryClient.client.query(request.path, request.params)
+        )
       end
 
       app.get '/ops/storage/db/**' do
-        erb :table,
-          layout: :page_layout,
-          locals: {
-            context: AdminUI::Context.new(request.path),
-            table: UC3Query::QueryClient.client.query(request.path, request.params)
-          }
+        adminui_show_table(
+          AdminUI::Context.new(request.path),
+          UC3Query::QueryClient.client.query(request.path, request.params)
+        )
       end
 
       app.post '/search' do

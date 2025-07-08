@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'sinatra/base'
+require 'sinatra/contrib'
 require_relative '../ui/context'
 require_relative '../client/uc3_client'
 

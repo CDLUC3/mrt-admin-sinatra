@@ -1,9 +1,11 @@
 docker:
   token: 
     ssm: /uc3/mrt/dev/github/readonly
+    default: ''
 ecs:
   token: 
     ssm: /uc3/mrt/dev/github/readonly
+    default: ''
 default:
   token: 
     ssm: /uc3/mrt/dev/github/readonly

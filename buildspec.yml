@@ -28,6 +28,9 @@ phases:
           jq -r ".Instances[0].Attributes.AWS_INSTANCE_IPV4"
       }
 
+      curl_format() {
+        echo "\t%{http_code}\t%{content_type}\t%{size_download}\t%{time_total}\n"}
+
       if [[ "$ADMIN_MODE" == "build" ]]
       then
         docker build --quiet --push \
@@ -45,7 +48,9 @@ phases:
         for route in $(curl --no-progress-meter http://$admintool/test/consistency | jq -r '.[]')
         do
           echo $route
-          curl -o /dev/null -s -w "\t%{http_code}\t%{size_download}\t%{time_total}\n" ${admintool}${route}
+          curl -o /tmp/curl.json -s -w "$(curl_format)" -H "Accept: application/json" ${admintool}${route}
+          cat /tmp/curl.json|jq -r '.context.title // "na"'
+          cat /tmp/curl.json|jq -r '.table | length'
         done
       fi
 
@@ -55,7 +60,9 @@ phases:
         for route in $(curl --no-progress-meter http://$admintool/test/routes | jq -r '.[]')
         do
           echo $route
-          curl -o /dev/null -s -w "\t%{http_code}\t%{size_download}\t%{time_total}\n" ${admintool}${route}
+          curl -o /tmp/curl.json -s -w "$(curl_format)" -H "Accept: application/json" ${admintool}${route}
+          cat /tmp/curl.json|jq -r 'context.title // "na"'
+          cat /tmp/curl.json|jq -r '.table | length'
         done
       fi
     - |

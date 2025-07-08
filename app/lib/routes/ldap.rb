@@ -14,12 +14,11 @@ module Sinatra
       app.get '/ldap/users' do
         ldap = UC3Ldap::LDAPClient.client
         ldap.load
-        erb :table,
-          :layout => :page_layout,
-          :locals => {
-            context: AdminUI::Context.new(request.path),
-            table: ldap.users_table
-          }
+
+        adminui_show_table(
+          AdminUI::Context.new(request.path),
+          ldap.users_table
+        )
       end
 
       app.get '/ldap/users/*' do
@@ -27,12 +26,11 @@ module Sinatra
         ldap = UC3Ldap::LDAPClient.client
         ldap.load
         roles = ldap.user_detail_records(user)
-        erb :table,
-          :layout => :page_layout,
-          :locals => {
-            context: AdminUI::Context.new(request.path),
-            table: ldap.user_details_table(roles)
-          }
+
+        adminui_show_table(
+          AdminUI::Context.new(request.path),
+          ldap.user_details_table(roles)
+        )
       end
 
       app.get '/ldap/collections/*' do
@@ -40,43 +38,36 @@ module Sinatra
         ldap = UC3Ldap::LDAPClient.client
         ldap.load
         roles = ldap.collection_detail_records(coll)
-        erb :table,
-          :layout => :page_layout,
-          :locals => {
-            context: AdminUI::Context.new(request.path),
-            table: ldap.collection_details_table(roles)
-          }
+
+        adminui_show_table(
+          AdminUI::Context.new(request.path),
+          ldap.collection_details_table(roles)
+        )
       end
 
       app.get '/ldap/collections' do
         ldap = UC3Ldap::LDAPClient.client
         ldap.load
-        erb :table,
-          :layout => :page_layout,
-          :locals => {
-            context: AdminUI::Context.new(request.path),
-            table: ldap.collections_table
-          }
+        adminui_show_table(
+          AdminUI::Context.new(request.path),
+          ldap.collections_table
+        )
       end
 
       app.get '/ldap/roles' do
         ldap = UC3Ldap::LDAPClient.client
         ldap.load
-        erb :table,
-          :layout => :page_layout,
-          :locals => {
-            context: AdminUI::Context.new(request.path),
-            table: ldap.roles_table
-          }
+        adminui_show_table(
+          AdminUI::Context.new(request.path),
+          ldap.roles_table
+        )
       end
 
       app.get '/ldap/collections-missing' do
-        erb :table,
-          :layout => :page_layout,
-          :locals => {
-            context: AdminUI::Context.new(request.path),
-            table: UC3Ldap::LDAPCollectionMapList.new.ldap_collection_map
-          }
+        adminui_show_table(
+          AdminUI::Context.new(request.path),
+          UC3Ldap::LDAPCollectionMapList.new.ldap_collection_map
+        )
       end
     end
   end

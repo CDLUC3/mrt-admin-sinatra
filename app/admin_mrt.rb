@@ -2,6 +2,7 @@
 
 require 'sinatra'
 require 'sinatra/base'
+require 'sinatra/contrib'
 require_relative 'lib/routes/home'
 require_relative 'lib/routes/code'
 require_relative 'lib/routes/resources'
@@ -23,22 +24,91 @@ Sinatra::UC3HomeRoutes.load_menu_file('app/config/mrt/menu.yml')
 AdminUI::Context.css = '/mrt/custom.css'
 AdminUI::Context.index_md = 'app/markdown/mrt/index.md'
 
+register Sinatra::Contrib
+
+def adminui_show_table_format(context, table, format)
+  if format == 'json'
+    content_type :json
+    {
+      context: context.to_h,
+      table: table.table_data
+    }.to_json
+  elsif format == 'csv'
+    content_type :text
+    halt 200, {'Content-Type' => 'text/csv'}, table.to_csv
+  else
+    erb :table,
+      :layout => :page_layout,
+      :locals => {
+        context: context,
+        table: table
+      }
+  end
+end
+
+def adminui_show_table(context, table)
+  fmt = request.params.fetch('format', '')
+  adminui_show_table_format(context, table, fmt) unless fmt.empty?
+  respond_to do |format|
+    format.json do
+      adminui_show_table_format(context, table, 'json')
+    end
+    format.html do
+      adminui_show_table_format(context, table, 'html')
+    end
+  end
+end
+
+def adminui_show_markdown(context, md_file)
+  respond_to do |format|
+    format.html do
+      erb :markdown,
+        :layout => :page_layout,
+        :locals => {
+          md_file: md_file,
+          context: context
+        }
+    end
+    format.json do
+      content_type :json
+      {
+        context: context.to_h,
+        markdown: md_file
+      }.to_json
+    end
+  end
+end
+
+def adminui_show_none(context)
+  respond_to do |format|
+    format.html do
+      erb :none,
+        :layout => :page_layout,
+        :locals => {
+          context: context
+        }
+    end
+    format.json do
+      content_type :json
+      {
+        context: context.to_h
+      }.to_json
+    end
+  end
+end
+
 get '/' do
-  erb :markdown,
-    :layout => :page_layout,
-    :locals => {
-      md_file: AdminUI::Context.index_md,
-      context: AdminUI::Context.new(request.path)
-    }
+  adminui_show_markdown(
+    AdminUI::Context.new(request.path),
+    AdminUI::Context.index_md
+  )
 end
 
 get '/context' do
-  erb :table,
-    :layout => :page_layout,
-    :locals => {
-      context: AdminUI::Context.new(request.path),
-      table: UC3::UC3Client.new.context
-    }
+  adminui_show_table(
+    AdminUI::Context.new(request.path),
+    UC3::UC3Client.new.context
+  )
 end
 
 get '/clients' do
@@ -56,24 +126,20 @@ get '/clients' do
   UC3Ldap::LDAPClient.client
   UC3::TestClient.client
 
-  erb :table,
-    :layout => :page_layout,
-    :locals => {
-      context: AdminUI::Context.new(request.path),
-      table: UC3::UC3Client.new.client_list
-    }
+  adminui_show_table(
+    AdminUI::Context.new(request.path),
+    UC3::UC3Client.new.client_list
+  )
 end
 
 get '/clients-vpc' do
   UC3Query::QueryClient.client
   UC3Queue::ZKClient.client
 
-  erb :table,
-    :layout => :page_layout,
-    :locals => {
-      context: AdminUI::Context.new(request.path),
-      table: UC3::UC3Client.new.client_list
-    }
+  adminui_show_table(
+    AdminUI::Context.new(request.path),
+    UC3::UC3Client.new.client_list
+  )
 end
 
 get '/infra/clients-no-vpc' do
@@ -84,39 +150,30 @@ get '/infra/clients-no-vpc' do
   UC3Resources::FunctionsClient.new
   UC3Resources::LoadBalancerClient.new
 
-  erb :table,
-    :layout => :page_layout,
-    :locals => {
-      context: AdminUI::Context.new(request.path),
-      table: UC3::UC3Client.new.client_list
-    }
+  adminui_show_table(
+    AdminUI::Context.new(request.path),
+    UC3::UC3Client.new.client_list
+  )
 end
 
 get '/ops/collections/**' do
-  erb :markdown,
-    :layout => :page_layout,
-    :locals => {
-      md_file: 'app/markdown/mrt/collections.md',
-      context: AdminUI::Context.new(request.path)
-    }
+  adminui_show_markdown(
+    AdminUI::Context.new(request.path),
+    'app/markdown/mrt/collections.md'
+  )
 end
 
 get '/ops/storage/scans' do
-  erb :markdown,
-    :layout => :page_layout,
-    :locals => {
-      md_file: 'app/markdown/mrt/storage_scans.md',
-      context: AdminUI::Context.new(request.path)
-    }
+  adminui_show_markdown(
+    AdminUI::Context.new(request.path),
+    'app/markdown/mrt/storage_scans.md'
+  )
 end
 
 get '/**' do
-  puts request.path
-  erb :none,
-    :layout => :page_layout,
-    :locals => {
-      context: AdminUI::Context.new(request.path)
-    }
+  adminui_show_none(
+    AdminUI::Context.new(request.path)
+  )
 end
 
 post '/hello' do

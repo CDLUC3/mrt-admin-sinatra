@@ -12,34 +12,28 @@ module Sinatra
       app.get '/source/tags/*' do |repo|
         srccode = UC3Code::SourceCodeClient.client
 
-        erb :table,
-          :layout => :page_layout,
-          :locals => {
-            context: AdminUI::Context.new(request.path),
-            table: srccode.repo_tags(repo)
-          }
+        adminui_show_table(
+          AdminUI::Context.new(request.path),
+          srccode.repo_tags(repo)
+        )
       end
 
       app.get '/source/artifacts/*' do |repo|
         srccode = UC3Code::SourceCodeClient.client
 
-        erb :table,
-          :layout => :page_layout,
-          :locals => {
-            context: AdminUI::Context.new(request.path),
-            table: srccode.artifacts_table(repo)
-          }
+        adminui_show_table(
+          AdminUI::Context.new(request.path),
+          srccode.artifacts_table(repo)
+        )
       end
 
       app.get '/source/images/*' do |repo|
         srccode = UC3Code::SourceCodeClient.client
 
-        erb :table,
-          :layout => :page_layout,
-          :locals => {
-            context: AdminUI::Context.new(request.path),
-            table: srccode.images_table(repo)
-          }
+        adminui_show_table(
+          AdminUI::Context.new(request.path),
+          srccode.images_table(repo)
+        )
       end
 
       app.get '/source/artifact/*/*/*' do |artifact, version, asset|
@@ -51,12 +45,11 @@ module Sinatra
       app.get '/source/artifact_manifest/*/*/*' do |artifact, version, asset|
         srccode = UC3Code::SourceCodeClient.client
         srccode.artifact_manifest(artifact, version, asset).to_json
-        erb :table,
-          :layout => :page_layout,
-          :locals => {
-            context: AdminUI::Context.new(request.path),
-            table: srccode.artifact_manifest_table(srccode.artifact_manifest(artifact, version, asset))
-          }
+
+        adminui_show_table(
+          AdminUI::Context.new(request.path),
+          srccode.artifact_manifest_table(srccode.artifact_manifest(artifact, version, asset))
+        )
       end
 
       app.get '/source/artifact_command/*/*/*' do |artifact, version, asset|
@@ -77,30 +70,24 @@ module Sinatra
       end
 
       app.get '/source' do
-        erb :markdown,
-          :layout => :page_layout,
-          :locals => {
-            md_file: 'app/markdown/mrt/source.md',
-            context: AdminUI::Context.new(request.path)
-          }
+        adminui_show_markdown(
+          AdminUI::Context.new(request.path),
+          'app/markdown/mrt/source.md'
+        )
       end
 
       app.get '/source/conventions' do
-        erb :markdown,
-          :layout => :page_layout,
-          :locals => {
-            md_file: 'app/markdown/mrt/source.md',
-            context: AdminUI::Context.new(request.path)
-          }
+        adminui_show_markdown(
+          AdminUI::Context.new(request.path),
+          'app/markdown/mrt/source.md'
+        )
       end
 
       app.get '/source/conventions/*' do |md|
-        erb :markdown,
-          :layout => :page_layout,
-          :locals => {
-            md_file: "app/markdown/mrt/conventions/#{md}",
-            context: AdminUI::Context.new(request.path)
-          }
+        adminui_show_markdown(
+          AdminUI::Context.new(request.path),
+          "app/markdown/mrt/conventions/#{md}"
+        )
       end
 
       app.post '/source/artifacts/delete/*' do |tag|
