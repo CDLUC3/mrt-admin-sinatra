@@ -29,7 +29,8 @@ phases:
       }
 
       curl_format() {
-        echo "\t%{http_code}\t%{content_type}\t%{size_download}\t%{time_total}\n"}
+        echo "\t%{http_code}\t%{content_type}\t%{size_download}\t%{time_total}\n"
+      }
 
       if [[ "$ADMIN_MODE" == "build" ]]
       then
