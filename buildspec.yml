@@ -36,7 +36,6 @@ phases:
         route=$1
         echo $route
         curl -H "Accept: application/json" -o /tmp/curl.json -s -w "$(curl_format)" ${admintool}${route} 2>/dev/null
-        cat /tmp/curl.json | jq
         cat /tmp/curl.json | jq -r '.context.title // "na"'
         cat /tmp/curl.json | jq -r '.table | length'
       }
