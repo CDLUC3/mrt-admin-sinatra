@@ -21,7 +21,8 @@ module AdminUI
       )
     end
 
-    def initialize(columns: [], data: [], filters: [], totals: false, description: '', status: :SKIP, status_message: '')
+    def initialize(columns: [], data: [], filters: [], totals: false, description: '', status: :SKIP,
+      status_message: '')
       @columns = columns
       @rows = data
       @filters = filters
