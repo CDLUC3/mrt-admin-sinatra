@@ -27,6 +27,8 @@ AdminUI::Context.index_md = 'app/markdown/mrt/index.md'
 register Sinatra::Contrib
 
 def adminui_show_table_format(context, table, format)
+  halt 404, 'Not Found' if table.nil?
+
   case format
   when 'json'
     content_type :json
@@ -179,9 +181,7 @@ get '/ops/storage/scans' do
 end
 
 get '/**' do
-  adminui_show_none(
-    AdminUI::Context.new(request.path)
-  )
+  halt 404, 'Not Found'
 end
 
 post '/hello' do
