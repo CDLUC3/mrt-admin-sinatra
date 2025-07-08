@@ -27,17 +27,19 @@ AdminUI::Context.index_md = 'app/markdown/mrt/index.md'
 register Sinatra::Contrib
 
 def adminui_show_table_format(context, table, format)
-  if format == 'json'
+  case format
+  when 'json'
     content_type :json
     {
       context: context.to_h,
       table: table.table_data
     }.to_json
-  elsif format == 'csv'
+  when 'csv'
     fname = "mrt-admin#{context.route.gsub('/', '-')}.#{Time.now.strftime('%Y%m%d-%H%M%S')}.csv"
     content_type :text
-    halt 200, {'Content-Type' => 'text/csv', 'Content-Disposition' => "attachment; filename=\"#{fname}\"" }, table.to_csv
-  elsif format == 'text'
+    halt 200, { 'Content-Type' => 'text/csv', 'Content-Disposition' => "attachment; filename=\"#{fname}\"" },
+      table.to_csv
+  when 'text'
     content_type :text
     halt 200, table.to_csv
   else

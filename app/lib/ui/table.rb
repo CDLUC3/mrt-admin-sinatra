@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'csv'
 
 # admin ui components
@@ -154,19 +155,14 @@ module AdminUI
 
     def to_csv
       CSV.generate do |csv|
-        row = []
-        @columns.each do |col|
-          row << col.header
-        end
+        row = @columns.map(&:header)
         csv << row
         @rows.each do |row|
           data = []
-          row.cols.each_with_index do |col, i|
+          row.cols.each_with_index do |col, _i|
             if col.is_a?(Hash)
               v = col.fetch(:value, '')
-              if v.is_a?(BigDecimal)
-                v = v.to_s
-              end
+              v = v.to_s if v.is_a?(BigDecimal)
             else
               v = col.to_s
             end
