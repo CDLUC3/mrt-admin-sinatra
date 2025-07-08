@@ -3,6 +3,7 @@
 require 'sinatra/base'
 require 'net/http'
 require_relative '../ui/context'
+require 'json'
 
 # custom sinatra routes
 module Sinatra
