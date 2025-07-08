@@ -9,13 +9,14 @@ require_relative '../ui/table'
 module UC3
   # Base class for UC3 client classes
   class UC3Client
-    STATUS = %i[SKIP PASS INFO WARN FAIL].freeze
+    STATUS = %i[SKIP PASS INFO WARN FAIL ERROR].freeze
     STATHASH = {
       SKIP: 0,
       PASS: 1,
       INFO: 2,
       WARN: 3,
-      FAIL: 4
+      FAIL: 4,
+      ERROR: 5
     }.freeze
 
     @clients = {}

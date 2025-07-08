@@ -211,6 +211,10 @@ div.FAIL, span.FAIL{
   color: red;
 }
 
+div.ERROR, span.ERROR{
+  color: purple;
+}
+
 div.INFO, span.INFO {
   color: blue;
 }

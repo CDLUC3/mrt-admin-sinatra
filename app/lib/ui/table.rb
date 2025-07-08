@@ -6,7 +6,7 @@ require 'csv'
 module AdminUI
   # Table rendering classes
   class FilterTable
-    def self.empty(message = '')
+    def self.empty(message = '', status: :SKIP, status_message: '')
       return FilterTable.new if message.empty?
 
       FilterTable.new(
@@ -15,11 +15,13 @@ module AdminUI
         ],
         data: [
           Row.new([message])
-        ]
+        ],
+        status: status,
+        status_message: status_message
       )
     end
 
-    def initialize(columns: [], data: [], filters: [], totals: false, description: '', status: :SKIP)
+    def initialize(columns: [], data: [], filters: [], totals: false, description: '', status: :SKIP, status_message: '')
       @columns = columns
       @rows = data
       @filters = filters
@@ -30,6 +32,7 @@ module AdminUI
         @filterable = true if col.filterable
       end
       @status = status
+      @status_message = status_message
     end
 
     def table_data
@@ -173,7 +176,7 @@ module AdminUI
       end
     end
 
-    attr_accessor :columns, :data, :filters, :filterable, :totals, :status
+    attr_accessor :columns, :data, :filters, :filterable, :totals, :status, :status_message
   end
 
   # Table rendering classes

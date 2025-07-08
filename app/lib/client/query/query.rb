@@ -104,6 +104,21 @@ module UC3Query
       )
     end
 
+    def result_header(path, sql)
+      sep = path.index('?') ? '&' : '?'
+      <<~HTML
+        <details>
+          <summary>SQL</summary>
+          <div>
+            <a href='#{path}#{sep}format=json'>JSON</a>
+            <a href='#{path}#{sep}format=csv'>CSV</a>
+            <a href='#{path}#{sep}format=text'>TEXT</a>
+          </div>
+          <pre>#{@formatter.format(sql).gsub(' (', '(')}</pre>
+        </details>
+      HTML
+    end
+
     def query(path, urlparams, sqlsym: :sql)
       table = AdminUI::FilterTable.empty
       query = @queries.fetch(path.to_sym, {})
@@ -134,19 +149,8 @@ module UC3Query
           make_column(field)
         end
 
-        sep = path.index('?') ? '&' : '?'
         description = Mustache.render(query.fetch(:description, ''), tparm)
-        description += <<~HTML
-          <details>
-            <summary>SQL</summary>
-            <div>
-              <a href='#{path}#{sep}format=json'>JSON</a>
-              <a href='#{path}#{sep}format=csv'>CSV</a>
-              <a href='#{path}#{sep}format=text'>TEXT</a>
-            </div>
-            <pre>#{@formatter.format(sql).gsub(' (', '(')}</pre>
-          </details>
-        HTML
+        description += result_header(path, sql)
         table = AdminUI::FilterTable.new(
           columns: cols,
           totals: query.fetch(:totals, false),
@@ -163,12 +167,12 @@ module UC3Query
       rescue StandardError => e
         arr = [
           "#{e.class}: #{e}",
-          "<details><summary>SQL</summary><pre>#{@formatter.format(sql).gsub(' (', '(')}</pre></details>",
+          result_header(path, sql),
           params.to_s,
           "Connect timeout: #{@dbconf[:connect_timeout]}",
           "Read timeout: #{@dbconf[:read_timeout]}"
         ]
-        return AdminUI::FilterTable.empty(arr.join('<hr/>'))
+        table = AdminUI::FilterTable.empty(arr.join('<hr/>'), status: :ERROR, status_message: e.to_s)
       end
       table
     end

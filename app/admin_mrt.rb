@@ -32,7 +32,9 @@ def adminui_show_table_format(context, table, format)
     content_type :json
     {
       context: context.to_h,
-      table: table.table_data
+      table: table.table_data,
+      status: table.status,
+      status_message: table.status_message
     }.to_json
   when 'csv'
     fname = "mrt-admin#{context.route.gsub('/', '-')}.#{Time.now.strftime('%Y%m%d-%H%M%S')}.csv"
