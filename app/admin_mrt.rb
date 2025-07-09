@@ -145,6 +145,7 @@ end
 get '/clients-vpc' do
   UC3Query::QueryClient.client
   UC3Queue::ZKClient.client
+  UC3::TestClient.client
 
   adminui_show_table(
     AdminUI::Context.new(request.path),
@@ -159,6 +160,7 @@ get '/infra/clients-no-vpc' do
   UC3Resources::BucketsClient.new
   UC3Resources::FunctionsClient.new
   UC3Resources::LoadBalancerClient.new
+  UC3::TestClient.client
 
   adminui_show_table(
     AdminUI::Context.new(request.path),
