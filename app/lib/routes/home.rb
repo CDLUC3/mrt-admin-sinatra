@@ -62,8 +62,7 @@ module Sinatra
       app.get '/test/consistency/run' do
         arr = UC3::TestClient.client.consistency_checks
         arr.each do |route|
-          sep = route.include?('?') ? '&' : '?'
-          status, headers, body = call "#{route}#{sep}format=json"
+          call env.merge("PATH_INFO" => route)
         end
         redirect '/queries/consistency/daily'
       end
