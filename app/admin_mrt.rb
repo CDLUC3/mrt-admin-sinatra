@@ -145,7 +145,6 @@ end
 get '/clients-vpc' do
   UC3Query::QueryClient.client
   UC3Queue::ZKClient.client
-  UC3::TestClient.client
 
   adminui_show_table(
     AdminUI::Context.new(request.path),

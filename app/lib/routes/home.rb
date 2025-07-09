@@ -49,27 +49,45 @@ module Sinatra
         UC3::TestClient.client.test_paths.to_json
       end
 
-      app.get '/test/routes/count' do
-        content_type :text
-        UC3::TestClient.client.test_paths.length.to_s
-      end
+      app.get '/test/routes/links' do
+        table = AdminUI::FilterTable.new(
+          columns: [
+            AdminUI::Column.new(:link, header: 'Link'),
+          ]
+        )
+        UC3::TestClient.client.test_paths.each do |route|
+          table.add_row(AdminUI::Row.make_row(table.columns, {
+            link: { value: route, href: route },
+          }))
+        end
 
+        adminui_show_table(
+          AdminUI::Context.new(request.path),
+          table
+        )
+      end
+ 
       app.get '/test/consistency' do
         content_type :json
         UC3::TestClient.client.consistency_checks.to_json
       end
 
-      app.get '/test/consistency/run' do
-        arr = UC3::TestClient.client.consistency_checks
-        arr.each do |route|
-          call env.merge("PATH_INFO" => route)
+      app.get '/test/consistency/links' do
+        table = AdminUI::FilterTable.new(
+          columns: [
+            AdminUI::Column.new(:link, header: 'Link'),
+          ]
+        )
+        UC3::TestClient.client.consistency_checks.each do |route|
+          table.add_row(AdminUI::Row.make_row(table.columns, {
+            link: { value: route, href: route }
+          }))
         end
-        redirect '/queries/consistency/daily'
-      end
 
-      app.get '/test/consistency/count' do
-        content_type :text
-        UC3::TestClient.client.consistency_checks.length.to_s
+        adminui_show_table(
+          AdminUI::Context.new(request.path),
+          table
+        )
       end
 
       app.get '/robots.txt' do
