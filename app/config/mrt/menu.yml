@@ -886,3 +886,9 @@ items:
     route: /queries/misc/collections
   - title: DB time
     route: /queries/misc/now
+  - title: List Consistency Checks
+    route: /test/consistency
+  - title: Run Consistency Checks (Slow)
+    route: /test/consistency/run
+  - title: List All routes
+    route: /test/routes

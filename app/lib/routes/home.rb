@@ -59,6 +59,16 @@ module Sinatra
         UC3::TestClient.client.consistency_checks.to_json
       end
 
+      app.get '/test/consistency/run' do
+        arr = UC3::TestClient.client.consistency_checks
+        arr.each do |route|
+          sep = route.include?('?') ? '&' : '?'
+          uri = URI.parse("http://localhost:9292/#{route}#{sep}format=json")
+          Net::HTTP.get_response(uri)
+        end
+        redirect '/queries/consistency/daily'
+      end
+
       app.get '/test/consistency/count' do
         content_type :text
         UC3::TestClient.client.consistency_checks.length.to_s
