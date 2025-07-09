@@ -526,6 +526,7 @@ queries:
       and 
         dcc.updated = dcclatest.last_updated
   /queries/consistency/replication/objects-2:
+    status: PASS
     description: |
       - [Object List: Older than 2 days](/queries/consistency/replication/objects-2/objlist?days=2)
       - [Object List: Older than 1 day](/queries/consistency/replication/objects-2/objlist?days=1)
@@ -550,6 +551,7 @@ queries:
     - name: days
       type: integer
   /queries/consistency/replication/objects-1:
+    status: PASS
     description: |
       - [Object List: Older than 2 days](/queries/consistency/replication/objects-1/objlist?days=2)
       - [Object List: Older than 1 day](/queries/consistency/replication/objects-1/objlist?days=1)
@@ -580,6 +582,7 @@ queries:
       - [Object List: Any time](/queries/consistency/replication/objects-4/objlist?days=0)
     template-params:
       COPIES: 4
+    status: PASS
     status_check: true
     totals: true
     sql: |
@@ -604,6 +607,7 @@ queries:
       - [Object List: Any time](/queries/consistency/replication/files-2/objlist?days=0)
     template-params:
       COPIES: 2
+    status: PASS
     status_check: true
     totals: true
     sql: |
@@ -628,6 +632,7 @@ queries:
       - [Object List: Any time](/queries/consistency/replication/files-1/objlist?days=0)
     template-params:
       COPIES: 1
+    status: PASS
     status_check: true
     totals: true
     sql: |
@@ -652,6 +657,7 @@ queries:
       - [Object List: Any time](/queries/consistency/replication/files-4/objlist?days=0)
     template-params:
       COPIES: 4
+    status: PASS
     status_check: true
     totals: true
     sql: |
@@ -670,6 +676,7 @@ queries:
     - name: days
       type: integer
   /queries/consistency/obj-comp/mult-colls:
+    status: PASS
     status_check: true
     totals: true
     description: |
@@ -684,6 +691,7 @@ queries:
       WHERE: |
         {{{MULTCOLL}}}
   /queries/consistency/obj-comp/version-clobber:
+    status: PASS
     status_check: true
     description: |
       - [Object List](/queries/consistency/obj-comp/version-clobber/objlist )
@@ -727,6 +735,7 @@ queries:
   /queries/consistency/obj-comp/objects-no-local-id:
     description: |
       - [Object List](/queries/consistency/obj-comp/objects-no-local-id/objlist)
+    status: PASS
     status_check: true
     sql: |
       select
@@ -775,6 +784,7 @@ queries:
         and
           erc_where != concat(o.ark, ' ; (:unas)')
   /queries/consistency/obj-comp/local-id-no-ark:
+    status: PASS
     sql: |
       SELECT
         replace(loc.inv_owner_ark, '%2F', '/') as ownark,
@@ -812,6 +822,7 @@ queries:
       order by
         modified desc
   /ops/db-queue/replication/required:
+    status: PASS
     status_check: true
     sql: |
       select
@@ -913,6 +924,7 @@ queries:
       group by
         category
   /ops/db-queue/replication/in-progress:
+    status: PASS
     status_check: true
     sql: |
       select
@@ -974,6 +986,7 @@ queries:
         bytes,
         status
   /ops/db-queue/replication/failed:
+    status: PASS
     status_check: true
     sql: |
       select
@@ -1072,6 +1085,7 @@ queries:
       order by
         replic_start desc
   /ops/db-queue/audit/oldest-audit-check:
+    status: PASS
     status_check: true
     sql: |
       select
@@ -1091,6 +1105,7 @@ queries:
         verified
       LIMIT 1
   /ops/db-queue/audit/active-batches:
+    status: PASS
     status_check: true
     sql: |
       select
@@ -1127,6 +1142,7 @@ queries:
       group by
         verified
   /ops/db-queue/audit/counts-by-state:
+    status: PASS
     status_check: true
     sql: |
       select
@@ -1228,6 +1244,7 @@ queries:
             status = 'unknown'
         ) as qcount
   /ops/collections/db/node-cleanup-needed:
+    status: PASS
     sql: |
       select
           icio.inv_collection_id,
@@ -1279,6 +1296,7 @@ queries:
           c.name,
           status
   /ops/collections/db/primary-config:
+    status: PASS
     status_check: true
     sql: |
       select
@@ -1332,6 +1350,7 @@ queries:
         nodename,
         collection
   /ops/collections/db/secondary-config:
+    status: PASS
     status_check: true
     sql: |
       with icin as (

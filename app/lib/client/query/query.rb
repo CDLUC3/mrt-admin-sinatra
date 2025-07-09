@@ -123,7 +123,6 @@ module UC3Query
     def query(path, urlparams, sqlsym: :sql)
       table = AdminUI::FilterTable.empty
       query = @queries.fetch(path.to_sym, {})
-      return nil if query.empty?
 
       sql = query.fetch(sqlsym, '')
       return table if sql.empty?
@@ -155,6 +154,7 @@ module UC3Query
         table = AdminUI::FilterTable.new(
           columns: cols,
           totals: query.fetch(:totals, false),
+          status: query.fetch(:status, :SKIP),
           description: description
         )
 
