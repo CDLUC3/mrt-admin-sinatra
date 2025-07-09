@@ -63,8 +63,7 @@ module Sinatra
         arr = UC3::TestClient.client.consistency_checks
         arr.each do |route|
           sep = route.include?('?') ? '&' : '?'
-          uri = URI.parse("http://localhost:9292/#{route}#{sep}format=json")
-          Net::HTTP.get_response(uri)
+          status, headers, body = call "#{route}#{sep}format=json"
         end
         redirect '/queries/consistency/daily'
       end
