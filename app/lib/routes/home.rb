@@ -52,12 +52,12 @@ module Sinatra
       app.get '/test/routes/links' do
         table = AdminUI::FilterTable.new(
           columns: [
-            AdminUI::Column.new(:link, header: 'Link'),
+            AdminUI::Column.new(:link, header: 'Link')
           ]
         )
         UC3::TestClient.client.test_paths.each do |route|
           table.add_row(AdminUI::Row.make_row(table.columns, {
-            link: { value: route, href: route },
+            link: { value: route, href: route }
           }))
         end
 
@@ -66,7 +66,7 @@ module Sinatra
           table
         )
       end
- 
+
       app.get '/test/consistency' do
         content_type :json
         UC3::TestClient.client.consistency_checks.to_json
@@ -75,7 +75,7 @@ module Sinatra
       app.get '/test/consistency/links' do
         table = AdminUI::FilterTable.new(
           columns: [
-            AdminUI::Column.new(:link, header: 'Link'),
+            AdminUI::Column.new(:link, header: 'Link')
           ]
         )
         UC3::TestClient.client.consistency_checks.each do |route|

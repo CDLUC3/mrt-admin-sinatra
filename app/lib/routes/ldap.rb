@@ -66,7 +66,7 @@ module Sinatra
       app.get '/ldap/collections-missing' do
         adminui_show_table(
           AdminUI::Context.new(request.path),
-          UC3Ldap::LDAPCollectionMapList.new.ldap_collection_map
+          UC3Ldap::LDAPCollectionMapList.new.ldap_collection_map(request.path)
         )
       end
     end
