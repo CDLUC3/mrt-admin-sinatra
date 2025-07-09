@@ -171,7 +171,7 @@ module UC3
   # browse ingest folder file system
   class FileSystemClient < UC3Client
     DIR = '/tdr/ingest/queue'
-    def ingest_folders(params)
+    def ingest_folders(route, params)
       path = params.fetch('path', '')
       path = '' if path =~ /^\.\./
       dir = path.empty? ? DIR : "#{DIR}/#{path}"
@@ -182,7 +182,8 @@ module UC3
           AdminUI::Column.new(:created, header: 'Created'),
           AdminUI::Column.new(:size, header: 'Bytes', cssclass: 'size'),
           AdminUI::Column.new(:actions, header: 'Actions')
-        ]
+        ],
+        status: 'PASS'
       )
       count = 0
       Dir.entries(dir).sort.each do |folder|
@@ -234,6 +235,7 @@ module UC3
           data
         ))
       end
+      record_status(route, table.status)
       table
     end
 

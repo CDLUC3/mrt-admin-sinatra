@@ -13,25 +13,30 @@ module Sinatra
       app.get '/ops/zk/nodes/node-names' do
         adminui_show_table(
           AdminUI::Context.new(request.path),
-          UC3Queue::ZKClient.new.dump_nodes(request.params)
+          UC3Queue::ZKClient.new.dump_nodes(request.path, request.params)
         )
       end
 
       app.get '/ops/zk/nodes/orphan' do
-        redirect '/ops/zk/nodes/node-names?zkpath=/&mode=test'
+        request.params['zkpath'] ||= '/'
+        request.params['mode'] ||= 'test'
+        adminui_show_table(
+          AdminUI::Context.new(request.path),
+          UC3Queue::ZKClient.new.dump_nodes(request.path, request.params)
+        )
       end
 
       app.get '/ops/zk/ingest/batches' do
         adminui_show_table(
           AdminUI::Context.new(request.path),
-          UC3Queue::ZKClient.new.batches
+          UC3Queue::ZKClient.new.batches(request.path)
         )
       end
 
       app.get '/ops/zk/ingest/jobs-by-collection' do
         adminui_show_table(
           AdminUI::Context.new(request.path),
-          UC3Queue::ZKClient.new.jobs_by_collection(request.params)
+          UC3Queue::ZKClient.new.jobs_by_collection(request.path, request.params)
         )
       end
 
@@ -78,7 +83,7 @@ module Sinatra
       app.get '/ops/zk/access/jobs' do
         adminui_show_table(
           AdminUI::Context.new(request.path),
-          UC3Queue::ZKClient.new.assembly_requests
+          UC3Queue::ZKClient.new.assembly_requests(request.path)
         )
       end
 
@@ -190,7 +195,7 @@ module Sinatra
       app.get '/ops/zk/ingest/folders' do
         adminui_show_table(
           AdminUI::Context.new(request.path),
-          UC3::FileSystemClient.client.ingest_folders(request.params)
+          UC3::FileSystemClient.client.ingest_folders(request.path, request.params)
         )
       end
 

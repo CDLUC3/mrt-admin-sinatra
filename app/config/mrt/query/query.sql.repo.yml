@@ -480,6 +480,7 @@ queries:
             'ucb_lib_prechmat', 'ucb_lib_stone_rubbings'
           )
   /ops/storage/db/nodes:
+    status: PASS
     status_check: true
     sql: |
       with lim as (

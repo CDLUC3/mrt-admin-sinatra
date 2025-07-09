@@ -535,6 +535,7 @@ queries:
       DATES: |
         {{{30TO60DAYS}}}
   /ops/db-queue/audit/30-days:
+    status: PASS
     status_check: true
     sql: |
       select

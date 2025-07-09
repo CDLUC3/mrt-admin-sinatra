@@ -32,7 +32,7 @@ module UC3Queue
       super(enabled: false, message: e.to_s)
     end
 
-    def batches
+    def batches(route)
       batches = MerrittZK::Batch.list_batches_as_json(@zk)
       table = AdminUI::FilterTable.new(
         columns: [
@@ -44,7 +44,8 @@ module UC3Queue
           AdminUI::Column.new(:jobdata, header: 'Job Data'),
           AdminUI::Column.new(:status, header: 'Status'),
           AdminUI::Column.new(:actions, header: 'Actions')
-        ]
+        ],
+        status: 'PASS'
       )
       batches.each do |batch|
         status = batch[:status].to_s
@@ -82,10 +83,11 @@ module UC3Queue
           )
         )
       end
+      record_status(route, table.status)
       table
     end
 
-    def jobs_by_collection(params)
+    def jobs_by_collection(route, params)
       return jobs(params) unless params.empty?
 
       @colls = {}
@@ -101,7 +103,8 @@ module UC3Queue
           AdminUI::Column.new(:jobstatus, header: 'Job Status'),
           AdminUI::Column.new(:jobCount, header: 'Job Count', cssclass: 'int'),
           AdminUI::Column.new(:status, header: 'Status')
-        ]
+        ],
+        status: 'PASS'
       )
       @colls.keys.sort.each do |profile|
         @colls[profile].keys.sort.each do |jobstatus|
@@ -125,6 +128,7 @@ module UC3Queue
           )
         end
       end
+      record_status(route, table.status)
       table
     end
 
@@ -206,7 +210,7 @@ module UC3Queue
       table
     end
 
-    def assembly_requests
+    def assembly_requests(route)
       jobs = MerrittZK::Access.list_jobs_as_json(@zk)
       table = AdminUI::FilterTable.new(
         columns: [
@@ -217,7 +221,8 @@ module UC3Queue
           AdminUI::Column.new(:date, header: 'DateTime', cssclass: 'date'),
           AdminUI::Column.new(:actions, header: 'Actions'),
           AdminUI::Column.new(:status, header: 'Status')
-        ]
+        ],
+        status: 'PASS'
       )
       jobs.each do |job|
         status = job[:status].to_s
@@ -255,6 +260,7 @@ module UC3Queue
           )
         )
       end
+      record_status(route, table.status)
       table
     end
 
@@ -308,7 +314,7 @@ module UC3Queue
       table
     end
 
-    def dump_node_test_table(nodedump)
+    def dump_node_test_table(route, nodedump)
       table = AdminUI::FilterTable.new(
         columns: [
           AdminUI::Column.new(:path, header: 'Path'),
@@ -316,7 +322,8 @@ module UC3Queue
           AdminUI::Column.new(:orphanpath, header: 'Orphan Path'),
           AdminUI::Column.new(:test, header: 'Test'),
           AdminUI::Column.new(:status, header: 'Status')
-        ]
+        ],
+        status: 'PASS'
       )
       nodedump.each do |node|
         value = node.values.first
@@ -335,6 +342,7 @@ module UC3Queue
           )
         )
       end
+      record_status(route, table.status)
       table
     end
 
@@ -353,7 +361,7 @@ module UC3Queue
       ''
     end
 
-    def dump_nodes(params)
+    def dump_nodes(route, params)
       nodedump = []
       nodedump = MerrittZK::NodeDump.new(@zk, params).listing unless @zk.nil?
 
@@ -361,7 +369,7 @@ module UC3Queue
       when 'data'
         dump_node_data_table(nodedump)
       when 'test'
-        dump_node_test_table(nodedump)
+        dump_node_test_table(route, nodedump)
       else
         dump_node_table(nodedump)
       end

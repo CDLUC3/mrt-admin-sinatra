@@ -210,7 +210,7 @@ module AdminUI
           pre = col.prefix
           v = { value: v, href: "#{pre}#{v}" } unless pre.empty?
         elsif col.link
-          v = { value: v, href: "#{v}" }
+          v = { value: v, href: v.to_s }
         elsif col.idlist
           pre = col.prefix
           arr = v.split(',').map do |vv|
@@ -286,6 +286,7 @@ module AdminUI
       elsif @cssclass.split.include?('status')
         render_span(cellval, cssclass: cellval)
       elsif @cssclass.split.include?('check_status')
+        # Enable the same CSS logic as a regular status column
         render_span(cellval, cssclass: cellval)
       else
         render_string(cellval.to_s)
