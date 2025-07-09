@@ -209,6 +209,8 @@ module AdminUI
         if col.id
           pre = col.prefix
           v = { value: v, href: "#{pre}#{v}" } unless pre.empty?
+        elsif col.link
+          v = { value: v, href: "#{v}" }
         elsif col.idlist
           pre = col.prefix
           arr = v.split(',').map do |vv|
@@ -241,7 +243,7 @@ module AdminUI
   # Table rendering classes
   class Column
     def initialize(sym, cssclass: '', header: '', spanclass: 'val', defval: '', filterable: false, id: false,
-      idlist: false, prefix: '')
+      idlist: false, prefix: '', link: false)
       @sym = sym
       @cssclass = cssclass.empty? ? sym.to_s : cssclass
       @header = header.empty? ? sym.to_s : header
@@ -249,11 +251,12 @@ module AdminUI
       @defval = defval
       @filterable = filterable
       @id = id
+      @link = link
       @idlist = idlist
       @prefix = prefix
     end
 
-    attr_accessor :sym, :cssclass, :header, :spanclass, :defval, :filterable, :id, :idlist, :prefix
+    attr_accessor :sym, :cssclass, :header, :spanclass, :defval, :filterable, :id, :idlist, :prefix, :link
 
     def render(cellval)
       if cellval.is_a?(Array)
@@ -281,6 +284,8 @@ module AdminUI
           cellval.fetch(:value, '').to_s
         end
       elsif @cssclass.split.include?('status')
+        render_span(cellval, cssclass: cellval)
+      elsif @cssclass.split.include?('check_status')
         render_span(cellval, cssclass: cellval)
       else
         render_string(cellval.to_s)

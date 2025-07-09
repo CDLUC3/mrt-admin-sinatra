@@ -99,6 +99,7 @@ module UC3Query
         filterable: coldef.fetch(:filterable, false),
         id: coldef.fetch(:id, false),
         idlist: coldef.fetch(:idlist, false),
+        link: coldef.fetch(:link, false),
         prefix: coldef.fetch(:prefix, ''),
         cssclass: "#{field} #{cssclass}"
       )

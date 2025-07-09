@@ -42,6 +42,10 @@ columns:
       filterable: true
     status:
       filterable: true
+    check_status:
+      filterable: true
+    check_name:
+      link: true
     own_name:
       filterable: true
     cost:
