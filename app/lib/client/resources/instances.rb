@@ -7,6 +7,10 @@ require_relative '../uc3_client'
 module UC3Resources
   # Query for repository images by tag
   class InstancesClient < UC3::UC3Client
+    def self.client
+      UC3::UC3Client.clients.fetch(self.class.to_s, InstancesClient.new)
+    end
+
     def initialize
       @client = Aws::EC2::Client.new(
         region: UC3::UC3Client.region

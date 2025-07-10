@@ -7,6 +7,10 @@ require_relative '../uc3_client'
 module UC3Resources
   # Query for repository images by tag
   class LoadBalancerClient < UC3::UC3Client
+    def self.client
+      UC3::UC3Client.clients.fetch(self.class.to_s, LoadBalancerClient.new)
+    end
+
     def initialize
       @client = Aws::ElasticLoadBalancingV2::Client.new(
         region: UC3::UC3Client.region

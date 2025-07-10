@@ -13,7 +13,7 @@ module Sinatra
       app.get '/ops/zk/nodes/node-names' do
         adminui_show_table(
           AdminUI::Context.new(request.path),
-          UC3Queue::ZKClient.new.dump_nodes(request.path, request.params)
+          UC3Queue::ZKClient.client.dump_nodes(request.path, request.params)
         )
       end
 
@@ -22,68 +22,70 @@ module Sinatra
         request.params['mode'] ||= 'test'
         adminui_show_table(
           AdminUI::Context.new(request.path),
-          UC3Queue::ZKClient.new.dump_nodes(request.path, request.params)
+          UC3Queue::ZKClient.client.dump_nodes(request.path, request.params)
         )
       end
 
       app.get '/ops/zk/ingest/batches' do
         adminui_show_table(
           AdminUI::Context.new(request.path),
-          UC3Queue::ZKClient.new.batches(request.path)
+          UC3Queue::ZKClient.client.batches(request.path)
         )
       end
 
       app.get '/ops/zk/ingest/jobs-by-collection' do
+        puts UC3Queue::ZKClient.client
+        puts UC3Queue::ZKClient.client.enabled
         adminui_show_table(
           AdminUI::Context.new(request.path),
-          UC3Queue::ZKClient.new.jobs_by_collection(request.path, request.params)
+          UC3Queue::ZKClient.client.jobs_by_collection(request.path, request.params)
         )
       end
 
       app.post '/ops/zk/ingest/pause' do
-        UC3Queue::ZKClient.new.pause_ingest
+        UC3Queue::ZKClient.client.pause_ingest
         redirect '/ops/zk/nodes/node-names?zkpath=/locks&mode=node'
       end
 
       app.post '/ops/zk/ingest/unpause' do
-        UC3Queue::ZKClient.new.unpause_ingest
+        UC3Queue::ZKClient.client.unpause_ingest
         redirect '/ops/zk/nodes/node-names?zkpath=/locks&mode=node'
       end
 
       app.post '/ops/zk/ingest/cleanup-queue' do
-        UC3Queue::ZKClient.new.cleanup_ingest_queue
+        UC3Queue::ZKClient.client.cleanup_ingest_queue
         redirect '/ops/zk/ingest/batches'
       end
 
       app.post '/ops/zk/access/pause-small' do
-        UC3Queue::ZKClient.new.pause_access_small
+        UC3Queue::ZKClient.client.pause_access_small
         redirect '/ops/zk/nodes/node-names?zkpath=/locks&mode=node'
       end
 
       app.post '/ops/zk/access/unpause-small' do
-        UC3Queue::ZKClient.new.unpause_access_small
+        UC3Queue::ZKClient.client.unpause_access_small
         redirect '/ops/zk/nodes/node-names?zkpath=/locks&mode=node'
       end
 
       app.post '/ops/zk/access/pause-large' do
-        UC3Queue::ZKClient.new.pause_access_large
+        UC3Queue::ZKClient.client.pause_access_large
         redirect '/ops/zk/nodes/node-names?zkpath=/locks&mode=node'
       end
 
       app.post '/ops/zk/access/unpause-large' do
-        UC3Queue::ZKClient.new.unpause_access_large
+        UC3Queue::ZKClient.client.unpause_access_large
         redirect '/ops/zk/nodes/node-names?zkpath=/locks&mode=node'
       end
 
       app.post '/ops/zk/access/cleanup-queue' do
-        UC3Queue::ZKClient.new.cleanup_access_queue
+        UC3Queue::ZKClient.client.cleanup_access_queue
         redirect '/ops/zk/access/jobs'
       end
 
       app.get '/ops/zk/access/jobs' do
         adminui_show_table(
           AdminUI::Context.new(request.path),
-          UC3Queue::ZKClient.new.assembly_requests(request.path)
+          UC3Queue::ZKClient.client.assembly_requests(request.path)
         )
       end
 
@@ -92,7 +94,7 @@ module Sinatra
         id = params[:splat][1]
         path = "/#{qn}/#{id}"
         begin
-          UC3Queue::ZKClient.new.delete_access(qn, id)
+          UC3Queue::ZKClient.client.delete_access(qn, id)
           content_type :json
           { message: "#{path} marked for deletion" }.to_json
         rescue StandardError => e
@@ -104,7 +106,7 @@ module Sinatra
       app.post '/ops/zk/ingest/job/delete/*' do
         id = params[:splat][0]
         begin
-          UC3Queue::ZKClient.new.delete_ingest_job(id)
+          UC3Queue::ZKClient.client.delete_ingest_job(id)
           content_type :json
           { message: "#{id} marked for deletion" }.to_json
         rescue StandardError => e
@@ -116,7 +118,7 @@ module Sinatra
       app.post '/ops/zk/ingest/job/requeue/*' do
         id = params[:splat][0]
         begin
-          UC3Queue::ZKClient.new.requeue_ingest_job(id)
+          UC3Queue::ZKClient.client.requeue_ingest_job(id)
           content_type :json
           { message: "#{id} requeued" }.to_json
         rescue StandardError => e
@@ -128,7 +130,7 @@ module Sinatra
       app.post '/ops/zk/ingest/job/hold/*' do
         id = params[:splat][0]
         begin
-          UC3Queue::ZKClient.new.hold_ingest_job(id)
+          UC3Queue::ZKClient.client.hold_ingest_job(id)
           content_type :json
           { message: "#{id} held" }.to_json
         rescue StandardError => e
@@ -140,7 +142,7 @@ module Sinatra
       app.post '/ops/zk/ingest/job/release/*' do
         id = params[:splat][0]
         begin
-          UC3Queue::ZKClient.new.release_ingest_job(id)
+          UC3Queue::ZKClient.client.release_ingest_job(id)
           content_type :json
           { message: "#{id} released" }.to_json
         rescue StandardError => e
@@ -152,7 +154,7 @@ module Sinatra
       app.post '/ops/zk/ingest/batch/delete/*' do
         id = params[:splat][0]
         begin
-          UC3Queue::ZKClient.new.delete_ingest_batch(id)
+          UC3Queue::ZKClient.client.delete_ingest_batch(id)
           content_type :json
           { message: "#{id} marked for deletion" }.to_json
         rescue StandardError => e
@@ -164,7 +166,7 @@ module Sinatra
       app.post '/ops/zk/ingest/batch/update-reporting/*' do
         id = params[:splat][0]
         begin
-          UC3Queue::ZKClient.new.update_reporting_ingest_batch(id)
+          UC3Queue::ZKClient.client.update_reporting_ingest_batch(id)
           content_type :json
           { message: "#{id} marked for update reporting" }.to_json
         rescue StandardError => e
@@ -178,7 +180,7 @@ module Sinatra
         id = params[:splat][1]
         path = "/#{qn}/#{id}"
         begin
-          UC3Queue::ZKClient.new.requeue_access(qn, id)
+          UC3Queue::ZKClient.client.requeue_access(qn, id)
           content_type :json
           { path: path, message: "Requeued #{path}" }.to_json
         rescue StandardError => e
@@ -188,7 +190,7 @@ module Sinatra
       end
 
       app.post '/ops/zk/access/fake' do
-        UC3Queue::ZKClient.new.fake_access
+        UC3Queue::ZKClient.client.fake_access
         redirect '/ops/zk/access/jobs'
       end
 
@@ -245,18 +247,18 @@ module Sinatra
       end
 
       app.post '/ops/zk/snapshot' do
-        UC3Queue::ZKClient.new.save_snapshot
+        UC3Queue::ZKClient.client.save_snapshot
         redirect '/ops/zk/ingest/folders?path=/zk-snapshots'
       end
 
       app.post '/ops/zk/restore' do
-        UC3Queue::ZKClient.new.restore_from_snapshot
+        UC3Queue::ZKClient.client.restore_from_snapshot
         redirect '/ops/zk/nodes/node-names?zkpath=/&mode=node'
       end
 
       app.get '/ops/zk/stat' do
         content_type :json
-        UC3Queue::ZKClient.new.zk_stat.to_json
+        UC3Queue::ZKClient.client.zk_stat.to_json
       end
     end
   end

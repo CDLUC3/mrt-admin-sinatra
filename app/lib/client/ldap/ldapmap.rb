@@ -9,8 +9,14 @@ module UC3Ldap
     def initialize
       @colltable = UC3Query::QueryClient.client.query('/queries/misc/collections', {})
       @ldap = UC3Ldap::LDAPClient.client
-      @ldap.load
-      @ldapcoll = @ldap.collections_table_data
+      @ldapcoll = []
+      if @ldap.enabled?
+        @ldap.load
+        @ldapcoll = @ldap.collections_table_data
+        @status = 'PASS'
+      else
+        @status = 'ERROR'
+      end
     end
 
     def ldap_collection_map(route)
@@ -21,7 +27,7 @@ module UC3Ldap
           AdminUI::Column.new(:coll, header: 'LDAP Coll'),
           AdminUI::Column.new(:status, header: 'Status')
         ],
-        status: 'PASS'
+        status: @status
       )
       map = {}
       @colltable.table_data.each do |row|

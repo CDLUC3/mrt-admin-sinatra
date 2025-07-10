@@ -21,6 +21,10 @@ module UC3
 
     @clients = {}
 
+    def self.client
+      UC3::UC3Client.clients.fetch(self.class.to_s, UC3Client.new)
+    end
+
     def initialize(enabled: true, message: '')
       UC3Client.clients[self.class.to_s] = { name: self.class.to_s, enabled: enabled, message: message }
     end

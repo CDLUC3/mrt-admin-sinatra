@@ -117,28 +117,28 @@ end
 get '/context' do
   adminui_show_table(
     AdminUI::Context.new(request.path),
-    UC3::UC3Client.new.context
+    UC3::UC3Client.client.context
   )
 end
 
 get '/clients' do
-  UC3::UC3Client.new
+  UC3::UC3Client.cleint
   UC3::FileSystemClient.client
   UC3Query::QueryClient.client
   UC3Queue::ZKClient.client
   UC3Code::SourceCodeClient.client
-  UC3Resources::InstancesClient.new
-  UC3Resources::ParametersClient.new
-  UC3Resources::ServicesClient.new
-  UC3Resources::BucketsClient.new
-  UC3Resources::FunctionsClient.new
-  UC3Resources::LoadBalancerClient.new
+  UC3Resources::InstancesClient.client
+  UC3Resources::ParametersClient.client
+  UC3Resources::ServicesClient.client
+  UC3Resources::BucketsClient.client
+  UC3Resources::FunctionsClient.client
+  UC3Resources::LoadBalancerClient.client
   UC3Ldap::LDAPClient.client
   UC3::TestClient.client
 
   adminui_show_table(
     AdminUI::Context.new(request.path),
-    UC3::UC3Client.new.client_list
+    UC3::UC3Client.client.client_list
   )
 end
 
@@ -148,22 +148,22 @@ get '/clients-vpc' do
 
   adminui_show_table(
     AdminUI::Context.new(request.path),
-    UC3::UC3Client.new.client_list
+    UC3::UC3Client.client.client_list
   )
 end
 
 get '/infra/clients-no-vpc' do
-  UC3Code::SourceCodeClient.new
-  UC3Resources::InstancesClient.new
-  UC3Resources::ParametersClient.new
-  UC3Resources::BucketsClient.new
-  UC3Resources::FunctionsClient.new
-  UC3Resources::LoadBalancerClient.new
+  UC3Code::SourceCodeClient.client
+  UC3Resources::InstancesClient.client
+  UC3Resources::ParametersClient.client
+  UC3Resources::BucketsClient.client
+  UC3Resources::FunctionsClient.client
+  UC3Resources::LoadBalancerClient.client
   UC3::TestClient.client
 
   adminui_show_table(
     AdminUI::Context.new(request.path),
-    UC3::UC3Client.new.client_list
+    UC3::UC3Client.client.client_list
   )
 end
 
@@ -182,7 +182,9 @@ get '/ops/storage/scans' do
 end
 
 get '/**' do
-  halt 404, 'Not Found'
+  adminui_show_none(
+    AdminUI::Context.new(request.path)
+  )
 end
 
 post '/hello' do

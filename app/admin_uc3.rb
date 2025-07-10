@@ -28,7 +28,7 @@ get '/context' do
     :layout => :page_layout,
     :locals => {
       context: AdminUI::Context.new(request.path),
-      table: UC3::UC3Client.new.context
+      table: UC3::UC3Client.client.context
     }
 end
 
@@ -43,7 +43,7 @@ get '/clients' do
     :layout => :page_layout,
     :locals => {
       context: AdminUI::Context.new(request.path),
-      table: UC3::UC3Client.new.client_list
+      table: UC3::UC3Client.client.client_list
     }
 end
 
