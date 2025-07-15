@@ -121,15 +121,19 @@ queries:
     - name: ark
       type: string
   /queries/recent/objects:
+    description: Retrieves results from the last 2000 objects that have been modified
     limit:
       enabled: true
     sql: |
       {{{OBJQ}}}
     template-params:
       WHERE: |
-        where o.modified >= (
-          select date_add(max(modified), INTERVAL -15 DAY) 
-          from inv.inv_objects
+        where exists (
+          select 1  
+          from inv.inv_objects oo
+          where oo.id = o.id
+          order by modified desc
+          limit 2000
         )
   /queries/repository/objects-localid:
     sql: |
