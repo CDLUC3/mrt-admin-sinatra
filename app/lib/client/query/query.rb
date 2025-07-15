@@ -128,6 +128,12 @@ module UC3Query
 
       # get know query parameters from yaml
       tparm = query.fetch(:'template-params', {})
+
+      if query.fetch(:limit, {}).fetch(:enabled, false)
+        tparm[:LIMIT] = query.fetch(:limit, {}).fetch(:default, urlparams.fetch('limit', '25').to_i)
+        tparm[:OFFSET] = urlparams.fetch('offset', '0').to_i
+      end
+
       # populate additional parameters using a query
       query.fetch(:'template-sql', {}).each do |key, value|
         tparm[key] = run_sql(value)
@@ -136,7 +142,8 @@ module UC3Query
       tparm.each do |key, value|
         tparm[key] = Mustache.render(value, @fragments) if value.is_a?(String)
       end
-      # inject parameters into the sql.  allow 2 levels of nesting
+      # inject parameters into the sql.  allow 3 levels of nesting
+      sql = Mustache.render(sql, @fragments.merge(tparm))
       sql = Mustache.render(sql, @fragments.merge(tparm))
       sql = Mustache.render(sql, @fragments.merge(tparm))
 

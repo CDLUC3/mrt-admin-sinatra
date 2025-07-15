@@ -29,14 +29,15 @@ fragments:
   OBJQ: |
     {{{OBJQPRE}}}
     {{{WHERE}}}
-    {{{OBJQPOST}}} 
+    {{{OBJQPOST}}}
+  # Note that the following is not paginate-able 
   OBJSUBQ: |
     {{{OBJQPRE}}}
     where exists (
       select 1
       from (
         {{{SUBWHERE}}}
-        limit 25
+        limit 20
       ) as q
       where q.inv_object_id = o.id
     )
@@ -78,7 +79,8 @@ fragments:
       billable_size,
       file_count
     order by o.id desc
-      limit 10
+    limit {{{LIMIT}}}
+    offset {{{OFFSET}}}
   # TODO - window function to get max version
   OBJFILES: |
     select
@@ -137,7 +139,8 @@ fragments:
       f.created desc,
       source,
       pathname
-    limit 2000
+    limit {{{LIMIT}}}
+    offset {{{OFFSET}}}
   OBJREPL: |
     select
       nn.role,
@@ -539,6 +542,8 @@ queries:
       {{{OBJREPLPRE}}}
       {{{REPSQL}}}
   /queries/consistency/replication/objects-2/objlist:
+    limit:
+      enabled: true
     template-params:
       COPIES: 2
     totals: true
@@ -564,6 +569,8 @@ queries:
       {{{OBJREPLPRE}}}
       {{{REPSQL}}}
   /queries/consistency/replication/objects-1/objlist:
+    limit:
+      enabled: true
     template-params:
       COPIES: 1
     totals: true
@@ -589,6 +596,8 @@ queries:
       {{{OBJREPLPRE}}}
       {{{REPSQL}}}
   /queries/consistency/replication/objects-4/objlist:
+    limit:
+      enabled: true
     template-params:
       COPIES: 4
     totals: true
@@ -614,6 +623,8 @@ queries:
       {{{FILEREPLPRE}}}
       {{{REPSQLFILE}}}
   /queries/consistency/replication/files-2/objlist:
+    limit:
+      enabled: true
     template-params:
       COPIES: 2
     totals: true
@@ -639,6 +650,8 @@ queries:
       {{{FILEREPLPRE}}}
       {{{REPSQLFILE}}}
   /queries/consistency/replication/files-1/objlist:
+    limit:
+      enabled: true
     template-params:
       COPIES: 1
     totals: true
@@ -664,6 +677,8 @@ queries:
       {{{FILEREPLPRE}}}
       {{{REPSQLFILE}}}
   /queries/consistency/replication/files-4/objlist:
+    limit:
+      enabled: true
     template-params:
       COPIES: 4
     totals: true
@@ -727,6 +742,8 @@ queries:
         end as status
       from gap
   /queries/consistency/obj-comp/version-clobber/objlist:
+    limit:
+      enabled: true
     sql: |
       {{{OBJSUBQ}}}
     template-params:

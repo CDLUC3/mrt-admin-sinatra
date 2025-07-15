@@ -91,6 +91,9 @@ queries:
     - name: mnemonic
       type: string
   /queries/repository/object:
+    limit:
+      enabled: true
+      default: 2000
     sql: |
       {{{OBJQ}}}
     template-params:
@@ -103,6 +106,9 @@ queries:
     - name: inv_object_id
       type: integer
   /queries/repository/object-ark:
+    limit:
+      enabled: true
+      default: 2000
     sql: |
       {{{OBJQ}}}
     template-params:
@@ -115,6 +121,8 @@ queries:
     - name: ark
       type: string
   /queries/recent/objects:
+    limit:
+      enabled: true
     sql: |
       {{{OBJQ}}}
     template-params:
@@ -346,6 +354,8 @@ queries:
     sql: |
       {{{MIME}}}
   /queries/use-cases/largest-objects:
+    limit:
+      enabled: true
     totals: true
     sql: |
       {{{OBJSUBQ}}}
@@ -362,6 +372,8 @@ queries:
         order by
           billable_size desc
   /queries/use-cases/most-files:
+    limit:
+      enabled: true
     totals: true
     sql: |
       {{{OBJSUBQ}}}
@@ -378,6 +390,8 @@ queries:
         order by
           file_count desc
   /queries/use-cases/largest-files:
+    limit:
+      enabled: true
     totals: true
     sql: |
       {{{OBJSUBQ}}}
@@ -394,6 +408,8 @@ queries:
         order by
           max_size desc
   /queries/use-cases/non-ascii-erc-what-mrt-demo:
+    limit:
+      enabled: true
     totals: true
     sql: |
       {{{OBJSUBQ}}}
@@ -412,6 +428,8 @@ queries:
         and
           c.mnemonic = 'mrt-demo'
   /queries/use-cases/long-mime-type-selected-collections:
+    limit:
+      enabled: true
     totals: true
     sql: |
       {{{OBJSUBQ}}}
@@ -432,6 +450,8 @@ queries:
         and
           c.mnemonic = 'mrt-demo'
   /queries/use-cases/non-ascii-pathname-mrt-demo:
+    limit:
+      enabled: true
     totals: true
     sql: |
       {{{OBJSUBQ}}}
@@ -456,6 +476,8 @@ queries:
             'ucb_lib_prechmat', 'ucb_lib_stone_rubbings'
           )
   /queries/use-cases/long-pathname-selected-collections:
+    limit:
+      enabled: true
     totals: true
     sql: |
       {{{OBJSUBQ}}}
