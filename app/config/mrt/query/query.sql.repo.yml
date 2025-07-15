@@ -128,7 +128,7 @@ queries:
     template-params:
       WHERE: |
         where o.modified >= (
-          select date_add(max(modified), INTERVAL -60 DAY) 
+          select date_add(max(modified), INTERVAL -15 DAY) 
           from inv.inv_objects
         )
   /queries/repository/objects-localid:
