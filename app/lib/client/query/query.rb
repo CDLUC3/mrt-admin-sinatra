@@ -35,7 +35,6 @@ module UC3Query
       config = UC3::UC3Client.resolve_lookup('app/config/mrt/query.template.yml', map)
       @dbconf = config.fetch('dbconf', {})
       @dbconf[:connect_timeout] = 10
-      @dbconf[:read_timeout] = 300
       @client = Mysql2::Client.new(@dbconf)
       @formatter = AnbtSql::Formatter.new(AnbtSql::Rule.new)
       super(enabled: enabled)

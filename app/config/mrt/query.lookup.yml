@@ -9,6 +9,8 @@ docker:
     val: password
   base_url:
     env: base_url
+  read_timeout:
+    val: 120
 dockerlocal:
   host: 
     val: 127.0.0.1
@@ -20,6 +22,8 @@ dockerlocal:
     val: password
   base_url:
     env: base_url
+  read_timeout:
+    val: 120
 ecs:
   host: 
     ssm: /uc3/mrt/ecs/billing/db-host
@@ -31,6 +35,8 @@ ecs:
     ssm: /uc3/mrt/ecs/billing/readwrite/db-password
   base_url:
     env: base_url
+  read_timeout:
+    val: 120
 default:
   host: 
     ssm: /uc3/mrt/dev/billing/db-host
@@ -42,4 +48,6 @@ default:
     ssm: /uc3/mrt/dev/billing/readwrite/db-password
   base_url:
     env: base_url
+  read_timeout:
+    val: 600
   
