@@ -111,6 +111,7 @@ module AdminUI
     <table class='data sortable'>
     <caption>
       #{render_status}
+      #{render_counts}
       #{render_description}
       #{render_filters}
     </caption>
@@ -149,6 +150,11 @@ module AdminUI
       s += '</div>'
       s
     end
+
+    def render_counts
+      %(<div class='counts'>#{@rows.length} Row(s)</div>)
+    end
+
 
     def render_description
       return '' if @description.empty?

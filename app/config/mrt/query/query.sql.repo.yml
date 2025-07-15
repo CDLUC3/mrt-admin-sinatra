@@ -128,13 +128,13 @@ queries:
       {{{OBJQ}}}
     template-params:
       WHERE: |
-        where exists (
-          select 1  
-          from inv.inv_objects oo
-          where oo.id = o.id
+        inner join (
+          select id 
+          from inv.inv_objects
           order by modified desc
           limit {{{WINDOW}}}
-        )
+        ) recent
+        on recent.id = o.id
   /queries/repository/objects-localid:
     sql: |
       {{{OBJQ}}}
