@@ -125,9 +125,6 @@ queries:
       enabled: true
     sql: |
       {{{OBJQ}}}
-    template-params:
-      WHERE: |
-        where o.id >= (select max(id)-10 from inv.inv_objects)
   /queries/repository/objects-localid:
     sql: |
       {{{OBJQ}}}
