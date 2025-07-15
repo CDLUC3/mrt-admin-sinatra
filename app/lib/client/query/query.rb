@@ -128,10 +128,14 @@ module UC3Query
 
       # get know query parameters from yaml
       tparm = query.fetch(:'template-params', {})
+      limparm = {}
 
       if query.fetch(:limit, {}).fetch(:enabled, false)
         tparm[:LIMIT] = query.fetch(:limit, {}).fetch(:default, urlparams.fetch('limit', '25').to_i)
         tparm[:OFFSET] = urlparams.fetch('offset', '0').to_i
+        limparm[:LIMIT] = tparm[:LIMIT]
+        limparm[:OFFSET] = tparm[:OFFSET]
+        limparm[:WINDOW] = tparm[:LIMIT] + tparm[:OFFSET]
       end
 
       # populate additional parameters using a query
@@ -140,7 +144,7 @@ module UC3Query
       end
       # resolve re-usable fragments found in template parameters
       tparm.each do |key, value|
-        tparm[key] = Mustache.render(value, @fragments) if value.is_a?(String)
+        tparm[key] = Mustache.render(value, @fragments.merge(limparm)) if value.is_a?(String)
       end
       # inject parameters into the sql.  allow 3 levels of nesting
       sql = Mustache.render(sql, @fragments.merge(tparm))

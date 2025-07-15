@@ -133,7 +133,7 @@ queries:
           from inv.inv_objects oo
           where oo.id = o.id
           order by modified desc
-          limit 2000
+          limit {{{WINDOW}}}
         )
   /queries/repository/objects-localid:
     sql: |
