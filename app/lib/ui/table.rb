@@ -22,13 +22,14 @@ module AdminUI
     end
 
     def initialize(columns: [], data: [], filters: [], totals: false, description: '', status: :SKIP,
-      status_message: '')
+      status_message: '', pagination: { enabled: false })
       @columns = columns
       @rows = data
       @filters = filters
       @filterable = false
       @totals = totals
       @description = description
+      @pagination = pagination
       @columns.each do |col|
         @filterable = true if col.filterable
       end
@@ -152,7 +153,9 @@ module AdminUI
     end
 
     def render_counts
-      %(<div class='counts'>#{@rows.length} Row(s)</div>)
+      counts = "#{@rows.length} Row(s)"
+      counts += "; Limit: #{pagination.fetch(:LIMIT, 0)}; Offset: #{pagination.fetch(:OFFSET, 0)}" if pagination.fetch(:enabled, false)
+      %(<div class='counts'>#{counts}</div>)
     end
 
 
@@ -183,7 +186,7 @@ module AdminUI
       end
     end
 
-    attr_accessor :columns, :data, :filters, :filterable, :totals, :status, :status_message
+    attr_accessor :columns, :data, :filters, :filterable, :totals, :status, :status_message, :description, :pagination
   end
 
   # Table rendering classes
