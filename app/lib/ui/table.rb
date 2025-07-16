@@ -175,7 +175,7 @@ module AdminUI
           nav[:prev] = render_page_link('prev', path, urlparams, limit, offsetprev)
           nav[:first] = render_page_link('first', path, urlparams, limit, 0) if offsetprev.positive?
         end
-        nav[:next] = render_page_link('next', path, urlparams, limit, offset + limit) unless @rows.empty?
+        nav[:next] = render_page_link('next', path, urlparams, limit, offset + limit) if @rows.length == limit
       end
       %(
         <div class='counts'>
