@@ -122,7 +122,7 @@ get '/context' do
 end
 
 get '/clients' do
-  UC3::UC3Client.cleint
+  UC3::UC3Client.client
   UC3::FileSystemClient.client
   UC3Query::QueryClient.client
   UC3Queue::ZKClient.client

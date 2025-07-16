@@ -6,17 +6,20 @@ require_relative '../query/query'
 module UC3Ldap
   # map of ldap collection to collection
   class LDAPCollectionMapList
-    def initialize
+    def initialize(ldapcli)
       @colltable = UC3Query::QueryClient.client.query('/queries/misc/collections', {})
-      @ldap = UC3Ldap::LDAPClient.client
+      @ldapcli = ldapcli
       @ldapcoll = []
-      if @ldap.enabled
-        @ldap.load
-        @ldapcoll = @ldap.collections_table_data
+      if @ldapcli.enabled
+        @ldapcli.load
+        @ldapcoll = @ldapcli.collections_table_data
         @status = 'PASS'
       else
+        puts 'LDAP Client not enabled'
         @status = 'ERROR'
       end
+    rescue StandardError => e
+      puts "LDAPCollectionMapList init error #{e}"
     end
 
     def ldap_collection_map(route)
@@ -71,7 +74,7 @@ module UC3Ldap
           )
         )
       end
-      @ldap.record_status(route, table.status)
+      @ldapcli.record_status(route, table.status)
       table
     end
   end

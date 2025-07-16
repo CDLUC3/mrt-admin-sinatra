@@ -35,7 +35,7 @@ module UC3Ldap
         }
       end
       @ldap = Net::LDAP.new(@ldap_connect)
-      super(enabled: enabled)
+      super(enabled: true)
     rescue StandardError => e
       puts "#{e.class}: #{e}; #{e.backtrace.join("\n")}"
       super(enabled: false, message: e.to_s)
@@ -44,7 +44,7 @@ module UC3Ldap
     attr_reader :users, :collections, :collection_arks, :roles
 
     def enabled
-      !@client.nil?
+      !@ldap.nil?
     end
 
     def user_displayname(uid)
