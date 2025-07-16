@@ -89,6 +89,15 @@ module Sinatra
         )
       end
 
+      # This should be a post request, but it is easier to automate as a consistency check if it is done as a get
+      # This is not yet tested on real data
+      app.get '/ops/db-queue-update/audit/reset-new-ucb-content' do
+        adminui_show_table(
+          AdminUI::Context.new(request.path),
+          UC3Query::QueryClient.client.reset_new_ucb_content(request.path, request.params)
+        )
+      end
+
       app.get '/ops/collections/db/**' do
         adminui_show_table(
           AdminUI::Context.new(request.path),

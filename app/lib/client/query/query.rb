@@ -208,5 +208,27 @@ module UC3Query
       stmt = @client.prepare('call update_ingests_processed()')
       stmt.execute
     end
+
+    def reset_new_ucb_content(path, urlparams)
+      table = query(path, urlparams)
+      table.table_data.each do |row|
+        objid = r['inv_object_id']
+        run_sql(
+          %(
+            update
+              inv_audits
+            set
+              verified = null,
+              status = 'unknown'
+            where
+              inv_object_id = ?
+            and
+              inv_node_id = ?
+          ),
+          [objid, 16]
+        )
+      end
+      table
+    end
   end
 end

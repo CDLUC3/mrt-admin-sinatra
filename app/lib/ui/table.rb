@@ -163,7 +163,6 @@ module AdminUI
     def render_counts
       counts = "#{@rows.length} Row(s)"
       nav = {}
-      puts pagination
       if pagination.fetch(:enabled, false)
         limit = pagination.fetch(:LIMIT, 0)
         offset = pagination.fetch(:OFFSET, 0)

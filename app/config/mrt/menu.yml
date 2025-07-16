@@ -595,6 +595,10 @@ items:
         route: /ops/db-queue/audit/active-batches
       - title: Counts by State
         route: /ops/db-queue/audit/counts-by-state
+      - title: Audit - New UCB Content
+        route: /ops/db-queue/audit/new-ucb-content
+      - title: Audit - Reset New UCB Content
+        route: /ops/db-queue-update/audit/reset-new-ucb-content
       - title: Stats, Last 30 days
         route: /ops/db-queue/audit/30-days
       - title: Recent Activity

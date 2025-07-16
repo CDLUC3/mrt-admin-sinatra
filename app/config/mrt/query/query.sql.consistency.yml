@@ -699,6 +699,8 @@ queries:
     sql: |
       {{{MULTCOLLQ}}}
   /queries/consistency/obj-comp/mult-colls/objlist:
+    limit:
+      enabled: true
     totals: true
     sql: |
       {{{OBJQ}}}
@@ -786,6 +788,8 @@ queries:
         order by
           category
   /queries/consistency/obj-comp/objects-no-local-id/objlist:
+    limit:
+      enabled: true
     sql: |
       {{{OBJQ}}}
     template-params:
@@ -1260,6 +1264,92 @@ queries:
           where
             status = 'unknown'
         ) as qcount
+  /ops/db-queue/audit/new-ucb-content:
+    status: PASS
+    status_check: true
+    sql: |
+      select distinct
+        o.id inv_object_id,
+        o.ark,
+        o.modified,
+        count(a.id) as files_count,
+        max(a.verified) as verified,
+        a.status as audit_status,
+        case
+          when a.status in ('size-mismatch','digest-mismatch', 'unverified') then 'Audit Failed'
+          when ifnull(verified, o.modified) < date_add(o.modified, interval {{{wait_hours}}} hour)
+            and o.modified > date_add(now(), interval -{{{wait_hours}}} hour)
+            then 'Reset Later'
+          when a.status = 'verified'
+            and ifnull(verified, o.modified) < date_add(o.modified, interval {{{wait_hours}}} hour)
+            then 'Reset Needed'
+          when a.status = 'verified' then 'Audited'
+          else 'In Progress'
+        end as category,
+        case
+          when a.status in ('size-mismatch','digest-mismatch', 'unverified') then 'FAIL'
+          when ifnull(verified, o.modified) < date_add(o.modified, interval {{{wait_hours}}} hour)
+            and o.modified > date_add(now(), interval -{{{wait_hours}}} hour)
+            then 'INFO'
+          when a.status = 'verified'
+            and ifnull(verified, o.modified) < date_add(o.modified, interval {{{wait_hours}}} hour)
+            then 'WARN'
+          when a.status = 'verified' then 'PASS'
+          else 'INFO'
+        end as status
+      from
+        inv.inv_objects o
+      right join
+        inv.inv_audits a
+      on
+        a.inv_object_id = o.id
+      and
+        a.inv_node_id = 16 /*sdsc node*/
+      where
+        o.inv_owner_id=14 /*ucb owner*/
+      and
+        o.modified > date_add(now(), interval -{{{days}}} day)
+      group by
+        o.id,
+        o.ark,
+        o.modified,
+        a.status
+      order by
+        o.modified desc
+    template-params:
+      days: 7
+      wait_hours: 24
+  /ops/db-queue-update/audit/reset-new-ucb-content:
+    status: PASS
+    status_check: true
+    sql: |
+      select distinct
+        o.id, o.ark, o.modified, 'PASS' as status
+      from
+        inv.inv_objects o
+      inner join
+        inv.inv_audits a
+      on
+        a.inv_object_id = o.id
+      and
+        a.inv_node_id = 16 /*sdsc node*/
+      where
+        o.inv_owner_id=14 /*ucb owner*/
+      and
+        o.modified > date_add(now(), interval -{{{days}}} day)
+      and
+        ifnull(verified, o.modified) < date_add(o.modified, interval {{{wait_hours}}} hour)
+      and
+        o.modified < date_add(now(), interval -{{{wait_hours}}} hour)
+      and
+        a.status = 'verified'
+      order by o.modified
+      limit {{{limit}}}
+      ;
+    template-params:
+      days: 7
+      wait_hours: 24
+      limit: 50
   /ops/collections/db/node-cleanup-needed:
     status: PASS
     sql: |
