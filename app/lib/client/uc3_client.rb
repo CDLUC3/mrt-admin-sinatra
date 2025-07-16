@@ -283,6 +283,7 @@ module UC3
 
           @consistency_checks << name if name =~ /#{pattern}/
         end
+        next if name =~ %r{/objlist}
         @test_paths << name unless @consistency_checks.include?(name)
       end
 
