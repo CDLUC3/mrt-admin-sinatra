@@ -265,9 +265,6 @@ module UC3
 
       UC3Query::QueryClient.client.queries.each_key do |name|
         name = name.to_s
-        @test_paths << name
-        # TODO: audit_ucb
-        # TODO: audit_ucb_reset
         %w[
           /queries/consistency/.*/
           /ops/collections/db/
@@ -275,6 +272,8 @@ module UC3
           /ops/db-queue/audit/oldest-audit-check
           /ops/db-queue/audit/30-days
           /ops/db-queue/audit/active-batches
+          /ops/db-queue/audit/new-ucb-content
+          /ops/db-queue-update/audit/reset-new-ucb-content
           /ops/db-queue/replication/failed
           /ops/db-queue/replication/in-progress
           /ops/db-queue/replication/required
@@ -284,6 +283,7 @@ module UC3
 
           @consistency_checks << name if name =~ /#{pattern}/
         end
+        @test_paths << name unless @consistency_checks.include?(name)
       end
 
       Sinatra::Application.routes['GET'].each do |path, route|

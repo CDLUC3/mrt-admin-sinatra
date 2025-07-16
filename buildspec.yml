@@ -43,6 +43,17 @@ phases:
         cat /tmp/curl.json | jq -r '"\t\t\t" + ((.status // "NA") + ":\t" + .status_message)' 2>/dev/null
       }
 
+      post_route() {
+        route=$1
+        echo
+        echo
+        echo "$route"
+        curl -X POST -H "Accept: application/json" -o /tmp/curl.json -s -w "$(curl_format)" ${admintool}${route}
+        cat /tmp/curl.json | jq -r '"\t\tTitle:\t" + .context.title // "na"' 2>/dev/null
+        cat /tmp/curl.json | jq -r '"\t\tRows:\t" + (.table | length | tostring)' 2>/dev/null
+        cat /tmp/curl.json | jq -r '"\t\t\t" + ((.status // "NA") + ":\t" + .status_message)' 2>/dev/null
+      }
+
       if [[ "$ADMIN_MODE" == "build" ]]
       then
         docker build --quiet --push \
@@ -59,6 +70,7 @@ phases:
         echo "Search for 'Status: 4', 'Status: 5' or 'ERROR' to detect issues"
         echo "================================================="
         admintool=$(admintool_ip):9292
+        post_route '/queries/update-billing'
         for route in $(curl --no-progress-meter http://$admintool/test/consistency | jq -r '.[]')
         do
           test_route $route
