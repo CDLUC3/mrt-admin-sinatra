@@ -156,10 +156,10 @@ module AdminUI
       params = urlparams
       params['limit'] = limit
       params['offset'] = offset
-      query_string = params.map { |key, value| "#{key}=#{value}" }.join("&")
-      %(<a href="#{path}?#{query_string}">#{title}</a>)    
+      query_string = params.map { |key, value| "#{key}=#{value}" }.join('&')
+      %(<a href="#{path}?#{query_string}">#{title}</a>)
     end
-    
+
     def render_counts
       counts = "#{@rows.length} Row(s)"
       nav = {}
@@ -170,12 +170,12 @@ module AdminUI
         path = pagination.fetch(:path, '')
         urlparams = pagination.fetch(:urlprams, {})
         counts += "; Limit: #{limit}; Offset: #{offset}"
-        if offset > 0
-          offsetprev = offset - limit > 0 ? offset - limit : 0
+        if offset.positive?
+          offsetprev = [offset - limit, 0].max
           nav[:prev] = render_page_link('prev', path, urlparams, limit, offsetprev)
-          nav[:first] = render_page_link('first', path, urlparams, limit, 0) if offsetprev > 0
+          nav[:first] = render_page_link('first', path, urlparams, limit, 0) if offsetprev.positive?
         end
-        nav[:next] = render_page_link('next', path, urlparams, limit, offset + limit) if @rows.length > 0
+        nav[:next] = render_page_link('next', path, urlparams, limit, offset + limit) unless @rows.empty?
       end
       %(
         <div class='counts'>
@@ -186,7 +186,6 @@ module AdminUI
         </div>
       )
     end
-
 
     def render_description
       return '' if @description.empty?
