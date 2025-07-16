@@ -121,7 +121,9 @@ queries:
     - name: ark
       type: string
   /queries/recent/objects:
-    description: Retrieves results from the last 2000 objects that have been modified
+    description: |
+      Retrieves results from recently modified objects.
+      This query will become inefficient if you attempt to go far back in time.
     limit:
       enabled: true
     sql: |

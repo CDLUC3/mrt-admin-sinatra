@@ -133,6 +133,8 @@ module UC3Query
       if query.fetch(:limit, {}).fetch(:enabled, false)
         tparm[:LIMIT] = query.fetch(:limit, {}).fetch(:default, urlparams.fetch('limit', '25').to_i)
         tparm[:OFFSET] = urlparams.fetch('offset', '0').to_i
+        pagination[:path] = path
+        pagination[:urlparams] = urlparams
         pagination[:enabled] = true
         pagination[:LIMIT] = tparm[:LIMIT]
         pagination[:OFFSET] = tparm[:OFFSET]

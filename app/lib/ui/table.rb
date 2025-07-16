@@ -152,10 +152,39 @@ module AdminUI
       s
     end
 
+    def render_page_link(title, path, urlparams, limit, offset)
+      params = urlparams
+      params['limit'] = limit
+      params['offset'] = offset
+      query_string = params.map { |key, value| "#{key}=#{value}" }.join("&")
+      %(<a href="#{path}?#{query_string}">#{title}</a>)    
+    end
+    
     def render_counts
       counts = "#{@rows.length} Row(s)"
-      counts += "; Limit: #{pagination.fetch(:LIMIT, 0)}; Offset: #{pagination.fetch(:OFFSET, 0)}" if pagination.fetch(:enabled, false)
-      %(<div class='counts'>#{counts}</div>)
+      nav = {}
+      puts pagination
+      if pagination.fetch(:enabled, false)
+        limit = pagination.fetch(:LIMIT, 0)
+        offset = pagination.fetch(:OFFSET, 0)
+        path = pagination.fetch(:path, '')
+        urlparams = pagination.fetch(:urlprams, {})
+        counts += "; Limit: #{limit}; Offset: #{offset}"
+        if offset > 0
+          offsetprev = offset - limit > 0 ? offset - limit : 0
+          nav[:prev] = render_page_link('prev', path, urlparams, limit, offsetprev)
+          nav[:first] = render_page_link('first', path, urlparams, limit, 0) if offsetprev > 0
+        end
+        nav[:next] = render_page_link('next', path, urlparams, limit, offset + limit) if @rows.length > 0
+      end
+      %(
+        <div class='counts'>
+        #{nav.fetch(:first, '')}
+        #{nav.fetch(:prev, '')}
+        <span>#{counts}<span>
+        #{nav.fetch(:next, '')}
+        </div>
+      )
     end
 
 
