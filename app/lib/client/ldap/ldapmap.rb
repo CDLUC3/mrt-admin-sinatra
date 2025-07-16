@@ -10,7 +10,7 @@ module UC3Ldap
       @colltable = UC3Query::QueryClient.client.query('/queries/misc/collections', {})
       @ldap = UC3Ldap::LDAPClient.client
       @ldapcoll = []
-      if @ldap.enabled?
+      if @ldap.enabled
         @ldap.load
         @ldapcoll = @ldap.collections_table_data
         @status = 'PASS'
