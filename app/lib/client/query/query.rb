@@ -212,7 +212,7 @@ module UC3Query
     def reset_new_ucb_content(path, urlparams)
       table = query(path, urlparams)
       table.table_data.each do |row|
-        objid = r['inv_object_id']
+        objid = row['inv_object_id']
         run_sql(
           %(
             update
