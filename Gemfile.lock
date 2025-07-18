@@ -1,7 +1,7 @@
 GIT
   remote: https://github.com/CDLUC3/mrt-zk.git
-  revision: 8358d5706a8c667ecd17269cfd77c57bf49f50ff
-  tag: 2.4.13
+  revision: 944849e063b4d4a12697aa2c885b5e546bee3acc
+  tag: 2.4.15
   specs:
     mrt-zk (1.0.1)
       zk (~> 1.10.0)
