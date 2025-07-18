@@ -26,6 +26,16 @@ function applyButtonControls() {
     if ($(this).hasClass('post')) {
       $(this).attr('disabled', true);
       self = this;
+
+      var confmsg = $(this).attr('confmsg') || '';
+      if (confmsg != '') {
+        confmsg += "\n\nAre you sure you want to proceed?";
+        if (!confirm(confmsg)) {
+          $(this).attr('disabled', false);
+          return false;
+        }
+      } 
+
       $.ajax({
         dataType: "json",
         method: "POST",
@@ -165,7 +175,7 @@ function applyMenuPost() {
 
     if (confirm(confmsg)) {
       const route = $(this).attr('data-route');
-      const form = $('<form></form>').attr('method', 'POST').attr('action', route);
+      const form = $('<form></form>').attr('method', 'POST').attr('action', route).text($(this).attr('data'));
       form.appendTo('body');
       form.submit();  
     }

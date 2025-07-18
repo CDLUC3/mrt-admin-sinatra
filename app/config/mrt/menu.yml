@@ -455,6 +455,26 @@ items:
         route: /ops/zk/nodes/node-names?zkpath=/access&mode=node
       - title: Orphan Report
         route: /ops/zk/nodes/orphan
+      - path: force-failure
+        title: Force Failure
+        route: /ops/zk/nodes/force-failure
+        items:
+        - title: Batch Node no state folders
+          route: /ops/zk/nodes/force-failure/states
+          confmsg: This will create a batch node with no state folders.
+          method: post
+        - title: Job in Multiple Batch States
+          route: /ops/zk/nodes/force-failure/duplicate-batch-states
+          confmsg: This will create a job in multiple batch states.
+          method: post
+        - title: Job in Multiple Job States
+          route: /ops/zk/nodes/force-failure/duplicate-job-states
+          confmsg: This will create a job in multiple job states.
+          method: post
+        - title: Create a Batch Lock
+          route: /ops/zk/nodes/force-failure/lock
+          confmsg: This will create a batch lock that can become invalid after a period of time.
+          method: post
     - path: ingest-queue
       title: Ingest Queue
       route: /ops/zk/ingest

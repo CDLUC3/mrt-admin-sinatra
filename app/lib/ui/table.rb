@@ -313,7 +313,9 @@ module AdminUI
           cssclass = cellval.fetch(:cssclass, '')
           post = cellval.fetch(:post, false)
           data = cellval.fetch(:data, '')
-          render_link(val, href, cssclass: cssclass, title: title, disabled: disabled, post: post, data: data)
+          confmsg = cellval.fetch(:confmsg, '')
+          render_link(val, href, cssclass: cssclass, title: title, disabled: disabled, post: post, data: data,
+            confmsg: confmsg)
         elsif cellval.key?(:title)
           render_span(val, title: cellval.fetch(:title, ''), cssclass: cellval.fetch(:cssclass, ''))
         else
@@ -333,7 +335,7 @@ module AdminUI
       val
     end
 
-    def render_link(val, href, cssclass: '', title: '', disabled: false, post: false, data: '')
+    def render_link(val, href, cssclass: '', title: '', disabled: false, post: false, data: '', confmsg: '')
       dis = disabled ? 'disabled' : ''
       if post
         %{
@@ -341,7 +343,8 @@ module AdminUI
            url='#{href}'
            data='#{data}'
            class='post #{cssclass}'
-          title='#{title}'
+           title='#{title}'
+           confmsg='#{confmsg}'
           #{dis}
         >#{val}</a>
         }

@@ -313,27 +313,40 @@ module UC3Queue
       table
     end
 
-    def dump_node_data_table(nodedump, status)
+    def dump_node_data_table(nodedump, status, mod: false)
+      cols = [
+        AdminUI::Column.new(:node, header: 'Node'),
+        AdminUI::Column.new(:nodedata, header: 'Node Data'),
+        AdminUI::Column.new(:ref, header: 'Reference')
+        ]
+      cols << AdminUI::Column.new(:action, header: 'Action') if mod
       table = AdminUI::FilterTable.new(
-        columns: [
-          AdminUI::Column.new(:node, header: 'Node'),
-          AdminUI::Column.new(:nodedata, header: 'Node Data'),
-          AdminUI::Column.new(:ref, header: 'Reference')
-        ],
+        columns: cols,
         status: status
       )
       nodedump.each do |row|
         row.each do |node, value|
           next if node == 'Status'
 
+          data = {
+            node: node,
+            ref: make_ref(node).empty? ? make_ref(value) : make_ref(node),
+            nodedata: JSON.pretty_generate(value)
+          }
+          if mod
+            data[:action] = {
+              value: 'Delete',
+              href: '/ops/zk/nodes/delete',
+              post: true,
+              cssclass: 'button',
+              confmsg: "Are you sure you want to delete #{node} and any of its child nodes?",
+              data: node
+            }
+          end
           table.add_row(
             AdminUI::Row.make_row(
               table.columns,
-              {
-                node: node,
-                ref: make_ref(node).empty? ? make_ref(value) : make_ref(node),
-                nodedata: JSON.pretty_generate(value)
-              }
+              data
             )
           )
         end
@@ -348,7 +361,8 @@ module UC3Queue
           AdminUI::Column.new(:created, header: 'Created'),
           AdminUI::Column.new(:orphanpath, header: 'Orphan Path'),
           AdminUI::Column.new(:test, header: 'Test'),
-          AdminUI::Column.new(:status, header: 'Status')
+          AdminUI::Column.new(:status, header: 'Status'),
+          AdminUI::Column.new(:ref, header: 'Reference')
         ],
         status: status
       )
@@ -356,15 +370,39 @@ module UC3Queue
         value = node.values.first
         next unless value.is_a?(Array)
 
+        match = %r{^(/batches/bid[0-9]+|/jobs/jid[0-9]+)(/|$)}.match(value[0])
+        ref = match ? match[1] : ''
+
         table.add_row(
           AdminUI::Row.make_row(
             table.columns,
             {
               path: value[0],
               created: value[1],
-              orphanpath: value[2],
+              orphanpath:
+                if value[2].empty?
+                  ''
+                else
+                  {
+                    value: "Delete #{value[2]}",
+                    href: '/ops/zk/nodes/delete',
+                    data: value[2],
+                    post: true,
+                    confmsg: "Are you sure you want to delete #{value[2]}",
+                    cssclass: 'button'
+                  }
+                end,
               test: value[3],
-              status: value[4]
+              status: value[4],
+              ref:
+                if ref.empty?
+                  ''
+                else
+                  {
+                    href: "/ops/zk/nodes/node-names?zkpath=#{ref}&mode=data&mod=true",
+                    value: ref
+                  }
+                end
             }
           )
         )
@@ -397,7 +435,7 @@ module UC3Queue
 
       case params.fetch('mode', 'node')
       when 'data'
-        dump_node_data_table(nodedump, status)
+        dump_node_data_table(nodedump, status, mod: params.key?('mod'))
       when 'test'
         dump_node_test_table(route, nodedump, status)
       else
@@ -561,6 +599,26 @@ module UC3Queue
         data << { error: "Error connecting to ZK host #{zkhost}: #{e.message}" }
       end
       data
+    end
+
+    def create_node(path, data: nil)
+      return if @zk.exists?(path)
+
+      if data.nil?
+        @zk.create(path)
+      else
+        @zk.create(path, data: data)
+      end
+    rescue StandardError => e
+      puts "Error creating node #{path}: #{e.message}"
+    end
+
+    def delete_node(path)
+      return if path.split('/').length < 2
+
+      @zk.rm_rf(path) if @zk.exists?(path)
+    rescue StandardError => e
+      puts "Error deleting node #{path}: #{e.message}"
     end
   end
 end

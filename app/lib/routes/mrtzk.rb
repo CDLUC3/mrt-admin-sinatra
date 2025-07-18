@@ -26,6 +26,64 @@ module Sinatra
         )
       end
 
+      app.post '/ops/zk/nodes/force-failure/states' do
+        zk = UC3Queue::ZKClient.client
+        zk.create_node('/batches/bid99998')
+        zk.create_node('/batches/bid99998/states')
+        zk.create_node('/batches/bid99998/submission', data: { foo: 'bar' }.to_json)
+
+        redirect '/ops/zk/nodes/orphan'
+      end
+
+      app.post '/ops/zk/nodes/force-failure/duplicate-batch-states' do
+        zk = UC3Queue::ZKClient.client
+        zk.create_node('/jobs/jid77777')
+        zk.create_node('/jobs/jid77777/bid', data: 'bid99999')
+        zk.create_node('/jobs/jid77777/status', data: { status: 'processing' }.to_json)
+        zk.create_node('/jobs/states/processing/00-jid77777')
+        zk.create_node('/batches/bid99999')
+
+        zk.create_node('/batches/bid99999/states')
+        zk.create_node('/batches/bid99999/states/batch-processing/jid77777')
+        zk.create_node('/batches/bid99999/states/batch-failed/jid77777')
+
+        redirect '/ops/zk/nodes/orphan'
+      end
+
+      app.post '/ops/zk/nodes/force-failure/duplicate-job-states' do
+        zk = UC3Queue::ZKClient.client
+        zk.create_node('/jobs/jid77776')
+        zk.create_node('/jobs/jid77776/status', data: { status: 'processing' }.to_json)
+        zk.create_node('/jobs/states/processing/00-jid77776')
+        zk.create_node('/jobs/states/estimating/00-jid77776')
+
+        redirect '/ops/zk/nodes/orphan'
+      end
+
+      app.post '/ops/zk/nodes/force-failure/lock' do
+        zk = UC3Queue::ZKClient.client
+        zk.create_node('/batches/bid99997')
+        zk.create_node('/batches/bid99997/lock')
+
+        redirect '/ops/zk/nodes/orphan'
+      end
+
+      app.post '/ops/zk/nodes/delete' do
+        f = request.body.read
+        if f.empty?
+          content_type :json
+          { message: 'No path specified' }.to_json
+        else
+          zk = UC3Queue::ZKClient.client
+          zk.delete_node(f)
+          content_type :json
+          { message: "#{f} deleted" }.to_json
+        end
+      rescue StandardError => e
+        content_type :json
+        { message: "ERROR: #{e.class}: #{e.message}" }.to_json
+      end
+
       app.get '/ops/zk/ingest/batches' do
         adminui_show_table(
           AdminUI::Context.new(request.path),
