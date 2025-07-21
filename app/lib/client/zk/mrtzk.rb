@@ -11,6 +11,8 @@ module UC3Queue
   # Query for ZK nodes
   # VPC peering does not allow this, so this connection will not work until ZK is running in the UC3
   class ZKClient < UC3::UC3Client
+    AGE_BATCHWARN = 3600 * 24 # 1 hour in seconds, converted to days
+
     def self.client
       UC3::UC3Client.clients.fetch(self.class.to_s, ZKClient.new)
     end
@@ -47,13 +49,16 @@ module UC3Queue
           AdminUI::Column.new(:submissionDate, header: 'DateTime', cssclass: 'date'),
           AdminUI::Column.new(:type, header: 'Type'),
           AdminUI::Column.new(:jobdata, header: 'Job Data'),
-          AdminUI::Column.new(:status, header: 'Status'),
-          AdminUI::Column.new(:actions, header: 'Actions')
+          AdminUI::Column.new(:batch_status, header: 'Batch Status'),
+          AdminUI::Column.new(:actions, header: 'Actions'),
+          AdminUI::Column.new(:status, header: 'Status')
         ],
         status: 'PASS'
       )
       batches.each do |batch|
         status = batch[:status].to_s
+        batch[:batch_status] = status
+        batch[:status] = status == 'Failed' ? 'FAIL' : 'PASS'
 
         id = batch[:id]
         batch[:id] = {
@@ -61,6 +66,11 @@ module UC3Queue
           value: batch[:id]
         }
         batch[:submissionDate] = date_format(batch[:submissionDate])
+
+        unless batch[:submissionDate].empty? || batch[:status] == 'FAIL'
+          puts "Batch #{id} found, flagging for age"
+          batch[:status] = 'WARN' if Time.now - Time.new(batch[:submissionDate]) > AGE_BATCHWARN
+        end
         batch[:jobdata] = []
         batch[:jobdata] << batch[:submitter]
         batch[:jobdata] << batch[:creator]
