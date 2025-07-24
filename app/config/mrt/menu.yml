@@ -716,9 +716,6 @@ items:
       route: /ldap/collections-missing
     - title: Roles
       route: /ldap/roles
-  - title: ECS Console
-    route: https://us-west-2.console.aws.amazon.com/ecs/v2/clusters/mrt-ecs-stack/services?region=us-west-2
-    external: true
   - title: Cloudshell Tips
     route: https://github.com/CDLUC3/mrt-doc-private/blob/main/docs/system-recovery/ecs.md
     external: true
