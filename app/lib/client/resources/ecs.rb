@@ -12,6 +12,10 @@ module UC3Resources
       UC3::UC3Client.clients.fetch(self.class.to_s, ServicesClient.new)
     end
 
+    def cluster_name
+      ENV.fetch('ECS_STACK_NAME', 'mrt-ecs-stack')
+    end
+
     def initialize
       @client = Aws::ECS::Client.new(
         region: UC3::UC3Client.region
@@ -21,12 +25,12 @@ module UC3Resources
       # An ECS Service has a ServiceDeployment which has a TargetServiceRevision.
       # A ServiceRevision has ContainerImage which has an ImageDigest.
       # The ImageDigest is the identity key for an image inside of an ECR Repository.
-      @client.list_services(cluster: 'mrt-ecs-stack', max_results: 20).service_arns.each do |arn|
-        @client.describe_services(cluster: 'mrt-ecs-stack', services: [arn]).services.each do |svc|
+      @client.list_services(cluster: cluster_name, max_results: 20).service_arns.each do |arn|
+        @client.describe_services(cluster: cluster_name, services: [arn]).services.each do |svc|
           digest = nil
           image = nil
           @client.list_service_deployments(
-            cluster: 'mrt-ecs-stack',
+            cluster: cluster_name,
             service: arn,
             status: ['SUCCESSFUL']
           ).service_deployments.each do |sd|
@@ -90,7 +94,7 @@ module UC3Resources
       return unless enabled
 
       @client.update_service(
-        cluster: 'mrt-ecs-stack',
+        cluster: cluster_name,
         service: service,
         force_new_deployment: true
       ).to_json
@@ -100,7 +104,7 @@ module UC3Resources
       return unless enabled
 
       @client.update_service(
-        cluster: 'mrt-ecs-stack',
+        cluster: cluster_name,
         service: service,
         desired_count: 2
       ).to_json
@@ -110,7 +114,7 @@ module UC3Resources
       return unless enabled
 
       @client.update_service(
-        cluster: 'mrt-ecs-stack',
+        cluster: cluster_name,
         service: service,
         desired_count: 1
       ).to_json
