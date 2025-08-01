@@ -92,9 +92,7 @@ module Sinatra
       end
 
       app.get '/ops/zk/ingest/jobs-by-collection' do
-        puts UC3Queue::ZKClient.client
-        puts UC3Queue::ZKClient.client.enabled
-        adminui_show_table(
+         adminui_show_table(
           AdminUI::Context.new(request.path),
           UC3Queue::ZKClient.client.jobs_by_collection(request.path, request.params)
         )

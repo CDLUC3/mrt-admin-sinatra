@@ -64,7 +64,6 @@ module UC3Resources
       while next_token
         res = @client.describe_parameters(opt)
         res.parameters.each do |param|
-          puts param.name
           path = param.name
           next unless params.key?(path)
 

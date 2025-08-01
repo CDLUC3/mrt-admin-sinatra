@@ -19,9 +19,7 @@ module UC3Code
     def initialize
       key = ENV.fetch('configkey', 'default')
       tmap = YAML.safe_load_file('app/config/mrt/source.lookup.yml', aliases: true)
-      puts tmap
       tmap = tmap.fetch(key, {})
-      puts tmap
       map = UC3::UC3Client.lookup_map(tmap)
 
       token = map.fetch('token', '')
@@ -30,7 +28,7 @@ module UC3Code
       begin
         @client = Octokit::Client.new(opts)
       rescue StandardError => e
-        puts e
+        puts "GitHub client error #{e}"
       end
       @tags = {}
       @since = Time.now - (2 * 365 * 24 * 60 * 60)
