@@ -107,6 +107,7 @@ module UC3Queue
 
       @colls = {}
 
+      puts "TB111"
       if enabled
         jobs = MerrittZK::Job.list_jobs_as_json(@zk)
         jobs = [] if jobs.nil?
@@ -119,6 +120,7 @@ module UC3Queue
       else
         status = 'ERROR'
       end
+      puts "TB112"
 
       table = AdminUI::FilterTable.new(
         columns: [
@@ -151,13 +153,14 @@ module UC3Queue
           )
         end
       end
+      puts "TB113"
+
       record_status(route, table.status)
       table
     end
 
     def jobs(params)
       jobs = []
-      puts "Enabled: #{enabled}"
       if enabled
         jobs = MerrittZK::Job.list_jobs_as_json(@zk)
         status = 'PASS'
