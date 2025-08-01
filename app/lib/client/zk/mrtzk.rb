@@ -108,7 +108,9 @@ module UC3Queue
       @colls = {}
 
       if enabled
-        MerrittZK::Job.list_jobs_as_json(@zk).each do |job|
+        jobs = MerrittZK::Job.list_jobs_as_json(@zk)
+        jobs = [] if jobs.nil?
+        jobs.each do |job|
           @colls[job[:profile]] ||= {}
           @colls[job[:profile]][job[:status]] ||= []
           @colls[job[:profile]][job[:status]] << job
@@ -484,7 +486,9 @@ module UC3Queue
 
     def cleanup_access_queue
       puts 'Cleaning up access jobs'
-      MerrittZK::Access.list_jobs_as_json(@zk).each do |job|
+      jobs = MerrittZK::Access.list_jobs_as_json(@zk)
+      jobs = [] if jobs.nil?
+      jobs.each do |job|
         qn = job.fetch(:queueNode, MerrittZK::Access::SMALL).gsub(%r{^/access/}, '')
         j = MerrittZK::Access.new(qn, job.fetch(:id, ''))
         j.load(@zk)
