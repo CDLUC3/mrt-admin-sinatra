@@ -24,7 +24,7 @@ phases:
     - |
       admintool_ip() {
         aws servicediscovery discover-instances \
-          --service-name admintool --namespace-name merritt | \
+          --service-name admintool --namespace-name merritt-ecs-dev | \
           jq -r ".Instances[0].Attributes.AWS_INSTANCE_IPV4"
       }
 
