@@ -102,7 +102,7 @@ phases:
           --image-uri ${ECR_REGISTRY}/mrt-admin-sinatra:latest \
           --no-cli-pager
 
-        aws ecs update-service --cluster mrt-ecs-stack --service admintool \
+        aws ecs update-service --cluster mrt-ecs-dev-stack --service admintool \
           --desired-count 2 --output yaml --no-cli-pager \
           --force-new-deployment || echo "Skip ECS Deployment"
       fi

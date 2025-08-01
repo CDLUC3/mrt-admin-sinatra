@@ -13,7 +13,7 @@ module UC3Resources
     end
 
     def cluster_name
-      ENV.fetch('ECS_STACK_NAME', 'mrt-ecs-stack')
+      ENV.fetch('ECS_STACK_NAME', 'mrt-ecs-dev-stack')
     end
 
     def initialize
