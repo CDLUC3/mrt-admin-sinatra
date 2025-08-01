@@ -25,7 +25,7 @@ module UC3Query
         @fragments.merge!(config.fetch(:fragments, {}))
         @queries.merge!(config.fetch(:queries, {}))
       rescue StandardError => e
-        puts "#{e.class}: #{e} in #{file}"
+        puts "(Query1) #{e.class}: #{e} in #{file}"
       end
 
       key = ENV.fetch('configkey', 'default')
@@ -39,7 +39,7 @@ module UC3Query
       @formatter = AnbtSql::Formatter.new(AnbtSql::Rule.new)
       super(enabled: enabled)
     rescue StandardError => e
-      puts "#{e.class}: #{e}; #{e.backtrace.join("\n")}"
+      puts "(Query2) #{e.class}: #{e}; #{e.backtrace.join("\n")}"
       super(enabled: false, message: e.to_s)
     end
 
@@ -75,7 +75,7 @@ module UC3Query
           hasharr << row.to_h
         end
       rescue StandardError => e
-        puts "#{e.class}: #{e}"
+        puts "(Query3) #{e.class}: #{e}"
       end
       hasharr
     end
