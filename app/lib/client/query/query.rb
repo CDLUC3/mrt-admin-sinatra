@@ -71,7 +71,9 @@ module UC3Query
       hasharr = []
       begin
         stmt = @client.prepare(Mustache.render(sql, @fragments))
-        stmt.execute(*args).each do |row|
+        rows = stmt.execute(*args)
+        rows = [] if rows.nil?
+        rows.each do |row|
           hasharr << row.to_h
         end
       rescue StandardError => e
