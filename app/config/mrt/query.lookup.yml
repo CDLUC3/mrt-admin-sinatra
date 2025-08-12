@@ -1,5 +1,5 @@
 # https://github.com/brianmario/mysql2?tab=readme-ov-file#connection-options
-docker:
+docker: &docker
   host: 
     val: db-container
   database: 
@@ -29,7 +29,7 @@ dockerlocal:
     val: 120
   write_timeout:
     val: 120
-ecs:
+ecs-dev:
   host: 
     ssm: /uc3/mrt/ecs/billing/db-host
   database: 
@@ -44,7 +44,7 @@ ecs:
     val: 120
   write_timeout:
     val: 120
-default:
+ecs-dbsnapshot:
   host: 
     ssm: /uc3/mrt/dev/billing/db-host
   database: 
@@ -59,4 +59,20 @@ default:
     val: 600
   write_timeout:
     val: 600
-  
+ecs-stg:
+  host: 
+    ssm: /uc3/mrt/stg/billing/db-host
+  database: 
+    ssm: /uc3/mrt/stg/billing/db-name
+  username: 
+    ssm: /uc3/mrt/stg/billing/readwrite/db-user
+  password: 
+    ssm: /uc3/mrt/stg/billing/readwrite/db-password
+  base_url:
+    env: base_url
+  read_timeout:
+    val: 600
+  write_timeout:
+    val: 600
+default:
+  << *docker 
