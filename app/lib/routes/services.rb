@@ -8,105 +8,134 @@ require_relative '../ui/context'
 module Sinatra
   # client specific routes
   module UC3ServicesRoutes
+    def ui_host
+      host = ENV.fetch('SVC_UI', 'ui:8086')
+      host =~ /^http/ ? host : "http://#{host}"  
+    end
+
+    def ingest_host
+      "http://#{ENV.fetch('SVC_INGEST', 'ingest:8080')}"
+    end
+
+    def store_host
+      "http://#{ENV.fetch('SVC_STORE', 'store:8080')}"
+    end
+
+    def access_host
+      "http://#{ENV.fetch('SVC_ACCESS', 'access:8080')}"
+    end
+
+    def audit_host
+      "http://#{ENV.fetch('SVC_AUDIT', 'audit:8080')}"
+    end
+
+    def replic_host
+      "http://#{ENV.fetch('SVC_REPLIC', 'replic:8080')}"
+    end
+
+    def inventory_host
+      "http://#{ENV.fetch('SVC_INVENTORY', 'inventory:8080')}"
+    end
+
     def self.registered(app)
       app.get '/json/ui/state' do
-        get_url('http://ui:8086/state.json')
+        get_url("#{ui_host}/state.json")
       end
 
       app.get '/json/ui/audit-replic' do
-        get_url('http://ui:8086/state-audit-replic.json')
+        get_url("#{ui_host}/state-audit-replic.json")
       end
 
       app.get '/json/ingest/state' do
-        get_url('http://ingest:8080/ingest/state?t=json')
+        get_url("#{ingest_host}/ingest/state?t=json")
       end
 
       app.get '/json/ingest/tag' do
-        get_url('http://ingest:8080/ingest/static/build.content.txt')
+        get_url("#{ingest_host}/ingest/static/build.content.txt")
       end
 
       app.get '/json/store/state' do
-        get_url('http://store:8080/store/state?t=json')
+        get_url("#{store_host}/store/state?t=json")
       end
 
       app.get '/json/store/tag' do
-        get_url('http://store:8080/store/static/build.content.txt')
+        get_url("#{store_host}/store/static/build.content.txt")
       end
 
       app.get '/json/store/nodes' do
-        get_url('http://store:8080/store/jsonstatus')
+        get_url("#{store_host}/store/jsonstatus")
       end
 
       app.get '/json/store/hostname' do
-        get_url('http://store:8080/store/hostname')
+        get_url("#{store_host}/store/hostname")
       end
 
       app.get '/json/inventory/state' do
-        get_url('http://inventory:8080/inventory/state?t=json')
+        get_url("#{inventory_host}/inventory/state?t=json")
       end
 
       app.post '/json/inventory/start' do
-        post_url('http://inventory:8080/inventory/service/start?t=json')
+        post_url("#{inventory_host}/inventory/service/start?t=json")
       end
 
       app.post '/json/inventory/stop' do
-        post_url('http://inventory:8080/inventory/service/stop?t=json')
+        post_url("#{inventory_host}/inventory/service/stop?t=json")
       end
 
       app.get '/json/inventory/tag' do
-        get_url('http://inventory:8080/inventory/static/build.content.txt')
+        get_url("#{inventory_host}/inventory/static/build.content.txt")
       end
 
       app.get '/json/audit/state' do
-        get_url('http://audit:8080/audit/state?t=json')
+        get_url("#{audit_host}/audit/state?t=json")
       end
 
       app.get '/json/audit/tag' do
-        get_url('http://audit:8080/audit/static/build.content.txt')
+        get_url("#{audit_host}/audit/static/build.content.txt")
       end
 
       app.get '/json/audit/nodes' do
-        get_url('http://audit:8080/audit/jsonstatus')
+        get_url("#{audit_host}/audit/jsonstatus")
       end
 
       app.post '/json/audit/start' do
-        post_url('http://audit:8080/audit/service/start?t=json')
+        post_url("#{audit_host}/audit/service/start?t=json")
       end
 
       app.post '/json/audit/stop' do
-        post_url('http://audit:8080/audit/service/stop?t=json')
+        post_url("#{audit_host}/audit/service/stop?t=json")
       end
 
       app.get '/json/replic/state' do
-        get_url('http://replic:8080/replic/state?t=json')
+        get_url("#{replic_host}/replic/state?t=json")
       end
 
       app.get '/json/replic/tag' do
-        get_url('http://replic:8080/replic/static/build.content.txt')
+        get_url("#{replic_host}/replic/static/build.content.txt")
       end
 
       app.post '/json/replic/start' do
-        post_url('http://replic:8080/replic/service/start?t=json')
+        post_url("#{replic_host}/replic/service/start?t=json")
       end
 
       app.post '/json/replic/pause' do
-        post_url('http://replic:8080/replic/service/pause?t=json')
+        post_url("#{replic_host}/replic/service/pause?t=json")
       end
 
       app.get '/json/replic/nodes' do
-        get_url('http://replic:8080/replic/jsonstatus')
+        get_url("#{replic_host}/replic/jsonstatus")
       end
 
       app.get '/json/access/state' do
-        get_url('http://access:8080/access/state?t=json')
+        get_url("#{access_host}/access/state?t=json")
       end
 
       app.get '/json/access/tag' do
-        get_url('http://access:8080/access/static/build.content.txt')
+        get_url("#{access_host}/access/static/build.content.txt")
       end
 
       app.get '/json/access/nodes' do
-        get_url('http://access:8080/access/jsonstatus')
+        get_url("#{access_host}/access/jsonstatus")
       end
 
       app.post '/stack-init' do
@@ -117,9 +146,9 @@ module Sinatra
     def stack_init
       UC3::FileSystemClient.client.cleanup_ingest_folders
       resp = []
-      resp << ::JSON.parse(post_url('http://inventory:8080/inventory/service/start?t=json'))
-      resp << ::JSON.parse(post_url('http://replic:8080/replic/service/start?t=json'))
-      resp << ::JSON.parse(post_url('http://audit:8080/audit/service/start?t=json'))
+      resp << ::JSON.parse(post_url("#{inventory_host}/inventory/service/start?t=json"))
+      resp << ::JSON.parse(post_url("#{replic_host}/replic/service/start?t=json"))
+      resp << ::JSON.parse(post_url("#{audit_host}/audit/service/start?t=json"))
       resp.to_json
     end
 
