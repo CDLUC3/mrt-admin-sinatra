@@ -75,4 +75,4 @@ ecs-stg:
   write_timeout:
     val: 600
 default:
-  << *docker 
+  <<: *docker 

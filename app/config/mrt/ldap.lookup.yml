@@ -14,17 +14,17 @@ docker: &docker
     guest_user: anonymous
     connect_timeout: 60
 dockerlocal:
-  << *docker
+  <<: *docker
 ecs-dev:
-  << *docker
+  <<: *docker
 ecs-dbsnapshot:
-  << *docker
+  <<: *docker
 ecs-stg:
   admin_password: 
     ssm: /uc3/mrt/stg/ldap/admin-password
   host:
     ssm: /uc3/mrt/stg/ldap/host
   _fixed:
-    << *fixed
+    <<: *fixed
 default:
-  << *docker 
+  <<: *docker 
