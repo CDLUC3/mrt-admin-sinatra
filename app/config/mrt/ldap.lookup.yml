@@ -1,0 +1,30 @@
+docker: &docker
+  admin_password: 
+    val: password
+  host:
+    val: ldap
+  _fixed: &fixed
+    admin_user: cn=Directory Manager
+    group_base: ou=mrt-classes,ou=uc3,dc=cdlib,dc=org
+    port: 1389
+    user_base: ou=People,ou=uc3,dc=cdlib,dc=org
+    inst_base: o=institutions,ou=uc3,dc=cdlib,dc=org
+    ark_minter_url: http://noid.cdlib.org/nd/noidu_p9
+    guest_password: guest
+    guest_user: anonymous
+    connect_timeout: 60
+dockerlocal:
+  << *docker
+ecs-dev:
+  << *docker
+ecs-dbsnapshot:
+  << *docker
+ecs-stg:
+  admin_password: 
+    ssm: /uc3/mrt/stg/ldap/admin-password
+  host:
+    ssm: /uc3/mrt/stg/ldap/host
+  _fixed:
+    << *fixed
+default:
+  << *docker 

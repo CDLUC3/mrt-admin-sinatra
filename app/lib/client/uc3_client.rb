@@ -122,7 +122,12 @@ module UC3
       ssm = Aws::SSM::Client.new(
         region: UC3::UC3Client.region
       )
-      map.each do |key, value|
+      map.clone.each do |key, value|
+        if key == '_fixed'
+          map[key].each do |k, v|
+            map[k] = v
+          end
+        end
         if value.key?('ssm') && !ssm.nil?
           begin
             resp = ssm.get_parameter(name: value['ssm'], with_decryption: true)
@@ -143,6 +148,7 @@ module UC3
           map[key] = map[key].to_f
         end
       end
+      puts map
       map
     end
 
