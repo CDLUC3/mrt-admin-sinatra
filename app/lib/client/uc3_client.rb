@@ -148,7 +148,6 @@ module UC3
           map[key] = map[key].to_f
         end
       end
-      puts map
       map
     end
 
