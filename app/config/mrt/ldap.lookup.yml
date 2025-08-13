@@ -23,7 +23,7 @@ ecs-stg:
   admin_password: 
     ssm: /uc3/mrt/stg/ldap/admin-password
   host:
-    ssm: /uc3/mrt/stg/ldap/host
+    env: HOST_LDAP
   _fixed:
     <<: *fixed
 default:
