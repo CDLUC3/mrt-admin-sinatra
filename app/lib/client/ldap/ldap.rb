@@ -17,7 +17,10 @@ module UC3Ldap
 
       key = ENV.fetch('configkey', 'default')
       tmap = YAML.safe_load_file('app/config/mrt/ldap.lookup.yml', aliases: true).fetch(key, {})
-      @ldapconf = JSON.parse(UC3::UC3Client.lookup_map(tmap).to_json, symbolize_names: true)
+      puts tmap
+      tmap2 = UC3::UC3Client.lookup_map(tmap)
+      puts tmap2
+      @ldapconf = JSON.parse(tmap2.to_json, symbolize_names: true)
       puts @ldapconf
       @ldap_connect = {
         host: @ldapconf.fetch(:host, ''),
