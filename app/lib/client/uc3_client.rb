@@ -113,15 +113,16 @@ module UC3
       JSON.parse(config.to_json, symbolize_names: true)
     end
 
-    def self.lookup_map_by_filename(filename)
+    def self.lookup_map_by_filename(filename, key: nil, symbolize_names: false)
       map = YAML.safe_load_file(filename, aliases: true)
-      lookup_map(map)
+      lookup_map(map, key: key, symbolize_names: symbolize_names)
     end
 
-    def self.lookup_map(map)
+    def self.lookup_map(map, key: nil, symbolize_names: false)
       ssm = Aws::SSM::Client.new(
         region: UC3::UC3Client.region
       )
+      map = key.nil? ? map : map.fetch(key, {})
       map.clone.each do |key, value|
         if key == '_fixed'
           map[key].each do |k, v|
@@ -147,6 +148,9 @@ module UC3
         when 'float'
           map[key] = map[key].to_f
         end
+      end
+      if symbolize_names
+        map = JSON.parse(map.to_json, symbolize_names: true)
       end
       map
     end

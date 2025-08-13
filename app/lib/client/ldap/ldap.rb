@@ -15,10 +15,12 @@ module UC3Ldap
       @collection_arks = {}
       @roles = {}
 
-      key = ENV.fetch('configkey', 'default')
-      tmap = YAML.safe_load_file('app/config/mrt/ldap.lookup.yml', aliases: true).fetch(key, {})
-      tmap2 = UC3::UC3Client.lookup_map(tmap)
-      @ldapconf = JSON.parse(tmap2.to_json, symbolize_names: true)
+      @ldapconf = UC3::UC3Client.lookup_map_by_filename(
+        'app/config/mrt/ldap.lookup.yml',
+        key: ENV.fetch('configkey', 'default'),
+        symbolize_names: true
+      )
+      puts "LDAP HOST: #{@ldapconf.fetch(:host, '')}"
       @ldap_connect = {
         host: @ldapconf.fetch(:host, ''),
         port: @ldapconf.fetch(:port, '1389').to_i,

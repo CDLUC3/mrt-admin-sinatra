@@ -28,10 +28,10 @@ module UC3Query
         puts "(Query1) #{e.class}: #{e} in #{file}"
       end
 
-      key = ENV.fetch('configkey', 'default')
-      tmap = YAML.safe_load_file('app/config/mrt/query.lookup.yml', aliases: true)
-      tmap = tmap.fetch(key, {})
-      map = UC3::UC3Client.lookup_map(tmap)
+      map = UC3::UC3Client.lookup_map_by_filename(
+        'app/config/mrt/query.lookup.yml',
+        key:ENV.fetch('configkey', 'default')
+      )
       config = UC3::UC3Client.resolve_lookup('app/config/mrt/query.template.yml', map)
       @dbconf = config.fetch('dbconf', {})
       @dbconf[:connect_timeout] = 10

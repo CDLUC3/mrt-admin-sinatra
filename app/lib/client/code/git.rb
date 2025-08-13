@@ -17,10 +17,10 @@ module UC3Code
   class GithubClient < UC3::UC3Client
     NOACT = 'javascript:alert("Not yet implemented");'
     def initialize
-      key = ENV.fetch('configkey', 'default')
-      tmap = YAML.safe_load_file('app/config/mrt/source.lookup.yml', aliases: true)
-      tmap = tmap.fetch(key, {})
-      map = UC3::UC3Client.lookup_map(tmap)
+      map = UC3::UC3Client.lookup_map_by_filename(
+        'app/config/mrt/source.lookup.yml', 
+        key: ENV.fetch('configkey', 'default')
+      )
 
       token = map.fetch('token', '')
       opts = {}
