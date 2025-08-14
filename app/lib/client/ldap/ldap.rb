@@ -137,7 +137,7 @@ module UC3Ldap
           if @users.key?(u)
             user = @users[u]
           else
-            put "LDAP: Not found: [#{u}]"
+            puts "LDAP: Not found: [#{u}]"
             user = LdapUser.new(nil, u)
             @users[u] = user
           end
