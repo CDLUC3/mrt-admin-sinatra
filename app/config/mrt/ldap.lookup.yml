@@ -6,11 +6,11 @@ docker: &docker
   port:
     val: 1389
   _fixed: &fixed
-    admin_user: cn=Directory Manager
-    group_base: ou=mrt-classes,ou=uc3,dc=cdlib,dc=org
-    user_base: ou=People,ou=uc3,dc=cdlib,dc=org
-    inst_base: o=institutions,ou=uc3,dc=cdlib,dc=org
-    ark_minter_url: http://noid.cdlib.org/nd/noidu_p9
+    admin_user: "cn=Directory Manager"
+    group_base: "ou=mrt-classes,ou=uc3,dc=cdlib,dc=org"
+    user_base: "ou=People,ou=uc3,dc=cdlib,dc=org"
+    inst_base: "o=institutions,ou=uc3,dc=cdlib,dc=org"
+    ark_minter_url: "http://noid.cdlib.org/nd/noidu_p9"
     guest_password: guest
     guest_user: anonymous
     connect_timeout: 60
@@ -27,6 +27,8 @@ ecs-stg:
     env: HOST_LDAP
   port: 
     val: 1636
+  encryption:
+    val: simple_tls
   _fixed:
     <<: *fixed
 ecs-prd:
@@ -36,6 +38,8 @@ ecs-prd:
     env: HOST_LDAP
   port: 
     val: 1636
+  encryption: 
+    val: simple_tls
   _fixed:
     <<: *fixed
 default:
