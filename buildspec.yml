@@ -57,7 +57,7 @@ phases:
       if [[ "$ADMIN_MODE" == "build" ]]
       then
         CA_CERT_NAME=UC3-Self-Signed-CA.crt
-        aws ssm get-parameter --name /uc3/default/uc3_ca/$CA_CERT_NAME --output text --query 'Parameter.Value' > src-colladmin/$CA_CERT_NAME
+        aws ssm get-parameter --name /uc3/default/uc3_ca/$CA_CERT_NAME --output text --query 'Parameter.Value' > $CA_CERT_NAME
 
         docker build --quiet --push \
           --build-arg ECR_REGISTRY=${ECR_REGISTRY} \
