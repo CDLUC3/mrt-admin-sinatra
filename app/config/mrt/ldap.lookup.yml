@@ -3,10 +3,11 @@ docker: &docker
     val: password
   host:
     val: ldap
+  port:
+    val: 1389
   _fixed: &fixed
     admin_user: cn=Directory Manager
     group_base: ou=mrt-classes,ou=uc3,dc=cdlib,dc=org
-    port: 1389
     user_base: ou=People,ou=uc3,dc=cdlib,dc=org
     inst_base: o=institutions,ou=uc3,dc=cdlib,dc=org
     ark_minter_url: http://noid.cdlib.org/nd/noidu_p9
@@ -24,6 +25,17 @@ ecs-stg:
     ssm: /uc3/mrt/stg/ldap/admin-password
   host:
     env: HOST_LDAP
+  port: 
+    val: 1636
+  _fixed:
+    <<: *fixed
+ecs-prd:
+  admin_password: 
+    ssm: /uc3/mrt/prd/ldap/admin-password
+  host:
+    env: HOST_LDAP
+  port: 
+    val: 1636
   _fixed:
     <<: *fixed
 default:

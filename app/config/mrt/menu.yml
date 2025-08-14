@@ -854,7 +854,7 @@ items:
       breadcrumb: true
       items:
       - title: Access State
-        route: /json/saccessore/state
+        route: /json/access/state
       - title: Access Build Tag
         route: /json/access/tag
       - title: Access Nodes

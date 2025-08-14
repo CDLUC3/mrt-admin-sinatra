@@ -14,27 +14,27 @@ module Sinatra
     end
 
     def ingest_host
-      "http://#{ENV.fetch('SVC_INGEST', 'ingest:8080')}"
+      "http://#{ENV.fetch('SVC_INGEST', 'ingest:8080/ingest')}"
     end
 
     def store_host
-      "http://#{ENV.fetch('SVC_STORE', 'store:8080')}"
+      "http://#{ENV.fetch('SVC_STORE', 'store:8080/store')}"
     end
 
     def access_host
-      "http://#{ENV.fetch('SVC_ACCESS', 'access:8080')}"
+      "http://#{ENV.fetch('SVC_ACCESS', 'access:8080/store')}"
     end
 
     def audit_host
-      "http://#{ENV.fetch('SVC_AUDIT', 'audit:8080')}"
+      "http://#{ENV.fetch('SVC_AUDIT', 'audit:8080/audit')}"
     end
 
     def replic_host
-      "http://#{ENV.fetch('SVC_REPLIC', 'replic:8080')}"
+      "http://#{ENV.fetch('SVC_REPLIC', 'replic:8080/replic')}"
     end
 
     def inventory_host
-      "http://#{ENV.fetch('SVC_INVENTORY', 'inventory:8080')}"
+      "http://#{ENV.fetch('SVC_INVENTORY', 'inventory:8080/inventory')}"
     end
 
     def self.registered(app)
@@ -60,6 +60,14 @@ module Sinatra
 
       app.get '/json/store/tag' do
         get_url("#{store_host}/static/build.content.txt")
+      end
+
+      app.get '/json/access/state' do
+        get_url("#{access_host}/state?t=json")
+      end
+
+      app.get '/json/access/tag' do
+        get_url("#{access_host}/static/build.content.txt")
       end
 
       app.get '/json/store/nodes' do
