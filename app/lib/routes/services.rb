@@ -47,95 +47,95 @@ module Sinatra
       end
 
       app.get '/json/ingest/state' do
-        get_url("#{ingest_host}/ingest/state?t=json")
+        get_url("#{ingest_host}/state?t=json")
       end
 
       app.get '/json/ingest/tag' do
-        get_url("#{ingest_host}/ingest/static/build.content.txt")
+        get_url("#{ingest_host}/static/build.content.txt")
       end
 
       app.get '/json/store/state' do
-        get_url("#{store_host}/store/state?t=json")
+        get_url("#{store_host}/state?t=json")
       end
 
       app.get '/json/store/tag' do
-        get_url("#{store_host}/store/static/build.content.txt")
+        get_url("#{store_host}/static/build.content.txt")
       end
 
       app.get '/json/store/nodes' do
-        get_url("#{store_host}/store/jsonstatus")
+        get_url("#{store_host}/jsonstatus")
       end
 
       app.get '/json/store/hostname' do
-        get_url("#{store_host}/store/hostname")
+        get_url("#{store_host}/hostname")
       end
 
       app.get '/json/inventory/state' do
-        get_url("#{inventory_host}/inventory/state?t=json")
+        get_url("#{inventory_host}/state?t=json")
       end
 
       app.post '/json/inventory/start' do
-        post_url("#{inventory_host}/inventory/service/start?t=json")
+        post_url("#{inventory_host}/service/start?t=json")
       end
 
       app.post '/json/inventory/stop' do
-        post_url("#{inventory_host}/inventory/service/stop?t=json")
+        post_url("#{inventory_host}/service/stop?t=json")
       end
 
       app.get '/json/inventory/tag' do
-        get_url("#{inventory_host}/inventory/static/build.content.txt")
+        get_url("#{inventory_host}/static/build.content.txt")
       end
 
       app.get '/json/audit/state' do
-        get_url("#{audit_host}/audit/state?t=json")
+        get_url("#{audit_host}/state?t=json")
       end
 
       app.get '/json/audit/tag' do
-        get_url("#{audit_host}/audit/static/build.content.txt")
+        get_url("#{audit_host}/static/build.content.txt")
       end
 
       app.get '/json/audit/nodes' do
-        get_url("#{audit_host}/audit/jsonstatus")
+        get_url("#{audit_host}/jsonstatus")
       end
 
       app.post '/json/audit/start' do
-        post_url("#{audit_host}/audit/service/start?t=json")
+        post_url("#{audit_host}/service/start?t=json")
       end
 
       app.post '/json/audit/stop' do
-        post_url("#{audit_host}/audit/service/stop?t=json")
+        post_url("#{audit_host}/service/stop?t=json")
       end
 
       app.get '/json/replic/state' do
-        get_url("#{replic_host}/replic/state?t=json")
+        get_url("#{replic_host}/state?t=json")
       end
 
       app.get '/json/replic/tag' do
-        get_url("#{replic_host}/replic/static/build.content.txt")
+        get_url("#{replic_host}/static/build.content.txt")
       end
 
       app.post '/json/replic/start' do
-        post_url("#{replic_host}/replic/service/start?t=json")
+        post_url("#{replic_host}/service/start?t=json")
       end
 
       app.post '/json/replic/pause' do
-        post_url("#{replic_host}/replic/service/pause?t=json")
+        post_url("#{replic_host}/service/pause?t=json")
       end
 
       app.get '/json/replic/nodes' do
-        get_url("#{replic_host}/replic/jsonstatus")
+        get_url("#{replic_host}/jsonstatus")
       end
 
       app.get '/json/access/state' do
-        get_url("#{access_host}/access/state?t=json")
+        get_url("#{access_host}/state?t=json")
       end
 
       app.get '/json/access/tag' do
-        get_url("#{access_host}/access/static/build.content.txt")
+        get_url("#{access_host}/static/build.content.txt")
       end
 
       app.get '/json/access/nodes' do
-        get_url("#{access_host}/access/jsonstatus")
+        get_url("#{access_host}/jsonstatus")
       end
 
       app.post '/stack-init' do
@@ -146,9 +146,9 @@ module Sinatra
     def stack_init
       UC3::FileSystemClient.client.cleanup_ingest_folders
       resp = []
-      resp << ::JSON.parse(post_url("#{inventory_host}/inventory/service/start?t=json"))
-      resp << ::JSON.parse(post_url("#{replic_host}/replic/service/start?t=json"))
-      resp << ::JSON.parse(post_url("#{audit_host}/audit/service/start?t=json"))
+      resp << ::JSON.parse(post_url("#{inventory_host}/service/start?t=json"))
+      resp << ::JSON.parse(post_url("#{replic_host}/service/start?t=json"))
+      resp << ::JSON.parse(post_url("#{audit_host}/service/start?t=json"))
       resp.to_json
     end
 
