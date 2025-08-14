@@ -74,5 +74,20 @@ ecs-stg:
     val: 600
   write_timeout:
     val: 600
+ecs-prd:
+  host: 
+    ssm: /uc3/mrt/prd/billing/db-host
+  database: 
+    ssm: /uc3/mrt/prd/billing/db-name
+  username: 
+    ssm: /uc3/mrt/prd/billing/readwrite/db-user
+  password: 
+    ssm: /uc3/mrt/prd/billing/readwrite/db-password
+  base_url:
+    env: base_url
+  read_timeout:
+    val: 600
+  write_timeout:
+    val: 600
 default:
   <<: *docker 
