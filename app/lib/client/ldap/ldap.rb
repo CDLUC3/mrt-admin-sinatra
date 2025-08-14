@@ -128,7 +128,7 @@ module UC3Ldap
         else
           coll = LdapCollection.new(nil, role.coll)
           @collections[role.coll] = coll
-          LambdaBase.log("Not found: [#{role.coll}]")
+          puts "LDAP: Not found: [#{role.coll}]"
         end
         role.set_collection(coll)
 
@@ -137,7 +137,7 @@ module UC3Ldap
           if @users.key?(u)
             user = @users[u]
           else
-            LambdaBase.log("Not found: [#{u}]")
+            put "LDAP: Not found: [#{u}]"
             user = LdapUser.new(nil, u)
             @users[u] = user
           end
@@ -336,7 +336,7 @@ module UC3Ldap
       entry.to_s.split(',').each do |s|
         return s[part.length, s.length] if s.start_with?(part)
       end
-      LambdaBase.log("Part not found in [#{entry}], Part[#{part}]")
+      puts "LDAP: Part not found in [#{entry}], Part[#{part}]"
       defval
     end
   end
@@ -368,7 +368,7 @@ module UC3Ldap
       entry.to_s.split(',').each do |s|
         return s[part.length, s.length] if s.start_with?(part)
       end
-      LambdaBase.log("Part not found in [#{entry}], Part[#{part}]")
+      puts "LDAP: Part not found in [#{entry}], Part[#{part}]"
       defval
     end
 
