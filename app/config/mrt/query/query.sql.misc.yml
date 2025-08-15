@@ -11,5 +11,5 @@ queries:
   /queries/misc/admin-types:
     sql: |
       select aggregate_role, count(*) 
-      from inv_objects 
+      from inv.inv_objects 
       group by aggregate_role
