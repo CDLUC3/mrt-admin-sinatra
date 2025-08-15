@@ -8,3 +8,8 @@ queries:
       select id, ark, erc_what
       from inv.inv_objects
       where object_type='MRT-system'
+  /queries/misc/admin-types:
+    sql: |
+      select aggregate_role, count(*) 
+      from inv_objects 
+      group by aggregate_role

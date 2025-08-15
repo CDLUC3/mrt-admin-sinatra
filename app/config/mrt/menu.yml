@@ -859,6 +859,15 @@ items:
         route: /json/access/tag
       - title: Access Nodes
         route: /json/access/nodes
+    - title: Admin Tool
+      path: admintool
+      route: /json/admintool
+      breadcrumb: true
+      items:
+      - title: Redeploy Admin Tool
+        route: /infra/ecs/redeploy/admintool
+        confmsg: This will re-deploy the Admin Tool service in ECS.
+        method: post
     - title: Stack init 
       route: /stack-init
       confmsg: This will signal the Admin tool to perform any stack initialization functions required by a fresh test environment.
@@ -913,3 +922,5 @@ items:
     route: /test/routes/links
   - title: Admin Objects
     route: /queries/misc/admin
+  - title: Admin Object Types
+    route: /queries/misc/admin-types
