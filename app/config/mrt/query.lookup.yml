@@ -14,6 +14,8 @@ docker: &docker
     val: 120
   write_timeout:
     val: 120
+ecs-ephemeral:
+  <<: *docker
 dockerlocal:
   host: 
     val: 127.0.0.1

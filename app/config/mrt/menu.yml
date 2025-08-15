@@ -911,3 +911,5 @@ items:
     route: /test/consistency/links
   - title: List All routes
     route: /test/routes/links
+  - title: Admin Objects
+    route: /queries/misc/admin

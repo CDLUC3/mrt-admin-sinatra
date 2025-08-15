@@ -3,4 +3,8 @@ queries:
     sql: |
       select
         now() as current
- 
+  /queries/misc/admin:
+    sql: |
+      select id, ark, erc_what
+      from inv.inv_objects
+      where object_type='MRT-system'
