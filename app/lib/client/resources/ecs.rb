@@ -100,6 +100,25 @@ module UC3Resources
       ).to_json
     end
 
+    def run_service_task(service, label)
+      return unless enabled
+
+      tasks = @client.list_tasks(
+        cluster: cluster_name,
+        service_name: service
+      ).task_arns
+
+      return "NA" if tasks.empty?
+
+      @client.execute_command(
+        cluster: cluster_name,
+        task: tasks[0],
+        container: service,
+        command: 'list-consistency-endpoints.sh'
+      ).to_json
+
+    end
+
     def scale_up_service(service)
       return unless enabled
 

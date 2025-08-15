@@ -61,6 +61,11 @@ module Sinatra
         redirect '/infra/ecs'
       end
 
+      app.post '/infra/ecs/run/*/label' do |service,label|
+        content_type :json
+        UC3Resources::ServicesClient.new.run_service_task(service, label)
+      end
+
       app.post '/infra/ecs/scale-up/*' do |service|
         UC3Resources::ServicesClient.new.scale_up_service(service)
         redirect '/infra/ecs'
