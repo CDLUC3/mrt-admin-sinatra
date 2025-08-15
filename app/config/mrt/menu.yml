@@ -802,6 +802,10 @@ items:
         route: /json/inventory/stop
         confmsg: This will signal the Inventory service to stop processing items in the database queue.
         method: post
+      - title: Inventory Admin Init
+        route: /json/inventory/admin-init
+        confmsg: This will signal the Inventory service to initialize the creation of Admin Objects.
+        method: post
       - title: Redeploy Inventory
         route: /infra/ecs/redeploy/inventory
         confmsg: This will re-deploy the Inventory service in ECS.

@@ -90,6 +90,10 @@ module Sinatra
         post_url("#{inventory_host}/service/stop?t=json")
       end
 
+      app.post '/json/inventory/admin-init' do
+        post_url("#{inventory_host}/service/admin/init")
+      end
+
       app.get '/json/inventory/tag' do
         get_url("#{inventory_host}/static/build.content.txt")
       end
