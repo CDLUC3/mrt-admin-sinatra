@@ -18,7 +18,7 @@ module UC3Code
     NOACT = 'javascript:alert("Not yet implemented");'
     def initialize
       map = UC3::UC3Client.lookup_map_by_filename(
-        'app/config/mrt/source.lookup.yml', 
+        'app/config/mrt/source.lookup.yml',
         key: ENV.fetch('configkey', 'default')
       )
 

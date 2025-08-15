@@ -100,23 +100,26 @@ module UC3Resources
       ).to_json
     end
 
-    def run_service_task(service, label)
+    def run_service_task(service, _label)
       return unless enabled
+
+      puts "ECS RUN: #{service} - #{label}"
 
       tasks = @client.list_tasks(
         cluster: cluster_name,
         service_name: service
       ).task_arns
 
-      return "NA" if tasks.empty?
+      puts tasks
+
+      return 'NA' if tasks.empty?
 
       @client.execute_command(
         cluster: cluster_name,
         task: tasks[0],
         container: service,
-        command: 'list-consistency-endpoints.sh'
+        command: '/list-consistency-endpoints.sh'
       ).to_json
-
     end
 
     def scale_up_service(service)

@@ -30,7 +30,7 @@ module UC3Query
 
       map = UC3::UC3Client.lookup_map_by_filename(
         'app/config/mrt/query.lookup.yml',
-        key:ENV.fetch('configkey', 'default')
+        key: ENV.fetch('configkey', 'default')
       )
       config = UC3::UC3Client.resolve_lookup('app/config/mrt/query.template.yml', map)
       @dbconf = config.fetch('dbconf', {})

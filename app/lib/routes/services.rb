@@ -10,7 +10,7 @@ module Sinatra
   module UC3ServicesRoutes
     def ui_host
       host = ENV.fetch('SVC_UI', 'ui:8086')
-      host =~ /^http/ ? host : "http://#{host}"  
+      host =~ /^http/ ? host : "http://#{host}"
     end
 
     def ingest_host

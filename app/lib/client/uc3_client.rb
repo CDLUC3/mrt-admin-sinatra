@@ -122,7 +122,7 @@ module UC3
       ssm = Aws::SSM::Client.new(
         region: UC3::UC3Client.region
       )
-      map = key.nil? ? map : map.fetch(key, {})
+      map = map.fetch(key, {}) unless key.nil?
       map.clone.each do |key, value|
         if key == '_fixed'
           map[key].each do |k, v|
@@ -149,9 +149,7 @@ module UC3
           map[key] = map[key].to_f
         end
       end
-      if symbolize_names
-        map = JSON.parse(map.to_json, symbolize_names: true)
-      end
+      map = JSON.parse(map.to_json, symbolize_names: true) if symbolize_names
       map
     end
 
