@@ -125,7 +125,8 @@ module UC3Resources
         cluster: cluster_name,
         task: tasks[0],
         container: service,
-        command: '/list-consistency-endpoints.sh'
+        command: '/list-consistency-endpoints.sh',
+        interactive: false
       ).to_json
     end
 
