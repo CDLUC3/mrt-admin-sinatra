@@ -126,7 +126,7 @@ module UC3Resources
         task: tasks[0],
         container: service,
         command: '/list-consistency-endpoints.sh',
-        interactive: false
+        interactive: true
       ).to_json
     end
 
