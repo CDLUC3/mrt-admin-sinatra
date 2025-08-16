@@ -29,6 +29,11 @@ module UC3Resources
         @client.describe_services(cluster: cluster_name, services: [arn]).services.each do |svc|
           digest = nil
           image = nil
+          pendcount = @client.list_service_deployments(
+            cluster: cluster_name,
+            service: arn,
+            status: %w[PENDING IN_PROGRESS]
+          ).service_deployments.length
           @client.list_service_deployments(
             cluster: cluster_name,
             service: arn,
@@ -50,6 +55,7 @@ module UC3Resources
           image_tag = image.split(':')[1]
           @services[svc.service_name] = {
             name: svc.service_name,
+            deploying: pendcount.positive?,
             desired_count: svc.desired_count,
             running_count: svc.running_count,
             pending_count: svc.pending_count,
@@ -73,6 +79,7 @@ module UC3Resources
       table = AdminUI::FilterTable.new(
         columns: [
           AdminUI::Column.new(:name, header: 'Name'),
+          AdminUI::Column.new(:deploying, header: 'Deploying'),
           AdminUI::Column.new(:desired_count, header: 'Desired'),
           AdminUI::Column.new(:running_count, header: 'Running'),
           AdminUI::Column.new(:pending_count, header: 'Pending'),
@@ -100,7 +107,7 @@ module UC3Resources
       ).to_json
     end
 
-    def run_service_task(service, _label)
+    def run_service_task(service, label)
       return unless enabled
 
       puts "ECS RUN: #{service} - #{label}"
