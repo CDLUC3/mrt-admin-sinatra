@@ -127,7 +127,7 @@ module UC3Resources
 
       @client.run_task(
         cluster: cluster_name,
-        task_definition: td[0],
+        task_definition: td,
         launch_type: 'FARGATE',
         network_configuration: network_configuration(service_arn)
       ).to_json
