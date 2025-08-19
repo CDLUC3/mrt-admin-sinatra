@@ -118,7 +118,7 @@ module UC3Resources
     def run_service_task(service, label)
       return unless enabled
 
-      tdarr = @client.list_task_definitions(family_prefix: label).task_definition_arns
+      tdarr = @client.list_task_definitions(family_prefix: "mrt-task-#{ENV['MERRIT_ECS']}-#{label}").task_definition_arns
       return if tdarr.nil?
       return if tdarr.empty?
 

@@ -881,8 +881,24 @@ items:
         route: /infra/ecs/redeploy/merrittdev
         confmsg: This will re-deploy the Merritt Dev service in ECS.
         method: post
+      - title: Run Consistency Checks
+        route: /infra/ecs/run/merrittdev/runConsistencyEndpoints
+        confmsg: This will run a job in the merrittdev container
+        method: post
       - title: Run Unit Tests
-        route: /infra/ecs/run/merrittdev/taskConsistency
+        route: /infra/ecs/run/merrittdev/runUnitTestEndpoints
+        confmsg: This will run a job in the merrittdev container
+        method: post
+      - title: Stop Stack
+        route: /infra/ecs/run/merrittdev/stopStack
+        confmsg: This will run a job in the merrittdev container
+        method: post
+      - title: Redeploy Stack
+        route: /infra/ecs/run/merrittdev/redeployStack
+        confmsg: This will run a job in the merrittdev container
+        method: post
+      - title: Redeploy ZooKeeper
+        route: /infra/ecs/run/merrittdev/redeployZk
         confmsg: This will run a job in the merrittdev container
         method: post
     - title: Stack init 
