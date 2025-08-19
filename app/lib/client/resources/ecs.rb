@@ -107,8 +107,8 @@ module UC3Resources
       ).to_json
     end
 
-    def network_configuration(service)
-      service = @client.describe_services(cluster: cluster_name, services: [@service]).services
+    def network_configuration(service_arn)
+      service = @client.describe_services(cluster: cluster_name, services: [service_arn]).services
       return {} if service.nil? || service.empty?
       deployment = service[0].deployments
       return {} if deployment.nil? || deployment.empty?
