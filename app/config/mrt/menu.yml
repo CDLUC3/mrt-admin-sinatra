@@ -881,8 +881,8 @@ items:
         route: /infra/ecs/redeploy/merrittdev
         confmsg: This will re-deploy the Merritt Dev service in ECS.
         method: post
-      - title: Run List Tests
-        route: /infra/ecs/run/merrittdev/list
+      - title: Run Unit Tests
+        route: /infra/ecs/run/merrittdev/taskConsistency
         confmsg: This will run a job in the merrittdev container
         method: post
     - title: Stack init 

@@ -107,26 +107,29 @@ module UC3Resources
       ).to_json
     end
 
+    def network_configuration(service)
+      service = @client.describe_services(cluster: cluster, services: [@service]).services
+      return {} if service.nil? || service.empty?
+      deployment = service[0].deployments
+      return {} if deployment.nil? || deployment.empty?
+      return deployment.network_configuration
+    end
+
     def run_service_task(service, label)
       return unless enabled
 
-      puts "ECS RUN: #{service} - #{label}"
+      tdarr = @client.list_task_definitions(family_prefix: label).task_definition_arns;
+      return if td.nil?
+      return if td.empty?
 
-      tasks = @client.list_tasks(
+      td = tdarr[0]
+      service_arn = "#{td.split(':')[0..4].join(':')}:service/#{cluster_name}/#{service}"
+
+      @client.run_task(
         cluster: cluster_name,
-        service_name: service
-      ).task_arns
-
-      puts tasks
-
-      return 'NA' if tasks.empty?
-
-      @client.execute_command(
-        cluster: cluster_name,
-        task: tasks[0],
-        container: service,
-        command: '/list-consistency-endpoints.sh',
-        interactive: true
+        task_definition: td[0],
+        launch_type: 'FARGATE',
+        network_configuration: network_configuration(service_arn)
       ).to_json
     end
 
