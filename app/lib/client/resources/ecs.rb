@@ -108,7 +108,7 @@ module UC3Resources
     end
 
     def network_configuration(service)
-      service = @client.describe_services(cluster: cluster, services: [@service]).services
+      service = @client.describe_services(cluster: cluster_name, services: [@service]).services
       return {} if service.nil? || service.empty?
       deployment = service[0].deployments
       return {} if deployment.nil? || deployment.empty?
@@ -118,7 +118,7 @@ module UC3Resources
     def run_service_task(service, label)
       return unless enabled
 
-      tdarr = @client.list_task_definitions(family_prefix: label).task_definition_arns;
+      tdarr = @client.list_task_definitions(family_prefix: label).task_definition_arns
       return if tdarr.nil?
       return if tdarr.empty?
 
