@@ -112,9 +112,7 @@ module UC3Resources
       return {} if service.nil? || service.empty?
       deployment = service[0].deployments
       return {} if deployment.nil? || deployment.empty?
-      netconf = deployment.network_configuration
-      return {} if netconf.nil? || netconf.empty?
-      netconf[0]
+      deployment[0].network_configuration
     end
 
     def run_service_task(service, label)
