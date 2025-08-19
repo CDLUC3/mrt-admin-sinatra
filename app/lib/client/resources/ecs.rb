@@ -118,7 +118,11 @@ module UC3Resources
     def run_service_task(service, label)
       return unless enabled
 
-      tdarr = @client.list_task_definitions(family_prefix: "mrt-task-#{ENV['MERRIT_ECS']}-#{label}").task_definition_arns
+      prefix = "mrt-task-#{ENV['MERRIT_ECS']}-#{label}"
+      puts "Searching for task definitions with prefix: #{prefix}"
+
+      tdarr = @client.list_task_definitions(family_prefix: prefix).task_definition_arns
+      puts "Found task definitions: #{tdarr.join(', ')}"
       return if tdarr.nil?
       return if tdarr.empty?
 
