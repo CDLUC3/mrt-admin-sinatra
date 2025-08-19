@@ -119,8 +119,8 @@ module UC3Resources
       return unless enabled
 
       tdarr = @client.list_task_definitions(family_prefix: label).task_definition_arns;
-      return if td.nil?
-      return if td.empty?
+      return if tdarr.nil?
+      return if tdarr.empty?
 
       td = tdarr[0]
       service_arn = "#{td.split(':')[0..4].join(':')}:service/#{cluster_name}/#{service}"
