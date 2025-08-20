@@ -702,6 +702,10 @@ items:
   - title: Storage Scans
     route: /ops/storage/scans
     tbd: true
+  - title: Cloudwatch Logs
+    route: /ops/cloudwatch
+  - title: Opensearch Logs
+    route: /ops/opensearch
 - path: Internals
   title: Internals
   items: 

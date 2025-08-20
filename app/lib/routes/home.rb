@@ -94,6 +94,14 @@ module Sinatra
         content_type :text
         "User-agent: *\nDisallow: /"
       end
+
+      app.get '/ops/cloudwatch'
+        redirect ENV.fetch('CLOUDWATCH_URL', '/')
+      end
+
+      app.get '/ops/opensearch'
+        redirect ENV.fetch('OPENSEARCH_URL', '/')
+      end
     end
   end
   register UC3HomeRoutes

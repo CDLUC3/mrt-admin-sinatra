@@ -65,3 +65,19 @@ td.nodedata {
   min-width: 300px;
   white-space: pre;
 }
+
+span.env {
+  font-weight: bold;
+}
+
+span.env-ecs-prd {
+  color: red;
+}
+
+span.env-ecs-stg {
+  color: green;
+}
+
+span.env-ecs-dev {
+  color: blue;
+}
