@@ -20,7 +20,7 @@
     <div style="clear:both"></div>
     <h1><%= context.title %></h1>
     <div class="breadcrumb">
-      <span><% ENV.fetch('MERRITT_ECS', '') %></span>
+      <span><%= ENV.fetch('MERRITT_ECS', '') %></span>
       <% context.breadcrumbs.each do |bc| %>
       <span>/ <a href="<%= bc[:url] %>"><%= bc[:title] %></a></span>
       <% end %>
