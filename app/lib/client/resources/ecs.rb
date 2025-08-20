@@ -110,15 +110,17 @@ module UC3Resources
     def network_configuration(service_arn)
       service = @client.describe_services(cluster: cluster_name, services: [service_arn]).services
       return {} if service.nil? || service.empty?
+
       deployment = service[0].deployments
       return {} if deployment.nil? || deployment.empty?
+
       deployment[0].network_configuration
     end
 
     def run_service_task(service, label)
       return unless enabled
 
-      prefix = "mrt-task-#{ENV['MERRITT_ECS']}-#{label}"
+      prefix = "mrt-task-#{ENV.fetch('MERRITT_ECS', '')}-#{label}"
 
       tdarr = @client.list_task_definitions(family_prefix: prefix).task_definition_arns
       return "No Task Definition found for prefix #{prefix}" if tdarr.nil? || tdarr.empty?
