@@ -31,6 +31,8 @@ items:
       admindeploy: lambda
     - title: Help
       route: /help
+  - title: Merritt Troubleshooting
+    route: https://github.com/CDLUC3/mrt-doc-private/blob/main/docs/system-recovery/README.md
 - path: source
   title: Source
   route: /source
