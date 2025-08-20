@@ -95,11 +95,11 @@ module Sinatra
         "User-agent: *\nDisallow: /"
       end
 
-      app.get '/ops/cloudwatch'
+      app.get '/ops/cloudwatch' do
         redirect ENV.fetch('CLOUDWATCH_URL', '/')
       end
 
-      app.get '/ops/opensearch'
+      app.get '/ops/opensearch' do
         redirect ENV.fetch('OPENSEARCH_URL', '/')
       end
     end
