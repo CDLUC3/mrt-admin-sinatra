@@ -887,6 +887,10 @@ items:
         route: /infra/ecs/run/merrittdev/runUnitTestEndpoints
         confmsg: This will run a job in the merrittdev container
         method: post
+      - title: Start Stack
+        route: /infra/ecs/run/merrittdev/startStack
+        confmsg: This will run a job in the merrittdev container
+        method: post
       - title: Stop Stack
         route: /infra/ecs/run/merrittdev/stopStack
         confmsg: This will run a job in the merrittdev container

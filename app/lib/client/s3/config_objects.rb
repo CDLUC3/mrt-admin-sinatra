@@ -25,7 +25,9 @@ module UC3S3
         opt[:region] = ENV.fetch('S3REGION', 'us-east-1')
       end
 
+      puts "Before create client"
       @s3_client = Aws::S3::Client.new(opt)
+      puts "After create client #{@s3_client.inspect}"
       @prefix = ENV.fetch('S3CONFIG_PREFIX', 'uc3/mrt/mrt-ingest-profiles/')
       @bucket = ENV.fetch('S3CONFIG_BUCKET', 'mrt-config')
       opts = {
