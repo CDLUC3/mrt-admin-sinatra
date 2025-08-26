@@ -13,15 +13,17 @@ module UC3S3
 
     def initialize
       opt = {}
-      unless ENV.fetch('S3REGION', '').empty?
+      opt[:region] = 'us-west-2'
+      unless ENV.fetch('S3ENDPOINT', '').empty?
         opt[:endpoint] = ENV.fetch('S3ENDPOINT', '')
         opt[:credentials] = Aws::Credentials.new(
           ENV.fetch('S3ACCESSKEY', ''),
           ENV.fetch('S3SECRETKEY', '')
         )
         opt[:force_path_style] = true unless ENV.fetch('S3ENDPOINT', '').empty?
+        # minio defaults to us-east-1
+        opt[:region] = ENV.fetch('S3REGION', 'us-east-1')
       end
-      opt[:region] = 'us-west-2'
 
       @s3_client = Aws::S3::Client.new(opt)
       @prefix = ENV.fetch('S3CONFIG_PREFIX', 'uc3/mrt/mrt-ingest-profiles/')
