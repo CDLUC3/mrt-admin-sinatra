@@ -13,18 +13,16 @@ module UC3S3
 
     def initialize
       opt = {}
-      if ENV.fetch('S3REGION', '').empty?
-        opt[:region] = 'us-west-2'
-      else
-        opt[:endpoint] = ENV.fetch('S3ENDPOINT', '') 
+      unless ENV.fetch('S3REGION', '').empty?
+        opt[:endpoint] = ENV.fetch('S3ENDPOINT', '')
         opt[:credentials] = Aws::Credentials.new(
           ENV.fetch('S3ACCESSKEY', ''),
           ENV.fetch('S3SECRETKEY', '')
         )
         opt[:force_path_style] = true unless ENV.fetch('S3ENDPOINT', '').empty?
-        opt[:region] = 'us-west-2'
       end
-  
+      opt[:region] = 'us-west-2'
+
       @s3_client = Aws::S3::Client.new(opt)
       @prefix = ENV.fetch('S3CONFIG_PREFIX', 'uc3/mrt/mrt-ingest-profiles/')
       @bucket = ENV.fetch('S3CONFIG_BUCKET', 'mrt-config')
@@ -34,13 +32,13 @@ module UC3S3
       }
       token = :first
       @config_objects = []
-      while !token.nil? do
+      until token.nil?
         resp = @s3_client.list_objects_v2(opts)
         resp.contents.each do |s3obj|
-          @config_objects << { 
+          @config_objects << {
             key: {
-              value: s3obj.key[@prefix.length..-1],
-              href: "/ops/collections/profiles/#{s3obj.key[@prefix.length..-1]}"
+              value: s3obj.key[@prefix.length..],
+              href: "/ops/collections/profiles/#{s3obj.key[@prefix.length..]}"
             }
           }
         end
@@ -73,7 +71,7 @@ module UC3S3
 
     def get_profile(profile)
       resp = @s3_client.get_object(
-        bucket: @bucket, 
+        bucket: @bucket,
         key: "uc3/mrt/mrt-ingest-profiles/#{profile}"
       )
       resp.body.read
