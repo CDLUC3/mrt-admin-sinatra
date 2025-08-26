@@ -76,7 +76,7 @@ module UC3S3
     def get_profile(profile)
       resp = @s3_client.get_object(
         bucket: @bucket,
-        key: "uc3/mrt/mrt-ingest-profiles/#{profile}"
+        key: "#{@prefix}#{profile}"
       )
       resp.body.read
     rescue StandardError => e
