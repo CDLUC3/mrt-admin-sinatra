@@ -10,9 +10,6 @@ module Sinatra
   # client specific routes
   module UC3HomeRoutes
     def self.add_menu_item(paths, item)
-      return if !item.fetch(:admindeploy,
-        '').empty? && ENV.fetch('ADMINDEPLOY', 'lambda') != item.fetch(:admindeploy, '')
-
       np = paths.clone
       leaf = item.fetch(:path, '')
       title = item.fetch(:title, '')

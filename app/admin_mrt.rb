@@ -10,6 +10,7 @@ require_relative 'lib/routes/services'
 require_relative 'lib/routes/query'
 require_relative 'lib/routes/ldap'
 require_relative 'lib/routes/mrtzk'
+require_relative 'lib/routes/config'
 
 set :bind, '0.0.0.0'
 
@@ -19,6 +20,7 @@ include Sinatra::UC3ResourcesRoutes
 include Sinatra::UC3ServicesRoutes
 include Sinatra::UC3QueryRoutes
 include Sinatra::UC3LdapRoutes
+include Sinatra::UC3S3Routes
 
 Sinatra::UC3HomeRoutes.load_menu_file('app/config/mrt/menu.yml')
 AdminUI::Context.css = '/mrt/custom.css'
@@ -134,31 +136,7 @@ get '/clients' do
   UC3Resources::FunctionsClient.client
   UC3Resources::LoadBalancerClient.client
   UC3Ldap::LDAPClient.client
-  UC3::TestClient.client
-
-  adminui_show_table(
-    AdminUI::Context.new(request.path),
-    UC3::UC3Client.client.client_list
-  )
-end
-
-get '/clients-vpc' do
-  UC3Query::QueryClient.client
-  UC3Queue::ZKClient.client
-
-  adminui_show_table(
-    AdminUI::Context.new(request.path),
-    UC3::UC3Client.client.client_list
-  )
-end
-
-get '/infra/clients-no-vpc' do
-  UC3Code::SourceCodeClient.client
-  UC3Resources::InstancesClient.client
-  UC3Resources::ParametersClient.client
-  UC3Resources::BucketsClient.client
-  UC3Resources::FunctionsClient.client
-  UC3Resources::LoadBalancerClient.client
+  UC3S3::ConfigObjectsClient.client
   UC3::TestClient.client
 
   adminui_show_table(

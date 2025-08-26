@@ -20,15 +20,8 @@ items:
     items:
     - title: Admin Tool Context
       route: /context
-    - title: Admin Tool Clients (Webapp)
+    - title: Admin Tool Clients
       route: /clients
-      admindeploy: webapp
-    - title: Admin Tool Clients (VPC)
-      route: /clients-vpc
-      admindeploy: lambda
-    - title: Admin Tool Clients (No VPC)
-      route: /infra/clients-no-vpc
-      admindeploy: lambda
     - title: Help
       route: /help
   - title: Merritt Troubleshooting
@@ -652,7 +645,6 @@ items:
     items:
     - title: Profiles
       route: /ops/collections/profiles
-      tbd: true
     - title: Storage Node Config
       route: /ops/collections/storage-node-config
       tbd: true
