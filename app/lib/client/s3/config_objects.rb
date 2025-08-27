@@ -25,30 +25,19 @@ module UC3S3
         opt[:region] = ENV.fetch('S3REGION', 'us-east-1')
       end
 
-      puts "Before create client"
       @s3_client = Aws::S3::Client.new(opt)
-      puts "After create client #{@s3_client.inspect}"
       @prefix = ENV.fetch('S3CONFIG_PREFIX', 'uc3/mrt/mrt-ingest-profiles/')
       @bucket = ENV.fetch('S3CONFIG_BUCKET', 'mrt-config')
-      opts = {
+
+      puts "before get #{@prefix}index.yaml"
+      resp = @s3_client.get_object(
         bucket: @bucket,
-        prefix: @prefix
-      }
-      token = :first
-      @config_objects = []
-      until token.nil?
-        resp = @s3_client.list_objects_v2(opts)
-        resp.contents.each do |s3obj|
-          @config_objects << {
-            key: {
-              value: s3obj.key[@prefix.length..],
-              href: "/ops/collections/profiles/#{s3obj.key[@prefix.length..]}"
-            }
-          }
-        end
-        token = resp.next_continuation_token
-        opts[:continuation_token] = token
-      end
+        key: "#{@prefix}index.yaml"
+      )
+      @config_objects = YAML.safe_load(resp.body.read, symbolize_names: true)
+
+      puts @config_objects
+      puts @config_objects.class
       super(enabled: true)
     rescue StandardError => e
       puts e
@@ -62,12 +51,23 @@ module UC3S3
     def list_profiles
       table = AdminUI::FilterTable.new(
         columns: [
-          AdminUI::Column.new(:key, header: 'Key')
+          AdminUI::Column.new(:key, header: 'Profile Link'),
+          AdminUI::Column.new(:Match, header: 'ProfileId Matches'),
+          AdminUI::Column.new(:Owner, header: 'Owner'),
+          AdminUI::Column.new(:StorageNode, header: 'StorageNode'),
+          AdminUI::Column.new(:Priority, header: 'Priority'),
+          AdminUI::Column.new(:ProfileDescription, header: 'ProfileDescription'),
+          AdminUI::Column.new(:CallbackURL, header: 'CallbackURL'),
+          AdminUI::Column.new(:error, header: 'Error')
         ]
       )
       return table unless enabled
 
-      @config_objects.each do |value|
+      @config_objects.each do |key, value|
+        value[:key] = {
+          value: key,
+          href: "/ops/collections/profiles/#{key}"
+        }
         table.add_row(AdminUI::Row.make_row(table.columns, value))
       end
       table
