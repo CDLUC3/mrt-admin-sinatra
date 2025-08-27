@@ -35,6 +35,15 @@ fragments:
       daily_billing
     where
       billing_totals_date < '2026-07-01'
+  FY2026: |
+    select
+      '2026-07-01' start,
+      '2027-07-01' end,
+      ifnull(max(billing_totals_date), '2027-07-01') as dytd
+    from
+      daily_billing
+    where
+      billing_totals_date < '2027-07-01'
   INVOICE: |
     {{#DATES}}
     select
@@ -468,6 +477,114 @@ queries:
     template-sql:
       DATES: |
         {{{FY2024}}}
+    sql: |
+      {{{INVOICE}}}
+  /queries/repository/campus/invoices/2025/CDL:
+    totals: true
+    template-params:
+      CAMPUS: CDL
+    template-sql:
+      DATES: |
+        {{{FY2025}}}
+    sql: |
+      {{{INVOICE}}}
+  /queries/repository/campus/invoices/2025/UCB:
+    totals: true
+    template-params:
+      CAMPUS: UCB
+    template-sql:
+      DATES: |
+        {{{FY2025}}}
+    sql: |
+      {{{INVOICE}}}
+  /queries/repository/campus/invoices/2025/UCD:
+    totals: true
+    template-params:
+      CAMPUS: UCD
+    template-sql:
+      DATES: |
+        {{{FY2025}}}
+    sql: |
+      {{{INVOICE}}}
+  /queries/repository/campus/invoices/2025/UCI:
+    totals: true
+    template-params:
+      CAMPUS: UCI
+    template-sql:
+      DATES: |
+        {{{FY2025}}}
+    sql: |
+      {{{INVOICE}}}
+  /queries/repository/campus/invoices/2025/UCLA:
+    totals: true
+    template-params:
+      CAMPUS: UCLA
+    template-sql:
+      DATES: |
+        {{{FY2025}}}
+    sql: |
+      {{{INVOICE}}}
+  /queries/repository/campus/invoices/2025/UCM:
+    totals: true
+    template-params:
+      CAMPUS: UCM
+    template-sql:
+      DATES: |
+        {{{FY2025}}}
+    sql: |
+      {{{INVOICE}}}
+  /queries/repository/campus/invoices/2025/UCR:
+    totals: true
+    template-params:
+      CAMPUS: UCR
+    template-sql:
+      DATES: |
+        {{{FY2025}}}
+    sql: |
+      {{{INVOICE}}}
+  /queries/repository/campus/invoices/2025/UCSB:
+    totals: true
+    template-params:
+      CAMPUS: UCSB
+    template-sql:
+      DATES: |
+        {{{FY2025}}}
+    sql: |
+      {{{INVOICE}}}
+  /queries/repository/campus/invoices/2025/UCSC:
+    totals: true
+    template-params:
+      CAMPUS: UCSC
+    template-sql:
+      DATES: |
+        {{{FY2025}}}
+    sql: |
+      {{{INVOICE}}}
+  /queries/repository/campus/invoices/2025/UCSD:
+    totals: true
+    template-params:
+      CAMPUS: UCSD
+    template-sql:
+      DATES: |
+        {{{FY2025}}}
+    sql: |
+      {{{INVOICE}}}
+  /queries/repository/campus/invoices/2025/UCSF:
+    totals: true
+    template-params:
+      CAMPUS: UCSF
+    template-sql:
+      DATES: |
+        {{{FY2025}}}
+    sql: |
+      {{{INVOICE}}}
+  /queries/repository/campus/invoices/2025/Other:
+    totals: true
+    template-params:
+      CAMPUS: Other
+    template-sql:
+      DATES: |
+        {{{FY2025}}}
     sql: |
       {{{INVOICE}}}
  
