@@ -330,6 +330,35 @@ items:
           route: /queries/repository/campus/invoices/2024/UCSF
         - title: Other
           route: /queries/repository/campus/invoices/2024/Other
+      - title: 'FY Begin 2025'
+        path: '2025'
+        route: /queries/repository/campus/invoices/2025
+        breadcrumb: true
+        items:
+        - title: CDL
+          route: /queries/repository/campus/invoices/2025/CDL
+        - title: UCB
+          route: /queries/repository/campus/invoices/2025/UCB
+        - title: UCD
+          route: /queries/repository/campus/invoices/2025/UCD
+        - title: UCI
+          route: /queries/repository/campus/invoices/2025/UCI
+        - title: UCLA
+          route: /queries/repository/campus/invoices/2025/UCLA
+        - title: UCM
+          route: /queries/repository/campus/invoices/2025/UCM
+        - title: UCR
+          route: /queries/repository/campus/invoices/2025/UCR
+        - title: UCSB
+          route: /queries/repository/campus/invoices/2025/UCSB
+        - title: UCSC
+          route: /queries/repository/campus/invoices/2025/UCSC
+        - title: UCSD
+          route: /queries/repository/campus/invoices/2025/UCSD
+        - title: UCSF
+          route: /queries/repository/campus/invoices/2025/UCSF
+        - title: Other
+          route: /queries/repository/campus/invoices/2025/Other
   - path: consistency
     title: Consistency
     route: /queries/consistency
