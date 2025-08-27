@@ -37,6 +37,7 @@ module UC3Ldap
         m = row[:mnemonic]
         ark = row[:ark]
         next if ark.nil?
+        next if m.to_s =~ /(_sla$|_service_level_agreement$|_curatorial_classes$|_system_classes$)/
 
         map[ark] = {
           ark: ark,
@@ -51,7 +52,6 @@ module UC3Ldap
         m = coll[:mnemonic]
         next if ark.nil?
         next if m.nil?
-        next if m.to_s =~ /(_sla$|_service_level_agreement$|_curatorial_classes$|_system_classes$)/
 
         if map.key?(ark)
           map[ark][:status] = 'PASS'
