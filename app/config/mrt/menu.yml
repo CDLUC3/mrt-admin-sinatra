@@ -932,9 +932,13 @@ items:
         route: /infra/ecs/run/merrittdev/redeployZk
         confmsg: This will run a job in the merrittdev container
         method: post
-    - title: Stack init 
+    - title: Stack Init 
       route: /stack-init
       confmsg: This will signal the Admin tool to perform any stack initialization functions required by a fresh test environment.
+      method: post
+    - title: Collections Init
+      route: /collections-init
+      confmsg: This will initialize collections used for testing Merritt.
       method: post
 - path: resources
   title: AWS

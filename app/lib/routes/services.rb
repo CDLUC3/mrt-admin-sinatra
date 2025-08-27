@@ -2,6 +2,7 @@
 
 require 'sinatra/base'
 require 'net/http'
+require 'net/http/post/multipart'
 require_relative '../ui/context'
 
 # custom sinatra routes
@@ -151,17 +152,45 @@ module Sinatra
       end
 
       app.post '/stack-init' do
-        stack_init
+        content_type :json
+        stack_init.to_json
       end
+
+      app.post '/collections-init' do
+        content_type :json
+        collections_init.to_json
+      end
+    end
+
+    def add_collection(ark, name, mnemonic)
+      post_url_multipart(
+        "#{inventory_host}/admin/collection/private",
+        { 'adminid': ark, 'name': name, 'mnemonic': mnemonic }
+      )
     end
 
     def stack_init
       UC3::FileSystemClient.client.cleanup_ingest_folders
       resp = []
-      resp << ::JSON.parse(post_url("#{inventory_host}/service/start?t=json"))
-      resp << ::JSON.parse(post_url("#{replic_host}/service/start?t=json"))
-      resp << ::JSON.parse(post_url("#{audit_host}/service/start?t=json"))
-      resp.to_json
+      r = post_url("#{inventory_host}/admin/init")
+      resp << ::JSON.parse(r)
+      collections_init.each do |r|
+        resp << r
+      end
+      r = post_url("#{replic_host}/service/start?t=json")
+      resp << ::JSON.parse(r)
+      r = post_url("#{audit_host}/service/start?t=json")
+      resp << ::JSON.parse(r)
+      resp
+    end
+
+    def collections_init
+      resp = []
+      r = add_collection('ark:/13030/m5rn35s8', 'Merritt Demo', 'merritt_demo')
+      resp << ::JSON.parse(r)
+      r = add_collection('ark:/13030/99999999', 'Terry Test', 'terry_test')
+      resp << ::JSON.parse(r)
+      resp
     end
 
     def get_url(url)
@@ -178,7 +207,21 @@ module Sinatra
     def post_url(url)
       uri = URI.parse(url)
       req = Net::HTTP::Post.new(uri)
-      req.content_type = 'application/json'
+      
+      response = Net::HTTP.start(uri.hostname, uri.port) do |http|
+        http.request(req)
+      end
+      json = response.body
+      content_type :json
+      json
+    rescue StandardError => e
+      content_type :json
+      { uri: uri, error: e.to_s }.to_json
+    end
+
+    def post_url_multipart(url, params)
+      uri = URI.parse(url)
+      req = Net::HTTP::Post::Multipart.new(uri, params)
       response = Net::HTTP.start(uri.hostname, uri.port) do |http|
         http.request(req)
       end
@@ -190,5 +233,6 @@ module Sinatra
       { uri: uri, error: e.to_s }.to_json
     end
   end
+
   register UC3ServicesRoutes
 end

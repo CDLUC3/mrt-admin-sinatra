@@ -80,6 +80,7 @@ GEM
     logger (1.7.0)
     mini_portile2 (2.8.9)
     multi_json (1.17.0)
+    multipart-post (2.4.1)
     mustache (1.1.1)
     mustermann (3.0.3)
       ruby2_keywords (~> 0.0.1)
@@ -209,6 +210,7 @@ DEPENDENCIES
   debug
   json
   mrt-zk!
+  multipart-post
   mustache
   mysql2
   net-ldap
