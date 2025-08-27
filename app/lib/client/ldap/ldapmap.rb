@@ -55,6 +55,13 @@ module UC3Ldap
         if map.key?(ark)
           map[ark][:status] = 'PASS'
           map[ark][:coll] = m
+        elsif m.to_s =~ /(_sla$|_service_level_agreement$|_curatorial_classes$|_system_classes$)/
+          map[ark] = {
+            ark: ark,
+            coll: m,
+            mnemonic: '',
+            status: 'SKIP'
+          }
         else
           map[ark] = {
             ark: ark,
