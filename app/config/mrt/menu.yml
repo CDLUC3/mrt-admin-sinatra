@@ -982,6 +982,8 @@ items:
       tbd: true
   - title: List Collections (Simple)
     route: /queries/misc/collections
+  - title: List First 1000 Objects (Simple)
+    route: /queries/misc/objects
   - title: DB time
     route: /queries/misc/now
   - title: List Consistency Checks

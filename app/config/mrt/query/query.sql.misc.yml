@@ -13,3 +13,10 @@ queries:
       select aggregate_role, count(*) 
       from inv.inv_objects 
       group by aggregate_role
+  /queries/misc/objects:
+    sql: |
+      select id, aggregate_role, ark, erc_what
+      from inv.inv_objects
+      order by id
+      limit 1000
+  

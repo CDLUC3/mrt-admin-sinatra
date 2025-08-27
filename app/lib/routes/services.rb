@@ -162,9 +162,10 @@ module Sinatra
       end
     end
 
-    def add_collection(ark, name, mnemonic)
+    def add_collection(ark, name, mnemonic, public: false)
+      vis = public ? 'public' : 'private'
       post_url_multipart(
-        "#{inventory_host}/admin/collection/private",
+        "#{inventory_host}/admin/collection/#{vis}",
         { 'adminid': ark, 'name': name, 'mnemonic': mnemonic }
       )
     end
@@ -186,10 +187,15 @@ module Sinatra
 
     def collections_init
       resp = []
-      r = add_collection('ark:/13030/m5rn35s8', 'Merritt Demo', 'merritt_demo')
-      resp << ::JSON.parse(r)
-      r = add_collection('ark:/13030/99999999', 'Terry Test', 'terry_test')
-      resp << ::JSON.parse(r)
+      [
+        { ark: 'ark:/13030/m5rn35s8', name: 'Merritt Demo', mnemonic: 'merritt_demo', public: true },
+        { ark: 'ark:/13030/m5qv8jks', name: 'cdl_dryaddev', mnemonic: 'cdl_dryaddev', public: true },
+        { ark: 'ark:/13030/m5154f09', name: 'escholarship', mnemonic: 'escholarship', public: true },
+        { ark: 'ark:/13030/99999999', name: 'Terry Test', mnemonic: 'terry_test', public: true },
+      ].each do |c|
+        r = add_collection(c[:ark], c[:name], c[:mnemonic], public: c.fetch(:public, false))
+        resp << ::JSON.parse(r)
+      end
       resp
     end
 
