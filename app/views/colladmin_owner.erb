@@ -6,6 +6,10 @@
   <div>
     <label for="sla">SLA</label>
     <select id="sla" name="sla">
+      <% slas.each do |key, value| %>
+        <option value="<%= key %>"><%= value %></option>
+      <% end %>
+    </select>
   </div>
   <input type="submit" value="Create Owner" DISABLED>
 </form>

@@ -7,6 +7,22 @@ require_relative '../client/s3/config_objects'
 module Sinatra
   # client specific routes
   module UC3S3Routes
+    def get_owners
+      data = {}
+      UC3Query::QueryClient.client.query('/queries/misc/admin-owner', {}).table_data.each do |row|
+        data[row[:ark]] = row[:name]
+      end
+      data
+    end
+
+    def get_slas
+      data = {}
+      UC3Query::QueryClient.client.query('/queries/misc/admin-sla', {}).table_data.each do |row|
+        data[row[:ark]] = row[:name]
+      end
+      data
+    end
+
     def self.registered(app)
       app.get '/ops/collections/management/slas' do
         redirect '/queries/misc/admin-sla'
@@ -24,7 +40,8 @@ module Sinatra
 
       app.get '/ops/collections/management/create-owner' do
         erb :colladmin_owner, layout: :page_layout, locals: {
-          context: AdminUI::Context.new(request.path)
+          context: AdminUI::Context.new(request.path),
+          slas: get_slas
         }
       end
 
@@ -34,7 +51,8 @@ module Sinatra
 
       app.get '/ops/collections/management/create-collection' do
         erb :colladmin_collection, layout: :page_layout, locals: {
-          context: AdminUI::Context.new(request.path)
+          context: AdminUI::Context.new(request.path),
+          owners: get_owners
         }
       end
 

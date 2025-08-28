@@ -2,6 +2,10 @@
   <div>
     <label for="owner">Owner</label>
     <select id="owner" name="owner">
+      <% owners.each do |key, value| %>
+        <option value="<%= key %>"><%= value %></option>
+      <% end %>
+    </select>
   </div>
   <div>
     <label for="public">Public</label>
@@ -24,7 +28,7 @@
     <li>Invnetory API admin/collection/private will be invoked</li>
     <li>Collection will be added to inv_objects table with the designated owner</li>
     <li>Collection will be added to inv_collections table with name and mnemonic set</li>
-    <li>An ingest profile will be generated for mnemonic_content using the information generated above</li>
+    <li>A default LDAP entry should be created for the collection granting access to the Merritt team</li>
     <li>The ingest profile will be presented in a text window and will be available for upload to GitHub</li>
   </ul>
 </div>
