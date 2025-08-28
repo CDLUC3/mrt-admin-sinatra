@@ -33,7 +33,14 @@ queries:
       select ark, name from inv.inv_owners order by name
   /queries/misc/sla:
     sql: |
-      select ark, name from inv.inv_collections
+      select 
+        ark, 
+        name,
+        (
+          select count(*) from inv.inv_collections_inv_objects icio
+          where icio.inv_collection_id = inv.inv_collections.id
+        ) as owner_count
+      from inv.inv_collections
       where exists (
         select 1 from inv.inv_objects o
         where 
