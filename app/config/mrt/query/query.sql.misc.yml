@@ -30,7 +30,7 @@ queries:
       where aggregate_role='MRT-owner'
   /queries/misc/owner:
     sql: |
-      select ark, name from inv_owners order by name
+      select ark, name from inv.inv_owners order by name
   /queries/misc/sla:
     sql: |
       select ark, name from inv.inv_collections
