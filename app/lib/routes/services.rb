@@ -166,7 +166,7 @@ module Sinatra
       vis = public ? 'public' : 'private'
       post_url_multipart(
         "#{inventory_host}/admin/collection/#{vis}",
-        { 'adminid': ark, 'name': name, 'mnemonic': mnemonic }
+        { adminid: ark, name: name, mnemonic: mnemonic }
       )
     end
 
@@ -191,7 +191,7 @@ module Sinatra
         { ark: 'ark:/13030/m5rn35s8', name: 'Merritt Demo', mnemonic: 'merritt_demo', public: true },
         { ark: 'ark:/13030/m5qv8jks', name: 'cdl_dryaddev', mnemonic: 'cdl_dryaddev', public: true },
         { ark: 'ark:/13030/m5154f09', name: 'escholarship', mnemonic: 'escholarship', public: true },
-        { ark: 'ark:/13030/99999999', name: 'Terry Test', mnemonic: 'terry_test', public: true },
+        { ark: 'ark:/13030/99999999', name: 'Terry Test', mnemonic: 'terry_test', public: true }
       ].each do |c|
         r = add_collection(c[:ark], c[:name], c[:mnemonic], public: c.fetch(:public, false))
         resp << ::JSON.parse(r)
@@ -213,7 +213,7 @@ module Sinatra
     def post_url(url)
       uri = URI.parse(url)
       req = Net::HTTP::Post.new(uri)
-      
+
       response = Net::HTTP.start(uri.hostname, uri.port) do |http|
         http.request(req)
       end
