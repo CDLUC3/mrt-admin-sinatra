@@ -1,0 +1,21 @@
+<form class="admintool">
+  <div>
+    <label for="name">Name</label>
+    <input type="text" id="name" name="name"/>
+  </div>
+  <div>
+    <label for="mnemonic">Mnemonic</label>
+    <input type="text" id="mnemonic" name="mnemonic" value="_sla"/>
+  </div>
+  <input type="submit" value="Create SLA" DISABLED>
+</form>
+
+<div class="after-submit">
+  <ul>
+    <li>Ark will be minted for the new SLA</li>
+    <li>Invnetory API admin/sla will be invoked</li>
+    <li>SLA will be added to inv_objects table with the default owner</li>
+    <li>SLA will be added to inv_collections table with name and mnemonic set</li>
+    <li>Redirect to <a href="/ops/collections/management/slas">SLAs</a></li>
+  </ul>
+</div>

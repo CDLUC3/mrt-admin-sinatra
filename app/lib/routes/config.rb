@@ -8,6 +8,36 @@ module Sinatra
   # client specific routes
   module UC3S3Routes
     def self.registered(app)
+      app.get '/ops/collections/management/slas' do
+        redirect '/queries/misc/admin-sla'
+      end
+
+      app.get '/ops/collections/management/create-sla' do
+        erb :colladmin_sla, layout: :page_layout, locals: {
+          context: AdminUI::Context.new(request.path)
+        }
+      end
+
+      app.get '/ops/collections/management/owners' do
+        redirect '/queries/misc/admin-owner'
+      end
+
+      app.get '/ops/collections/management/create-owner' do
+        erb :colladmin_owner, layout: :page_layout, locals: {
+          context: AdminUI::Context.new(request.path)
+        }
+      end
+
+      app.get '/ops/collections/management/collections' do
+        redirect '/queries/misc/admin-collection'
+      end
+
+      app.get '/ops/collections/management/create-collection' do
+        erb :colladmin_collection, layout: :page_layout, locals: {
+          context: AdminUI::Context.new(request.path)
+        }
+      end
+
       app.get '/ops/collections/profiles' do
         adminui_show_table(
           AdminUI::Context.new(request.path),

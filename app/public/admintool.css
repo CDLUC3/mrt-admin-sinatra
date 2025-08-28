@@ -226,3 +226,9 @@ span.SKIP {
 div.SKIP {
   display: none;
 }
+
+form.admintool label {
+  width: 150px;
+  display: inline-block;
+  font-weight: bold;
+}}

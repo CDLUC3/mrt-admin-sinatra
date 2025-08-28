@@ -672,8 +672,25 @@ items:
     route: /ops/collections
     breadcrumb: true
     items:
-    - title: Profiles
-      route: /ops/collections/profiles
+    - path: management
+      title: Collection Management
+      breadcrumb: true
+      route: /ops/collections/management
+      items:
+      - title: SLAs
+        route: /ops/collections/management/slas
+      - title: Create SLA
+        route: /ops/collections/management/create-sla
+      - title: Owners
+        route: /ops/collections/management/owners
+      - title: Create Owner
+        route: /ops/collections/management/create-owner
+      - title: Collections
+        route: /ops/collections/management/collections
+      - title: Create Collection
+        route: /ops/collections/management/create-collection
+      - title: Ingest Profiles
+        route: /ops/collections/profiles
     - title: Storage Node Config
       route: /ops/collections/storage-node-config
       tbd: true

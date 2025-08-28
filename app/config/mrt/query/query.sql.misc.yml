@@ -5,9 +5,35 @@ queries:
         now() as current
   /queries/misc/admin:
     sql: |
-      select id, ark, erc_what
+      select id as inv_object_id, aggregate_role, ark, erc_what
       from inv.inv_objects
       where object_type='MRT-system'
+  /queries/misc/admin-owner:
+    description: |
+      - [Collection Management](/ops/collections/management)
+      - [Create Owner](/ops/collections/management/create-owner)
+    sql: |
+      select id as inv_object_id, aggregate_role, ark, erc_what
+      from inv.inv_objects
+      where aggregate_role='MRT-owner'
+  /queries/misc/admin-sla:
+    description: |
+      - [Collection Management](/ops/collections/management)
+      - [Create SLA](/ops/collections/management/create-sla)
+    sql: |
+      select o.id as inv_object_id, o.aggregate_role, o.ark, o.erc_what, c.mnemonic
+      from inv.inv_objects o
+      left join inv.inv_collections c on c.inv_object_id = o.id
+      where o.aggregate_role='MRT-service-level-agreement'
+  /queries/misc/admin-collection:
+    description: |
+      - [Collection Management](/ops/collections/management)
+      - [Create Collection](/ops/collections/management/create-collection)
+    sql: |
+      select o.id as inv_object_id, o.aggregate_role, o.ark, o.erc_what, c.mnemonic, c.harvest_privilege
+      from inv.inv_objects o
+      left join inv.inv_collections c on c.inv_object_id = o.id
+      where o.aggregate_role='MRT-collection'
   /queries/misc/admin-types:
     sql: |
       select aggregate_role, count(*) 
@@ -15,7 +41,7 @@ queries:
       group by aggregate_role
   /queries/misc/objects:
     sql: |
-      select id, aggregate_role, ark, erc_what
+      select id inv_object_id, aggregate_role, ark, erc_what
       from inv.inv_objects
       order by id
       limit 1000
