@@ -17,11 +17,29 @@ queries:
       - [Create Owner](/ops/collections/management/create-owner)
     sql: |
       select 
-        id as inv_object_id, 
-        aggregate_role, ark, 
-        erc_what as name
-      from inv.inv_objects
+        o.id as inv_object_id, 
+        o.aggregate_role, 
+        o.ark, 
+        o.erc_what as name,
+        case
+          when o.erc_what = own.name then 'name match'
+          else 'no name match'
+        end as match_status
+      from inv.inv_objects o
+      left join inv.inv_owners own on own.inv_object_id = o.id
       where aggregate_role='MRT-owner'
+  /queries/misc/owner:
+    sql: |
+      select ark, name from inv_owners order by name
+  /queries/misc/sla:
+    sql: |
+      select ark, name from inv.inv_collections
+      where exists (
+        select 1 from inv.inv_objects o
+        where 
+          o.id = inv.inv_collections.inv_object_id
+          and o.aggregate_role = 'MRT-service-level-agreement'
+      ) order by name
   /queries/misc/admin-sla:
     description: |
       - [Collection Management](/ops/collections/management)
@@ -32,7 +50,11 @@ queries:
         o.aggregate_role, 
         o.ark, 
         o.erc_what as name, 
-        c.mnemonic
+        c.mnemonic,
+        case
+          when o.erc_what = c.name then 'name match'
+          else 'no name match'
+        end as match_status
       from inv.inv_objects o
       left join inv.inv_collections c on c.inv_object_id = o.id
       where o.aggregate_role='MRT-service-level-agreement'
@@ -47,10 +69,23 @@ queries:
         o.ark, 
         o.erc_what as name, 
         c.mnemonic, 
-        c.harvest_privilege
+        c.harvest_privilege,
+        case
+          when o.erc_what = c.name then 'name match'
+          else 'no name match'
+        end as match_status
       from inv.inv_objects o
       left join inv.inv_collections c on c.inv_object_id = o.id
       where o.aggregate_role='MRT-collection'
+  /queries/misc/collection:
+    sql: |
+      select ark, name from inv.inv_collections
+      where exists (
+        select 1 from inv.inv_objects o
+        where 
+          o.id = inv.inv_collections.inv_object_id
+          and o.aggregate_role = 'MRT-collection'
+      ) order by name
   /queries/misc/admin-types:
     sql: |
       select 

@@ -9,7 +9,7 @@ module Sinatra
   module UC3S3Routes
     def get_owners
       data = {}
-      UC3Query::QueryClient.client.query('/queries/misc/admin-owner', {}).table_data.each do |row|
+      UC3Query::QueryClient.client.query('/queries/misc/owner', {}).table_data.each do |row|
         data[row[:ark]] = row[:name]
       end
       data
@@ -17,7 +17,15 @@ module Sinatra
 
     def get_slas
       data = {}
-      UC3Query::QueryClient.client.query('/queries/misc/admin-sla', {}).table_data.each do |row|
+      UC3Query::QueryClient.client.query('/queries/misc/sla', {}).table_data.each do |row|
+        data[row[:ark]] = row[:name]
+      end
+      data
+    end
+
+    def get_collections
+      data = {}
+      UC3Query::QueryClient.client.query('/queries/misc/collection', {}).table_data.each do |row|
         data[row[:ark]] = row[:name]
       end
       data
@@ -52,7 +60,8 @@ module Sinatra
       app.get '/ops/collections/management/create-collection' do
         erb :colladmin_collection, layout: :page_layout, locals: {
           context: AdminUI::Context.new(request.path),
-          owners: get_owners
+          owners: get_owners,
+          collections: get_collections
         }
       end
 
