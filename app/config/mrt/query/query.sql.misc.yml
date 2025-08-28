@@ -22,9 +22,9 @@ queries:
         o.ark, 
         o.erc_what as name,
         case
-          when o.erc_what = own.name then 'name match'
-          else 'no name match'
-        end as match_status
+          when o.erc_what = own.name then 'Matches'
+          else 'No match'
+        end as name_match_status
       from inv.inv_objects o
       left join inv.inv_owners own on own.inv_object_id = o.id
       where aggregate_role='MRT-owner'
@@ -35,11 +35,7 @@ queries:
     sql: |
       select 
         ark, 
-        name,
-        (
-          select count(*) from inv.inv_collections_inv_objects icio
-          where icio.inv_collection_id = inv.inv_collections.id
-        ) as owner_count
+        name
       from inv.inv_collections
       where exists (
         select 1 from inv.inv_objects o
@@ -59,9 +55,13 @@ queries:
         o.erc_what as name, 
         c.mnemonic,
         case
-          when o.erc_what = c.name then 'name match'
-          else 'no name match'
-        end as match_status
+          when o.erc_what = c.name then 'Matches'
+          else 'No match'
+        end as name_match_status,
+        (
+          select count(*) from inv.inv_collections_inv_objects icio
+          where icio.inv_collection_id = c.id
+        ) as owner_count
       from inv.inv_objects o
       left join inv.inv_collections c on c.inv_object_id = o.id
       where o.aggregate_role='MRT-service-level-agreement'
@@ -78,9 +78,9 @@ queries:
         c.mnemonic, 
         c.harvest_privilege,
         case
-          when o.erc_what = c.name then 'name match'
-          else 'no name match'
-        end as match_status
+          when o.erc_what = c.name then 'Matches'
+          else 'No match'
+        end as name_match_status
       from inv.inv_objects o
       left join inv.inv_collections c on c.inv_object_id = o.id
       where o.aggregate_role='MRT-collection'
