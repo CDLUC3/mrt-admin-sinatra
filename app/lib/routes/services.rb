@@ -170,6 +170,13 @@ module Sinatra
       )
     end
 
+    def add_owner(ark, name, sla_ark)
+      post_url_multipart(
+        "#{inventory_host}/admin/owner",
+        { adminid: ark, name: name, slaid: sla_ark }
+      )
+    end
+
     def stack_init
       UC3::FileSystemClient.client.cleanup_ingest_folders
       resp = []

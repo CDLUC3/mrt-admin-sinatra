@@ -13,7 +13,6 @@ queries:
       where object_type='MRT-system'
   /queries/misc/admin-owner:
     description: |
-      - [Collection Management](/ops/collections/management)
       - [Create Owner](/ops/collections/management/create-owner)
     sql: |
       select 
@@ -41,7 +40,6 @@ queries:
       ) order by name
   /queries/misc/admin-sla:
     description: |
-      - [Collection Management](/ops/collections/management)
       - [Create SLA](/ops/collections/management/create-sla)
     sql: |
       select 
@@ -59,7 +57,6 @@ queries:
       where o.aggregate_role='MRT-service-level-agreement'
   /queries/misc/admin-collection:
     description: |
-      - [Collection Management](/ops/collections/management)
       - [Create Collection](/ops/collections/management/create-collection)
     sql: |
       select 

@@ -37,7 +37,10 @@ module Sinatra
 
     def self.registered(app)
       app.get '/ops/collections/management/slas' do
-        redirect '/queries/misc/admin-sla'
+        adminui_show_table(
+          AdminUI::Context.new(request.path),
+          UC3Query::QueryClient.client.query('/queries/misc/admin-sla', {})
+        )
       end
 
       app.post '/ops/collections/management/create-sla' do
@@ -51,7 +54,10 @@ module Sinatra
       end
 
       app.get '/ops/collections/management/owners' do
-        redirect '/queries/misc/admin-owner'
+        adminui_show_table(
+          AdminUI::Context.new(request.path),
+          UC3Query::QueryClient.client.query('/queries/misc/admin-owner', {})
+        )
       end
 
       app.post '/ops/collections/management/create-owner' do
@@ -66,7 +72,10 @@ module Sinatra
       end
 
       app.get '/ops/collections/management/collections' do
-        redirect '/queries/misc/admin-collection'
+        adminui_show_table(
+          AdminUI::Context.new(request.path),
+          UC3Query::QueryClient.client.query('/queries/misc/admin-collection', {})
+        )
       end
 
 
