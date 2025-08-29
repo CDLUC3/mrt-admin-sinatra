@@ -31,9 +31,17 @@ module Sinatra
       data
     end
 
+    def get_notification_map
+      UC3S3::ConfigObjectsClient.client.notification_map
+    end
+
     def self.registered(app)
       app.get '/ops/collections/management/slas' do
         redirect '/queries/misc/admin-sla'
+      end
+
+      app.post '/ops/collections/management/create-sla' do
+        redirect '/ops/collections/management/slas'
       end
 
       app.get '/ops/collections/management/create-sla' do
@@ -44,6 +52,10 @@ module Sinatra
 
       app.get '/ops/collections/management/owners' do
         redirect '/queries/misc/admin-owner'
+      end
+
+      app.post '/ops/collections/management/create-owner' do
+        redirect '/ops/collections/management/owners'
       end
 
       app.get '/ops/collections/management/create-owner' do
@@ -57,24 +69,38 @@ module Sinatra
         redirect '/queries/misc/admin-collection'
       end
 
+
+      app.post '/ops/collections/management/create-collection' do
+        erb :colladmin_profile, layout: :page_layout, locals: {
+          context: AdminUI::Context.new(request.path),
+          profile: %{
+# ${DESCRIPTION} - ${ARK}
+ProfileID: ${NAME}
+ProfileDescription: ${DESCRIPTION}
+Identifier-scheme: ARK
+Identifier-namespace: 13030
+          }
+        }              
+      end
+
       app.get '/ops/collections/management/create-collection' do
         erb :colladmin_collection, layout: :page_layout, locals: {
           context: AdminUI::Context.new(request.path),
           owners: get_owners,
-          collections: get_collections
+          notifications: get_notification_map
         }
       end
 
       app.get '/ops/collections/profiles' do
         adminui_show_table(
           AdminUI::Context.new(request.path),
-          UC3S3::ConfigObjectsClient.new.list_profiles
+          UC3S3::ConfigObjectsClient.client.list_profiles
         )
       end
 
       app.get '/ops/collections/profiles/*' do |profile|
         content_type :text
-        UC3S3::ConfigObjectsClient.new.get_profile(profile)
+        UC3S3::ConfigObjectsClient.client.get_profile(profile)
       end
     end
   end

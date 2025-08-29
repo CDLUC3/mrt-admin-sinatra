@@ -1,4 +1,4 @@
-<form class="admintool">
+<form class="admintool" method="post" action="/ops/collections/management/create-collection">
   <fieldset>
     <legend>Collection Attributes</legend>
     <div>
@@ -15,29 +15,30 @@
     </div>
     <div>
       <label for="name">Name</label>
-      <input type="text" id="name" name="name"/>
+      <input type="text" id="name" name="name" size="80"/>
     </div>
     <div>
       <label for="mnemonic">Mnemonic</label>
-      <input type="text" id="mnemonic" name="mnemonic" value=""/>
+      <input type="text" id="mnemonic" name="mnemonic" value="" size="30"/>
     </div>
   </fieldset>
   <fieldset>
     <legend>Ingest Profile Attributes</legend>
     <div>
-      <label for="collection">Copy Notifications from</label>
-      <select id="collection" name="collection">
-        <% collections.each do |key, value| %>
-          <option value="<%= key %>"><%= value %></option>
+      <label for="notifyselect">Copy Notifications from</label>
+      <select id="notifyselect" name="notifyselect">
+        <option value=""></option>
+        <% notifications.each do |key, value| %>
+          <option value="<%= value %>"><%= key %></option>
         <% end %>
       </select>
     </div>
     <div>
       <label for="notifications">Notification Emails</label>
-      <textarea id="notifications" name="notifications"></textarea>
+      <textarea id="notifications" name="notifications" rows="4" cols="80"></textarea>
     </div>
   </fieldset>
-  <input type="submit" value="Create Collection" DISABLED>
+  <input type="submit" value="Create Collection (MOCK)">
 </form>
 
 <h3>After sumbmission...</h3>
@@ -54,3 +55,14 @@
 
 <h3>Discuss</h3>
 <div>Do we need to pass an Owner to inventory when creating a collection, or would it be sufficent to specify the owner only in the ingest profile?</div>
+
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('#notifyselect').change(function() {
+      var selected = $(this).val();
+      if (selected) {
+        $('#notifications').val(selected);
+      }
+    });
+  });
+</script>

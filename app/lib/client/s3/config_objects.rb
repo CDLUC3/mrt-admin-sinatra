@@ -36,8 +36,6 @@ module UC3S3
       )
       @config_objects = YAML.safe_load(resp.body.read, symbolize_names: true)
 
-      puts @config_objects
-      puts @config_objects.class
       super(enabled: true)
     rescue StandardError => e
       puts e
@@ -46,6 +44,12 @@ module UC3S3
 
     def enabled
       !@s3_client.nil?
+    end
+
+    def notification_map
+      @config_objects.each_with_object({}) do |(key, value), map|
+        map[key] = value[:Notification] if value[:Notification]
+      end
     end
 
     def list_profiles
