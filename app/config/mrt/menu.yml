@@ -690,7 +690,7 @@ items:
       - title: Create Collection
         route: /ops/collections/management/create-collection
       - title: Ingest Profiles
-        route: /ops/collections/profiles
+        route: /ops/collections/management/profiles
     - title: Storage Node Config
       route: /ops/collections/storage-node-config
       tbd: true

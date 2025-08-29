@@ -1,5 +1,12 @@
 <form class="admintool" method="post" action="/ops/collections/management/create-collection">
   <fieldset>
+    <legend>Profile Name</legend>
+    <div>
+      <label for="name">Profile Name</label>
+      <input type="text" id="name" name="name" size="40"/>
+    </div>
+  </fieldset>
+  <fieldset>
     <legend>Collection Attributes</legend>
     <div>
       <label for="owner">Owner</label>
@@ -14,8 +21,8 @@
       <input type="checkbox" id="public" name="public">
     </div>
     <div>
-      <label for="name">Name</label>
-      <input type="text" id="name" name="name" size="80"/>
+      <label for="description">Profile Description</label>
+      <input type="text" id="description" name="description" size="80"/>
     </div>
     <div>
       <label for="mnemonic">Mnemonic</label>
@@ -55,6 +62,7 @@
 
 <h3>Discuss</h3>
 <div>Do we need to pass an Owner to inventory when creating a collection, or would it be sufficent to specify the owner only in the ingest profile?</div>
+<div>Eliminate Collection admin profiles?</div>
 
 <script type="text/javascript">
   $(document).ready(function() {

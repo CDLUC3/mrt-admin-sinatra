@@ -70,7 +70,7 @@ module UC3S3
       @config_objects.each do |key, value|
         value[:key] = {
           value: key,
-          href: "/ops/collections/profiles/#{key}"
+          href: "/ops/collections/management/profiles/#{key}"
         }
         table.add_row(AdminUI::Row.make_row(table.columns, value))
       end
@@ -83,6 +83,32 @@ module UC3S3
         key: "#{@prefix}#{profile}"
       )
       resp.body.read
+    rescue StandardError => e
+      e.to_s
+    end
+
+    def make_profile(params)
+      resp = @s3_client.get_object(
+        bucket: @bucket,
+        key: "#{@prefix}TEMPLATE-PROFILE"
+      )
+      ark = 'ark:/13030/mintme'
+      profile = resp.body.read
+      profile.gsub!('${ARK}', ark)
+      profile.gsub!('${NAME}', "#{params.fetch('name', '')}_content")
+      profile.gsub!('${CONTEXT}', params.fetch('name', ''))
+      profile.gsub!('${COLLECTION}', ark)
+      profile.gsub!('${DESCRIPTION}', params.fetch('description', ''))
+      profile.gsub!('${OWNER}', params.fetch('owner', ''))
+      notsub = ''
+      params.fetch('notifications', '').split(',').each_with_index do |n, i|
+        notsub += "Notification.#{i + 1}: #{n.strip}\n"
+      end
+      profile.gsub!(/^Notification.*$/, notsub)
+      now = Time.now.utc.strftime('%Y-%m-%dT%H:%M:%S')
+      profile.gsub!('${CREATIONDATE}', now)
+      profile.gsub!('${MODIFICATIONDATE}', now)
+      profile
     rescue StandardError => e
       e.to_s
     end

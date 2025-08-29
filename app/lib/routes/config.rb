@@ -82,14 +82,9 @@ module Sinatra
       app.post '/ops/collections/management/create-collection' do
         erb :colladmin_profile, layout: :page_layout, locals: {
           context: AdminUI::Context.new(request.path),
-          profile: %{
-# ${DESCRIPTION} - ${ARK}
-ProfileID: ${NAME}
-ProfileDescription: ${DESCRIPTION}
-Identifier-scheme: ARK
-Identifier-namespace: 13030
-          }
-        }              
+          profile: UC3S3::ConfigObjectsClient.client.make_profile(request.params),
+          profile_name: "#{request.params.fetch('name', '')}_content"
+        }
       end
 
       app.get '/ops/collections/management/create-collection' do
@@ -100,14 +95,14 @@ Identifier-namespace: 13030
         }
       end
 
-      app.get '/ops/collections/profiles' do
+      app.get '/ops/collections/management/profiles' do
         adminui_show_table(
           AdminUI::Context.new(request.path),
           UC3S3::ConfigObjectsClient.client.list_profiles
         )
       end
 
-      app.get '/ops/collections/profiles/*' do |profile|
+      app.get '/ops/collections/management/profiles/*' do |profile|
         content_type :text
         UC3S3::ConfigObjectsClient.client.get_profile(profile)
       end

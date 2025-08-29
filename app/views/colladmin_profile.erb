@@ -1,9 +1,14 @@
-<h2>Profile to upload to GitHub</h2>
+<div class="uploadinstruct">
+  Upload Profile <strong><%= profile_name %></strong> to upload to GitHub
+</div>
 <div>
-<textarea rows="20" cols="80"><%= profile %></textarea>
+<textarea rows="27" cols="100"><%= profile %></textarea>
 </div>
 
 <h2>After upload</h2>
 <div>
-  <a href="/ops/collections/management/collections">View Collections</a>
+  <ul>
+    <li><a href="/ops/collections/management/collections">View Collections</a></li>
+    <li><a href="/ops/collections/management/profiles">View Profiles</a></li>
+  </ul>  
 </div>
