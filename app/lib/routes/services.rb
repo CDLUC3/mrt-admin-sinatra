@@ -211,6 +211,72 @@ module Sinatra
       rescue StandardError => e
         resp << { action: "Audit Init", error: e.to_s }
       end
+
+      qc = UC3Query::QueryClient.client
+      if !qc.nil? && qc.enabled
+        begin
+          sql = %{
+            select * from inv.inv_nodes
+          }
+          if qc.run_sql(sql).empty?
+            qc.run_sql(%(
+              insert into inv.inv_nodes(
+                number,
+                media_type,
+                media_connectivity,
+                access_mode,
+                access_protocol,
+                node_form,
+                node_protocol,
+                logical_volume,
+                external_provider,
+                verify_on_read,
+                verify_on_write,
+                base_url
+              )
+              select
+                7777,
+                'magnetic-disk',
+                'cloud',
+                'on-line',
+                's3',
+                'physical',
+                'http',
+                'yaml:7777',
+                'nodeio',
+                1,
+                1,
+                'http://store:8080/store'
+              union
+              select
+                8888,
+                'magnetic-disk',
+                'cloud',
+                'on-line',
+                's3',
+                'physical',
+                'http',
+                'yaml:8888',
+                'nodeio',
+                1,
+                1,
+                'http://store:8080/store';
+
+              insert into billing.daily_node_counts(
+                as_of_date,inv_node_id, number, object_count, object_count_primary, object_count_secondary, file_count, billable_size
+              )
+              select 
+                date(now()), id, number, 1, 0, 0, 0, 0
+              from inv.inv_nodes;
+            ))
+            resp << { action: "Add test storage nodes", result: "success" }
+          else
+            resp << { action: "Add test storage nodes", result: "skipped - already exists" }
+          end
+        rescue StandardError => e
+          resp << { action: "Add test storage nodes", error: e.to_s }
+        end
+      end
       resp
     end
 
