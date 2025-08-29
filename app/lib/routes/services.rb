@@ -217,7 +217,7 @@ module Sinatra
     def collections_init
       resp = []
       [
-        {ark: TEST_SLA, name: 'Test SLA', mnemonic: 'test_sla' }
+        # {ark: TEST_SLA, name: 'Test SLA', mnemonic: 'test_sla' }
       ].each do |c|
         r = add_sla(c[:ark], c[:name], c[:mnemonic])
         begin
@@ -227,7 +227,7 @@ module Sinatra
         end
       end
       [
-        { ark: 'ark:/13030/88888888', name: 'Test Owner', sla_ark: MERRITT_ADMIN_OWNER }
+        # { ark: 'ark:/13030/88888888', name: 'Test Owner', sla_ark: MERRITT_ADMIN_OWNER }
       ].each do |own|
         r = add_owner(own[:ark], own[:name], own[:sla_ark])
         begin
