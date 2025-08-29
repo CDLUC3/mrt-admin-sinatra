@@ -10,7 +10,7 @@ queries:
         aggregate_role, ark, 
         erc_what as name
       from inv.inv_objects
-      where object_type='MRT-system'
+      where aggregate_role != 'MRT-none'
   /queries/misc/admin-owner:
     description: |
       - [Create Owner](/ops/collections/management/create-owner)
