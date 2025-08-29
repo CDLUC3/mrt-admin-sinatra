@@ -9,6 +9,9 @@ require_relative '../ui/context'
 module Sinatra
   # client specific routes
   module UC3ServicesRoutes
+    MERRITT_ADMIN_OWNER = 'ark:/13030/j2rn30xp'
+    TEST_SLA = 'ark:/13030/77777777'
+
     def ui_host
       host = ENV.fetch('SVC_UI', 'ui:8086')
       host =~ /^http/ ? host : "http://#{host}"
@@ -177,23 +180,63 @@ module Sinatra
       )
     end
 
+    def add_sla(ark, name, mnemonic)
+      post_url_multipart(
+        "#{inventory_host}/admin/sla",
+        { adminid: ark, name: name, mnemonic: mnemonic }
+      )
+    end
+
     def stack_init
       UC3::FileSystemClient.client.cleanup_ingest_folders
       resp = []
       r = post_url("#{inventory_host}/admin/init")
-      resp << ::JSON.parse(r)
+      begin
+        resp << ::JSON.parse(r)
+      rescue StandardError => e
+        resp << { action: "Inventory Init", error: e.to_s }
+      end
       collections_init.each do |r|
         resp << r
       end
       r = post_url("#{replic_host}/service/start?t=json")
-      resp << ::JSON.parse(r)
+      begin
+        resp << ::JSON.parse(r)
+      rescue StandardError => e
+        resp << { action: "Replic Init", error: e.to_s }
+      end
       r = post_url("#{audit_host}/service/start?t=json")
-      resp << ::JSON.parse(r)
+      begin
+        resp << ::JSON.parse(r)
+      rescue StandardError => e
+        resp << { action: "Audit Init", error: e.to_s }
+      end
       resp
     end
 
     def collections_init
       resp = []
+      [
+        {ark: TEST_SLA, name: 'Test SLA', mnemonic: 'test_sla' }
+      ].each do |c|
+        r = add_sla(c[:ark], c[:name], c[:mnemonic])
+        begin
+          resp << ::JSON.parse(r)
+        rescue StandardError => e
+          resp << { action: "Create SLA #{c[:name]}", error: e.to_s }
+        end
+      end
+      [
+        { ark: 'ark:/13030/88888888', name: 'Test Owner', sla_ark: MERRITT_ADMIN_OWNER }
+      ].each do |own|
+        r = add_owner(own[:ark], own[:name], own[:sla_ark])
+        begin
+          resp << ::JSON.parse(r)
+        rescue StandardError => e
+          resp << { action: "Create Owner #{own[:name]}", error: e.to_s }
+        end
+      end
+
       [
         { ark: 'ark:/13030/m5rn35s8', name: 'Merritt Demo', mnemonic: 'merritt_demo', public: true },
         { ark: 'ark:/13030/m5qv8jks', name: 'cdl_dryaddev', mnemonic: 'cdl_dryaddev', public: true },
@@ -201,7 +244,11 @@ module Sinatra
         { ark: 'ark:/13030/99999999', name: 'Terry Test', mnemonic: 'terry_test', public: true }
       ].each do |c|
         r = add_collection(c[:ark], c[:name], c[:mnemonic], public: c.fetch(:public, false))
-        resp << ::JSON.parse(r)
+        begin
+          resp << ::JSON.parse(r)
+        rescue StandardError => e
+          resp << { action: "Create Collection #{c[:name]}", error: e.to_s }
+        end
       end
       resp
     end
