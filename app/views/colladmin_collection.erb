@@ -32,6 +32,15 @@
   <fieldset>
     <legend>Ingest Profile Attributes</legend>
     <div>
+      <label for="primarynode">Primary Storage Node</label>
+      <select id="primarynode" name="primarynode">
+        <option value=""></option>
+        <% nodes.each do |key, value| %>
+          <option value="<%= key %>"><%= value %></option>
+        <% end %>
+      </select>
+    </div>
+    <div>
       <label for="notifyselect">Copy Notifications from</label>
       <select id="notifyselect" name="notifyselect">
         <option value=""></option>

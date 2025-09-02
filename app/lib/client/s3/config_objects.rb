@@ -108,6 +108,7 @@ module UC3S3
       now = Time.now.utc.strftime('%Y-%m-%dT%H:%M:%S')
       profile.gsub!('${CREATIONDATE}', now)
       profile.gsub!('${MODIFICATIONDATE}', now)
+      profile.gsub!('${STORAGENODE}', params.fetch('primarynode', ''))
       profile
     rescue StandardError => e
       e.to_s

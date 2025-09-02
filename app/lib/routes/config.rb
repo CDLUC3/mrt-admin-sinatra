@@ -15,6 +15,14 @@ module Sinatra
       data
     end
 
+    def get_nodes
+      data = {}
+      UC3Query::QueryClient.client.query('/ops/storage/db/nodes', {}).table_data.each do |row|
+        data[row[:node_number]] = "#{row[:node_number]} #{row[:description]} (#{row[:object_count]})"
+      end
+      data
+    end
+
     def get_slas
       data = {}
       UC3Query::QueryClient.client.query('/queries/misc/sla', {}).table_data.each do |row|
@@ -91,7 +99,8 @@ module Sinatra
         erb :colladmin_collection, layout: :page_layout, locals: {
           context: AdminUI::Context.new(request.path),
           owners: get_owners,
-          notifications: get_notification_map
+          notifications: get_notification_map,
+          nodes: get_nodes
         }
       end
 

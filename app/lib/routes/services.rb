@@ -260,8 +260,18 @@ module Sinatra
                 'nodeio',
                 1,
                 1,
-                'http://store:8080/store';
+                'http://store:8080/store'
+            ))
+            resp << { action: "Add test storage nodes", result: "success" }
+          else
+            resp << { action: "Add test storage nodes", result: "skipped - already exists" }
+          end
 
+          sql = %{
+            select * from billing.daily_node_counts
+          }
+          if qc.run_sql(sql).empty?
+            qc.run_sql(%(
               insert into billing.daily_node_counts(
                 as_of_date,inv_node_id, number, object_count, object_count_primary, object_count_secondary, file_count, billable_size
               )
@@ -269,12 +279,14 @@ module Sinatra
                 date(now()), id, number, 1, 0, 0, 0, 0
               from inv.inv_nodes;
             ))
-            resp << { action: "Add test storage nodes", result: "success" }
+            resp << { action: "Add test storage node counts", result: "success" }
           else
-            resp << { action: "Add test storage nodes", result: "skipped - already exists" }
+            resp << { action: "Add test storage node counts", result: "skipped - already exists" }
           end
+          qc.run_sql(%{update inv.inv_objects set aggregate_role='MRT-service-level-agreement' where ark='ark:/13030/j2h41690'})
+          resp << { action: "Temp fix complete" }
         rescue StandardError => e
-          resp << { action: "Add test storage nodes", error: e.to_s }
+          resp << { action: "Add test storage node and node counts", error: e.to_s }
         end
       end
       resp
