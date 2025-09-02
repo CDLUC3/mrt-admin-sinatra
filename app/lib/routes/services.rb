@@ -194,7 +194,7 @@ module Sinatra
       begin
         resp << ::JSON.parse(r)
       rescue StandardError => e
-        resp << { action: "Inventory Init", error: e.to_s }
+        resp << { action: 'Inventory Init', error: e.to_s }
       end
       collections_init.each do |r|
         resp << r
@@ -203,21 +203,21 @@ module Sinatra
       begin
         resp << ::JSON.parse(r)
       rescue StandardError => e
-        resp << { action: "Replic Init", error: e.to_s }
+        resp << { action: 'Replic Init', error: e.to_s }
       end
       r = post_url("#{audit_host}/service/start?t=json")
       begin
         resp << ::JSON.parse(r)
       rescue StandardError => e
-        resp << { action: "Audit Init", error: e.to_s }
+        resp << { action: 'Audit Init', error: e.to_s }
       end
 
       qc = UC3Query::QueryClient.client
       if !qc.nil? && qc.enabled
         begin
-          sql = %{
+          sql = %(
             select * from inv.inv_nodes
-          }
+          )
           if qc.run_sql(sql).empty?
             qc.run_sql(%(
               insert into inv.inv_nodes(
@@ -262,31 +262,42 @@ module Sinatra
                 1,
                 'http://store:8080/store'
             ))
-            resp << { action: "Add test storage nodes", result: "success" }
+            resp << { action: 'Add test storage nodes', result: 'success' }
           else
-            resp << { action: "Add test storage nodes", result: "skipped - already exists" }
+            resp << { action: 'Add test storage nodes', result: 'skipped - already exists' }
           end
 
-          sql = %{
+          sql = %(
             select * from billing.daily_node_counts
-          }
+          )
           if qc.run_sql(sql).empty?
             qc.run_sql(%(
               insert into billing.daily_node_counts(
-                as_of_date,inv_node_id, number, object_count, object_count_primary, object_count_secondary, file_count, billable_size
+                as_of_date,
+                inv_node_id,
+                number,
+                object_count,
+                object_count_primary,
+                object_count_secondary,
+                file_count,
+                billable_size
               )
-              select 
+              select
                 date(now()), id, number, 1, 0, 0, 0, 0
               from inv.inv_nodes;
             ))
-            resp << { action: "Add test storage node counts", result: "success" }
+            resp << { action: 'Add test storage node counts', result: 'success' }
           else
-            resp << { action: "Add test storage node counts", result: "skipped - already exists" }
+            resp << { action: 'Add test storage node counts', result: 'skipped - already exists' }
           end
-          qc.run_sql(%{update inv.inv_objects set aggregate_role='MRT-service-level-agreement' where ark='ark:/13030/j2h41690'})
-          resp << { action: "Temp fix complete" }
+          qc.run_sql(%(
+            update inv.inv_objects
+            set aggregate_role='MRT-service-level-agreement'
+            where ark='ark:/13030/j2h41690'
+          ))
+          resp << { action: 'Temp fix complete' }
         rescue StandardError => e
-          resp << { action: "Add test storage node and node counts", error: e.to_s }
+          resp << { action: 'Add test storage node and node counts', error: e.to_s }
         end
       end
       resp
@@ -294,27 +305,6 @@ module Sinatra
 
     def collections_init
       resp = []
-      [
-        # {ark: TEST_SLA, name: 'Test SLA', mnemonic: 'test_sla' }
-      ].each do |c|
-        r = add_sla(c[:ark], c[:name], c[:mnemonic])
-        begin
-          resp << ::JSON.parse(r)
-        rescue StandardError => e
-          resp << { action: "Create SLA #{c[:name]}", error: e.to_s }
-        end
-      end
-      [
-        # { ark: 'ark:/13030/88888888', name: 'Test Owner', sla_ark: MERRITT_ADMIN_OWNER }
-      ].each do |own|
-        r = add_owner(own[:ark], own[:name], own[:sla_ark])
-        begin
-          resp << ::JSON.parse(r)
-        rescue StandardError => e
-          resp << { action: "Create Owner #{own[:name]}", error: e.to_s }
-        end
-      end
-
       [
         { ark: 'ark:/13030/m5rn35s8', name: 'Merritt Demo', mnemonic: 'merritt_demo', public: true },
         { ark: 'ark:/13030/m5qv8jks', name: 'cdl_dryaddev', mnemonic: 'cdl_dryaddev', public: true },

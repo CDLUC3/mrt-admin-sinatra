@@ -86,7 +86,6 @@ module Sinatra
         )
       end
 
-
       app.post '/ops/collections/management/create-collection' do
         erb :colladmin_profile, layout: :page_layout, locals: {
           context: AdminUI::Context.new(request.path),

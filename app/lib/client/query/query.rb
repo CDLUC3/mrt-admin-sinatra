@@ -232,6 +232,5 @@ module UC3Query
       end
       table
     end
-
   end
 end
