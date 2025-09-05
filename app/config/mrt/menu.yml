@@ -674,7 +674,6 @@ items:
   - path: collections
     title: Collections
     route: /ops/collections
-    disable: ecs-dbsnapshot
     breadcrumb: true
     items:
     - path: management
@@ -685,17 +684,17 @@ items:
       - title: SLAs
         route: /ops/collections/management/slas
       - title: Create SLA
-        disable: ecs-prd
+        disable: ecs-prd, ecs-dbsnapshot
         route: /ops/collections/management/create-sla
       - title: Owners
         route: /ops/collections/management/owners
       - title: Create Owner
-        disable: ecs-prd
+        disable: ecs-prd, ecs-dbsnapshot
         route: /ops/collections/management/create-owner
       - title: Collections
         route: /ops/collections/management/collections
       - title: Create Collection
-        disable: ecs-prd
+        disable: ecs-prd, ecs-dbsnapshot
         route: /ops/collections/management/create-collection
       - title: Ingest Profiles
         route: /ops/collections/management/profiles

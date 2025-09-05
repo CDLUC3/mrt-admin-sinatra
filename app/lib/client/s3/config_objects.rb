@@ -43,6 +43,7 @@ module UC3S3
       super(enabled: true)
     rescue StandardError => e
       puts e
+      puts e.backtrace
       super(enabled: false, message: e.to_s)
     end
 
