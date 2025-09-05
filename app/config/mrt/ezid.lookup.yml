@@ -15,7 +15,12 @@ dockerlocal:
 ecs-dev:
   <<: *docker
 ecs-dbsnapshot:
-  supported: false
+  user:
+    val: na
+  password:
+    val: na
+  _fixed:
+    api: na
 ecs-stg:
   user:
     ssm: /uc3/mrt/stg/ingest/ezid-user
