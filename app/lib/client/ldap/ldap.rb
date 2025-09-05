@@ -20,7 +20,8 @@ module UC3Ldap
         key: ENV.fetch('configkey', 'default'),
         symbolize_names: true
       )
-      puts "LDAP HOST: #{@ldapconf.fetch(:host, '')}:#{@ldapconf.fetch(:port, '1389')}"
+      
+      # puts "LDAP HOST: #{@ldapconf.fetch(:host, '')}:#{@ldapconf.fetch(:port, '1389')}"
       @ldap_connect = {
         host: @ldapconf.fetch(:host, ''),
         port: @ldapconf.fetch(:port, '1389').to_i,

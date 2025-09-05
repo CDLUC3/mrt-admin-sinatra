@@ -52,6 +52,7 @@ module Sinatra
       end
 
       app.post '/ops/collections/management/create-sla' do
+        UC3S3::ConfigObjectsClient.client.create_sla(request.params)
         redirect '/ops/collections/management/slas'
       end
 
@@ -69,6 +70,7 @@ module Sinatra
       end
 
       app.post '/ops/collections/management/create-owner' do
+        UC3S3::ConfigObjectsClient.client.create_owner(request.params)
         redirect '/ops/collections/management/owners'
       end
 
@@ -87,9 +89,10 @@ module Sinatra
       end
 
       app.post '/ops/collections/management/create-collection' do
+        ark = UC3S3::ConfigObjectsClient.client.create_collection(request.params)
         erb :colladmin_profile, layout: :page_layout, locals: {
           context: AdminUI::Context.new(request.path),
-          profile: UC3S3::ConfigObjectsClient.client.make_profile(request.params),
+          profile: UC3S3::ConfigObjectsClient.client.make_profile(request.params, ark: ark),
           profile_name: "#{request.params.fetch('name', '')}_content"
         }
       end

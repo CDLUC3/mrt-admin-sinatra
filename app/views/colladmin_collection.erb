@@ -8,8 +8,9 @@
   </fieldset>
   <fieldset>
     <legend>Collection Attributes</legend>
+    <div><em>The Collection Admin object will have a default Merritt system owner.</em></div>
     <div>
-      <label for="owner">Owner</label>
+      <label for="owner">Collection Content Owner</label>
       <select id="owner" name="owner">
         <% owners.each do |key, value| %>
           <option value="<%= key %>"><%= value %></option>
@@ -54,24 +55,8 @@
       <textarea id="notifications" name="notifications" rows="4" cols="80"></textarea>
     </div>
   </fieldset>
-  <input type="submit" value="Create Collection (MOCK)">
+  <input type="submit" value="Create Collection">
 </form>
-
-<h3>After sumbmission...</h3>
-<div class="after-submit">
-  <ul>
-    <li>Ark will be minted for the new Collection</li>
-    <li>Inventory API admin/collection/private will be invoked</li>
-    <li>Collection will be added to inv_objects table with the designated owner</li>
-    <li>Collection will be added to inv_collections table with name and mnemonic set</li>
-    <li>A default LDAP entry should be created for the collection granting access to the Merritt team</li>
-    <li>The ingest profile will be presented in a text window and will be available for upload to GitHub</li>
-  </ul>
-</div>
-
-<h3>Discuss</h3>
-<div>Do we need to pass an Owner to inventory when creating a collection, or would it be sufficent to specify the owner only in the ingest profile?</div>
-<div>Eliminate Collection admin profiles?</div>
 
 <script type="text/javascript">
   $(document).ready(function() {

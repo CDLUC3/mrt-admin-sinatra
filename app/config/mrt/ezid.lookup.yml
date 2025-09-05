@@ -1,0 +1,42 @@
+docker: &docker
+  user: 
+    val: user
+  password: 
+    val: password
+  _fixed:
+    # this is a fake ezid service with no authentication
+    api: http://ezid:4567
+    target: https://github.com/CDLUC3/mrt-doc
+    sla_shoulder: ark:/99999/fk4
+    owner_shoulder: ark:/99999/fk4
+    collection_shoulder: ark:/99999/fk4
+dockerlocal:
+  <<: *docker
+ecs-dev:
+  <<: *docker
+ecs-dbsnapshot:
+  # ingests not supported
+ecs-stg:
+  user:
+    ssm: /uc3/mrt/stg/ingest/ezid-user
+  password:
+    ssm: /uc3/mrt/stg/ingest/ezid-password
+  _fixed:
+    api: https://ezid.cdlib.org
+    target: https://merritt-stage.cdlib.org
+    sla_shoulder: ark:/99999/fk4
+    owner_shoulder: ark:/99999/fk4
+    collection_shoulder: ark:/99999/fk4
+ecs-prd:
+  user:
+    ssm: /uc3/mrt/prd/ingest/ezid-user
+  password:
+    ssm: /uc3/mrt/prd/ingest/ezid-password
+  _fixed:
+    api: https://ezid.cdlib.org
+    target: https://merritt.cdlib.org
+    sla_shoulder: ark:/13030/j2
+    owner_shoulder: ark:/13030/j2
+    collection_shoulder: ark:/13030/m5
+default:
+  <<: *docker 

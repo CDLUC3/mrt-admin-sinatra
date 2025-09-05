@@ -29,13 +29,17 @@ module UC3S3
       @prefix = ENV.fetch('S3CONFIG_PREFIX', 'uc3/mrt/mrt-ingest-profiles/')
       @bucket = ENV.fetch('S3CONFIG_BUCKET', 'mrt-config')
 
-      puts "before get #{@prefix}index.yaml"
       resp = @s3_client.get_object(
         bucket: @bucket,
         key: "#{@prefix}index.yaml"
       )
       @config_objects = YAML.safe_load(resp.body.read, symbolize_names: true)
 
+      @ezidconf = UC3::UC3Client.lookup_map_by_filename(
+        'app/config/mrt/ezid.lookup.yml',
+        key: ENV.fetch('configkey', 'default'),
+        symbolize_names: true
+      )
       super(enabled: true)
     rescue StandardError => e
       puts e
@@ -87,12 +91,11 @@ module UC3S3
       e.to_s
     end
 
-    def make_profile(params)
+    def make_profile(params, ark: 'ark:/13030/mintme')
       resp = @s3_client.get_object(
         bucket: @bucket,
         key: "#{@prefix}TEMPLATE-PROFILE"
       )
-      ark = 'ark:/13030/mintme'
       profile = resp.body.read
       profile.gsub!('${ARK}', ark)
       profile.gsub!('${NAME}', "#{params.fetch('name', '')}_content")
@@ -112,6 +115,44 @@ module UC3S3
       profile
     rescue StandardError => e
       e.to_s
+    end
+
+    def mint_sla_url
+      "#{@ezidconf.fetch(:api, 'http://ezid:4567')}/shoulder/#{@ezidconf.fetch(:slashoulder, 'ark:/13030/fk4')}"
+    end
+
+    def create_sla(params)
+      ark = mint(mint_sla_url)
+      add_sla(ark, params.fetch('name', ''), params.fetch('mnemonic', ''))
+      ark
+    end
+
+    def mint_owner_url
+      "#{@ezidconf.fetch(:api, 'http://ezid:4567')}/shoulder/#{@ezidconf.fetch(:owner_shoulder, 'ark:/13030/fk4')}"
+    end
+
+    def create_owner(params)
+      ark = mint(mint_owner_url)
+      add_owner(ark, params.fetch('name', ''), params.fetch('sla', ''))
+      ark
+    end
+
+    def mint_collection_url
+      "#{@ezidconf.fetch(:api, 'http://ezid:4567')}/shoulder/#{@ezidconf.fetch(:collection_shoulder, 'ark:/13030/fk4')}"
+    end
+
+    def mint(url)
+      r = post_url_body(url, body: "_target: #{@ezidconf.fetch(:target, '')}")
+      m = /^([^:]*): (.*)$/.match(r)
+      raise "Mint failure: #{r}" unless m[1] == 'success'
+      m[2]
+    end
+
+    def create_collection(params)
+      ark = mint(mint_collection_url)
+      add_collection(ark, params.fetch('name', ''), params.fetch('mnemonic', ''), public: params.key?('public'))
+      # add ldap stuff
+      ark
     end
   end
 end

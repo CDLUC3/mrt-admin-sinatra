@@ -332,14 +332,19 @@ module Sinatra
       { uri: uri, error: e.to_s }.to_json
     end
 
-    def post_url(url)
+    def post_url_body(url, body: nil)
       uri = URI.parse(url)
       req = Net::HTTP::Post.new(uri)
+      req.body = body
 
       response = Net::HTTP.start(uri.hostname, uri.port) do |http|
         http.request(req)
       end
-      json = response.body
+      response.body
+    end
+
+    def post_url(url, body: nil)
+      json = post_url_body(url)
       content_type :json
       json
     rescue StandardError => e
@@ -353,12 +358,7 @@ module Sinatra
       response = Net::HTTP.start(uri.hostname, uri.port) do |http|
         http.request(req)
       end
-      json = response.body
-      content_type :json
-      json
-    rescue StandardError => e
-      content_type :json
-      { uri: uri, error: e.to_s }.to_json
+      response.body
     end
   end
 
