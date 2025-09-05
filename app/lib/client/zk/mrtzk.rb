@@ -20,11 +20,14 @@ module UC3Queue
     def initialize
       map = UC3::UC3Client.lookup_map_by_filename('app/config/mrt/zk.yml')
       zkconn = map.fetch('zkconn', '')
-      puts "Creating Zookeeper connection to #{zkconn}"
-      @zk = ZK.new(zkconn, timeout: 1000)
+      raise 'ZK connection string not defined' if zkconn.empty?
+
+      puts "Creating Zookeeper connection to #{zkconn}."
+      # note that this timeout (in sec) is for the creation of the connection
+      @zk = ZK.new(zkconn, timeout: 1)
       raise "ZK init error #{zkconn}" if @zk.nil?
 
-      puts "ZooKeeper connection established"
+      puts "ZooKeeper connection established: #{@zk.inspect}"
       @zk_hosts = []
       zkconn.split(',').each do |zkhost|
         @zk_hosts << zkhost.split(':').first
