@@ -21,6 +21,7 @@ module UC3Queue
       map = UC3::UC3Client.lookup_map_by_filename('app/config/mrt/zk.yml')
       zkconn = map.fetch('zkconn', '')
       @zk = ZK.new(zkconn, timeout: 1000)
+      raise "ZK init error #{zkconn}" if @zk.nil?
       @zk_hosts = []
       zkconn.split(',').each do |zkhost|
         @zk_hosts << zkhost.split(':').first
