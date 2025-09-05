@@ -23,7 +23,7 @@ module UC3Queue
       raise 'ZK connection string not defined' if zkconn.empty?
 
       puts "Creating Zookeeper connection to #{zkconn}."
-      # note that this timeout (in sec) is for the creation of the connection
+      # NOTE: that this timeout (in sec) is for the creation of the connection
       @zk = ZK.new(zkconn, timeout: 2)
       raise "ZK init error #{zkconn}" if @zk.nil?
       raise "ZK connection error #{zkconn}" unless @zk.connected?

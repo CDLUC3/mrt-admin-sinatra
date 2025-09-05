@@ -25,15 +25,21 @@ module UC3S3
         opt[:region] = ENV.fetch('S3REGION', 'us-east-1')
       end
 
-      @s3_client = Aws::S3::Client.new(opt)
-      @prefix = ENV.fetch('S3CONFIG_PREFIX', 'uc3/mrt/mrt-ingest-profiles/')
-      @bucket = ENV.fetch('S3CONFIG_BUCKET', 'mrt-config')
+      begin
+        @s3_client = Aws::S3::Client.new(opt)
+        @prefix = ENV.fetch('S3CONFIG_PREFIX', 'uc3/mrt/mrt-ingest-profiles/')
+        @bucket = ENV.fetch('S3CONFIG_BUCKET', 'mrt-config')
 
-      resp = @s3_client.get_object(
-        bucket: @bucket,
-        key: "#{@prefix}index.yaml"
-      )
-      @config_objects = YAML.safe_load(resp.body.read, symbolize_names: true)
+        resp = @s3_client.get_object(
+          bucket: @bucket,
+          key: "#{@prefix}index.yaml"
+        )
+        @config_objects = YAML.safe_load(resp.body.read, symbolize_names: true)
+      rescue StandardError => e
+        puts e
+        puts e.backtrace
+        super(enabled: false, message: "Unable to load configuration data from S3: #{e}")
+      end
 
       @ezidconf = UC3::UC3Client.lookup_map_by_filename(
         'app/config/mrt/ezid.lookup.yml',
