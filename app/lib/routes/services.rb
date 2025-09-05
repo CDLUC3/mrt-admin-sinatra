@@ -165,28 +165,6 @@ module Sinatra
       end
     end
 
-    def add_collection(ark, name, mnemonic, public: false)
-      vis = public ? 'public' : 'private'
-      post_url_multipart(
-        "#{inventory_host}/admin/collection/#{vis}",
-        { adminid: ark, name: name, mnemonic: mnemonic }
-      )
-    end
-
-    def add_owner(ark, name, sla_ark)
-      post_url_multipart(
-        "#{inventory_host}/admin/owner",
-        { adminid: ark, name: name, slaid: sla_ark }
-      )
-    end
-
-    def add_sla(ark, name, mnemonic)
-      post_url_multipart(
-        "#{inventory_host}/admin/sla",
-        { adminid: ark, name: name, mnemonic: mnemonic }
-      )
-    end
-
     def stack_init
       UC3::FileSystemClient.client.cleanup_ingest_folders
       resp = []
@@ -353,11 +331,13 @@ module Sinatra
     end
 
     def post_url_multipart(url, params)
+      puts "POST #{url} with #{params.inspect}"
       uri = URI.parse(url)
       req = Net::HTTP::Post::Multipart.new(uri, params)
       response = Net::HTTP.start(uri.hostname, uri.port) do |http|
         http.request(req)
       end
+      puts "Response: #{response.status}"
       response.body
     end
   end

@@ -30,12 +30,16 @@ module Sinatra
         menu: route.empty? || !items.empty?
       )
       items.each do |citem|
+        next if citem.fetch(:disable, '').split(/, */).include?(ENV.fetch('configkey', 'default'))
+
         add_menu_item(np, citem)
       end
     end
 
     def self.load_menu_file(menu_file)
       UC3::UC3Client.load_config(menu_file).fetch(:items, {}).each do |menu|
+        next if menu.fetch(:disable, '').split(/, */).include?(ENV.fetch('configkey', 'default'))
+
         add_menu_item([''], menu)
       end
     end

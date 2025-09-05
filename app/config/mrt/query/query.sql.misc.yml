@@ -12,8 +12,6 @@ queries:
       from inv.inv_objects
       where aggregate_role != 'MRT-none'
   /queries/misc/admin-owner:
-    description: |
-      - [Create Owner](/ops/collections/management/create-owner)
     sql: |
       select 
         o.id as inv_object_id, 
@@ -39,8 +37,6 @@ queries:
           and o.aggregate_role = 'MRT-service-level-agreement'
       ) order by name
   /queries/misc/admin-sla:
-    description: |
-      - [Create SLA](/ops/collections/management/create-sla)
     sql: |
       select 
         o.id as inv_object_id, 
@@ -56,8 +52,6 @@ queries:
       left join inv.inv_collections c on c.inv_object_id = o.id
       where o.aggregate_role='MRT-service-level-agreement'
   /queries/misc/admin-collection:
-    description: |
-      - [Create Collection](/ops/collections/management/create-collection)
     sql: |
       select 
         o.id as inv_object_id, 

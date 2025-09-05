@@ -13,8 +13,10 @@ items:
     route: /queries/consistency/daily
   - title: Batches
     route: /ops/zk/ingest/batches
+    disable: ecs-dbsnapshot
   - title: Jobs
     route: /ops/zk/ingest/jobs-by-collection
+    disable: ecs-dbsnapshot
   - path: about
     title: About
     items:
@@ -30,6 +32,7 @@ items:
   title: Source
   route: /source
   breadcrumb: true
+  disable: ecs-ephemeral, ecs-dbsnapshot, ecs-stg, ecs-prd
   items:
   - title: Tag Conventions
     external: true
@@ -454,6 +457,7 @@ items:
   - path: zookeeper
     title: ZooKeeper
     route: /ops/zk
+    disable: ecs-dbsnapshot
     breadcrumb: true
     items:
     - path: zk-nodes
@@ -670,6 +674,7 @@ items:
   - path: collections
     title: Collections
     route: /ops/collections
+    disable: ecs-dbsnapshot
     breadcrumb: true
     items:
     - path: management
@@ -680,14 +685,17 @@ items:
       - title: SLAs
         route: /ops/collections/management/slas
       - title: Create SLA
+        disable: ecs-prd
         route: /ops/collections/management/create-sla
       - title: Owners
         route: /ops/collections/management/owners
       - title: Create Owner
+        disable: ecs-prd
         route: /ops/collections/management/create-owner
       - title: Collections
         route: /ops/collections/management/collections
       - title: Create Collection
+        disable: ecs-prd
         route: /ops/collections/management/create-collection
       - title: Ingest Profiles
         route: /ops/collections/management/profiles
@@ -742,8 +750,10 @@ items:
     tbd: true
   - title: Cloudwatch Logs
     route: /ops/cloudwatch
+    disable: default, docker
   - title: Opensearch Logs
     route: /ops/opensearch
+    disable: default, docker
 - path: Internals
   title: Internals
   items: 
@@ -765,6 +775,7 @@ items:
     external: true
   - title: Deployment State
     route: /infra/ecs
+    disable: default, docker
   - title: Services
     path: services
     route: /json
@@ -781,11 +792,13 @@ items:
         route: /json/ui/audit-replic
       - title: Redeploy UI
         route: /infra/ecs/redeploy/ui
+        disable: default, docker
         confmsg: This will re-deploy the UI service in ECS.
         method: post
     - title: Ingest
       path: ingest
       route: /json/ingest
+      disable: ecs-dbsnapshot
       breadcrumb: true
       items:
       - title: Ingest State
@@ -798,14 +811,17 @@ items:
         method: post
       - title: Scale Up Ingest
         route: /infra/ecs/scale-up/ingest
+        disable: default, docker
         confmsg: This will scale up the number of Ingest tasks running in ECS unless the maximum configured number has been reached.
         method: post
       - title: Scale Down Ingest
         route: /infra/ecs/scale-down/ingest
+        disable: default, docker
         confmsg: This will scale down the number of Ingest tasks running in ECS unless the minimum configured number has been reached.
         method: post
     - title: Store
       path: store
+      disable: ecs-dbsnapshot
       route: /json/store
       breadcrumb: true
       items:
@@ -819,19 +835,23 @@ items:
         route: /json/store/hostname
       - title: Redeploy Store
         route: /infra/ecs/redeploy/store
+        disable: default, docker
         confmsg: This will re-deploy the Store service in ECS.
         method: post
       - title: Scale Up Store
         route: /infra/ecs/scale-up/store
+        disable: default, docker
         confmsg: This will scale up the number of Store tasks running in ECS unless the maximum configured number has been reached.
         method: post
       - title: Scale Down Store
         route: /infra/ecs/scale-down/store
         confmsg: This will scale down the number of Store tasks running in ECS unless the minimum configured number has been reached.
+        disable: default, docker
         method: post
     - title: Inventory
       path: inventory
       route: /json/inventory
+      disable: ecs-dbsnapshot
       breadcrumb: true
       items:
       - title: Inventory State
@@ -852,11 +872,13 @@ items:
         method: post
       - title: Redeploy Inventory
         route: /infra/ecs/redeploy/inventory
+        disable: default, docker
         confmsg: This will re-deploy the Inventory service in ECS.
         method: post
     - title: Audit
       path: audit
       route: /json/audit
+      disable: ecs-dbsnapshot
       breadcrumb: true
       items:
       - title: Audit State
@@ -873,11 +895,13 @@ items:
         method: post
       - title: Redeploy Audit
         route: /infra/ecs/redeploy/audit
+        disable: default, docker
         confmsg: This will re-deploy the Audit service in ECS.
         method: post
     - title: Replic
       path: replic
       route: /json/replic
+      disable: ecs-dbsnapshot
       breadcrumb: true
       items:
       - title: Replic State
@@ -894,12 +918,14 @@ items:
         method: post
       - title: Redeploy Replic
         route: /infra/ecs/redeploy/replic
+        disable: default, docker
         confmsg: This will re-deploy the Recplic service in ECS.
         method: post
     - title: Access
       path: access
       route: /json/access
       breadcrumb: true
+      disable: ecs-dbsnapshot
       items:
       - title: Access State
         route: /json/access/state
@@ -910,55 +936,68 @@ items:
     - title: Admin Tool
       path: admintool
       route: /json/admintool
+      disable: default, docker
       breadcrumb: true
       items:
       - title: Redeploy Admin Tool
         route: /infra/ecs/redeploy/admintool
+        disable: default, docker
         confmsg: This will re-deploy the Admin Tool service in ECS.
         method: post
     - title: Merritt Dev
       path: merrittdev
       route: /json/merrittdev
+      disable: default, docker
       breadcrumb: true
       items:
       - title: Redeploy Merritt Dev
         route: /infra/ecs/redeploy/merrittdev
+        disable: default, docker
         confmsg: This will re-deploy the Merritt Dev service in ECS.
         method: post
       - title: Run Consistency Checks
         route: /infra/ecs/run/merrittdev/runConsistencyEndpoints
+        disable: default, docker
         confmsg: This will run a job in the merrittdev container
         method: post
       - title: Run Unit Tests
         route: /infra/ecs/run/merrittdev/runUnitTestEndpoints
+        disable: default, docker
         confmsg: This will run a job in the merrittdev container
         method: post
       - title: Start Stack
         route: /infra/ecs/run/merrittdev/startStack
+        disable: default, docker
         confmsg: This will run a job in the merrittdev container
         method: post
       - title: Stop Stack
         route: /infra/ecs/run/merrittdev/stopStack
+        disable: default, docker
         confmsg: This will run a job in the merrittdev container
         method: post
       - title: Redeploy Stack
         route: /infra/ecs/run/merrittdev/redeployStack
+        disable: default, docker
         confmsg: This will run a job in the merrittdev container
         method: post
       - title: Redeploy ZooKeeper
         route: /infra/ecs/run/merrittdev/redeployZk
+        disable: default, docker
         confmsg: This will run a job in the merrittdev container
         method: post
     - title: Stack Init 
       route: /stack-init
+      disable: ecs-stg, ecs-prd
       confmsg: This will signal the Admin tool to perform any stack initialization functions required by a fresh test environment.
       method: post
     - title: Collections Init
       route: /collections-init
+      disable: ecs-stg, ecs-prd
       confmsg: This will initialize collections used for testing Merritt.
       method: post
 - path: resources
   title: AWS
+  disable: ecs-ephemeral, ecs-dbsnapshot, ecs-stg, ecs-prd, docker, default
   items:
   - title: Infrastructure Reports
     route: /infra

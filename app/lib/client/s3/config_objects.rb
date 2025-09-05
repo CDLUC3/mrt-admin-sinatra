@@ -123,6 +123,7 @@ module UC3S3
 
     def create_sla(params)
       ark = mint(mint_sla_url)
+      puts "SLA Ark Minted: #{ark}"
       add_sla(ark, params.fetch('name', ''), params.fetch('mnemonic', ''))
       ark
     end
@@ -133,6 +134,7 @@ module UC3S3
 
     def create_owner(params)
       ark = mint(mint_owner_url)
+      puts "Owner Ark Minted: #{ark}"
       add_owner(ark, params.fetch('name', ''), params.fetch('sla', ''))
       ark
     end
@@ -151,9 +153,32 @@ module UC3S3
 
     def create_collection(params)
       ark = mint(mint_collection_url)
+      puts "Collection Ark Minted: #{ark}"
       add_collection(ark, params.fetch('name', ''), params.fetch('mnemonic', ''), public: params.key?('public'))
       # add ldap stuff
       ark
+    end
+
+    def add_collection(ark, name, mnemonic, public: false)
+      vis = public ? 'public' : 'private'
+      post_url_multipart(
+        "#{inventory_host}/admin/collection/#{vis}",
+        { adminid: ark, name: name, mnemonic: mnemonic }
+      )
+    end
+
+    def add_owner(ark, name, sla_ark)
+      post_url_multipart(
+        "#{inventory_host}/admin/owner",
+        { adminid: ark, name: name, slaid: sla_ark }
+      )
+    end
+
+    def add_sla(ark, name, mnemonic)
+      post_url_multipart(
+        "#{inventory_host}/admin/sla",
+        { adminid: ark, name: name, mnemonic: mnemonic }
+      )
     end
   end
 end

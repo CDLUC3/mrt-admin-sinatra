@@ -1,12 +1,23 @@
-docker:
+docker: &docker
+  token: 
+    val: ''
+    default: ''
+ecs-dev: &dev
   token: 
     ssm: /uc3/mrt/dev/github/readonly
     default: ''
-ecs:
-  token: 
-    ssm: /uc3/mrt/dev/github/readonly
-    default: ''
+ecs-dbsnapshot:
+  <<: *dev
+ecs-ephemeral:
+  <<: *dev
+
+# would require cross acount access for ecr/artifact
+ecs-stg:
+  <<: *docker
+ecs-prd:
+  <<: *docker
+
 default:
-  token: 
-    ssm: /uc3/mrt/dev/github/readonly
-    default: ''
+  <<: *docker
+dockerlocal:
+  <<: *docker
