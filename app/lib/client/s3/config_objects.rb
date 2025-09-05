@@ -47,7 +47,7 @@ module UC3S3
         key: ENV.fetch('configkey', 'default'),
         symbolize_names: true
       )
-      super(enabled: true)
+      super(enabled: !@config_objects.empty?)
     rescue StandardError => e
       puts e
       puts e.backtrace
