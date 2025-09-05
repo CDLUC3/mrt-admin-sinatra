@@ -25,6 +25,7 @@ module UC3S3
         opt[:region] = ENV.fetch('S3REGION', 'us-east-1')
       end
 
+      @config_objects = {}
       begin
         @s3_client = Aws::S3::Client.new(opt)
         @prefix = ENV.fetch('S3CONFIG_PREFIX', 'uc3/mrt/mrt-ingest-profiles/')
@@ -54,7 +55,7 @@ module UC3S3
     end
 
     def enabled
-      !@s3_client.nil?
+      !@config_objects.empty?
     end
 
     def notification_map

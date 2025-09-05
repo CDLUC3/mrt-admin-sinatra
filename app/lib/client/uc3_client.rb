@@ -265,7 +265,7 @@ module UC3
   # Identify routes for Consistency Checks and for Unit Testing
   class TestClient < UC3Client
     def initialize
-      super(enabled: true, message: 'Test Client')
+      super(enabled: true)
 
       @test_paths = []
       @consistency_checks = []
