@@ -31,6 +31,8 @@ module UC3Queue
       @snapshot_path = map.fetch('snapshot_path', '/tdr/ingest/queue/zk-snapshots')
       super(enabled: true)
     rescue StandardError => e
+      puts e
+      puts e.backtrace
       @zk = nil
       super(enabled: false, message: e.to_s)
     end

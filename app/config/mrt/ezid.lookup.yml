@@ -15,7 +15,7 @@ dockerlocal:
 ecs-dev:
   <<: *docker
 ecs-dbsnapshot:
-  # ingests not supported
+  supported: false
 ecs-stg:
   user:
     ssm: /uc3/mrt/stg/ingest/ezid-user
