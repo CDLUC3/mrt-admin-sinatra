@@ -145,6 +145,7 @@ module UC3S3
       r = post_url_body(url, body: "_target: #{@ezidconf.fetch(:target, '')}")
       m = /^([^:]*): (.*)$/.match(r)
       raise "Mint failure: #{r}" unless m[1] == 'success'
+
       m[2]
     end
 

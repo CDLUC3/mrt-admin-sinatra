@@ -344,7 +344,7 @@ module Sinatra
     end
 
     def post_url(url, body: nil)
-      json = post_url_body(url)
+      json = post_url_body(url, body: body)
       content_type :json
       json
     rescue StandardError => e
