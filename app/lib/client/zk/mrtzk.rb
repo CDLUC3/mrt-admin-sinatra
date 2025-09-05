@@ -20,8 +20,11 @@ module UC3Queue
     def initialize
       map = UC3::UC3Client.lookup_map_by_filename('app/config/mrt/zk.yml')
       zkconn = map.fetch('zkconn', '')
+      puts "Creating Zookeeper connection to #{zkconn}"
       @zk = ZK.new(zkconn, timeout: 1000)
       raise "ZK init error #{zkconn}" if @zk.nil?
+
+      puts "ZooKeeper connection established"
       @zk_hosts = []
       zkconn.split(',').each do |zkhost|
         @zk_hosts << zkhost.split(':').first
@@ -32,7 +35,7 @@ module UC3Queue
       @snapshot_path = map.fetch('snapshot_path', '/tdr/ingest/queue/zk-snapshots')
       super(enabled: true)
     rescue StandardError => e
-      puts e
+      puts "ZooKeeper Creation Error: #{e.message}"
       puts e.backtrace
       @zk = nil
       super(enabled: false, message: e.to_s)
