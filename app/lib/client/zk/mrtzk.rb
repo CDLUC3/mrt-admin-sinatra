@@ -24,7 +24,7 @@ module UC3Queue
 
       puts "Creating Zookeeper connection to #{zkconn}."
       # note that this timeout (in sec) is for the creation of the connection
-      @zk = ZK.new(zkconn, timeout: 1)
+      @zk = ZK.new(zkconn, timeout: 2)
       raise "ZK init error #{zkconn}" if @zk.nil?
 
       puts "ZooKeeper connection established: #{@zk.inspect}"
@@ -45,7 +45,7 @@ module UC3Queue
     end
 
     def enabled
-      !@zk.nil?
+      @zk.nil? ? false : @zk.connected?
     end
 
     def batches(route)
