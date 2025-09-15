@@ -268,12 +268,6 @@ module Sinatra
           else
             resp << { action: 'Add test storage node counts', result: 'skipped - already exists' }
           end
-          qc.run_sql(%(
-            update inv.inv_objects
-            set aggregate_role='MRT-service-level-agreement'
-            where ark='ark:/13030/j2h41690'
-          ))
-          resp << { action: 'Temp fix complete' }
         rescue StandardError => e
           resp << { action: 'Add test storage node and node counts', error: e.to_s }
         end
