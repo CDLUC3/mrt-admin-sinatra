@@ -337,7 +337,7 @@ module Sinatra
       response = Net::HTTP.start(uri.hostname, uri.port) do |http|
         http.request(req)
       end
-      puts "Response: #{response.status}"
+      puts "Response: #{response.inspect}"
       response.body
     end
   end
