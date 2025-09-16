@@ -153,7 +153,12 @@ module UC3S3
     def mint(url)
       raise 'Minting not supported' unless @ezidconf.fetch(:supported, true)
 
-      r = post_url_body(url, body: "_target: #{@ezidconf.fetch(:target, '')}")
+      r = post_url_body(
+        url,
+        body: "_target: #{@ezidconf.fetch(:target, '')}",
+        user: @ezidconf.fetch(:user, nil),
+        password: @ezidconf.fetch(:password, nil)
+      )
       m = /^([^:]*): (.*)$/.match(r)
       raise "Mint failure: #{r}" unless m
       raise "Mint failure: #{r}" unless m[1] == 'success'
