@@ -308,7 +308,11 @@ module Sinatra
       puts "URI: #{url}, body: #{body}, user: #{user}, password: #{password ? '****' : nil}"
       uri = URI.parse(url)
       req = Net::HTTP::Post.new(uri)
-      req.basic_auth(user, password) if user && password
+      if user && password
+        # req.basic_auth(user, password)
+        token = Base64.strict_encode64("#{user}:#{password}")
+        req['Authorization'] = "Basic #{token}"
+      end
       req['Accept'] = 'text/plain'
 
       req.body = body
