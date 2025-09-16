@@ -30,7 +30,8 @@ module UC3Ldap
           username: @ldapconf.fetch(:admin_user, ''),
           password: @ldapconf.fetch(:admin_password, '')
         },
-        connect_timeout: @ldapconf.fetch(:connect_timeout, '60').to_i
+        connect_timeout: @ldapconf.fetch(:connect_timeout, '60').to_i, 
+        onerror: 'warn'
       }
       if @ldapconf.fetch(:encryption, '') == 'simple_tls'
         @ldap_connect[:encryption] = {
@@ -40,7 +41,7 @@ module UC3Ldap
           }
         }
       end
-      @ldap = Net::LDAP.new(@ldap_connect, onerror: 'warn')
+      @ldap = Net::LDAP.new(@ldap_connect)
 
       @ldap.bind
       super(enabled: true)
