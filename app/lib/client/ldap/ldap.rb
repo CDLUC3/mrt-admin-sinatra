@@ -41,9 +41,10 @@ module UC3Ldap
         }
       end
       @ldap = Net::LDAP.new(@ldap_connect)
+      
       @ldap.bind
       super(enabled: true)
-    resuce Errno::ECONNREFUSED => e
+    rescue Errno::ECONNREFUSED => e
       puts "(LDAP) #{e.class}: #{e}; #{e.backtrace.join("\n")}"
       super(enabled: false, message: e.to_s)
     rescue StandardError => e
