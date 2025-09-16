@@ -12,7 +12,7 @@ module AdminUI
 
   ## Menu (array of submenus and menu items)
   class Menu
-    def initialize(path, title, parent: nil)
+    def initialize(path, title, parent: nil, classes: '')
       @path = path
       @title = title
       @parent = parent
@@ -20,9 +20,10 @@ module AdminUI
       @top = parent.nil? ? self : parent.top
       @top.paths[path] = self
       @children = []
+      @classes = classes
     end
 
-    attr_accessor :title, :parent, :top, :children, :path, :depth
+    attr_accessor :title, :parent, :top, :children, :path, :depth, :classes
 
     def full_path
       paths = []
@@ -35,8 +36,8 @@ module AdminUI
       paths.reverse.join('/')
     end
 
-    def add_submenu(path, title, breadcrumb: false, description: '', route: '')
-      child = Menu.new(path, title, parent: self)
+    def add_submenu(path, title, breadcrumb: false, description: '', route: '', classes: '')
+      child = Menu.new(path, title, parent: self, classes: classes)
       if breadcrumb && !route.empty?
         child.top.route_names[route] =
           { title: title, description: description, breadcrumb: true, route: route }
@@ -46,16 +47,16 @@ module AdminUI
     end
 
     def add_menu_item(route, title, description: '', tbd: false, breadcrumb: false, external: false, method: 'get',
-      confmsg: '')
+      confmsg: '', classes: '')
       mi = MenuItem.new(self, route, title, description: description, tbd: tbd, breadcrumb: breadcrumb,
-        external: external, method: method, confmsg: confmsg)
+        external: external, method: method, confmsg: confmsg, classes: classes)
       @children << mi
       mi
     end
 
     def render
       s = %(
-      <li role="none">
+      <li role="none" class="#{classes}">
         <a aria-haspopup="true" aria-expanded="false" href="#" role="menuitem" title="#{title}">#{title}</a>
         <ul class="submenu" role="menu" aria-label="#{title} submenu">
       )
@@ -80,23 +81,23 @@ module AdminUI
     end
 
     def create_menu_item_for_path(path, route, title, description: '', tbd: false, breadcrumb: false, menu: false,
-      external: false, method: 'get', confmsg: '')
+      external: false, method: 'get', confmsg: '', classes: '')
       parpath = path
       if @paths.key?(parpath)
         if menu
-          @paths[parpath].add_submenu(path, title, description: description, breadcrumb: breadcrumb, route: route)
+          @paths[parpath].add_submenu(path, title, description: description, breadcrumb: breadcrumb, route: route, classes: classes)
         else
           @paths[parpath].add_menu_item(route, title, description: description, tbd: tbd, breadcrumb: breadcrumb,
-            external: external, method: method, confmsg: confmsg)
+            external: external, method: method, confmsg: confmsg, classes: classes)
         end
       else
         parpath = File.dirname(path) until @paths.key?(parpath)
         if menu
-          @paths[parpath].add_submenu(path, title, description: description, breadcrumb: breadcrumb, route: route)
+          @paths[parpath].add_submenu(path, title, description: description, breadcrumb: breadcrumb, route: route, classes: classes)
         else
-          @paths[parpath].add_submenu(path, path, breadcrumb: breadcrumb, route: route)
+          @paths[parpath].add_submenu(path, path, breadcrumb: breadcrumb, route: route, classes: classes)
           create_menu_item_for_path(path, route, title, description: description, tbd: tbd, breadcrumb: breadcrumb,
-            menu: menu, external: external, method: method, confmsg: confmsg)
+            menu: menu, external: external, method: method, confmsg: confmsg, classes: classes)
         end
       end
     end
@@ -172,7 +173,7 @@ module AdminUI
   ## Menu item (hash of title, description and full route (path and query string)
   class MenuItem
     def initialize(parent, route, title, description: '', tbd: false, breadcrumb: false, external: false,
-      method: 'get', confmsg: '')
+      method: 'get', confmsg: '', classes: '')
       @parent = parent
       @title = title
       @route = route
@@ -182,11 +183,12 @@ module AdminUI
       @breadcrumb = breadcrumb
       @description = description
       @confmsg = confmsg
+      @classes = classes
 
       @parent.top.route_names[route_normalized] = { title: title, description: description, route: @route }
     end
 
-    attr_accessor :title, :route, :description, :tbd, :breadcrumb, :external, :method, :confmsg
+    attr_accessor :title, :route, :description, :tbd, :breadcrumb, :external, :method, :confmsg, :classes
 
     def route_normalized
       arr = @route.split('?')
@@ -199,7 +201,9 @@ module AdminUI
     def render
       return '' if @breadcrumb
 
-      lclass = @tbd ? 'tbd' : ''
+      carr = @classes.split(' ')
+      carr << 'tbd' if @tbd
+      lclass = carr.join(' ')
       if @method == 'get'
         icon = @external ? ' 🔗' : ''
         target = @external ? '_blank' : '_self'
@@ -249,6 +253,7 @@ module AdminUI
       @description = TopMenu.instance.description_for_route(@route)
       @breadcrumbs = breadcrumbs
       # Breadcrumbs are an array of hashes with keys :title and :url
+      @ctime = File.ctime('/var/task/Gemfile.lock').strftime('%Y%m%d_%H%M%S')
     end
 
     def classes
@@ -275,6 +280,6 @@ module AdminUI
       }
     end
 
-    attr_accessor :title, :route
+    attr_accessor :title, :route, :ctime
   end
 end

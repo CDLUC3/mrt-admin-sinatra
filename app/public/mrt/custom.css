@@ -81,3 +81,21 @@ span.env-ecs-stg {
 span.env-ecs-dev {
   color: blue;
 }
+
+div.app-state span.inactive {
+  display: none;
+}
+
+div.app-state.no-db span.inactive,
+div.app-state.no-zk span.inactive,
+div.app-state.no-ldap span.inactive {
+  display: inline;
+  color: red;
+}
+
+div.app-state.no-db li.needs-db a, 
+div.app-state.no-zk li.needs-zk a, 
+div.app-state.no-ldap li.needs-ldap a {
+  color: lightgray;
+  font-style: italic;
+}

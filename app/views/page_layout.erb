@@ -5,11 +5,11 @@
     <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
     <link rel="stylesheet" type="text/css" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/themes/smoothness/jquery-ui.css"></link>
     <link rel="icon" href="/favicon.ico" />
-    <link rel="stylesheet" type="text/css" href="/admintool.css" />
-    <link rel="stylesheet" type="text/css" href="/navmenu.css" />
-    <link rel="stylesheet" type="text/css" href="<%= context.class.css %>"/>
-    <script src="/admintool.js"></script>
-    <script src="/navmenu.js"></script>
+    <link rel="stylesheet" type="text/css" href="/admintool.css?v=<%= context.ctime %>" />
+    <link rel="stylesheet" type="text/css" href="/navmenu.css?v=<%= context.ctime %>" />
+    <link rel="stylesheet" type="text/css" href="<%= context.class.css %>?v=<%= context.ctime %>"/>
+    <script src="/admintool.js?v=<%= context.ctime %>"></script>
+    <script src="/navmenu.js?v=<%= context.ctime %>"></script>
     <script src="/sorttable.js"></script>
     <title><%= context.title %></title>
   </head>

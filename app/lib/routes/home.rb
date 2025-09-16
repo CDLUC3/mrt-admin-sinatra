@@ -9,7 +9,7 @@ require_relative '../client/uc3_client'
 module Sinatra
   # client specific routes
   module UC3HomeRoutes
-    def self.add_menu_item(paths, item)
+    def self.add_menu_item(paths, item, classes: '')
       np = paths.clone
       leaf = item.fetch(:path, '')
       title = item.fetch(:title, '')
@@ -17,6 +17,7 @@ module Sinatra
       confmsg = item.fetch(:confmsg, title)
       np.append(leaf) unless leaf.empty?
       items = item.fetch(:items, [])
+      classes = item.fetch(:classes, classes)
       AdminUI::TopMenu.instance.create_menu_item_for_path(
         np.join('/'),
         route,
@@ -27,12 +28,13 @@ module Sinatra
         external: item.fetch(:external, false),
         method: item.fetch(:method, 'get'),
         breadcrumb: item.fetch(:breadcrumb, false),
-        menu: route.empty? || !items.empty?
+        menu: route.empty? || !items.empty?,
+        classes: classes
       )
       items.each do |citem|
         next if citem.fetch(:disable, '').split(/, */).include?(ENV.fetch('configkey', 'default'))
 
-        add_menu_item(np, citem)
+        add_menu_item(np, citem, classes: classes)
       end
     end
 
@@ -40,7 +42,7 @@ module Sinatra
       UC3::UC3Client.load_config(menu_file).fetch(:items, {}).each do |menu|
         next if menu.fetch(:disable, '').split(/, */).include?(ENV.fetch('configkey', 'default'))
 
-        add_menu_item([''], menu)
+        add_menu_item([''], menu, classes: menu.fetch(:classes, ''))
       end
     end
 
