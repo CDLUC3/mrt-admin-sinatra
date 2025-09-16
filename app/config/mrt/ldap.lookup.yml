@@ -13,7 +13,7 @@ docker: &docker
     ark_minter_url: "http://noid.cdlib.org/nd/noidu_p9"
     guest_password: guest
     guest_user: anonymous
-    connect_timeout: 60
+    connect_timeout: 15
 dockerlocal:
   <<: *docker
 ecs-dev:

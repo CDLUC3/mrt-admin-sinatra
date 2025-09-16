@@ -40,7 +40,6 @@ module UC3Queue
       super(enabled: true)
     rescue StandardError => e
       puts "ZooKeeper Creation Error: #{e.message}"
-      puts e.backtrace
       @zk = nil
       super(enabled: false, message: e.to_s)
     end
