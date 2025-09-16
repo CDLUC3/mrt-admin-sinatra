@@ -125,7 +125,7 @@ module UC3S3
     end
 
     def mint_sla_url
-      "#{@ezidconf.fetch(:api, 'http://ezid:4567')}/shoulder/#{@ezidconf.fetch(:slashoulder, 'ark:/13030/fk4')}"
+      "#{@ezidconf.fetch(:api, 'http://ezid:4567')}/shoulder/#{@ezidconf.fetch(:slashoulder, 'ark:/99999/fk4')}"
     end
 
     def create_sla(params)
@@ -136,7 +136,7 @@ module UC3S3
     end
 
     def mint_owner_url
-      "#{@ezidconf.fetch(:api, 'http://ezid:4567')}/shoulder/#{@ezidconf.fetch(:owner_shoulder, 'ark:/13030/fk4')}"
+      "#{@ezidconf.fetch(:api, 'http://ezid:4567')}/shoulder/#{@ezidconf.fetch(:owner_shoulder, 'ark:/99999/fk4')}"
     end
 
     def create_owner(params)
@@ -147,7 +147,7 @@ module UC3S3
     end
 
     def mint_collection_url
-      "#{@ezidconf.fetch(:api, 'http://ezid:4567')}/shoulder/#{@ezidconf.fetch(:collection_shoulder, 'ark:/13030/fk4')}"
+      "#{@ezidconf.fetch(:api, 'http://ezid:4567')}/shoulder/#{@ezidconf.fetch(:collection_shoulder, 'ark:/99999/fk4')}"
     end
 
     def mint(url)
