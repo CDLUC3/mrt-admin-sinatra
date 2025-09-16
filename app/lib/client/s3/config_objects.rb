@@ -169,7 +169,7 @@ module UC3S3
     def create_collection(params)
       ark = mint(mint_collection_url)
       puts "Collection Ark Minted: #{ark}"
-      add_collection(ark, params.fetch('name', ''), params.fetch('mnemonic', ''), public: params.key?('public'))
+      add_collection(ark, params.fetch('description', ''), params.fetch('name', ''), public: params.key?('public'))
       # add ldap stuff
       ark
     end
