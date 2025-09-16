@@ -41,7 +41,9 @@ module UC3Ldap
           }
         }
       end
+      puts "Before @ldap"
       @ldap = Net::LDAP.new(@ldap_connect)
+      puts "After... #{@ldap.inspect}"
 
       # @ldap.bind
       super(enabled: true)
