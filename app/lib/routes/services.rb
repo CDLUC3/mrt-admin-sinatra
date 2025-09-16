@@ -309,15 +309,16 @@ module Sinatra
       uri = URI.parse(url)
       req = Net::HTTP::Post.new(uri)
       if user && password
-        # req.basic_auth(user, password)
-        token = Base64.strict_encode64("#{user}:#{password}")
-        req['Authorization'] = "Basic #{token}"
+        req.basic_auth(user, password)
+        # token = Base64.strict_encode64("#{user}:#{password}")
+        # req['Authorization'] = "Basic #{token}"
       end
+      req['Content-Type'] = 'text/plain; charset=UTF-8'
       req['Accept'] = 'text/plain'
 
       req.body = body
 
-      response = Net::HTTP.start(uri.hostname, uri.port) do |http|
+      response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: uri.scheme == 'https') do |http|
         http.request(req)
       end
       response.body
