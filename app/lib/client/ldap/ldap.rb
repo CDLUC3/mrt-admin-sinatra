@@ -45,7 +45,7 @@ module UC3Ldap
       @ldap = Net::LDAP.new(@ldap_connect)
       puts "After... #{@ldap.inspect}"
 
-      # @ldap.bind
+      @ldap.bind
       super(enabled: true)
     rescue Errno::ECONNRESET => e
       puts "(LDAP Conn Reset) #{e.class}: #{e};"

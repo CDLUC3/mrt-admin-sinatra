@@ -20,6 +20,8 @@ ecs-dev:
   <<: *docker
 ecs-dbsnapshot:
   <<: *docker
+ecs-ephemeral:
+  <<: *docker
 ecs-stg:
   admin_password: 
     ssm: /uc3/mrt/stg/ldap/admin-password
