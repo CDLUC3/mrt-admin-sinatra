@@ -309,6 +309,7 @@ module Sinatra
       uri = URI.parse(url)
       req = Net::HTTP::Post.new(uri)
       req.basic_auth(user, password) if user && password
+      req['Accept'] = 'text/plain'
 
       req.body = body
 
