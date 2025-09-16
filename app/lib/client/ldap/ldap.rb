@@ -45,6 +45,9 @@ module UC3Ldap
 
       # @ldap.bind
       super(enabled: true)
+    rescue Errno::ECONNRESET => e
+      puts "(LDAP Conn Reset) #{e.class}: #{e};"
+      super(enabled: false, message: e.to_s)
     rescue Errno::ECONNREFUSED => e
       puts "(LDAP Conn Refused) #{e.class}: #{e};"
       super(enabled: false, message: e.to_s)
