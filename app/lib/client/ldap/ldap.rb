@@ -41,7 +41,7 @@ module UC3Ldap
         }
       end
       @ldap = Net::LDAP.new(@ldap_connect)
-      @ldap.search(base: user_base)
+      @ldap.bind
       super(enabled: true)
     rescue StandardError => e
       puts "(LDAP) #{e.class}: #{e}; #{e.backtrace.join("\n")}"

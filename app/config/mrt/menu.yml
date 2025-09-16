@@ -599,6 +599,7 @@ items:
   - path: db-queue
     title: Database Queues
     route: /ops/db-queue
+    classes: needs-db
     breadcrumb: true
     items:
     - path: replication-queue
@@ -676,6 +677,7 @@ items:
   - path: collections
     title: Collections
     route: /ops/collections
+    classes: needs-db
     breadcrumb: true
     items:
     - path: management
@@ -717,6 +719,7 @@ items:
   - path: storage
     route: /ops/storage
     breadcrumb: true
+    classes: needs-db
     title: Storage
     items:
     - path: db
@@ -761,6 +764,7 @@ items:
   - path: ldap
     title: LDAP
     route: /ldap
+    classes: needs-ldap
     breadcrumb: true
     items:
     - title: Users
@@ -1038,17 +1042,21 @@ items:
     - title: OpenSearch Usage
       route: /infra/opensearch-usage
       tbd: true
-  - title: List Collections (Simple)
-    route: /queries/misc/collections
-  - title: List First 1000 Objects (Simple)
-    route: /queries/misc/objects
-  - title: DB time
-    route: /queries/misc/now
-  - title: List Consistency Checks
-    route: /test/consistency/links
-  - title: List All routes
-    route: /test/routes/links
-  - title: Admin Objects
-    route: /queries/misc/admin
-  - title: Admin Object Types
-    route: /queries/misc/admin-types
+  - title: Queries
+    path: queries
+    classes: needs-db
+    items:
+    - title: List Collections (Simple)
+      route: /queries/misc/collections
+    - title: List First 1000 Objects (Simple)
+      route: /queries/misc/objects
+    - title: DB time
+      route: /queries/misc/now
+    - title: List Consistency Checks
+      route: /test/consistency/links
+    - title: List All routes
+      route: /test/routes/links
+    - title: Admin Objects
+      route: /queries/misc/admin
+    - title: Admin Object Types
+      route: /queries/misc/admin-types
