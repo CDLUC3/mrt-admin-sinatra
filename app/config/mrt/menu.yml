@@ -99,6 +99,7 @@ items:
       route: /source/artifacts/replic
 - path: reports
   title: Reports
+  classes: needs-db
   items:
   - path: repository
     title: Repository
@@ -458,6 +459,7 @@ items:
     title: ZooKeeper
     route: /ops/zk
     disable: ecs-dbsnapshot
+    classes: needs-zk
     breadcrumb: true
     items:
     - path: zk-nodes
@@ -684,17 +686,17 @@ items:
       - title: SLAs
         route: /ops/collections/management/slas
       - title: Create SLA
-        disable: ecs-prd, ecs-dbsnapshot
+        disable: ecs-dbsnapshot
         route: /ops/collections/management/create-sla
       - title: Owners
         route: /ops/collections/management/owners
       - title: Create Owner
-        disable: ecs-prd, ecs-dbsnapshot
+        disable: ecs-dbsnapshot
         route: /ops/collections/management/create-owner
       - title: Collections
         route: /ops/collections/management/collections
       - title: Create Collection
-        disable: ecs-prd, ecs-dbsnapshot
+        disable: ecs-dbsnapshot
         route: /ops/collections/management/create-collection
       - title: Ingest Profiles
         route: /ops/collections/management/profiles
@@ -867,6 +869,7 @@ items:
         method: post
       - title: Inventory Admin Init
         route: /json/inventory/admin-init
+        disable: ecs-stg, ecs-prd
         confmsg: This will signal the Inventory service to initialize the creation of Admin Objects.
         method: post
       - title: Redeploy Inventory

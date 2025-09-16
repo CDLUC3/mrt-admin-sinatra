@@ -27,7 +27,10 @@ module UC3
 
     def initialize(enabled: true, message: '')
       UC3Client.clients[self.class.to_s] = { name: self.class.to_s, enabled: enabled, message: message }
+      @enabled = enabled
     end
+
+    attr_reader :enabled
 
     def self.status_index(stat)
       STATHASH.fetch(stat.to_sym, 0)
@@ -70,10 +73,6 @@ module UC3
 
     def self.region
       ENV['AWS_REGION'] || 'us-west-2'
-    end
-
-    def enabled
-      false
     end
 
     def context
@@ -332,9 +331,5 @@ module UC3
     end
 
     attr_reader :test_paths, :consistency_checks
-
-    def enabled
-      true
-    end
   end
 end

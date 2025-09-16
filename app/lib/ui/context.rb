@@ -251,6 +251,14 @@ module AdminUI
       # Breadcrumbs are an array of hashes with keys :title and :url
     end
 
+    def classes
+      classes = []
+      classes << 'no-db' unless UC3Query::QueryClient.client.enabled
+      classes << 'no-zk' unless UC3Queue::ZKClient.client.enabled
+      classes << 'no-ldap' unless UC3Ldap::LDAPClient.client.enabled
+      classes
+    end
+
     def breadcrumbs
       TopMenu.instance.breadcrumbs_for_route(@route)
     end

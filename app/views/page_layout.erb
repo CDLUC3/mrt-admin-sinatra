@@ -14,24 +14,27 @@
     <title><%= context.title %></title>
   </head>
   <body>
-    <div class="menu">
-      <%= AdminUI::TopMenu.instance.render %>
-    </div>
-    <div style="clear:both"></div>
-    <h1><%= context.title %></h1>
-    <div class="breadcrumb">
-      <span class="env env-<%= ENV.fetch('MERRITT_ECS', '') %>"><%= ENV.fetch('MERRITT_ECS', '') %></span>
-      <% context.breadcrumbs.each do |bc| %>
-      <span>/ <a href="<%= bc[:url] %>"><%= bc[:title] %></a></span>
-      <% end %>
-      <span>/ <%= context.title %></span>
-    </div>
-    <div class="main">
-      <div class="description">
-        <%= context.description %>
+    <div class="app-state <%= context.classes.join(' ') %>">
+      <div class="menu">
+        <%= AdminUI::TopMenu.instance.render %>
       </div>
-      <%= yield %>
+      <div style="clear:both"></div>
+      <h1><%= context.title %></h1>
+      <div class="breadcrumb">
+        <span class="env env-<%= ENV.fetch('MERRITT_ECS', '') %>"><%= ENV.fetch('MERRITT_ECS', '') %></span>
+        <% context.breadcrumbs.each do |bc| %>
+        <span>/ <a href="<%= bc[:url] %>"><%= bc[:title] %></a></span>
+        <% end %>
+        <span>/ <%= context.title %></span>
+        <span class="inactive">[<%= context.classes.join(' ') %>]</span>
+      </div>
+      <div class="main">
+        <div class="description">
+          <%= context.description %>
+        </div>
+        <%= yield %>
+      </div>
+      <div id="alertmsg" title="Admin Tool Message"></div>
     </div>
-    <div id="alertmsg" title="Admin Tool Message"></div>
   </body>
 </html>

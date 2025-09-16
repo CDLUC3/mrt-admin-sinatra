@@ -232,3 +232,14 @@ form.admintool label {
   display: inline-block;
   font-weight: bold;
 }
+
+div.app-state span.inactive {
+  display: none;
+}
+
+div.app-state.no-db span.inactive,
+div.app-state.no-zk span.inactive,
+div.app-state.no-ldap span.inactive {
+  display: inline;
+  color: red;
+}
