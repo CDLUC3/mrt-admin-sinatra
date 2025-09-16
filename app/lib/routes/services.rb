@@ -305,7 +305,7 @@ module Sinatra
     end
 
     def post_url_body(url, body: nil, user: nil, password: nil)
-      puts "URI: #{uri}, body: #{body}, user: #{user}, password: #{password ? '****' : nil}"
+      puts "URI: #{url}, body: #{body}, user: #{user}, password: #{password ? '****' : nil}"
       uri = URI.parse(url)
       req = Net::HTTP::Post.new(uri)
       req.basic_auth(user, password) if user && password
