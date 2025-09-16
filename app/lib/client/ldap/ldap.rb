@@ -30,8 +30,8 @@ module UC3Ldap
           username: @ldapconf.fetch(:admin_user, ''),
           password: @ldapconf.fetch(:admin_password, '')
         },
-        connect_timeout: @ldapconf.fetch(:connect_timeout, '60').to_i, 
-        onerror: 'warn'
+        # this value does not appear in the Net::LDAP docs
+        connect_timeout: @ldapconf.fetch(:connect_timeout, '60').to_i
       }
       if @ldapconf.fetch(:encryption, '') == 'simple_tls'
         @ldap_connect[:encryption] = {
@@ -43,7 +43,7 @@ module UC3Ldap
       end
       @ldap = Net::LDAP.new(@ldap_connect)
 
-      @ldap.bind
+      # @ldap.bind
       super(enabled: true)
     rescue Errno::ECONNREFUSED => e
       puts "(LDAP Conn Refused) #{e.class}: #{e};"
