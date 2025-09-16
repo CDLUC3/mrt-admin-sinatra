@@ -125,7 +125,7 @@ module UC3S3
     end
 
     def mint_sla_url
-      "#{@ezidconf.fetch(:api, 'http://ezid:4567')}/shoulder/#{@ezidconf.fetch(:slashoulder, 'ark:/99999/fk4')}"
+      "#{@ezidconf.fetch(:api, 'http://ezid:4567')}/shoulder/#{@ezidconf.fetch(:sla_shoulder, 'ark:/99999/fk4')}"
     end
 
     def create_sla(params)
