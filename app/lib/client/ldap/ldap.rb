@@ -30,7 +30,6 @@ module UC3Ldap
           username: @ldapconf.fetch(:admin_user, ''),
           password: @ldapconf.fetch(:admin_password, '')
         },
-        # this value does not appear in the Net::LDAP docs
         connect_timeout: @ldapconf.fetch(:connect_timeout, '60').to_i
       }
       if @ldapconf.fetch(:encryption, '') == 'simple_tls'
@@ -41,9 +40,7 @@ module UC3Ldap
           }
         }
       end
-      puts "Before @ldap"
       @ldap = Net::LDAP.new(@ldap_connect)
-      puts "After... #{@ldap.inspect}"
 
       @ldap.bind
       super(enabled: true)
