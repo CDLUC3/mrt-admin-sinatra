@@ -98,6 +98,13 @@ module Sinatra
         )
       end
 
+      app.get '/ops/zk/ingest/jobs-by-collection-and-batch' do
+        adminui_show_table(
+          AdminUI::Context.new(request.path),
+          UC3Queue::ZKClient.client.jobs_by_collection_and_batch(request.path, request.params)
+        )
+      end
+
       app.post '/ops/zk/ingest/pause' do
         UC3Queue::ZKClient.client.pause_ingest
         redirect '/ops/zk/nodes/node-names?zkpath=/locks&mode=node'

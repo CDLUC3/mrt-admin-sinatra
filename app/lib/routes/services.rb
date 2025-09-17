@@ -177,18 +177,6 @@ module Sinatra
       collections_init.each do |r|
         resp << r
       end
-      r = post_url("#{replic_host}/service/start?t=json")
-      begin
-        resp << ::JSON.parse(r)
-      rescue StandardError => e
-        resp << { action: 'Replic Init', error: e.to_s }
-      end
-      r = post_url("#{audit_host}/service/start?t=json")
-      begin
-        resp << ::JSON.parse(r)
-      rescue StandardError => e
-        resp << { action: 'Audit Init', error: e.to_s }
-      end
 
       qc = UC3Query::QueryClient.client
       if !qc.nil? && qc.enabled

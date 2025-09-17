@@ -165,6 +165,64 @@ module UC3Queue
       table
     end
 
+    def jobs_by_collection_and_batch(route, params)
+      return jobs(params) unless params.empty?
+
+      @colls = {}
+
+      if enabled
+        jobs = MerrittZK::Job.list_jobs_as_json(@zk)
+        jobs = [] if jobs.nil?
+        jobs.each do |job|
+          key = "#{job[:profile]}:#{job[:bid]}"
+          @colls[key] ||= {}
+          @colls[key][job[:status]] ||= []
+          @colls[key][job[:status]] << job
+        end
+        status = 'PASS'
+      else
+        status = 'ERROR'
+      end
+
+      table = AdminUI::FilterTable.new(
+        columns: [
+          AdminUI::Column.new(:profile, header: 'Profile'),
+          AdminUI::Column.new(:bid, header: 'Batch ID'),
+          AdminUI::Column.new(:jobstatus, header: 'Job Status'),
+          AdminUI::Column.new(:jobCount, header: 'Job Count', cssclass: 'int'),
+          AdminUI::Column.new(:status, header: 'Status')
+        ],
+        status: status
+      )
+      @colls.keys.sort.each do |key|
+        profile, bid = key.split(':', 2)
+        @colls[key].keys.sort.each do |jobstatus|
+          job_count = @colls[key][jobstatus].size
+          table.add_row(
+            AdminUI::Row.make_row(
+              table.columns,
+              {
+                profile: profile,
+                bid: {
+                  href: "/ops/zk/ingest/jobs-by-collection?profile=#{profile}&bid=#{bid}",
+                  value: bid
+                },
+                jobstatus: {
+                  href: "/ops/zk/ingest/jobs-by-collection?profile=#{profile}&bid=#{bid}&status=#{jobstatus}",
+                  value: jobstatus
+                },
+                jobCount: job_count,
+                status: jobstatus == 'Failed' ? 'FAIL' : 'PASS'
+              }
+            )
+          )
+        end
+      end
+
+      record_status(route, table.status)
+      table
+    end
+
     def jobs(params)
       jobs = []
       if enabled
@@ -192,6 +250,7 @@ module UC3Queue
       jobs.each do |job|
         next unless params.fetch('profile', job[:profile]) == job[:profile]
         next unless params.fetch('status', job[:status]) == job[:status]
+        next unless params.fetch('bid', job[:bid]) == job[:bid]
 
         id = job[:id]
         status = job[:status].to_s
