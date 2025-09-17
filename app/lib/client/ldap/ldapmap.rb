@@ -28,7 +28,7 @@ module UC3Ldap
           AdminUI::Column.new(:ark, header: 'Ark'),
           AdminUI::Column.new(:mnemonic, header: 'Mnemonic'),
           AdminUI::Column.new(:coll, header: 'LDAP Coll'),
-          AdminUI::Column.new(:status, header: 'Status')
+          AdminUI::Column.new(:status, header: 'Status', filterable: true)
         ],
         status: @status
       )
