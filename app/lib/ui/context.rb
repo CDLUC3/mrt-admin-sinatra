@@ -85,7 +85,8 @@ module AdminUI
       parpath = path
       if @paths.key?(parpath)
         if menu
-          @paths[parpath].add_submenu(path, title, description: description, breadcrumb: breadcrumb, route: route, classes: classes)
+          @paths[parpath].add_submenu(path, title, description: description, breadcrumb: breadcrumb, route: route,
+            classes: classes)
         else
           @paths[parpath].add_menu_item(route, title, description: description, tbd: tbd, breadcrumb: breadcrumb,
             external: external, method: method, confmsg: confmsg, classes: classes)
@@ -93,7 +94,8 @@ module AdminUI
       else
         parpath = File.dirname(path) until @paths.key?(parpath)
         if menu
-          @paths[parpath].add_submenu(path, title, description: description, breadcrumb: breadcrumb, route: route, classes: classes)
+          @paths[parpath].add_submenu(path, title, description: description, breadcrumb: breadcrumb, route: route,
+            classes: classes)
         else
           @paths[parpath].add_submenu(path, path, breadcrumb: breadcrumb, route: route, classes: classes)
           create_menu_item_for_path(path, route, title, description: description, tbd: tbd, breadcrumb: breadcrumb,
@@ -201,7 +203,7 @@ module AdminUI
     def render
       return '' if @breadcrumb
 
-      carr = @classes.split(' ')
+      carr = @classes.split
       carr << 'tbd' if @tbd
       lclass = carr.join(' ')
       if @method == 'get'
