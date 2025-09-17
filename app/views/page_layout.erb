@@ -14,14 +14,14 @@
     <title><%= context.title %></title>
   </head>
   <body>
-    <div class="app-state <%= context.classes.join(' ') %>">
+    <div class="app-state app-state-<%= ENV.fetch('MERRITT_ECS', '') %> <%= context.classes.join(' ') %>">
       <div class="menu">
         <%= AdminUI::TopMenu.instance.render %>
       </div>
       <div style="clear:both"></div>
       <h1><%= context.title %></h1>
       <div class="breadcrumb">
-        <span class="env env-<%= ENV.fetch('MERRITT_ECS', '') %>"><%= ENV.fetch('MERRITT_ECS', '') %></span>
+        <span class="env"><%= ENV.fetch('MERRITT_ECS', '') %></span>
         <% context.breadcrumbs.each do |bc| %>
         <span>/ <a href="<%= bc[:url] %>"><%= bc[:title] %></a></span>
         <% end %>

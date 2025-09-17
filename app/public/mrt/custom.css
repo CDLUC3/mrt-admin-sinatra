@@ -70,15 +70,15 @@ span.env {
   font-weight: bold;
 }
 
-span.env-ecs-prd {
+div.app-state-ecs-prd span.env {
   color: red;
 }
 
-span.env-ecs-stg {
+div.app-state-ecs-stg span.env {
   color: green;
 }
 
-span.env-ecs-dev {
+div.app-state-ecs-dev span.env {
   color: blue;
 }
 
