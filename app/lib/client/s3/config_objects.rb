@@ -158,7 +158,7 @@ module UC3S3
       body << "_target: #{@ezidconf.fetch(:target, '')}"
       body << '_owner: merritt'
       body << '_profile: erc'
-      # body << '_status: reserved'
+      body << '_status: reserved'
       body << '_export: no'
       body << "what: #{description}"
 
