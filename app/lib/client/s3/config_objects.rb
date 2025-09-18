@@ -156,9 +156,10 @@ module UC3S3
       # https://ezid.cdlib.org/doc/apidoc.html#internal-metadata
       body = []
       body << "_target: #{@ezidconf.fetch(:target, '')}"
-      body << "erc: what: #{description}"
+      body << "what: #{description}"
       body << '_owner: merritt'
       body << '_profile: erc'
+      body << '_status: reserved'
       body << '_export: no'
 
       r = post_url_body(
