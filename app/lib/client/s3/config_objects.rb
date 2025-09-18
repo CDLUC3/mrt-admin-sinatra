@@ -153,11 +153,11 @@ module UC3S3
     def mint(url, description)
       raise 'Minting not supported' unless @ezidconf.fetch(:supported, true)
 
+      # https://ezid.cdlib.org/doc/apidoc.html#internal-metadata
       body = []
       body << "_target: #{@ezidconf.fetch(:target, '')}"
       body << "erc: what: #{description}"
       body << '_owner: merritt'
-      body << '_ownergroup: merritt'
       body << '_profile: erc'
       body << '_export: no'
 
