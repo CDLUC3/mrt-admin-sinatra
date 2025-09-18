@@ -129,7 +129,7 @@ module UC3S3
     end
 
     def create_sla(params)
-      ark = mint(mint_sla_url)
+      ark = mint(mint_sla_url, params.fetch('name', ''))
       puts "SLA Ark Minted: #{ark}"
       add_sla(ark, params.fetch('name', ''), params.fetch('mnemonic', ''))
       ark
@@ -140,7 +140,7 @@ module UC3S3
     end
 
     def create_owner(params)
-      ark = mint(mint_owner_url)
+      ark = mint(mint_owner_url, params.fetch('name', ''))
       puts "Owner Ark Minted: #{ark}"
       add_owner(ark, params.fetch('name', ''), params.fetch('sla', ''))
       ark
@@ -150,12 +150,20 @@ module UC3S3
       "#{@ezidconf.fetch(:api, 'http://ezid:4567')}/shoulder/#{@ezidconf.fetch(:collection_shoulder, 'ark:/99999/fk4')}"
     end
 
-    def mint(url)
+    def mint(url, description)
       raise 'Minting not supported' unless @ezidconf.fetch(:supported, true)
+
+      body = []
+      body << "_target: #{@ezidconf.fetch(:target, '')}"
+      body << "erc: what: #{description}"
+      body << '_owner: merritt'
+      body << '_ownergroup: merritt'
+      body << '_profile: erc'
+      body << '_export: no'
 
       r = post_url_body(
         url,
-        body: "_target: #{@ezidconf.fetch(:target, '')}",
+        body: body.join("\n"),
         user: @ezidconf.fetch(:user, nil),
         password: @ezidconf.fetch(:password, nil)
       )
@@ -167,7 +175,7 @@ module UC3S3
     end
 
     def create_collection(params)
-      ark = mint(mint_collection_url)
+      ark = mint(mint_collection_url, params.fetch('description', ''))
       puts "Collection Ark Minted: #{ark}"
       add_collection(ark, params.fetch('description', ''), params.fetch('name', ''), public: params.key?('public'))
       # add ldap stuff
