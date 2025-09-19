@@ -1,0 +1,14 @@
+<h2>Update LDAP Roles for Collection: <%= collection %></h2>
+
+<form class="admintool" method="post" action="/ops/collections/management/create-collection">
+  <% %w[read write download admin].each do |role| %>
+    <fieldset>
+      <div><label for="<%= role %>"><%= role.capitalize %> Permission</label></div>
+      <div>
+        <textarea id="<%= role %>" name="<%= role %>" rows="4" cols="80"><%= perms[role.to_sym].join(", ") %></textarea>
+      </div>
+    </fieldset>
+  <% end %>
+
+  <input type="submit" value="Update Roles" disabled>
+</form>

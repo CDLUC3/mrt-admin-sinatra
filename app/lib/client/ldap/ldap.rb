@@ -81,6 +81,24 @@ module UC3Ldap
       @collections.fetch(coll).detail_records
     end
 
+    def collection_perm_records(coll)
+      collperms = {
+        read: [],
+        write: [],
+        download: [],
+        admin: []
+      }
+      return collperms unless @collections.key?(coll)
+
+      @collections.fetch(coll).detail_records.each_value do |role|
+        collperms[:read] << role.user if role.read
+        collperms[:write] << role.user if role.write
+        collperms[:download] << role.user if role.download
+        collperms[:admin] << role.user if role.admin
+      end
+      collperms
+    end
+
     def collection_detail_records_for_ark(ark)
       return [] unless @collection_arks.key?(ark)
 
@@ -233,7 +251,7 @@ module UC3Ldap
       arr = []
       @collections.each_value do |coll|
         arr.append({
-          mnemonic: { value: coll.mnemonic, href: "/ldap/collections/#{coll.mnemonic}" },
+          mnemonic: { value: coll.mnemonic, href: "/ldap/collections/details/#{coll.mnemonic}" },
           unlinked: coll.unlinked,
           description: coll.description,
           profile: coll.profile,
@@ -267,24 +285,6 @@ module UC3Ldap
       table
     end
 
-    def roles_table
-      table = AdminUI::FilterTable.new(
-        columns: [
-          AdminUI::Column.new(:perm, header: 'Permission'),
-          AdminUI::Column.new(:collection_name, header: 'collection'),
-          AdminUI::Column.new(:user_names, header: 'Users')
-        ]
-      )
-      roles.each_value do |role|
-        table.add_row(AdminUI::Row.make_row(table.columns, {
-          perm: role.perm,
-          collection_name: role.collection_name,
-          user_names: role.user_names
-        }))
-      end
-      table
-    end
-
     def user_details_table(roles)
       table = AdminUI::FilterTable.new(
         columns: [
@@ -297,7 +297,7 @@ module UC3Ldap
       )
       roles.each_value do |role|
         table.add_row(AdminUI::Row.make_row(table.columns, {
-          collection: { value: role.collection, href: "/ldap/collections/#{role.collection}" },
+          collection: { value: role.collection, href: "/ldap/collections/details/#{role.collection}" },
           read: role.read,
           write: role.write,
           download: role.download,
@@ -307,7 +307,7 @@ module UC3Ldap
       table
     end
 
-    def collection_details_table(roles)
+    def collection_details_table(collection, roles)
       table = AdminUI::FilterTable.new(
         columns: [
           AdminUI::Column.new(:user, header: 'User'),
@@ -315,7 +315,8 @@ module UC3Ldap
           AdminUI::Column.new(:write, header: 'Write'),
           AdminUI::Column.new(:download, header: 'Download'),
           AdminUI::Column.new(:admin, header: 'Admin')
-        ]
+        ],
+        description: "[Edit Roles for Collection](/ldap/collections/edit/#{collection})"
       )
       roles.each_value do |role|
         table.add_row(AdminUI::Row.make_row(table.columns, {
@@ -333,9 +334,42 @@ module UC3Ldap
       j = JSON.parse(body)
       ark = j.fetch('ark', '')
       description = j.fetch('description', '')
+      mnemonic = j.fetch('mnemonic', '')
+
+      dn = "ou=#{mnemonic},ou=mrt-classes,ou=uc3,dc=cdlib,dc=org"
+      attributes = {
+        objectclass: %w[top merrittClass organizationalUnit],
+        submissionProfile: "#{mnemonic}_content",
+        description: description,
+        ou: mnemonic,
+        arkId: ark
+      }
+
+      @ldap.add(dn: dn, attributes: attributes)
+
+      defusers = %w[merritt-test]
+      defusers_role = {}
+      defusers_role['read'] = %w[anonymous]
+      %w[read write download admin].each do |perm|
+        dn = "cn=#{perm},ou=#{mnemonic},ou=mrt-classes,ou=uc3,dc=cdlib,dc=org"
+        attributes = {
+          objectclass: %w[top groupOfUniqueNames],
+          cn: perm,
+          uniquemember: []
+        }
+        defusers.each do |u|
+          attributes[:uniquemember] << "uid=#{u},ou=People,ou=uc3,dc=cdlib,dc=org"
+        end
+        defusers_role.fetch(perm, []).each do |u|
+          attributes[:uniquemember] << "uid=#{u},ou=People,ou=uc3,dc=cdlib,dc=org"
+        end
+
+        @ldap.add(dn: dn, attributes: attributes)
+      end
+
       {
         message: "LDAP groups created for #{ark} #{description}",
-        redirect: "/ldap/collections"
+        redirect: '/ldap/collections'
       }
     end
   end

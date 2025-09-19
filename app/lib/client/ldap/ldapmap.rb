@@ -50,7 +50,8 @@ module UC3Ldap
             href: '/ldap/create-collection-groups',
             data: {
               ark: ark,
-              description: description
+              description: description,
+              mnemonic: m
             }.to_json,
             cssclass: 'button',
             post: true,

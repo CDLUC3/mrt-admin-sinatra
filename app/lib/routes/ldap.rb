@@ -33,7 +33,7 @@ module Sinatra
         )
       end
 
-      app.get '/ldap/collections/*' do
+      app.get '/ldap/collections/details/*' do
         coll = params[:splat][0]
         ldap = UC3Ldap::LDAPClient.client
         ldap.load
@@ -41,8 +41,21 @@ module Sinatra
 
         adminui_show_table(
           AdminUI::Context.new(request.path),
-          ldap.collection_details_table(roles)
+          ldap.collection_details_table(coll, roles)
         )
+      end
+
+      app.get '/ldap/collections/edit/*' do
+        coll = params[:splat][0]
+        ldap = UC3Ldap::LDAPClient.client
+        ldap.load
+        perms = ldap.collection_perm_records(coll)
+
+        erb :colladmin_collection_roles, layout: :page_layout, locals: {
+          context: AdminUI::Context.new(request.path),
+          collection: coll,
+          perms: perms
+        }
       end
 
       app.get '/ldap/collections' do
@@ -51,15 +64,6 @@ module Sinatra
         adminui_show_table(
           AdminUI::Context.new(request.path),
           ldap.collections_table
-        )
-      end
-
-      app.get '/ldap/roles' do
-        ldap = UC3Ldap::LDAPClient.client
-        ldap.load
-        adminui_show_table(
-          AdminUI::Context.new(request.path),
-          ldap.roles_table
         )
       end
 

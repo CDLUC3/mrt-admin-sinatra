@@ -114,7 +114,7 @@ module UC3S3
       params.fetch('notifications', '').split(',').each_with_index do |n, i|
         notsub += "Notification.#{i + 1}: #{n.strip}\n"
       end
-      profile.gsub!(/^Notification.*$/, notsub)
+      profile.gsub!(/^Notification\..*$/, notsub.strip)
       now = Time.now.utc.strftime('%Y-%m-%dT%H:%M:%S')
       profile.gsub!('${CREATIONDATE}', now)
       profile.gsub!('${MODIFICATIONDATE}', now)

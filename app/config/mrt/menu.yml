@@ -775,8 +775,6 @@ items:
       route: /ldap/collections
     - title: Missing LDAP Collections
       route: /ldap/collections-missing
-    - title: Roles
-      route: /ldap/roles
   - title: Cloudshell Tips
     route: https://github.com/CDLUC3/mrt-doc-private/blob/main/docs/system-recovery/ecs.md
     external: true
