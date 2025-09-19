@@ -328,6 +328,16 @@ module UC3Ldap
       end
       table
     end
+
+    def create_collection_groups(body)
+      j = JSON.parse(body)
+      ark = j.fetch('ark', '')
+      description = j.fetch('description', '')
+      {
+        message: "LDAP groups created for #{ark} #{description}",
+        redirect: "/ldap/collections"
+      }
+    end
   end
 
   # base class ldap record

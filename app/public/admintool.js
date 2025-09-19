@@ -43,13 +43,23 @@ function applyButtonControls() {
         url: $(this).attr('url'),
         data: $(this).attr('data'),
         success: function(data) {
-          $("#alertmsg").text(data['message']).dialog({
-            create: function(event, ui) {
-              $(event.target).parent().css('position', 'fixed');
-            },
-            show: { effect: "blind", duration: 800 },
-            position: { my: "right", at: "left", of: self }
-          });
+          if (data['message']) {
+            $("#alertmsg").text(data['message']).dialog({
+              create: function(event, ui) {
+                $(event.target).parent().css('position', 'fixed');
+              },
+              show: { effect: "blind", duration: 800 },
+              position: { my: "right", at: "left", of: self }
+            });
+            setTimeout(
+              function(){
+                if (data['redirect']) {
+                  document.location = data['redirect'];
+                }
+              }, 
+              1500
+            );
+          }
         },
         error: function( xhr, status ) {
           $("#alertmsg").text(xhr.responseText).dialog({

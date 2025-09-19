@@ -71,6 +71,13 @@ module Sinatra
           UC3Ldap::LDAPCollectionMapList.new(ldap).ldap_collection_map(request.path)
         )
       end
+
+      app.post '/ldap/create-collection-groups' do
+        ldap = UC3Ldap::LDAPClient.client
+        coll = ldap.create_collection_groups(request.body.read)
+        content_type :json
+        coll.to_json
+      end
     end
   end
   register UC3LdapRoutes

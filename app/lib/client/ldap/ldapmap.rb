@@ -27,6 +27,7 @@ module UC3Ldap
         columns: [
           AdminUI::Column.new(:ark, header: 'Ark'),
           AdminUI::Column.new(:mnemonic, header: 'Mnemonic'),
+          AdminUI::Column.new(:description, header: 'Description'),
           AdminUI::Column.new(:coll, header: 'LDAP Coll'),
           AdminUI::Column.new(:status, header: 'Status', filterable: true)
         ],
@@ -35,6 +36,7 @@ module UC3Ldap
       map = {}
       @colltable.table_data.each do |row|
         m = row[:mnemonic]
+        description = row[:collection_name]
         ark = row[:ark]
         next if ark.nil?
         next if m.to_s =~ /(_sla$|_service_level_agreement$|_curatorial_classes$|_system_classes$)/
@@ -42,7 +44,19 @@ module UC3Ldap
         map[ark] = {
           ark: ark,
           mnemonic: m,
-          coll: '',
+          description: description,
+          coll: {
+            value: 'Create LDAP Records (tbd)',
+            href: '/ldap/create-collection-groups',
+            data: {
+              ark: ark,
+              description: description
+            }.to_json,
+            cssclass: 'button',
+            post: true,
+            redirect: true,
+            disabled: false
+          },
           status: 'FAIL'
         }
       end
@@ -61,6 +75,7 @@ module UC3Ldap
             ark: ark,
             coll: m,
             mnemonic: '',
+            description: '',
             status: 'FAIL'
           }
         end
