@@ -271,7 +271,9 @@ module Sinatra
         { ark: 'ark:/13030/m5154f09', name: 'escholarship', mnemonic: 'escholarship', public: true },
         { ark: 'ark:/13030/99999999', name: 'Terry Test', mnemonic: 'terry_test', public: true }
       ].each do |c|
-        r = add_collection(c[:ark], c[:name], c[:mnemonic], public: c.fetch(:public, false))
+        r = UC3S3::ConfigObjectsClient.client.add_collection(
+          c[:ark], c[:name], c[:mnemonic], public: c.fetch(:public, false)
+        )
         begin
           resp << ::JSON.parse(r)
         rescue StandardError => e
