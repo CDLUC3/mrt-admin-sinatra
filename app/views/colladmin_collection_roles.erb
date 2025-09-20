@@ -1,14 +1,15 @@
 <h2>Update LDAP Roles for Collection: <%= collection %></h2>
-
-<form class="admintool" method="post" action="/ops/collections/management/create-collection">
+<div>Warning: user names are not validated in this form.  Carefully validate your changes after update.</div>
+<form class="admintool" method="post" action="/ldap/collections/edit">
+  <input type="hidden" name="collection" value="<%= collection %>">
   <% %w[read write download admin].each do |role| %>
     <fieldset>
       <div><label for="<%= role %>"><%= role.capitalize %> Permission</label></div>
       <div>
-        <textarea id="<%= role %>" name="<%= role %>" rows="4" cols="80"><%= perms[role.to_sym].join(", ") %></textarea>
+        <textarea id="<%= role %>" name="<%= role %>" rows="5" cols="80"><%= perms[role.to_sym].join(", ") %></textarea>
       </div>
     </fieldset>
   <% end %>
 
-  <input type="submit" value="Update Roles" disabled>
+  <input type="submit" value="Update Roles">
 </form>

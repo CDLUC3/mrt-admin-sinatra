@@ -99,6 +99,13 @@ module UC3Ldap
       collperms
     end
 
+    def apply_collection_role_changes(coll, newperms)
+      %w[read write download admin].each do |perm|
+        users = newperms.fetch(perm.to_sym, [])
+        update_collection_role(coll, perm, users)
+      end
+    end
+
     def collection_detail_records_for_ark(ark)
       return [] unless @collection_arks.key?(ark)
 
@@ -330,12 +337,29 @@ module UC3Ldap
       table
     end
 
-    def create_collection_groups(body)
-      j = JSON.parse(body)
-      ark = j.fetch('ark', '')
-      description = j.fetch('description', '')
-      mnemonic = j.fetch('mnemonic', '')
+    def create_collection_role(mnemonic, perm, users)
+      dn = "cn=#{perm},ou=#{mnemonic},ou=mrt-classes,ou=uc3,dc=cdlib,dc=org"
+      attributes = {
+        objectclass: %w[top groupOfUniqueNames],
+        cn: perm,
+        uniquemember: []
+      }
+      users.each do |u|
+        attributes[:uniquemember] << "uid=#{u},ou=People,ou=uc3,dc=cdlib,dc=org"
+      end
 
+      @ldap.add(dn: dn, attributes: attributes)
+    end
+
+    def update_collection_role(mnemonic, perm, users)
+      dn = "cn=#{perm},ou=#{mnemonic},ou=mrt-classes,ou=uc3,dc=cdlib,dc=org"
+      data = users.map do |u|
+        "uid=#{u},ou=People,ou=uc3,dc=cdlib,dc=org"
+      end
+      @ldap.replace_attribute(dn, :uniquemember, data)
+    end
+
+    def create_collection(mnemonic, ark, description)
       dn = "ou=#{mnemonic},ou=mrt-classes,ou=uc3,dc=cdlib,dc=org"
       attributes = {
         objectclass: %w[top merrittClass organizationalUnit],
@@ -346,26 +370,18 @@ module UC3Ldap
       }
 
       @ldap.add(dn: dn, attributes: attributes)
+    end
 
-      defusers = %w[merritt-test]
-      defusers_role = {}
-      defusers_role['read'] = %w[anonymous]
-      %w[read write download admin].each do |perm|
-        dn = "cn=#{perm},ou=#{mnemonic},ou=mrt-classes,ou=uc3,dc=cdlib,dc=org"
-        attributes = {
-          objectclass: %w[top groupOfUniqueNames],
-          cn: perm,
-          uniquemember: []
-        }
-        defusers.each do |u|
-          attributes[:uniquemember] << "uid=#{u},ou=People,ou=uc3,dc=cdlib,dc=org"
-        end
-        defusers_role.fetch(perm, []).each do |u|
-          attributes[:uniquemember] << "uid=#{u},ou=People,ou=uc3,dc=cdlib,dc=org"
-        end
-
-        @ldap.add(dn: dn, attributes: attributes)
-      end
+    def create_collection_groups(body)
+      j = JSON.parse(body)
+      ark = j.fetch('ark', '')
+      description = j.fetch('description', '')
+      mnemonic = j.fetch('mnemonic', '')
+      create_collection(mnemonic, ark, description)
+      create_collection_role(mnemonic, 'read', %w[anonymous merritt-test])
+      create_collection_role(mnemonic, 'write', %w[merritt-test])
+      create_collection_role(mnemonic, 'download', %w[anonymous merritt-test])
+      create_collection_role(mnemonic, 'admin', %w[merritt-test])
 
       {
         message: "LDAP groups created for #{ark} #{description}",

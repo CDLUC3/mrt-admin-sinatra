@@ -58,6 +58,23 @@ module Sinatra
         }
       end
 
+      app.post '/ldap/collections/edit' do
+        ldap = UC3Ldap::LDAPClient.client
+        ldap.load
+        coll = request.params.fetch('collection', '')
+
+        ldap.apply_collection_role_changes(
+          coll,
+          {
+            read: request.params.fetch('read', '').gsub(/\s*/, '').split(','),
+            write: request.params.fetch('write', '').gsub(/\s*/, '').split(','),
+            download: request.params.fetch('download', '').gsub(/\s*/, '').split(','),
+            admin: request.params.fetch('admin', '').gsub(/\s*/, '').split(',')
+          }
+        )
+        redirect "/ldap/collections/details/#{coll}"
+      end
+
       app.get '/ldap/collections' do
         ldap = UC3Ldap::LDAPClient.client
         ldap.load
