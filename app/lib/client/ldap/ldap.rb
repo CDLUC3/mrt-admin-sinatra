@@ -356,7 +356,10 @@ module UC3Ldap
       data = users.map do |u|
         "uid=#{u},ou=People,ou=uc3,dc=cdlib,dc=org"
       end
-      @ldap.replace_attribute(dn, :uniquemember, data)
+
+      res = @ldap.replace_attribute(dn, :uniquemember, data)
+      res ||= @ldap.add(dn: dn, attributes: attributes)
+      res
     end
 
     def create_collection(mnemonic, ark, description)
@@ -372,20 +375,29 @@ module UC3Ldap
       @ldap.add(dn: dn, attributes: attributes)
     end
 
+    def default_users(role)
+      @ldapconf.fetch(role, '').gsub(/\s*/, '').split(',')
+    end
+
     def create_collection_groups(body)
       j = JSON.parse(body)
       ark = j.fetch('ark', '')
       description = j.fetch('description', '')
+      messages = []
       mnemonic = j.fetch('mnemonic', '')
-      create_collection(mnemonic, ark, description)
-      create_collection_role(mnemonic, 'read', @ldapconf.fetch(:default_read, '').gsub(/\s*/, '').split(','))
-      create_collection_role(mnemonic, 'write', @ldapconf.fetch(:default_write, '').gsub(/\s*/, '').split(','))
-      create_collection_role(mnemonic, 'download', @ldapconf.fetch(:default_download, '').gsub(/\s*/, '').split(','))
-      create_collection_role(mnemonic, 'admin', @ldapconf.fetch(:default_admin, '').gsub(/\s*/, '').split(','))
+      if create_collection(mnemonic, ark, description)
+        messages << "Created collection #{mnemonic} #{ark} #{description}"
+        messages << 'Read role created' if create_collection_role(mnemonic, 'read', default_users(:default_read))
+        messages << 'Write role created' if create_collection_role(mnemonic, 'write', default_users(:default_write))
+        messages << 'Download role created' if create_collection_role(mnemonic, 'download',
+          default_users(:default_download))
+        messages << 'Admin role created' if create_collection_role(mnemonic, 'admin', default_users(:default_admin))
+      end
 
       {
-        message: "LDAP groups created for #{ark} #{description}",
-        redirect: '/ldap/collections'
+        message: messages.join(";\n"),
+        redirect: '/ldap/collections',
+        modal: true
       }
     end
   end

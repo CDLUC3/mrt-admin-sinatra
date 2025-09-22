@@ -44,21 +44,20 @@ function applyButtonControls() {
         data: $(this).attr('data'),
         success: function(data) {
           if (data['message']) {
-            $("#alertmsg").text(data['message']).dialog({
-              create: function(event, ui) {
-                $(event.target).parent().css('position', 'fixed');
-              },
-              show: { effect: "blind", duration: 800 },
-              position: { my: "right", at: "left", of: self }
-            });
-            setTimeout(
-              function(){
-                if (data['redirect']) {
-                  document.location = data['redirect'];
-                }
-              }, 
-              1500
-            );
+            if (data['modal']) {
+              confirm(data['message']);
+            } else {
+              $("#alertmsg").text(data['message']).dialog({
+                create: function(event, ui) {
+                  $(event.target).parent().css('position', 'fixed');
+                },
+                show: { effect: "blind", duration: 800 },
+                position: { my: "right", at: "left", of: self }
+              });
+            }
+            if (data['redirect']) {
+              document.location = data['redirect'];
+            }
           }
         },
         error: function( xhr, status ) {
