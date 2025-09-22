@@ -100,6 +100,12 @@ div.app-state.no-ldap li.needs-ldap a {
   font-style: italic;
 }
 
+div.revroles {
+  width: 50%;
+  float: right;
+  display: inline;
+}
+
 div.revroles span.role {
   border: thin solid gray;
   display: inline-block;
@@ -132,6 +138,11 @@ span.role.add::before {
 
 div.revroles span.role.del {
   border: thin solid blue;
+  background-color: white;
+}
+
+div.revroles span.role.err {
+  border: thin solid red;
   background-color: white;
 }
 

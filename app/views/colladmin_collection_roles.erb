@@ -1,5 +1,4 @@
 <h2>Update LDAP Roles for Collection: <%= collection %></h2>
-<div>Warning: user names are not validated in this form.  Carefully validate your changes after update.</div>
 <form class="admintool" method="post" action="/ldap/collections/edit">
   <input type="hidden" name="collection" value="<%= collection %>">
   <input type="hidden" id="known_users" name="known_users" value="<%= known_users %>">
@@ -8,7 +7,7 @@
       <div><label for="<%= role %>"><%= role.capitalize %> Permission</label></div>
       <div class="roleset">
         <input type="hidden" id="orig-<%= role %>" class="orig" name="orig-<%= role %>" value="<%= perms[role.to_sym].join(", ") %>"/>
-        <textarea id="<%= role %>" name="<%= role %>" rows="5" cols="80"><%= perms[role.to_sym].join(", ") %></textarea>
+        <textarea id="<%= role %>" name="<%= role %>" rows="6" cols="60"><%= perms[role.to_sym].join(", ") %></textarea>
         <div id="rev-<%= role %>" class="revroles">
         </div>
       </div>
@@ -40,8 +39,14 @@
       if (item == "") {
         return;
       }
+      var isdup = false;
+      roleset.each(function(){
+        if ($(this).text() == item) {
+          isdup = true;
+        }
+      });
       var v = $("<span class='role'>").text(item).appendTo(roleset);
-      if (!known_users.includes(item)) {
+      if (!known_users.includes(item) || isdup) {
         v.addClass("err");
       } else if (!curroles.includes(item)) {
         v.addClass("add");
