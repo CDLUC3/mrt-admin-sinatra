@@ -2,14 +2,60 @@
 <div>Warning: user names are not validated in this form.  Carefully validate your changes after update.</div>
 <form class="admintool" method="post" action="/ldap/collections/edit">
   <input type="hidden" name="collection" value="<%= collection %>">
+  <input type="hidden" id="known_users" name="known_users" value="<%= known_users %>">
   <% %w[read write download admin].each do |role| %>
     <fieldset>
       <div><label for="<%= role %>"><%= role.capitalize %> Permission</label></div>
-      <div>
+      <div class="roleset">
+        <input type="hidden" id="orig-<%= role %>" class="orig" name="orig-<%= role %>" value="<%= perms[role.to_sym].join(", ") %>"/>
         <textarea id="<%= role %>" name="<%= role %>" rows="5" cols="80"><%= perms[role.to_sym].join(", ") %></textarea>
+        <div id="rev-<%= role %>" class="revroles">
+        </div>
       </div>
     </fieldset>
   <% end %>
 
-  <input type="submit" value="Update Roles">
+  <input id="submit" type="submit" value="Update Roles" disabled>
 </form>
+
+<script type="text/javascript">
+  $(document).ready(function() {
+    show_roles($("#read"));
+    show_roles($("#write"));
+    show_roles($("#download"));
+    show_roles($("#admin"));
+    $('#read, #write, #download, #admin').on('blur', function() {
+      show_roles($(this));
+    });
+  });
+
+  function show_roles(ref) {
+    var newroles = ref.val().split(/\s*,\s*/).sort();
+    var known_users = $("#known_users").val().split(/\s*,\s*/).sort();
+    var roleset = ref.parent("div.roleset").find("div.revroles");
+    var roleset = ref.parent("div.roleset").find("div.revroles");
+    var curroles = ref.parent("div.roleset").find("input.orig").val().split(/\s*,\s*/).sort();
+    roleset.empty();
+    $.each(newroles, function(index, item){
+      if (item == "") {
+        return;
+      }
+      var v = $("<span class='role'>").text(item).appendTo(roleset);
+      if (!known_users.includes(item)) {
+        v.addClass("err");
+      } else if (!curroles.includes(item)) {
+        v.addClass("add");
+      }
+    });
+    $.each(curroles, function(index, item){
+      if (item == "") {
+        return;
+      }
+      if (!newroles.includes(item)) {
+        $("<span class='role del'>").text(item).appendTo(roleset);
+      }
+    });
+    var valid = ($("span.role.err").length == 0) && ($("span.role.add").length + $("span.role.del").length > 0);
+    $("#submit").attr("disabled", !valid);
+  }
+</script>

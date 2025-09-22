@@ -99,3 +99,52 @@ div.app-state.no-ldap li.needs-ldap a {
   color: lightgray;
   font-style: italic;
 }
+
+div.revroles span.role {
+  border: thin solid gray;
+  display: inline-block;
+  padding: 3px;
+  margin: 3px;
+  border-radius: 12px;
+  background-color: lightgray;
+}
+
+div.revroles span.role.err {
+  border: thin solid red;
+}
+
+span.role.err::before {
+  content: "X ";
+  color: red;
+  font-weight: bold;
+}
+
+div.revroles span.role.add {
+  border: thin solid blue;
+  background-color: white;
+}
+
+span.role.add::before {
+  content: "+ ";
+  color: blue;
+  font-weight: bold;
+}
+
+div.revroles span.role.del {
+  border: thin solid blue;
+  background-color: white;
+}
+
+span.role.del::before {
+  content: "- ";
+  color: blue;
+  font-weight: bold;
+}
+
+span.role::after {
+  content: "\00A0\00A0";
+}
+
+span.role::before {
+  content: "\00A0\00A0";
+}

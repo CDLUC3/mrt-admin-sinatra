@@ -54,6 +54,7 @@ module Sinatra
         erb :colladmin_collection_roles, layout: :page_layout, locals: {
           context: AdminUI::Context.new(request.path),
           collection: coll,
+          known_users: ldap.users.keys.join(','),
           perms: perms
         }
       end
