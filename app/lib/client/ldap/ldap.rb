@@ -378,10 +378,10 @@ module UC3Ldap
       description = j.fetch('description', '')
       mnemonic = j.fetch('mnemonic', '')
       create_collection(mnemonic, ark, description)
-      create_collection_role(mnemonic, 'read', %w[anonymous merritt-test])
-      create_collection_role(mnemonic, 'write', %w[merritt-test])
-      create_collection_role(mnemonic, 'download', %w[anonymous merritt-test])
-      create_collection_role(mnemonic, 'admin', %w[merritt-test])
+      create_collection_role(mnemonic, 'read', @ldapconf.fetch(:default_read, '').gsub(/\s*/, '').split(','))
+      create_collection_role(mnemonic, 'write', @ldapconf.fetch(:default_write, '').gsub(/\s*/, '').split(','))
+      create_collection_role(mnemonic, 'download', @ldapconf.fetch(:default_download, '').gsub(/\s*/, '').split(','))
+      create_collection_role(mnemonic, 'admin', @ldapconf.fetch(:default_admin, '').gsub(/\s*/, '').split(','))
 
       {
         message: "LDAP groups created for #{ark} #{description}",

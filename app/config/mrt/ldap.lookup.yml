@@ -5,6 +5,15 @@ docker: &docker
     val: ldap
   port:
     val: 1389
+  default_read:
+    val: merritt-test, anonymous
+  default_write:
+    val: merritt-test
+  default_download:
+    val: merritt-test, anonymous
+  default_admin:
+    val: merritt-test
+
   _fixed: &fixed
     admin_user: "cn=Directory Manager"
     group_base: "ou=mrt-classes,ou=uc3,dc=cdlib,dc=org"
@@ -31,6 +40,14 @@ ecs-stg:
     val: 1636
   encryption:
     val: simple_tls
+  default_read:
+    ssm: /uc3/mrt/stg/ldap/default-read
+  default_write:
+    ssm: /uc3/mrt/stg/ldap/default-write
+  default_download:
+    ssm: /uc3/mrt/stg/ldap/default-download
+  default_admin:
+    ssm: /uc3/mrt/stg/ldap/default-admin
   _fixed:
     <<: *fixed
 ecs-prd:
@@ -42,6 +59,14 @@ ecs-prd:
     val: 1636
   encryption: 
     val: simple_tls
+  default_read:
+    ssm: /uc3/mrt/prd/ldap/default-read
+  default_write:
+    ssm: /uc3/mrt/prd/ldap/default-write
+  default_download:
+    ssm: /uc3/mrt/prd/ldap/default-download
+  default_admin:
+    ssm: /uc3/mrt/prd/ldap/default-admin
   _fixed:
     <<: *fixed
 default:
