@@ -358,7 +358,14 @@ module UC3Ldap
       end
 
       res = @ldap.replace_attribute(dn, :uniquemember, data)
-      res ||= @ldap.add(dn: dn, attributes: data)
+      res ||= @ldap.add(
+        dn: dn,
+        attributes: {
+          objectclass: %w[top groupOfUniqueNames],
+          cn: perm,
+          uniquemember: data
+        }
+      )
       res
     end
 
