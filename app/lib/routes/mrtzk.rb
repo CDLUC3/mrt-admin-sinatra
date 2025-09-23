@@ -257,19 +257,19 @@ module Sinatra
         redirect '/ops/zk/access/jobs'
       end
 
-      app.get '/ops/zk/ingest/folders' do
+      app.get '/ops/ingest-folders/list' do
         adminui_show_table(
           AdminUI::Context.new(request.path),
           UC3::FileSystemClient.client.ingest_folders(request.path, request.params)
         )
       end
 
-      app.post '/ops/zk/ingest/folders/cleanup' do
+      app.post '/ops/ingest-folders/cleanup' do
         UC3::FileSystemClient.client.cleanup_ingest_folders
-        redirect '/ops/zk/ingest/folders'
+        redirect '/ops/ingest-folders/list'
       end
 
-      app.post '/ops/zk/ingest/folder/delete' do
+      app.post '/ops/ingest-folders/delete' do
         f = request.body.read
         if f.empty?
           content_type :json
@@ -284,34 +284,34 @@ module Sinatra
         { message: "ERROR: #{e.class}: #{e.message}" }.to_json
       end
 
-      app.post '/ops/zk/ingest/force-failure/estimating' do
+      app.post '/ops/ingest-folders/force-failure/estimating' do
         File.new('/tdr/ingest/queue/Estimate_FAIL', 'w')
-        redirect '/ops/zk/ingest/folders'
+        redirect '/ops/ingest-folders/list'
       end
 
-      app.post '/ops/zk/ingest/force-failure/provisioning' do
+      app.post '/ops/ingest-folders/force-failure/provisioning' do
         File.new('/tdr/ingest/queue/Provision_FAIL', 'w')
-        redirect '/ops/zk/ingest/folders'
+        redirect '/ops/ingest-folders/list'
       end
 
-      app.post '/ops/zk/ingest/force-failure/download' do
+      app.post '/ops/ingest-folders/force-failure/download' do
         File.new('/tdr/ingest/queue/Download_FAIL', 'w')
-        redirect '/ops/zk/ingest/folders'
+        redirect '/ops/ingest-folders/list'
       end
 
-      app.post '/ops/zk/ingest/force-failure/processing' do
+      app.post '/ops/ingest-folders/force-failure/processing' do
         File.new('/tdr/ingest/queue/Process_FAIL', 'w')
-        redirect '/ops/zk/ingest/folders'
+        redirect '/ops/ingest-folders/list'
       end
 
-      app.post '/ops/zk/ingest/force-failure/notify' do
+      app.post '/ops/ingest-folders/force-failure/notify' do
         File.new('/tdr/ingest/queue/Notify_FAIL', 'w')
-        redirect '/ops/zk/ingest/folders'
+        redirect '/ops/ingest-folders/list'
       end
 
       app.post '/ops/zk/snapshot' do
         UC3Queue::ZKClient.client.save_snapshot
-        redirect '/ops/zk/ingest/folders?path=/zk-snapshots'
+        redirect '/ops/ingest-folders/list?path=/zk-snapshots'
       end
 
       app.post '/ops/zk/restore' do

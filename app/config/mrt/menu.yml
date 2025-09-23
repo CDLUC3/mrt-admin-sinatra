@@ -528,36 +528,6 @@ items:
         route: /ops/zk/ingest/cleanup-queue
         confmsg: This will cleanup all completed and deleted batches in the ingest queue.
         method: post
-      - title: Ingest Folders
-        route: /ops/zk/ingest/folders
-      - title: Cleanup Ingest Folders
-        route: /ops/zk/ingest/folders/cleanup
-        confmsg: This will cleanup ingest batches older than 30 days, RecycleBin items older than 3 days and ZK snapshots older than 3 days.
-        method: post
-      - path: force-failure
-        title: Force Failure
-        route: /ops/zk/ingest/force-failure
-        items:
-        - title: Estimating
-          route: /ops/zk/ingest/force-failure/estimating
-          confmsg: This will cause all Estimating jobs to fail until the failure file is removed from the ingest queue.
-          method: post
-        - title: Download
-          route: /ops/zk/ingest/force-failure/download
-          confmsg: This will cause all Downloading jobs to fail until the failure file is removed from the ingest queue.
-          method: post
-        - title: Notify
-          route: /ops/zk/ingest/force-failure/notify
-          confmsg: This will cause all Notify jobs to fail until the failure file is removed from the ingest queue.
-          method: post
-        - title: Provisioning
-          confmsg: This will cause all Provisioning jobs to fail until the failure file is removed from the ingest queue.
-          route: /ops/zk/ingest/force-failure/provisioning
-          method: post
-        - title: Processing
-          confmsg: This will cause all Processing jobs to fail until the failure file is removed from the ingest queue.
-          route: /ops/zk/ingest/force-failure/processing
-          method: post
     - path: access-queue
       title: Access Queue
       route: /ops/zk/access
@@ -598,6 +568,42 @@ items:
       method: post
     - title: ZooKeeper Stat
       route: /ops/zk/stat
+  - path: ingest-folders
+    title: Ingest Folders
+    route: /ops/ingest-folders
+    breadcrumb: true
+    items:
+    - title: Ingest Folders
+      route: /ops/ingest-folders/list
+    - title: Cleanup Ingest Folders
+      route: /ops/ingest-folders/cleanup
+      confmsg: This will cleanup ingest batches older than 30 days, RecycleBin items older than 3 days and ZK snapshots older than 3 days.
+      description: Choose "Operations -> Ingest Folders -> Cleanup Ingest Folders" from the menu
+      method: post
+    - path: force-failure
+      title: Force Failure
+      route: /ops/ingest-folders/force-failure
+      items:
+      - title: Estimating
+        route: /ops/ingest-folders/force-failure/estimating
+        confmsg: This will cause all Estimating jobs to fail until the failure file is removed from the ingest folder.
+        method: post
+      - title: Download
+        route: /ops/ingest-folders/force-failure/download
+        confmsg: This will cause all Downloading jobs to fail until the failure file is removed from the ingest folder.
+        method: post
+      - title: Notify
+        route: /ops/ingest-folders/force-failure/notify
+        confmsg: This will cause all Notify jobs to fail until the failure file is removed from the ingest folder.
+        method: post
+      - title: Provisioning
+        confmsg: This will cause all Provisioning jobs to fail until the failure file is removed from the ingest folder.
+        route: /ops/ingest-folders/force-failure/provisioning
+        method: post
+      - title: Processing
+        confmsg: This will cause all Processing jobs to fail until the failure file is removed from the ingest folder.
+        route: /ops/ingest-folders/force-failure/processing
+        method: post
   - path: db-queue
     title: Database Queues
     route: /ops/db-queue

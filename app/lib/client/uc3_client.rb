@@ -209,14 +209,14 @@ module UC3
         data = if File.directory?("#{dir}/#{folder}")
                  if folder == '..'
                    {
-                     name: { value: '..', href: "/ops/zk/ingest/folders?path=#{File.dirname(path)}" },
+                     name: { value: '..', href: "/ops/ingest-folders/list?path=#{File.dirname(path)}" },
                      created: '',
                      size: '',
                      actions: []
                    }
                  else
                    {
-                     name: { value: folder, href: "/ops/zk/ingest/folders?path=#{path}/#{folder}" },
+                     name: { value: folder, href: "/ops/ingest-folders/list?path=#{path}/#{folder}" },
                      created: date_format(File.ctime("#{dir}/#{folder}")),
                      size: '',
                      actions: []
@@ -229,7 +229,7 @@ module UC3
                    size: File.size("#{dir}/#{folder}"),
                    actions: {
                      value: 'Delete',
-                     href: '/ops/zk/ingest/folder/delete',
+                     href: '/ops/ingest-folders/delete',
                      data: folder,
                      cssclass: 'button',
                      post: true,
@@ -320,7 +320,7 @@ module UC3
             /ops/zk/ingest/jobs-by-collection
             /ops/zk/ingest/batches
             /ops/zk/nodes/orphan
-            /ops/zk/ingest/folders
+            /ops/ingest-folders/list
           ].each do |pattern|
             @consistency_checks << path if path =~ /#{pattern}/
           end
