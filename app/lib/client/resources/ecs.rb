@@ -12,10 +12,6 @@ module UC3Resources
       UC3::UC3Client.clients.fetch(self.class.to_s, ServicesClient.new)
     end
 
-    def cluster_name
-      ENV.fetch('ECS_STACK_NAME', 'mrt-ecs-dev-stack')
-    end
-
     def initialize
       @client = Aws::ECS::Client.new(
         region: UC3::UC3Client.region

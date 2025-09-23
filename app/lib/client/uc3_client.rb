@@ -75,6 +75,10 @@ module UC3
       ENV['AWS_REGION'] || 'us-west-2'
     end
 
+    def cluster_name
+      ENV.fetch('ECS_STACK_NAME', 'mrt-ecs-dev-stack')
+    end
+
     def context
       table = AdminUI::FilterTable.new(
         columns: [
@@ -257,7 +261,7 @@ module UC3
       `find #{DIR} -maxdepth 1  -name "bid-*" -mtime +30 | xargs rm -rf`
       `find #{DIR}/FAILED -maxdepth 1  -name "bid-*" -mtime +30 | xargs rm -rf`
       `find #{DIR}/RecycleBin -maxdepth 1  -name "jid-*" -mtime +3 | xargs rm -rf`
-      `find #{DIR}/zk-snapshots -maxdepth 1  -name "latest-snapshot.20-*" -mtime +3 | xargs rm -rf`
+      `find #{DIR}/zk-snapshots -maxdepth 1  -name "latest_snapshot.#{cluster_name}.20*" -mtime +3 | xargs rm -rf`
     end
   end
 
