@@ -657,14 +657,14 @@ module UC3Queue
     def save_snapshot
       `mkdir -p #{@snapshot_path}`
       url = "http://#{@zk_hosts.first}:#{@admin_port}/commands/snapshot?streaming=true"
-      path = "#{@snapshot_path}/latest_snapshot.#{cluster_name}.#{Time.new.strftime('%Y-%m-%d_%H:%M:%S')}.out"
-      path_ln = "#{@snapshot_path}/latest_snapshot.#{cluster_name}.out"
+      path = "#{@snapshot_path}/latest_snapshot.#{UC3::UC3Client.stack_name}.#{Time.new.strftime('%Y-%m-%d_%H:%M:%S')}.out"
+      path_ln = "#{@snapshot_path}/latest_snapshot.#{UC3::UC3Client.stack_name}.out"
       puts `curl -H #{zk_auth} #{url} --output #{path} && rm #{path_ln} && ln -s #{path} #{path_ln}`
     end
 
     def restore_from_snapshot
       ct = "'Content-Type:application/octet-stream'"
-      path = "#{@snapshot_path}/latest_snapshot.#{cluster_name}.out"
+      path = "#{@snapshot_path}/latest_snapshot.#{UC3::UC3Client.stack_name}.out"
       @zk_hosts.each do |zkhost|
         url = "http://#{zkhost}:#{@admin_port}/commands/restore"
         puts `curl -H #{ct} -H #{zk_auth} -POST #{url} --data-binary "@#{path}"`

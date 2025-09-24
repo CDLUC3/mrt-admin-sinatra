@@ -160,15 +160,15 @@ module UC3Query
 
       begin
         stmt = @client.prepare(sql)
-        if dispcols.empty?
-          cols = stmt.fields.map do |field|
-            make_column(field)
-          end
-        else
-          cols = dispcols.map do |field|
-            make_column(field)
-          end
-        end
+        cols = if dispcols.empty?
+                 stmt.fields.map do |field|
+                   make_column(field)
+                 end
+               else
+                 dispcols.map do |field|
+                   make_column(field)
+                 end
+               end
 
         description = Mustache.render(query.fetch(:description, ''), tparm)
         description += result_header(path, sql)
@@ -216,7 +216,7 @@ module UC3Query
         href: "/ops/replication/#{row['inv_object_id']}",
         cssclass: 'button',
         post: true,
-        disabled: true
+        disabled: storage_mgt_disabled?
       }
       row
     end
@@ -228,14 +228,14 @@ module UC3Query
         href: "/tbd/#{row['inv_object_id']}",
         cssclass: 'button',
         post: true,
-        disabled: true
+        disabled: storage_mgt_disabled?
       }
       row['actions'] << {
         value: 'Re-audit Unverified',
         href: "/tbd/#{row['inv_object_id']}",
         cssclass: 'button',
         post: true,
-        disabled: true
+        disabled: storage_mgt_disabled?
       }
       if row['role'] == 'primary'
         row['actions'] << {
@@ -243,50 +243,51 @@ module UC3Query
           href: "/tbd/#{row['inv_object_id']}",
           cssclass: 'button',
           post: true,
-          disabled: true
+          disabled: storage_mgt_disabled?
         }
         row['actions'] << {
           value: "Get Ingest Checkm (v#{row['version_number']})",
           href: "/tbd/#{row['inv_object_id']}",
           cssclass: 'button',
           post: true,
-          disabled: true
+          disabled: storage_mgt_disabled?
         }
         row['actions'] << {
           value: 'Get Storage Manifest Yaml',
           href: "/tbd/#{row['inv_object_id']}",
           cssclass: 'button',
           post: true,
-          disabled: true
+          disabled: storage_mgt_disabled?
         }
         row['actions'] << {
           value: 'Get Storage Provenance Yaml',
           href: "/tbd/#{row['inv_object_id']}",
           cssclass: 'button',
           post: true,
-          disabled: true
+          disabled: storage_mgt_disabled?
         }
         row['actions'] << {
           value: 'Get Storage Provenance Diff',
           href: "/tbd/#{row['inv_object_id']}",
           cssclass: 'button',
           post: true,
-          disabled: true
+          disabled: storage_mgt_disabled?
         }
         row['actions'] << {
           value: 'Rebuild Inventory',
           href: "/tbd/#{row['inv_object_id']}",
           cssclass: 'button button_red',
-          confmsg: "Are you sure you want to rebuild the INV entry for this ark?\nA new inv_object_id will be assigned.",
+          confmsg: %(Are you sure you want to rebuild the INV entry for this ark?
+            A new inv_object_id will be assigned.),
           post: true,
-          disabled: true
+          disabled: storage_mgt_disabled?
         }
         row['actions'] << {
           value: 'Clear Scan Entries for Ark',
           href: "/tbd/#{row['inv_object_id']}",
           cssclass: 'button',
           post: true,
-          disabled: true
+          disabled: storage_mgt_disabled?
         }
       end
       row

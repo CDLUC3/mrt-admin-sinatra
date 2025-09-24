@@ -61,7 +61,14 @@ function applyButtonControls() {
           }
         },
         error: function( xhr, status ) {
-          $("#alertmsg").text(xhr.responseText).dialog({
+          var msg = "";
+          if (xhr.status == 404) {
+            msg = "Error 404: Not Found";
+          } else {
+            msg = xhr.responseText;
+          }
+
+          $("#alertmsg").text(msg).dialog({
             create: function(event, ui) {
               $(event.target).parent().css('position', 'fixed');
             },

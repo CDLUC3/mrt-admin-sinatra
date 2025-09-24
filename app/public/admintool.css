@@ -74,13 +74,16 @@ td.actions {
 }
 th.ark,
 td.ark,
-th.metadata,
-td.metadata,
 th.date, 
 td.date,
 th.jobdata, 
 td.jobdata {
   width: 180px;
+}
+th.metadata,
+td.metadata {
+  width: 250px;
+  padding-left: 20px;
 }
 tr.other th.tag, tr.other td.tag {
   color: red;
@@ -146,6 +149,7 @@ td.mnemonics span.val {
   white-space: nowrap;
   overflow-x: clip;
 }
+td.metadata span.val,
 td.artifacts span.val,
 td.images span.val {
   display: list-item;

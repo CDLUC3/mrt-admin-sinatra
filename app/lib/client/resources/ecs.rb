@@ -21,17 +21,17 @@ module UC3Resources
       # An ECS Service has a ServiceDeployment which has a TargetServiceRevision.
       # A ServiceRevision has ContainerImage which has an ImageDigest.
       # The ImageDigest is the identity key for an image inside of an ECR Repository.
-      @client.list_services(cluster: cluster_name, max_results: 20).service_arns.each do |arn|
-        @client.describe_services(cluster: cluster_name, services: [arn]).services.each do |svc|
+      @client.list_services(cluster: UC3::UC3Client.cluster_name, max_results: 20).service_arns.each do |arn|
+        @client.describe_services(cluster: UC3::UC3Client.cluster_name, services: [arn]).services.each do |svc|
           digest = nil
           image = nil
           pendcount = @client.list_service_deployments(
-            cluster: cluster_name,
+            cluster: UC3::UC3Client.cluster_name,
             service: arn,
             status: %w[PENDING IN_PROGRESS]
           ).service_deployments.length
           @client.list_service_deployments(
-            cluster: cluster_name,
+            cluster: UC3::UC3Client.cluster_name,
             service: arn,
             status: ['SUCCESSFUL']
           ).service_deployments.each do |sd|
@@ -97,14 +97,14 @@ module UC3Resources
       return unless enabled
 
       @client.update_service(
-        cluster: cluster_name,
+        cluster: UC3::UC3Client.cluster_name,
         service: service,
         force_new_deployment: true
       ).to_json
     end
 
     def network_configuration(service_arn)
-      service = @client.describe_services(cluster: cluster_name, services: [service_arn]).services
+      service = @client.describe_services(cluster: UC3::UC3Client.cluster_name, services: [service_arn]).services
       return {} if service.nil? || service.empty?
 
       deployment = service[0].deployments
@@ -125,7 +125,7 @@ module UC3Resources
       service_arn = "#{td.split(':')[0..4].join(':')}:service/#{cluster_name}/#{service}"
 
       @client.run_task(
-        cluster: cluster_name,
+        cluster: UC3::UC3Client.cluster_name,
         task_definition: td,
         launch_type: 'FARGATE',
         network_configuration: network_configuration(service_arn)
@@ -136,7 +136,7 @@ module UC3Resources
       return unless enabled
 
       @client.update_service(
-        cluster: cluster_name,
+        cluster: UC3::UC3Client.cluster_name,
         service: service,
         desired_count: 2
       ).to_json
@@ -146,7 +146,7 @@ module UC3Resources
       return unless enabled
 
       @client.update_service(
-        cluster: cluster_name,
+        cluster: UC3::UC3Client.cluster_name,
         service: service,
         desired_count: 1
       ).to_json

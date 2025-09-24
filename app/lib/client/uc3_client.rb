@@ -19,6 +19,12 @@ module UC3
       ERROR: 5
     }.freeze
 
+    ECS_DBSNAPSHOT = 'ecs-dbsnapshot'
+    ECS_DEV = 'ecs-dev'
+    ECS_EPHEMERAL = 'ecs-ephemeral'
+    ECS_STG = 'ecs-stg'
+    ECS_PRD = 'ecs-prd'
+
     @clients = {}
 
     def self.client
@@ -75,8 +81,20 @@ module UC3
       ENV['AWS_REGION'] || 'us-west-2'
     end
 
-    def cluster_name
+    def self.cluster_name
       ENV.fetch('ECS_STACK_NAME', 'mrt-ecs-dev-stack')
+    end
+
+    def self.stack_name
+      ENV.fetch('MERRITT_ECS', 'ecs-dev')
+    end
+
+    def self.dbsnapshot_stack?
+      stack_name == ECS_DBSNAPSHOT
+    end
+
+    def self.storage_mgt_disabled?
+      [ECS_DBSNAPSHOT, ECS_STG, ECS_PRD].include?(stack_name)
     end
 
     def context
@@ -261,7 +279,8 @@ module UC3
       `find #{DIR} -maxdepth 1  -name "bid-*" -mtime +30 | xargs rm -rf`
       `find #{DIR}/FAILED -maxdepth 1  -name "bid-*" -mtime +30 | xargs rm -rf`
       `find #{DIR}/RecycleBin -maxdepth 1  -name "jid-*" -mtime +3 | xargs rm -rf`
-      `find #{DIR}/zk-snapshots -maxdepth 1  -name "latest_snapshot.#{cluster_name}.20*" -mtime +3 | xargs rm -rf`
+      name = '-name "latest_snapshot.#{UC3::UC3Client.stack_name}.20*"'
+      `find #{DIR}/zk-snapshots -maxdepth 1 #{name} -mtime +3 | xargs rm -rf`
     end
   end
 

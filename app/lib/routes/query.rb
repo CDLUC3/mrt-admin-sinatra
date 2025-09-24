@@ -32,7 +32,10 @@ module Sinatra
               request.path,
               request.params,
               resolver: UC3Query::QueryClient.method(:obj_info_resolver),
-              dispcols: %w[inv_object_id ark actions version_number mnemonics metadata local_ids created billable_size file_count]
+              dispcols: %w[
+                inv_object_id ark actions version_number mnemonics metadata local_ids created billable_size
+                file_count
+]
             ),
             aux_tables: [
               UC3Query::QueryClient.client.query(

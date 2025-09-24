@@ -261,7 +261,7 @@ module AdminUI
     def classes
       classes = []
       classes << 'no-db' unless UC3Query::QueryClient.client.enabled
-      classes << 'no-zk' unless UC3Queue::ZKClient.client.enabled || ENV.fetch('MERRITT_ECS', '') == 'ecs-dbsnapshot'
+      classes << 'no-zk' unless UC3Queue::ZKClient.client.enabled || UC3::UC3Client.dbsnapshot_stack?
       classes << 'no-ldap' unless UC3Ldap::LDAPClient.client.enabled
       classes
     end
