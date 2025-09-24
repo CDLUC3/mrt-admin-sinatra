@@ -87,6 +87,7 @@ queries:
         ark, 
         erc_what
       from inv.inv_objects
+      where aggregate_role = 'MRT-none'
       order by id
       limit 1000
   

@@ -109,6 +109,7 @@ module AdminUI
 
     def render
       s = %(
+    <div class='table'>
     <table class='data sortable'>
     <caption>
       #{render_status}
@@ -137,7 +138,7 @@ module AdminUI
         end
         s += %(</tr></tfoot>)
       end
-      s += %(</table>)
+      s += %(</table></div>)
       s
     end
 
@@ -176,6 +177,7 @@ module AdminUI
         end
         nav[:next] = render_page_link('next', path, urlparams, limit, offset + limit) if @rows.length == limit
       end
+      return "" if @rows.empty?
       %(
         <div class='counts'>
         #{nav.fetch(:first, '')}
@@ -213,7 +215,7 @@ module AdminUI
       end
     end
 
-    attr_accessor :columns, :data, :filters, :filterable, :totals, :status, :status_message, :description, :pagination
+    attr_accessor :columns, :data, :filters, :filterable, :totals, :status, :status_message, :description, :pagination, :rows
   end
 
   # Table rendering classes
@@ -221,6 +223,18 @@ module AdminUI
     def initialize(data, cssclass: '')
       @cssclass = cssclass
       @cols = data
+    end
+
+    def col_hash(coldefs)
+      hash = {}
+      coldefs.each_with_index do |c, i|
+        hash[c.sym.to_sym] = @cols[i].is_a?(Hash) ? @cols[i].fetch(:value, '') : @cols[i]
+      end
+      hash
+    end
+
+    def set_data(colindex, val)
+      @cols[colindex] = val if colindex >= 0
     end
 
     def self.format_float(vfloat)

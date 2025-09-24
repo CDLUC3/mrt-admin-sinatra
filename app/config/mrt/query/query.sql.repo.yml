@@ -140,9 +140,12 @@ queries:
   /queries/repository/objects-localid:
     sql: |
       {{{OBJQ}}}
+    limit:
+      enabled: true
+      default: 2000
     template-params:
       WHERE: |
-        where exists (
+        where o.aggregate_role = 'MRT-none' and exists (
           select 1 from inv.inv_localids loc
           where loc.inv_object_ark = o.ark
           and loc.local_id = ?
@@ -153,36 +156,48 @@ queries:
   /queries/repository/objects-erc-who:
     sql: |
       {{{OBJQ}}}
+    limit:
+      enabled: true
+      default: 2000
     template-params:
       WHERE: |
-        where o.erc_who like ?
+        where o.aggregate_role = 'MRT-none' and o.erc_who like ?
     parameters:
     - name: term
       type: string
   /queries/repository/objects-erc-what:
     sql: |
       {{{OBJQ}}}
+    limit:
+      enabled: true
+      default: 2000
     template-params:
       WHERE: |
-        where o.erc_what like ?
+        where o.aggregate_role = 'MRT-none' and o.erc_what like ?
     parameters:
     - name: term
       type: string
   /queries/repository/objects-erc-when:
     sql: |
       {{{OBJQ}}}
+    limit:
+      enabled: true
+      default: 2000
     template-params:
       WHERE: |
-        where o.erc_when like ?
+        where o.aggregate_role = 'MRT-none' and o.erc_when like ?
     parameters:
     - name: term
       type: string
   /queries/repository/objects-by-filename:
     sql: |
       {{{OBJQ}}}
+    limit:
+      enabled: true
+      default: 2000
     template-params:
       WHERE: |
-        where exists (
+        where o.aggregate_role = 'MRT-none' and exists (
           select 1 from inv.inv_files f
           where pathname like ?
           and f.inv_object_id = o.id
@@ -193,9 +208,12 @@ queries:
   /queries/repository/objects-by-container:
     sql: |
       {{{OBJQ}}}
+    limit:
+      enabled: true
+      default: 2000
     template-params:
       WHERE: |
-        where exists (
+        where o.aggregate_role = 'MRT-none' and exists (
           select 1 from inv.inv_ingests ing
           where filename = ?
           and ing.inv_object_id = o.id

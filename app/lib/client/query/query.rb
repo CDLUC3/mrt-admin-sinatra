@@ -121,7 +121,7 @@ module UC3Query
       HTML
     end
 
-    def query(path, urlparams, sqlsym: :sql)
+    def query(path, urlparams, sqlsym: :sql, resolver: UC3Query::QueryClient.method(:default_resolver))
       table = AdminUI::FilterTable.empty
       query = @queries.fetch(path.to_sym, {})
 
@@ -176,6 +176,7 @@ module UC3Query
 
         params = resolve_parameters(query.fetch(:parameters, []), urlparams)
         stmt.execute(*params).each do |row|
+          row = resolver.call(row)
           table.add_row(AdminUI::Row.make_row(table.columns, row))
         end
       rescue StandardError => e
@@ -190,6 +191,50 @@ module UC3Query
       end
       record_status(path, table.status) if query.fetch(:status_check, false)
       table
+    end
+
+    def self.default_resolver(row)
+      row
+    end
+
+    def self.obj_info_resolver(row)
+      row['actions'] = []
+      row['actions'] << {
+        value: 'Trigger Replication',
+        href: "/ops/replication/#{row['inv_object_id']}",
+        cssclass: 'button',
+        post: true,
+        disabled: true
+      }
+      row
+    end
+
+    def self.obj_node_resolver(row)
+      row['actions'] = []
+      row['actions'] << {
+        value: 'Re-audit All Files',
+        href: "/tbd/#{row['inv_object_id']}",
+        cssclass: 'button',
+        post: true,
+        disabled: true
+      }
+      row['actions'] << {
+        value: 'Re-audit Unverified',
+        href: "/tbd/#{row['inv_object_id']}",
+        cssclass: 'button',
+        post: true,
+        disabled: true
+      }
+      if row['role'] == 'primary'
+        row['actions'] << {
+          value: 'Get Manifest',
+          href: "/tbd/#{row['inv_object_id']}",
+          cssclass: 'button',
+          post: true,
+          disabled: true
+        }
+      end
+      row
     end
 
     attr_accessor :queries

@@ -46,9 +46,10 @@ fragments:
     select
       o.id inv_object_id,
       o.ark,
+      '' as actions,
       o.version_number,
       group_concat(c.mnemonic) as mnemonics,
-      own.name,
+      own.name as own_name,
       erc_what,
       erc_who,
       erc_when,
@@ -145,6 +146,7 @@ fragments:
     select
       nn.role,
       nn.node_id,
+      '' actions,
       nn.node_number,
       nn.description,
       nn.access_mode,
