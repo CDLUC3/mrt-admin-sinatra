@@ -29,20 +29,20 @@ module Sinatra
           locals: {
             context: AdminUI::Context.new(request.path),
             table: UC3Query::QueryClient.client.query(
-              request.path, 
+              request.path,
               request.params,
               resolver: UC3Query::QueryClient.method(:obj_info_resolver)
             ),
             aux_tables: [
               UC3Query::QueryClient.client.query(
-                request.path, 
-                request.params, 
+                request.path,
+                request.params,
                 sqlsym: :repl_sql,
                 resolver: UC3Query::QueryClient.method(:obj_node_resolver)
               ),
               UC3Query::QueryClient.client.query(
-                request.path, 
-                request.params, 
+                request.path,
+                request.params,
                 sqlsym: :files_sql
               )
             ]

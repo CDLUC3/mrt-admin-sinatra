@@ -177,7 +177,8 @@ module AdminUI
         end
         nav[:next] = render_page_link('next', path, urlparams, limit, offset + limit) if @rows.length == limit
       end
-      return "" if @rows.empty?
+      return '' if @rows.empty?
+
       %(
         <div class='counts'>
         #{nav.fetch(:first, '')}
@@ -215,7 +216,8 @@ module AdminUI
       end
     end
 
-    attr_accessor :columns, :data, :filters, :filterable, :totals, :status, :status_message, :description, :pagination, :rows
+    attr_accessor :columns, :data, :filters, :filterable, :totals, :status, :status_message, :description, :pagination,
+      :rows
   end
 
   # Table rendering classes
