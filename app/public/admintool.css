@@ -74,6 +74,8 @@ td.actions {
 }
 th.ark,
 td.ark,
+th.metadata,
+td.metadata,
 th.date, 
 td.date,
 th.jobdata, 
@@ -93,6 +95,10 @@ a.button {
   background-color: navy;
   color: white;
 }
+a.button_red {
+  color: red !important;
+}
+
 a.buttontbd {
   background-color: navy;  
   color: yellow;

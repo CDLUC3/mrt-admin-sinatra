@@ -121,7 +121,7 @@ module UC3Query
       HTML
     end
 
-    def query(path, urlparams, sqlsym: :sql, resolver: UC3Query::QueryClient.method(:default_resolver))
+    def query(path, urlparams, sqlsym: :sql, dispcols: [], resolver: UC3Query::QueryClient.method(:default_resolver))
       table = AdminUI::FilterTable.empty
       query = @queries.fetch(path.to_sym, {})
 
@@ -160,8 +160,14 @@ module UC3Query
 
       begin
         stmt = @client.prepare(sql)
-        cols = stmt.fields.map do |field|
-          make_column(field)
+        if dispcols.empty?
+          cols = stmt.fields.map do |field|
+            make_column(field)
+          end
+        else
+          cols = dispcols.map do |field|
+            make_column(field)
+          end
         end
 
         description = Mustache.render(query.fetch(:description, ''), tparm)
@@ -198,6 +204,12 @@ module UC3Query
     end
 
     def self.obj_info_resolver(row)
+      row['metadata'] = []
+      row['metadata'] << "What: #{row['erc_what']}"
+      row['metadata'] << "Who: #{row['erc_who']}"
+      row['metadata'] << "When: #{row['erc_when']}"
+      row['metadata'] << "Own: #{row['name']}"
+
       row['actions'] = []
       row['actions'] << {
         value: 'Trigger Replication',
@@ -228,6 +240,49 @@ module UC3Query
       if row['role'] == 'primary'
         row['actions'] << {
           value: 'Get Manifest',
+          href: "/tbd/#{row['inv_object_id']}",
+          cssclass: 'button',
+          post: true,
+          disabled: true
+        }
+        row['actions'] << {
+          value: "Get Ingest Checkm (v#{row['version_number']})",
+          href: "/tbd/#{row['inv_object_id']}",
+          cssclass: 'button',
+          post: true,
+          disabled: true
+        }
+        row['actions'] << {
+          value: 'Get Storage Manifest Yaml',
+          href: "/tbd/#{row['inv_object_id']}",
+          cssclass: 'button',
+          post: true,
+          disabled: true
+        }
+        row['actions'] << {
+          value: 'Get Storage Provenance Yaml',
+          href: "/tbd/#{row['inv_object_id']}",
+          cssclass: 'button',
+          post: true,
+          disabled: true
+        }
+        row['actions'] << {
+          value: 'Get Storage Provenance Diff',
+          href: "/tbd/#{row['inv_object_id']}",
+          cssclass: 'button',
+          post: true,
+          disabled: true
+        }
+        row['actions'] << {
+          value: 'Rebuild Inventory',
+          href: "/tbd/#{row['inv_object_id']}",
+          cssclass: 'button button_red',
+          confmsg: "Are you sure you want to rebuild the INV entry for this ark?\nA new inv_object_id will be assigned.",
+          post: true,
+          disabled: true
+        }
+        row['actions'] << {
+          value: 'Clear Scan Entries for Ark',
           href: "/tbd/#{row['inv_object_id']}",
           cssclass: 'button',
           post: true,
