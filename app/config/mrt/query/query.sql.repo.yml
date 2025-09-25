@@ -672,10 +672,10 @@ queries:
         mnemonic not like 'mrt_%_classes'
       order By
         mnemonic
-  /queries/content/producer-files-preview:
+  /queries/content/mnemonic/producer-files-preview:
     limit:
       enabled: true
-      default: 100
+      default: 1000
     sql: |
       {{{PRODUCER}}}
       limit {{{LIMIT}}}
@@ -683,17 +683,17 @@ queries:
     parameters:
       - name: mnemonic
         type: string
-  /queries/content/producer-files:
+  /queries/content/mnemonic/producer-files:
     sql: |
       {{{PRODUCER}}}
     parameters:
       - name: mnemonic
         type: string
     save_to_cloud: true
-  /queries/content/ucsc-objects-preview:
+  /queries/content/mnemonic/ucsc-objects-preview:
     limit:
       enabled: true
-      default: 100
+      default: 1000
     sql: |
       {{{UCSCOBJ}}}
       limit {{{LIMIT}}}
@@ -701,7 +701,7 @@ queries:
     parameters:
     - name: mnemonic
       type: string
-  /queries/content/ucsc-objects:
+  /queries/content/mnemonic/ucsc-objects:
     sql: |
       {{{UCSCOBJ}}}
     parameters:

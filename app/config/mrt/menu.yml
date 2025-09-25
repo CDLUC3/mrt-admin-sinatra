@@ -443,14 +443,19 @@ items:
     breadcrumb: true
     route: /queries/content
     items: 
-    - title: Producer File Preview (paginated)
-      route: /queries/content/producer-files-preview
-    - title: Producer File Listing (☁️)
-      route: /queries/content/producer-files
-    - title: UCSC Object Preview (paginated)
-      route: /queries/content/ucsc-objects-preview
-    - title: UCSC Object Listing (☁️)
-      route: /queries/content/ucsc-objects
+    - path: content 
+      title: By Collection 
+      breadcrumb: true
+      route: /queries/content/mnemonic
+      items: 
+      - title: Producer File Preview (paginated)
+        route: /queries/content/mnemonic/producer-files-preview
+      - title: Producer File Listing (☁️)
+        route: /queries/content/mnemonic/producer-files
+      - title: UCSC Object Preview (paginated)
+        route: /queries/content/mnemonic/ucsc-objects-preview
+      - title: UCSC Object Listing (☁️)
+        route: /queries/content/mnemonic/ucsc-objects
   - route: /queries/update-billing
     title: Update Billing
     method: post

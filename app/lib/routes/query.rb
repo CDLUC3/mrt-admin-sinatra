@@ -62,7 +62,7 @@ module Sinatra
         redirect "/queries/recent/ingests?date=#{Date.today.strftime('%Y-%m-%d')}"
       end
 
-      app.get '/queries/content/*' do
+      app.get '/queries/content/mnemonic/*' do
         if request.params.key?('mnemonic')
           result = UC3Query::QueryClient.client.query(request.path, request.params)
 
