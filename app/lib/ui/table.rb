@@ -168,7 +168,7 @@ module AdminUI
         limit = pagination.fetch(:LIMIT, 0)
         offset = pagination.fetch(:OFFSET, 0)
         path = pagination.fetch(:path, '')
-        urlparams = pagination.fetch(:urlprams, {})
+        urlparams = pagination.fetch(:urlparams, {})
         counts += "; Limit: #{limit}; Offset: #{offset}"
         if offset.positive?
           offsetprev = [offset - limit, 0].max
