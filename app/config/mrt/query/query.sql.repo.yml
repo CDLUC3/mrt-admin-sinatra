@@ -47,23 +47,52 @@ fragments:
         on f.inv_version_id = v.id
       inner join collobj co
         on f.inv_object_id = co.id and co.version_number = v.number
+    ),
+    billing_files AS (
+      select
+        co.ark,
+        co.version_number,
+        f.inv_object_id,
+        f.pathname,
+        md5(f.pathname) as md5path,
+        f.billable_size,
+        f.digest_value,
+        f.created
+      from
+        collobj co
+      inner join inv.inv_files f
+        on f.inv_object_id = co.id and source = 'producer' and f.billable_size = f.full_size
     )
+
+    loc as (
+        select inv_object_ark, group_concat(local_id) as loc_id_agg
+        from inv.inv_localids
+        where exists (
+          select 1
+          from collobj co
+          where co.ark = inv_object_ark
+        )
+        group by inv_object_ark
+    )
+
     select
-      distinct co.ark,
-      co.version_number,
-      substr(f.pathname, 10) as fname,
-      f.billable_size,
-      f.digest_value,
-      f.created,
-      (select group_concat(local_id) from inv.inv_localids where inv_object_ark = co.ark) as loc_id_agg
+      bf.ark,
+      bf.version_number,
+      substr(bf.pathname, 10) as fname,
+      bf.billable_size,
+      bf.digest_value,
+      bf.created,
+      loc.loc_id_agg
     from
-      collobj co
-    inner join inv.inv_files f
-      on f.inv_object_id = co.id and source = 'producer' and f.billable_size = f.full_size
+      billing_files bf
+    inner join loc
+      on loc.inv_object_ark = bf.ark
+    /*
     inner join current_files cf
-      on cf.inv_object_id = co.id and cf.md5path = md5(f.pathname)
+      on cf.inv_object_id = bf.inv_object_id and cf.md5path = bf.md5path
+    */
     order by
-      o.ark,
+      bf.ark,
       fname
   UCSCOBJ:
     with loc as (
