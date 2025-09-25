@@ -443,9 +443,13 @@ items:
     breadcrumb: true
     route: /queries/content
     items: 
-    - title: Producer File Listing (slow)
+    - title: Producer File Preview (paginated)
+      route: /queries/content/producer-files-preview
+    - title: Producer File Listing (☁️)
       route: /queries/content/producer-files
-    - title: UCSC Object Listing (slow)
+    - title: UCSC Object Preview (paginated)
+      route: /queries/content/ucsc-objects-preview
+    - title: UCSC Object Listing (☁️)
       route: /queries/content/ucsc-objects
   - route: /queries/update-billing
     title: Update Billing

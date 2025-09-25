@@ -35,7 +35,7 @@ module Sinatra
               dispcols: %w[
                 inv_object_id ark actions version_number mnemonics metadata local_ids created billable_size
                 file_count
-]
+              ]
             ),
             aux_tables: [
               UC3Query::QueryClient.client.query(
@@ -62,26 +62,19 @@ module Sinatra
         redirect "/queries/recent/ingests?date=#{Date.today.strftime('%Y-%m-%d')}"
       end
 
-      app.get '/queries/content/producer-files' do
+      app.get '/queries/content/*' do
         if request.params.key?('mnemonic')
-          adminui_show_table(
-            AdminUI::Context.new(request.path),
-            UC3Query::QueryClient.client.query(request.path, request.params)
-          )
-        else
-          adminui_show_table(
-            AdminUI::Context.new(request.path),
-            UC3Query::QueryClient.client.query('/queries/collections', request.params)
-          )
-        end
-      end
+          result = UC3Query::QueryClient.client.query(request.path, request.params)
 
-      app.get '/queries/content/ucsc-objects' do
-        if request.params.key?('mnemonic')
-          adminui_show_table(
-            AdminUI::Context.new(request.path),
-            UC3Query::QueryClient.client.query(request.path, request.params)
-          )
+          if result.is_a?(AdminUI::FilterTable)
+            adminui_show_table(
+              AdminUI::Context.new(request.path),
+              result
+            )
+          else
+            content_type 'text/plain'
+            result
+          end
         else
           adminui_show_table(
             AdminUI::Context.new(request.path),

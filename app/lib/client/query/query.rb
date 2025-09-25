@@ -181,9 +181,21 @@ module UC3Query
         )
 
         params = resolve_parameters(query.fetch(:parameters, []), urlparams)
-        stmt.execute(*params).each do |row|
-          row = resolver.call(row)
-          table.add_row(AdminUI::Row.make_row(table.columns, row))
+
+        if query.fetch(:save_to_cloud, false)
+          CSV.generate do |csv|
+            crow = cols.map(&:header)
+            csv << crow
+            stmt.execute(*params).each do |row|
+              csv << row.values
+            end
+            return csv.string
+          end
+        else
+          stmt.execute(*params).each do |row|
+            row = resolver.call(row)
+            table.add_row(AdminUI::Row.make_row(table.columns, row))
+          end
         end
       rescue StandardError => e
         arr = [
