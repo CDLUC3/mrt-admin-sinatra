@@ -122,7 +122,7 @@ module UC3Resources
       return "No Task Definition found for prefix #{prefix}" if tdarr.nil? || tdarr.empty?
 
       td = tdarr[0]
-      service_arn = "#{td.split(':')[0..4].join(':')}:service/#{cluster_name}/#{service}"
+      service_arn = "#{td.split(':')[0..4].join(':')}:service/#{UC3::UC3Client.cluster_name}/#{service}"
 
       @client.run_task(
         cluster: UC3::UC3Client.cluster_name,
