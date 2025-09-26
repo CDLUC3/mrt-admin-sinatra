@@ -458,6 +458,10 @@ items:
         route: /queries/content/mnemonic/ucsc-objects
   - title: Saved Reports (☁️)
     route: /saved-reports/list
+    description: |
+      Saved reports will expire after 28 days.
+
+      Presigned URLs will expire after 7 days. (we need to verify this)
   - route: /queries/update-billing
     title: Update Billing
     method: post

@@ -703,7 +703,7 @@ queries:
     parameters:
       - name: mnemonic
         type: string
-    save_to_cloud: "reports/producer-files-{{mnemonic}}"
+    save_to_cloud: "reports/producer-files-{{mnemonic}}.csv"
   /queries/content/mnemonic/ucsc-objects-preview:
     limit:
       enabled: true
@@ -721,7 +721,7 @@ queries:
     parameters:
     - name: mnemonic
       type: string
-    save_to_cloud: "reports/ucsc-objects-{{mnemonic}}"
+    save_to_cloud: "reports/ucsc-objects-{{mnemonic}}.csv"
   /queries/misc/collections:
     totals: true
     sql: |

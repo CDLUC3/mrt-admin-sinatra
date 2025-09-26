@@ -221,7 +221,8 @@ module UC3S3
       url, = @s3_presigner.presigned_request(
         :get_object,
         bucket: @report_bucket,
-        key: path
+        key: path,
+        expires_in: 604_800 # 7 days which is max allowed by AWS
       )
       url
     end
@@ -243,7 +244,7 @@ module UC3S3
           AdminUI::Column.new(:download, header: 'Download'),
           AdminUI::Column.new(:url, header: 'URL'),
           AdminUI::Column.new(:created, header: 'Created'),
-          AdminUI::Column.new(:size_gb, header: 'Size GB')
+          AdminUI::Column.new(:size, header: 'Size')
         ]
       )
       resp = @s3_client.list_objects_v2({
@@ -262,7 +263,7 @@ module UC3S3
             value: 'URL'
           },
           created: s3obj.last_modified,
-          size_gb: s3obj.size
+          size: s3obj.size
         }
         table.add_row(AdminUI::Row.make_row(table.columns, row))
       end
