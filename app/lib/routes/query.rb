@@ -72,8 +72,7 @@ module Sinatra
               result
             )
           else
-            content_type 'text/plain'
-            result
+            redirect '/saved-reports/list'
           end
         else
           adminui_show_table(

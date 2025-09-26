@@ -165,8 +165,7 @@ module UC3Query
       # inject parameters into the sql.  allow 3 levels of nesting
       sql = Mustache.render(sql, @fragments.merge(tparm))
       sql = Mustache.render(sql, @fragments.merge(tparm))
-      sql = Mustache.render(sql, @fragments.merge(tparm))
-      sql
+      Mustache.render(sql, @fragments.merge(tparm))
     end
 
     def query(path, urlparams, sqlsym: :sql, dispcols: [], resolver: UC3Query::QueryClient.method(:default_resolver))
@@ -210,19 +209,22 @@ module UC3Query
 
         params = resolve_parameters(query.fetch(:parameters, []), urlparams)
 
-        if query.fetch(:save_to_cloud, false)
+        s2c = query.fetch(:save_to_cloud, '')
+        if s2c.empty?
+          stmt.execute(*params).each do |row|
+            row = resolver.call(row)
+            table.add_row(AdminUI::Row.make_row(table.columns, row))
+          end
+        else
+          rptpath = Mustache.render(s2c, urlparams)
           CSV.generate do |csv|
             crow = cols.map(&:header)
             csv << crow
             stmt.execute(*params).each do |row|
               csv << row.values
             end
-            return csv.string
-          end
-        else
-          stmt.execute(*params).each do |row|
-            row = resolver.call(row)
-            table.add_row(AdminUI::Row.make_row(table.columns, row))
+            UC3S3::ConfigObjectsClient.client.create_report(rptpath, csv.string)
+            return rptpath
           end
         end
       rescue StandardError => e

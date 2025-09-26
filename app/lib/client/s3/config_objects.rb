@@ -28,8 +28,10 @@ module UC3S3
       @config_objects = {}
       begin
         @s3_client = Aws::S3::Client.new(opt)
+        @s3_presigner = Aws::S3::Presigner.new(client: @s3_client)
         @prefix = ENV.fetch('S3CONFIG_PREFIX', 'uc3/mrt/mrt-ingest-profiles/')
         @bucket = ENV.fetch('S3CONFIG_BUCKET', 'mrt-config')
+        @report_bucket = ENV.fetch('S3REPORT_BUCKET', 'mrt-reports')
 
         resp = @s3_client.get_object(
           bucket: @bucket,
@@ -203,6 +205,68 @@ module UC3S3
         "#{inventory_host}/admin/sla",
         { adminid: ark, name: name, mnemonic: mnemonic }
       )
+    end
+
+    def create_report(path, body, content_type: nil)
+      arg = {
+        body: body,
+        bucket: @report_bucket,
+        key: path
+      }
+      arg[:content_type] = content_type unless content_type.nil?
+      @s3_client.put_object(arg)
+    end
+
+    def get_report(path)
+      url, = @s3_presigner.presigned_request(
+        :get_object,
+        bucket: @report_bucket,
+        key: path
+      )
+      url
+    end
+
+    def get_report_url(path)
+      table = AdminUI::FilterTable.new(
+        columns: [
+          AdminUI::Column.new(:url, header: 'URL')
+        ]
+      )
+      table.add_row(AdminUI::Row.make_row(table.columns, { url: get_report(path) }))
+      table
+    end
+
+    def list_reports(path)
+      table = AdminUI::FilterTable.new(
+        columns: [
+          AdminUI::Column.new(:path, header: 'Report Path'),
+          AdminUI::Column.new(:download, header: 'Download'),
+          AdminUI::Column.new(:url, header: 'URL'),
+          AdminUI::Column.new(:created, header: 'Created'),
+          AdminUI::Column.new(:size_gb, header: 'Size GB')
+        ]
+      )
+      resp = @s3_client.list_objects_v2({
+        bucket: @report_bucket,
+        prefix: path
+      })
+      resp.contents.each do |s3obj|
+        row = {
+          path: s3obj.key,
+          download: {
+            href: "/saved-reports/retrieve?report=#{URI.encode_www_form_component(s3obj.key)}",
+            value: 'Download'
+          },
+          url: {
+            href: "/saved-reports/url?report=#{URI.encode_www_form_component(s3obj.key)}",
+            value: 'URL'
+          },
+          created: s3obj.last_modified,
+          size_gb: s3obj.size
+        }
+        table.add_row(AdminUI::Row.make_row(table.columns, row))
+      end
+      table
     end
   end
 end

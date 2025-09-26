@@ -456,6 +456,8 @@ items:
         route: /queries/content/mnemonic/ucsc-objects-preview
       - title: UCSC Object Listing (☁️)
         route: /queries/content/mnemonic/ucsc-objects
+  - title: Saved Reports (☁️)
+    route: /saved-reports/list
   - route: /queries/update-billing
     title: Update Billing
     method: post

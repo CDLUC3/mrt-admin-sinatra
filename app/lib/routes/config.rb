@@ -117,6 +117,34 @@ module Sinatra
         content_type :text
         UC3S3::ConfigObjectsClient.client.get_profile(profile)
       end
+
+      app.get '/saved-reports/list' do
+        adminui_show_table(
+          AdminUI::Context.new(request.path),
+          UC3S3::ConfigObjectsClient.client.list_reports('reports/')
+        )
+      end
+
+      app.get '/saved-reports/retrieve' do
+        rpt = request.params.fetch('report', '')
+        redirect '/saved-reports/list' if rpt.empty?
+
+        rpt = URI.decode_www_form_component(rpt)
+
+        redirect UC3S3::ConfigObjectsClient.client.get_report(rpt)
+      end
+
+      app.get '/saved-reports/url' do
+        rpt = request.params.fetch('report', '')
+        redirect '/saved-reports/list' if rpt.empty?
+
+        rpt = URI.decode_www_form_component(rpt)
+
+        adminui_show_table(
+          AdminUI::Context.new(request.path),
+          UC3S3::ConfigObjectsClient.client.get_report_url(rpt)
+        )
+      end
     end
   end
   register UC3S3Routes
