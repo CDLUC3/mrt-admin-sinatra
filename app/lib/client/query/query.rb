@@ -121,6 +121,54 @@ module UC3Query
       HTML
     end
 
+    def limit(query, urlparams)
+      query.fetch(:limit, {}).fetch(:default, urlparams.fetch('limit', '25').to_i)
+    end
+
+    def offset(urlparams)
+      urlparams.fetch('offset', '0').to_i
+    end
+
+    def pagination_params(query, path, urlparams)
+      pag = { enabled: false }
+      if query.fetch(:limit, {}).fetch(:enabled, false)
+        pag[:path] = path
+        pag[:urlparams] = urlparams
+        pag[:enabled] = true
+        pag[:LIMIT] = limit(query, urlparams)
+        pag[:OFFSET] = offset(urlparams)
+        pag[:WINDOW] = limit(query, urlparams) + offset(urlparams)
+      end
+      pag
+    end
+
+    def template_params(query, urlparams, pagination)
+      tparm = query.fetch(:'template-params', {})
+      if query.fetch(:limit, {}).fetch(:enabled, false)
+        tparm[:LIMIT] = limit(query, urlparams)
+        tparm[:OFFSET] = offset(urlparams)
+      end
+
+      # populate additional parameters using a query
+      query.fetch(:'template-sql', {}).each do |key, value|
+        tparm[key] = run_sql(value)
+      end
+
+      # resolve re-usable fragments found in template parameters
+      tparm.each do |key, value|
+        tparm[key] = Mustache.render(value, @fragments.merge(pagination)) if value.is_a?(String)
+      end
+      tparm
+    end
+
+    def resolve_sql(sql, tparm)
+      # inject parameters into the sql.  allow 3 levels of nesting
+      sql = Mustache.render(sql, @fragments.merge(tparm))
+      sql = Mustache.render(sql, @fragments.merge(tparm))
+      sql = Mustache.render(sql, @fragments.merge(tparm))
+      sql
+    end
+
     def query(path, urlparams, sqlsym: :sql, dispcols: [], resolver: UC3Query::QueryClient.method(:default_resolver))
       table = AdminUI::FilterTable.empty
       query = @queries.fetch(path.to_sym, {})
@@ -129,33 +177,13 @@ module UC3Query
       return table if sql.empty?
 
       # get know query parameters from yaml
-      tparm = query.fetch(:'template-params', {})
-      pagination = { enabled: false }
+      pagination = pagination_params(query, path, urlparams)
+      tparm = template_params(query, urlparams, pagination)
 
-      if query.fetch(:limit, {}).fetch(:enabled, false)
-        tparm[:LIMIT] = query.fetch(:limit, {}).fetch(:default, urlparams.fetch('limit', '25').to_i)
-        tparm[:OFFSET] = urlparams.fetch('offset', '0').to_i
-        pagination[:path] = path
-        pagination[:urlparams] = urlparams
-        pagination[:enabled] = true
-        pagination[:LIMIT] = tparm[:LIMIT]
-        pagination[:OFFSET] = tparm[:OFFSET]
-        pagination[:WINDOW] = tparm[:LIMIT] + tparm[:OFFSET]
-      end
+      # Design idea: allow sql to be an array of sql statements.
+      # This would permit us to create temporary tables to use in subsequent queries.
 
-      # populate additional parameters using a query
-      query.fetch(:'template-sql', {}).each do |key, value|
-        tparm[key] = run_sql(value)
-      end
-      # resolve re-usable fragments found in template parameters
-      tparm.each do |key, value|
-        tparm[key] = Mustache.render(value, @fragments.merge(pagination)) if value.is_a?(String)
-      end
-      # inject parameters into the sql.  allow 3 levels of nesting
-      sql = Mustache.render(sql, @fragments.merge(tparm))
-      sql = Mustache.render(sql, @fragments.merge(tparm))
-      sql = Mustache.render(sql, @fragments.merge(tparm))
-
+      sql = resolve_sql(sql, tparm)
       return AdminUI::FilterTable.empty(sql) unless enabled
 
       begin
