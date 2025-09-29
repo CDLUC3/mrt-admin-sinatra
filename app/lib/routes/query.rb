@@ -42,7 +42,8 @@ module Sinatra
                 request.path,
                 request.params,
                 sqlsym: :repl_sql,
-                resolver: UC3Query::QueryClient.method(:obj_node_resolver)
+                resolver: UC3Query::QueryClient.method(:obj_node_resolver),
+                dispcols: %w[role actions node_number created replicated unverified last_verified version_number]
               ),
               UC3Query::QueryClient.client.query(
                 request.path,
@@ -89,6 +90,12 @@ module Sinatra
           AdminUI::Context.new(request.path),
           UC3Query::QueryClient.client.query(request.path, request.params)
         )
+      end
+
+
+      app.post '/queries-update/**' do
+        content_type :json
+        UC3Query::QueryClient.client.query_update(request.path, request.params).to_json
       end
 
       app.get '/ops/db-queue/**' do

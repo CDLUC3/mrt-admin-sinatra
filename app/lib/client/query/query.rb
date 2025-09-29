@@ -168,12 +168,35 @@ module UC3Query
       Mustache.render(sql, @fragments.merge(tparm))
     end
 
+    def query_update(path, urlparams, sqlsym: :sql)
+      query = @queries.fetch(path.to_sym, {})
+
+      sql = query.fetch(sqlsym, '')
+      return {message: 'SQL is empty'} if sql.empty?
+      return {message: 'Not an update query'} unless query.fetch(:update, false)
+      begin
+        stmt = @client.prepare(sql)
+
+        params = resolve_parameters(query.fetch(:parameters, []), urlparams)
+
+        stmt.execute(*params)
+      rescue StandardError => e
+        return {
+          status: 'FAIL',
+          message: "#{e.class}: #{e}" 
+        }
+      end
+      { status: 'OK', message: "Update completed. #{stmt.affected_rows} rows" }
+    end
+
+
     def query(path, urlparams, sqlsym: :sql, dispcols: [], resolver: UC3Query::QueryClient.method(:default_resolver))
       table = AdminUI::FilterTable.empty
       query = @queries.fetch(path.to_sym, {})
 
       sql = query.fetch(sqlsym, '')
       return table if sql.empty?
+      return table if query.fetch(:update, false)
 
       # get know query parameters from yaml
       pagination = pagination_params(query, path, urlparams)
@@ -255,7 +278,7 @@ module UC3Query
       row['actions'] = []
       row['actions'] << {
         value: 'Trigger Replication',
-        href: "/ops/replication/#{row['inv_object_id']}",
+        href: "/queries-update/replic/trigger?inv_object_id=#{row['inv_object_id']}",
         cssclass: 'button',
         post: true,
         disabled: storage_mgt_disabled?
@@ -264,17 +287,18 @@ module UC3Query
     end
 
     def self.obj_node_resolver(row)
+      row['node_number'] = [row['node_number'], row['description'], row['acceess_mode']]
       row['actions'] = []
       row['actions'] << {
         value: 'Re-audit All Files',
-        href: "/tbd/#{row['inv_object_id']}",
+        href: "/queries-update/audit/reset?inv_object_id=#{row['inv_object_id']}&inv_node_id=#{row['node_id']}",
         cssclass: 'button',
         post: true,
         disabled: storage_mgt_disabled?
       }
       row['actions'] << {
         value: 'Re-audit Unverified',
-        href: "/tbd/#{row['inv_object_id']}",
+        href: "/queries-update/audit/reset-unverified?inv_object_id=#{row['inv_object_id']}&inv_node_id=#{row['node_id']}",
         cssclass: 'button',
         post: true,
         disabled: storage_mgt_disabled?
@@ -285,35 +309,35 @@ module UC3Query
           href: "/tbd/#{row['inv_object_id']}",
           cssclass: 'button',
           post: true,
-          disabled: storage_mgt_disabled?
+          disabled: storage_mgt_disabled? || true
         }
         row['actions'] << {
           value: "Get Ingest Checkm (v#{row['version_number']})",
           href: "/tbd/#{row['inv_object_id']}",
           cssclass: 'button',
           post: true,
-          disabled: storage_mgt_disabled?
+          disabled: storage_mgt_disabled?  || true
         }
         row['actions'] << {
           value: 'Get Storage Manifest Yaml',
           href: "/tbd/#{row['inv_object_id']}",
           cssclass: 'button',
           post: true,
-          disabled: storage_mgt_disabled?
+          disabled: storage_mgt_disabled?  || true
         }
         row['actions'] << {
           value: 'Get Storage Provenance Yaml',
           href: "/tbd/#{row['inv_object_id']}",
           cssclass: 'button',
           post: true,
-          disabled: storage_mgt_disabled?
+          disabled: storage_mgt_disabled?  || true
         }
         row['actions'] << {
           value: 'Get Storage Provenance Diff',
           href: "/tbd/#{row['inv_object_id']}",
           cssclass: 'button',
           post: true,
-          disabled: storage_mgt_disabled?
+          disabled: storage_mgt_disabled?  || true
         }
         row['actions'] << {
           value: 'Rebuild Inventory',
@@ -322,11 +346,11 @@ module UC3Query
           confmsg: %(Are you sure you want to rebuild the INV entry for this ark?
             A new inv_object_id will be assigned.),
           post: true,
-          disabled: storage_mgt_disabled?
+          disabled: storage_mgt_disabled?  || true
         }
         row['actions'] << {
           value: 'Clear Scan Entries for Ark',
-          href: "/tbd/#{row['inv_object_id']}",
+          href: "/queries-update/storage-maints/clear-entries-for-ark?ark=#{row['ark']}",
           cssclass: 'button',
           post: true,
           disabled: storage_mgt_disabled?
@@ -357,21 +381,11 @@ module UC3Query
     def reset_new_ucb_content(path, urlparams)
       table = query(path, urlparams)
       table.table_data.each do |row|
-        objid = row['inv_object_id']
-        run_sql(
-          %(
-            update
-              inv_audits
-            set
-              verified = null,
-              status = 'unknown'
-            where
-              inv_object_id = ?
-            and
-              inv_node_id = ?
-          ),
-          [objid, 16]
-        )
+        query_update('/queries-update/audit/reset', { 
+          inv_object_id: row['inv_object_id'], 
+          inv_node_id: 16
+        })
+        # TODO: evaluate return object and present results
       end
       table
     end

@@ -144,6 +144,8 @@ fragments:
     offset {{{OFFSET}}}
   OBJREPL: |
     select
+      nn.ark,
+      nn.inv_object_id,
       nn.role,
       nn.node_id,
       '' actions,

@@ -1,0 +1,282 @@
+queries:
+  /queries-update/audit/reset:
+    update: true
+    sql: |
+      update
+        inv.inv_audits
+      set
+        verified = null,
+        status = 'unknown'
+      where
+        inv_object_id = ?
+      and
+        inv_node_id = ?
+    parameters:
+    - name: inv_object_id
+      type: integer
+    - name: inv_node_id
+      type: integer
+  /queries-update/audit/reset-unverified:
+    update: true
+    sql: |
+      update
+        inv.inv_audits
+      set
+        verified = null,
+        status = 'unknown'
+      where
+        inv_object_id = ?
+      and
+        inv_node_id = ?
+      and
+        status != 'verified'
+    parameters:
+    - name: inv_object_id
+      type: integer
+    - name: inv_node_id
+      type: integer
+  /queries-update/audit/status-reset:
+    update: true
+    sql: |
+      UPDATE
+        inv.inv_audits
+      SET
+        status='unknown',
+        verified=null
+      WHERE
+        status = ?
+    parameters:
+    - name: status
+      type: string
+  /queries-update/audit/retry:
+    update: true
+    sql: |
+      update
+        inv.inv_audits
+      set
+        status = 'unknown'
+      where
+        inv_object_id = ?
+      and
+        inv_node_id = ?
+      and
+        status = 'error'
+    parameters:
+    - name: inv_object_id
+      type: integer
+    - name: inv_node_id
+      type: integer
+  /queries-update/replic/trigger:
+    update: true
+    sql: |
+      update
+        inv.inv_nodes_inv_objects inio
+      set
+        replicated = null
+      where
+        inv_object_id = ?
+      and
+        role = 'primary'
+    parameters:
+    - name: inv_object_id
+      type: integer
+  /queries-update/storage-nodes/add:
+    update: true
+    sql: |
+      INSERT INTO
+        inv.inv_collections_inv_nodes(
+          inv_collection_id,
+          inv_node_id
+        )
+      SELECT
+        ?,
+        (
+          select
+            id
+          from
+            inv.inv_nodes
+          where
+            number = ?
+        )
+    parameters:
+    - name: inv_collection_id
+      type: integer
+    - name: node_number
+      type: integer
+  /queries-update/storage-nodes/trigger-replication:
+    update: true
+    sql: |
+      update
+        inv.inv_nodes_inv_objects inio
+      set
+        replicated = null
+      where
+        role = 'primary'
+      and exists (
+        select
+          1
+        from
+          inv_collections_inv_objects icio
+        where
+          icio.inv_collection_id = ?
+        and
+          icio.inv_object_id = inio.inv_object_id
+      )
+    parameters:
+    - name: inv_collection_id
+      type: integer
+  /queries-update/storage-nodes/delete:
+    update: true
+    sql: |
+      DELETE FROM
+        inv.inv_collections_inv_nodes
+      WHERE
+        inv_collection_id = ?
+      AND
+        inv_node_id = (
+          select
+            id
+          from
+            inv.inv_nodes
+          where
+            number = ?
+        )
+    parameters:
+    - name: inv_collection_id
+      type: integer
+    - name: node_number
+      type: integer
+  /queries-update/storage-nodes/get-batch-of-arks-to-delete:
+    update: false
+    sql: |
+      SELECT
+        o.ark
+      from
+          inv.inv_objects o
+        inner join
+          inv.inv_collections_inv_objects icio
+        on
+          o.id = icio.inv_object_id
+        WHERE
+          icio.inv_collection_id = ?
+        AND exists (
+          select
+            1
+          from
+            inv.inv_nodes_inv_objects inio
+          WHERE
+            inio.inv_node_id = (
+              select id from inv.inv_nodes where number = ?
+            )
+          and
+            inio.inv_object_id = icio.inv_object_id
+          and
+            inio.role = 'secondary'
+        )
+        limit 50
+    parameters:
+    - name: inv_node_id
+      type: integer
+  /queries-update/storage-maints/clear-entries-for-ark:
+    update: true
+    sql: |
+      DELETE FROM
+        inv.inv_storage_maints
+      WHERE
+        s3key like concat(?,'%')
+      AND
+        maint_status != 'removed'
+    parameters:
+    - name: ark
+      type: string
+  /queries-update/storage-maints/update-status:
+    update: true
+    sql: |
+      UDPDATE
+        inv.inv_storage_maints
+      SET
+        maint_status= ?
+      WHERE
+        maint_status != 'removed'
+      and
+        id = ?
+    parameters:
+    - name: status
+      type: string
+    - name: id
+      type: integer
+  /queries-update/storage-maints/batch-update-status:
+    update: true
+    sql: |
+      UDPDATE
+        inv.inv_storage_maints
+      SET
+        maint_status= ?
+      WHERE
+        maint_status != 'removed'
+      and
+        id in ()
+    parameters:
+    - name: status
+      type: string
+    - name: idlist
+      # need to code support for a list
+      type: list
+  /queries-update/storage-maints/apply-review-change:
+    update: true
+    sql: |
+      update
+        inv.inv_storage_maints
+      set
+        maint_status = ?,
+        note = ?
+      where
+        id = ?
+      and
+        maint_status != 'removed'
+      and
+        inv_node_id = (
+          select
+            id
+          from
+            inv.inv_nodes
+          where
+            number = ?
+        )
+    parameters:
+    - name: status
+      type: string
+    - name: note
+      type: string
+    - name: id
+      type: integer
+    - name: node_number
+      type: integer
+  /queries-update/admin/update-collection:
+    update: true
+    sql: |
+      update
+        inv.inv_collections
+      set
+        name = ?
+      where
+        id = ?
+    parameters:
+    - name: name
+      type: string
+    - name: id
+      type: integer
+  /queries-update/admin/update-owner:
+    update: true
+    sql: |
+      update
+        inv.inv_owners
+      set
+        name = ?
+      where
+        id = ?
+    parameters:
+    - name: name
+      type: string
+    - name: id
+      type: integer
