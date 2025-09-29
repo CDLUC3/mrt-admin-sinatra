@@ -173,7 +173,7 @@ fragments:
         n.description,
         n.access_mode,
         o.created,
-        inio.created as replicated,
+        inio.replicated as replicated,
         o.id as inv_object_id,
         o.ark as ark,
         o.version_number
