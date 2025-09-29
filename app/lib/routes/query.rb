@@ -92,7 +92,6 @@ module Sinatra
         )
       end
 
-
       app.post '/queries-update/**' do
         content_type :json
         UC3Query::QueryClient.client.query_update(request.path, request.params).to_json

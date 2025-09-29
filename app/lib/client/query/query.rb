@@ -172,8 +172,9 @@ module UC3Query
       query = @queries.fetch(path.to_sym, {})
 
       sql = query.fetch(sqlsym, '')
-      return {message: 'SQL is empty'} if sql.empty?
-      return {message: 'Not an update query'} unless query.fetch(:update, false)
+      return { message: 'SQL is empty' } if sql.empty?
+      return { message: 'Not an update query' } unless query.fetch(:update, false)
+
       begin
         stmt = @client.prepare(sql)
 
@@ -183,12 +184,11 @@ module UC3Query
       rescue StandardError => e
         return {
           status: 'FAIL',
-          message: "#{e.class}: #{e}" 
+          message: "#{e.class}: #{e}"
         }
       end
       { status: 'OK', message: "Update completed. #{stmt.affected_rows} rows" }
     end
-
 
     def query(path, urlparams, sqlsym: :sql, dispcols: [], resolver: UC3Query::QueryClient.method(:default_resolver))
       table = AdminUI::FilterTable.empty
@@ -316,28 +316,28 @@ module UC3Query
           href: "/tbd/#{row['inv_object_id']}",
           cssclass: 'button',
           post: true,
-          disabled: storage_mgt_disabled?  || true
+          disabled: storage_mgt_disabled? || true
         }
         row['actions'] << {
           value: 'Get Storage Manifest Yaml',
           href: "/tbd/#{row['inv_object_id']}",
           cssclass: 'button',
           post: true,
-          disabled: storage_mgt_disabled?  || true
+          disabled: storage_mgt_disabled? || true
         }
         row['actions'] << {
           value: 'Get Storage Provenance Yaml',
           href: "/tbd/#{row['inv_object_id']}",
           cssclass: 'button',
           post: true,
-          disabled: storage_mgt_disabled?  || true
+          disabled: storage_mgt_disabled? || true
         }
         row['actions'] << {
           value: 'Get Storage Provenance Diff',
           href: "/tbd/#{row['inv_object_id']}",
           cssclass: 'button',
           post: true,
-          disabled: storage_mgt_disabled?  || true
+          disabled: storage_mgt_disabled? || true
         }
         row['actions'] << {
           value: 'Rebuild Inventory',
@@ -346,7 +346,7 @@ module UC3Query
           confmsg: %(Are you sure you want to rebuild the INV entry for this ark?
             A new inv_object_id will be assigned.),
           post: true,
-          disabled: storage_mgt_disabled?  || true
+          disabled: storage_mgt_disabled? || true
         }
         row['actions'] << {
           value: 'Clear Scan Entries for Ark',
@@ -381,8 +381,8 @@ module UC3Query
     def reset_new_ucb_content(path, urlparams)
       table = query(path, urlparams)
       table.table_data.each do |row|
-        query_update('/queries-update/audit/reset', { 
-          inv_object_id: row['inv_object_id'], 
+        query_update('/queries-update/audit/reset', {
+          inv_object_id: row['inv_object_id'],
           inv_node_id: 16
         })
         # TODO: evaluate return object and present results
