@@ -504,6 +504,34 @@ fragments:
       number
     having
       count(*) > 1
+  UNREPLICATED: |
+    with unreplicated as (
+      select
+        p.inv_object_id,
+        o.created,
+        o.modified
+      from
+        inv.inv_nodes_inv_objects p
+      inner join
+        inv.inv_objects o
+      on
+        o.id = p.inv_object_id
+      where
+        p.role='primary'
+      and
+        not exists(
+          select
+            1
+          from
+            inv.inv_nodes_inv_objects s
+          where
+            s.role='secondary'
+          and
+            p.inv_object_id = s.inv_object_id
+          and
+            s.version_number = o.version_number
+        )
+    )
 queries:
   /queries/consistency/daily:
     sql: |
@@ -847,9 +875,14 @@ queries:
       order by
         modified desc
   /ops/db-queue/replication/required:
+    description: |
+      - [Object List: Older than 2 days](/ops/db-queue/replication/required/objlist?days=2)
+      - [Object List: Older than 1 day](/ops/db-queue/replication/required/objlist?days=1)
+      - [Object List: Any time](/ops/db-queue/replication/required/objlist?days=0)
     status: PASS
     status_check: true
     sql: |
+      {{{UNREPLICATED}}}
       select
         case
           when u.inv_object_id = (
@@ -919,35 +952,24 @@ queries:
             ) > 0 then 'WARN'
          else 'PASS'
         end as status
-      from (
-        select
-          p.inv_object_id,
-          o.created,
-          o.modified
-        from
-          inv.inv_nodes_inv_objects p
-        inner join
-          inv.inv_objects o
-        on
-          o.id = p.inv_object_id
-        where
-          p.role='primary'
-        and
-          not exists(
-            select
-              1
-            from
-              inv.inv_nodes_inv_objects s
-            where
-              s.role='secondary'
-            and
-              p.inv_object_id = s.inv_object_id
-            and
-              s.version_number = o.version_number
-          )
-      ) as u
+      from unreplicated u
       group by
         category
+  /ops/db-queue/replication/required/objlist:
+    limit:
+      enabled: true
+    status: PASS
+    status_check: true
+    sql: |
+      {{{UNREPLICATED}}}
+      {{{OBJQ}}}
+    template-params:
+      WHERE: |
+        inner join unreplicated u on o.id = u.inv_object_id
+        and u.modified < date_add(now(), INTERVAL -? DAY)
+    parameters:
+    - name: days
+      type: integer
   /ops/db-queue/replication/in-progress:
     status: PASS
     status_check: true
