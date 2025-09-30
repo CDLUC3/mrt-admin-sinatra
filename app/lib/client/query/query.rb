@@ -288,18 +288,19 @@ module UC3Query
     end
 
     def self.obj_node_resolver(row)
+      pstr = "?inv_object_id=#{row['inv_object_id']}&inv_node_id=#{row['node_id']}"
       row['node_number'] = [row['node_number'], row['description'], row['acceess_mode']]
       row['actions'] = []
       row['actions'] << {
         value: 'Re-audit All Files',
-        href: "/queries-update/audit/reset?inv_object_id=#{row['inv_object_id']}&inv_node_id=#{row['node_id']}",
+        href: "/queries-update/audit/reset#{pstr}",
         cssclass: 'button',
         post: true,
         disabled: storage_mgt_disabled?
       }
       row['actions'] << {
         value: 'Re-audit Unverified',
-        href: "/queries-update/audit/reset-unverified?inv_object_id=#{row['inv_object_id']}&inv_node_id=#{row['node_id']}",
+        href: "/queries-update/audit/reset-unverified#{pstr}",
         cssclass: 'button',
         post: true,
         disabled: storage_mgt_disabled?

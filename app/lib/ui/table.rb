@@ -273,6 +273,8 @@ module AdminUI
           v = format_int(v)
         elsif v.is_a?(Float)
           v = format_float(v)
+        elsif v.is_a?(String)
+          v = v.encode('UTF-8', invalid: :replace, undef: :replace, replace: '')
         end
         data << v
       end
