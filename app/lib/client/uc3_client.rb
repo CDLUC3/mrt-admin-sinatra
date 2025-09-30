@@ -94,7 +94,9 @@ module UC3
       stack_name == ECS_DBSNAPSHOT
     end
 
-    def self.storage_mgt_disabled?
+    def self.storage_mgt_disabled?(strict: false)
+      return [ECS_DBSNAPSHOT].include?(stack_name) if strict
+
       [ECS_DBSNAPSHOT, ECS_PRD].include?(stack_name)
     end
 

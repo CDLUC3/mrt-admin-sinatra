@@ -310,20 +310,20 @@ module UC3Query
           value: 'Get Manifest',
           href: "/ops/storage/manifest?node_number=#{row['node_number']}&ark=#{row['ark']}",
           cssclass: 'button',
-          disabled: storage_mgt_disabled?
+          disabled: storage_mgt_disabled?(strict: true)
         }
         row['actions'] << {
           value: "Get Ingest Checkm (v#{row['version_number']})",
           href: "/ops/storage/ingest-checkm?node_number=#{row['node_number']}" \
                 "&ark=#{row['ark']}&version_number=#{row['version_number']}",
           cssclass: 'button',
-          disabled: storage_mgt_disabled?
+          disabled: storage_mgt_disabled?(strict: true)
         }
         row['actions'] << {
           value: 'Get Storage Manifest Yaml',
           href: "/ops/storage/manifest-yaml?node_number=#{row['node_number']}&ark=#{row['ark']}",
           cssclass: 'button',
-          disabled: storage_mgt_disabled?
+          disabled: storage_mgt_disabled?(strict: true)
         }
         row['actions'] << {
           value: 'Rebuild Inventory',

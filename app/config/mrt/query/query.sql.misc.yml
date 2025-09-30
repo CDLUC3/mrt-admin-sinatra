@@ -81,13 +81,10 @@ queries:
       group by aggregate_role
   /queries/misc/objects:
     sql: |
-      select 
-        id inv_object_id, 
-        aggregate_role, 
-        ark, 
-        erc_what
-      from inv.inv_objects
-      where aggregate_role = 'MRT-none'
-      order by id
-      limit 1000
-  
+      {{{OBJQ}}}
+    template-params:
+      WHERE: |
+        where aggregate_role = 'MRT-none'    
+    limit: 
+      default: 1000
+      enabled: true
