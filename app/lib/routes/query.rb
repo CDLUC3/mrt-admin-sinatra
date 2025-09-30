@@ -23,7 +23,8 @@ module Sinatra
         )
       end
 
-      app.get '/queries/repository/object*' do
+      ['/queries/repository/object*', '/queries/*/objlist', '/ops/*/objlist'].each do |path|
+      app.get path do
         erb :tables,
           layout: :page_layout,
           locals: {
@@ -52,6 +53,7 @@ module Sinatra
               )
             ]
           }
+      end
       end
 
       app.post '/queries/update-billing' do
