@@ -27,8 +27,7 @@ module Sinatra
         '/queries/repository/object*',
         '/queries/*/objlist',
         '/ops/*/objlist',
-        '/queries/misc/objects',
-        'queries/recent/objects'
+        '/queries/recent/objects'
       ].each do |path|
         app.get path do
           erb :tables,
