@@ -23,7 +23,13 @@ module Sinatra
         )
       end
 
-      ['/queries/repository/object*', '/queries/*/objlist', '/ops/*/objlist', '/queries/misc/objects'].each do |path|
+      [
+        '/queries/repository/object*',
+        '/queries/*/objlist',
+        '/ops/*/objlist',
+        '/queries/misc/objects',
+        'queries/recent/objects'
+      ].each do |path|
         app.get path do
           erb :tables,
             layout: :page_layout,

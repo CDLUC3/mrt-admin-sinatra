@@ -84,7 +84,14 @@ queries:
       {{{OBJQ}}}
     template-params:
       WHERE: |
-        where aggregate_role = 'MRT-none'    
-    limit: 
-      default: 1000
+        and exists (
+          select 1
+          from inv.inv_objects x
+          where x.aggregate_role = 'MRT-none'
+          and o.id = x.id
+          order by o.id
+          limit 1000
+        )
+    limit:
       enabled: true
+      default: 1000
