@@ -24,36 +24,36 @@ module Sinatra
       end
 
       ['/queries/repository/object*', '/queries/*/objlist', '/ops/*/objlist'].each do |path|
-      app.get path do
-        erb :tables,
-          layout: :page_layout,
-          locals: {
-            context: AdminUI::Context.new(request.path),
-            table: UC3Query::QueryClient.client.query(
-              request.path,
-              request.params,
-              resolver: UC3Query::QueryClient.method(:obj_info_resolver),
-              dispcols: %w[
-                inv_object_id ark actions version_number mnemonics metadata local_ids created billable_size
-                file_count
-              ]
-            ),
-            aux_tables: [
-              UC3Query::QueryClient.client.query(
+        app.get path do
+          erb :tables,
+            layout: :page_layout,
+            locals: {
+              context: AdminUI::Context.new(request.path),
+              table: UC3Query::QueryClient.client.query(
                 request.path,
                 request.params,
-                sqlsym: :repl_sql,
-                resolver: UC3Query::QueryClient.method(:obj_node_resolver),
-                dispcols: %w[role actions node_number created replicated unverified last_verified version_number]
+                resolver: UC3Query::QueryClient.method(:obj_info_resolver),
+                dispcols: %w[
+                  inv_object_id ark actions version_number mnemonics metadata local_ids created billable_size
+                  file_count
+                ]
               ),
-              UC3Query::QueryClient.client.query(
-                request.path,
-                request.params,
-                sqlsym: :files_sql
-              )
-            ]
-          }
-      end
+              aux_tables: [
+                UC3Query::QueryClient.client.query(
+                  request.path,
+                  request.params,
+                  sqlsym: :repl_sql,
+                  resolver: UC3Query::QueryClient.method(:obj_node_resolver),
+                  dispcols: %w[role actions description created replicated unverified last_verified version_number]
+                ),
+                UC3Query::QueryClient.client.query(
+                  request.path,
+                  request.params,
+                  sqlsym: :files_sql
+                )
+              ]
+            }
+        end
       end
 
       app.post '/queries/update-billing' do

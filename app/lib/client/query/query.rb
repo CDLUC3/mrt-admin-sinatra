@@ -289,7 +289,7 @@ module UC3Query
 
     def self.obj_node_resolver(row)
       pstr = "?inv_object_id=#{row['inv_object_id']}&inv_node_id=#{row['node_id']}"
-      row['node_number'] = [row['node_number'], row['description'], row['acceess_mode']]
+      row['description'] = [row['node_number'], row['description'], row['acceess_mode']]
       row['actions'] = []
       row['actions'] << {
         value: 'Re-audit All Files',
@@ -308,38 +308,22 @@ module UC3Query
       if row['role'] == 'primary'
         row['actions'] << {
           value: 'Get Manifest',
-          href: "/tbd/#{row['inv_object_id']}",
+          href: "/ops/storage/manifest?node_number=#{row['node_number']}&ark=#{row['ark']}",
           cssclass: 'button',
-          post: true,
-          disabled: storage_mgt_disabled? || true
+          disabled: storage_mgt_disabled?
         }
         row['actions'] << {
           value: "Get Ingest Checkm (v#{row['version_number']})",
-          href: "/tbd/#{row['inv_object_id']}",
+          href: "/ops/storage/ingest-checkm?node_number=#{row['node_number']}" \
+                "&ark=#{row['ark']}&version_number=#{row['version_number']}",
           cssclass: 'button',
-          post: true,
-          disabled: storage_mgt_disabled? || true
+          disabled: storage_mgt_disabled?
         }
         row['actions'] << {
           value: 'Get Storage Manifest Yaml',
-          href: "/tbd/#{row['inv_object_id']}",
+          href: "/ops/storage/manifest-yaml?node_number=#{row['node_number']}&ark=#{row['ark']}",
           cssclass: 'button',
-          post: true,
-          disabled: storage_mgt_disabled? || true
-        }
-        row['actions'] << {
-          value: 'Get Storage Provenance Yaml',
-          href: "/tbd/#{row['inv_object_id']}",
-          cssclass: 'button',
-          post: true,
-          disabled: storage_mgt_disabled? || true
-        }
-        row['actions'] << {
-          value: 'Get Storage Provenance Diff',
-          href: "/tbd/#{row['inv_object_id']}",
-          cssclass: 'button',
-          post: true,
-          disabled: storage_mgt_disabled? || true
+          disabled: storage_mgt_disabled?
         }
         row['actions'] << {
           value: 'Rebuild Inventory',

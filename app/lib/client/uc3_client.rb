@@ -4,6 +4,7 @@ require 'aws-sdk-ssm'
 require 'mustache'
 require 'yaml'
 require_relative '../ui/table'
+require_relative '../util/manifest_to_yaml'
 
 # Scope custom code for UC3 to distinguish from 3rd party classes
 module UC3
@@ -94,7 +95,7 @@ module UC3
     end
 
     def self.storage_mgt_disabled?
-      [ECS_DBSNAPSHOT, ECS_STG, ECS_PRD].include?(stack_name)
+      [ECS_DBSNAPSHOT, ECS_PRD].include?(stack_name)
     end
 
     def context
@@ -354,5 +355,16 @@ module UC3
     end
 
     attr_reader :test_paths, :consistency_checks
+  end
+
+  # Call endpoints in Merritt Services
+  class MerrittEndpointClient < UC3Client
+    def initialize
+      super(enabled: true)
+    end
+
+    def self.client
+      UC3::UC3Client.clients.fetch(self.class.to_s, MerrittEndpointClient.new)
+    end
   end
 end

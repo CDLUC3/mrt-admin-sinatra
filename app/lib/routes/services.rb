@@ -163,6 +163,35 @@ module Sinatra
         content_type :json
         collections_init.to_json
       end
+
+      app.get '/ops/storage/manifest' do
+        url = "#{store_host}/manifest/#{request.params['node_number']}/#{CGI.escape(request.params['ark'])}"
+        puts "URL: #{url}"
+        get_url(url, ctype: :xml)
+      end
+
+      app.get '/ops/storage/manifest' do
+        get_url(manifest_url(request.params), ctype: :xml)
+      end
+
+      app.get '/ops/storage/manifest-yaml' do
+        data = get_url_body(manifest_url(request.params))
+        content_type :yaml
+        ManifestToYaml.new.load_xml(data)
+      end
+
+      app.get '/ops/storage/ingest-checkm' do
+        nodenum = request.params['node_number']
+        ark = request.params['ark']
+        ver = request.params['version_number']
+        url = "#{store_host}/ingestlink/#{nodenum}/#{CGI.escape(ark)}/#{ver}"
+        puts "URL: #{url}"
+        get_url(url, ctype: :text)
+      end
+    end
+
+    def manifest_url(params)
+      "#{store_host}/manifest/#{params['node_number']}/#{CGI.escape(params['ark'])}"
     end
 
     def stack_init
@@ -283,12 +312,18 @@ module Sinatra
       resp
     end
 
-    def get_url(url)
+    def get_url_body(url)
       uri = URI.parse(url)
       response = Net::HTTP.get_response(uri)
-      json = response.body
-      content_type :json
-      json
+      response.body
+    end
+
+    def get_url(url, ctype: :json)
+      uri = URI.parse(url)
+      response = Net::HTTP.get_response(uri)
+      data = response.body
+      content_type ctype
+      data
     rescue StandardError => e
       content_type :json
       { uri: uri, error: e.to_s }.to_json
