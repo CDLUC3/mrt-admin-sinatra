@@ -65,6 +65,11 @@ module UC3S3
       end
     end
 
+    def storage_node_for_mnemonic(mnemonic)
+      key = :"#{mnemonic}_content"
+      @config_objects.fetch(key, {}).fetch(:StorageNode, '')
+    end
+
     def list_profiles
       table = AdminUI::FilterTable.new(
         columns: [

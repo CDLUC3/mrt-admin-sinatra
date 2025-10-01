@@ -4,6 +4,7 @@ require 'sinatra/base'
 require 'sinatra/contrib'
 require 'uri'
 require_relative '../client/query/query'
+require_relative '../client/query/query_resolvers'
 require_relative '../ui/context'
 
 # custom sinatra routes
@@ -37,7 +38,7 @@ module Sinatra
               table: UC3Query::QueryClient.client.query(
                 request.path,
                 request.params,
-                resolver: UC3Query::QueryClient.method(:obj_info_resolver),
+                resolver: UC3Query::QueryResolvers.method(:obj_info_resolver),
                 dispcols: %w[
                   inv_object_id ark actions version_number mnemonics metadata local_ids created billable_size
                   file_count
@@ -48,7 +49,7 @@ module Sinatra
                   request.path,
                   request.params,
                   sqlsym: :repl_sql,
-                  resolver: UC3Query::QueryClient.method(:obj_node_resolver),
+                  resolver: UC3Query::QueryResolvers.method(:obj_node_resolver),
                   dispcols: %w[role actions description created replicated unverified last_verified version_number]
                 ),
                 UC3Query::QueryClient.client.query(
@@ -102,6 +103,17 @@ module Sinatra
       app.post '/queries-update/**' do
         content_type :json
         UC3Query::QueryClient.client.query_update(request.path, request.params).to_json
+      end
+
+      app.get '/ops/db-queue/collections/storage-node-config' do
+        adminui_show_table(
+          AdminUI::Context.new(request.path),
+          UC3Query::QueryClient.client.query(
+            request.path,
+            request.params,
+            resolver: UC3Query::QueryResolvers.method(:collection_nodes_resolver)
+          )
+        )
       end
 
       app.get '/ops/db-queue/**' do

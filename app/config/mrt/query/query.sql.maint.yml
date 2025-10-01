@@ -1,0 +1,31 @@
+queries:
+  /ops/db-queue/collections/storage-node-config:
+    sql: |
+      with node_counts as (
+        select 
+          inv_collection_id, 
+          count(*) node_count
+        from inv.inv_collections_inv_nodes
+        group by inv_collection_id
+      )
+      select
+        c.mnemonic,
+        c.name,
+        c.ark,
+        '' primary_node,
+        ifnull(node_count, 0) node_count,
+        '' actions,
+        case
+          when ifnull(node_count, 0) < 2 then 'FAIL'
+          else 'PASS'
+        end as status
+      from inv.inv_collections c
+      left join node_counts nc
+        on c.id = nc.inv_collection_id
+      where exists (
+        select 1 from inv.inv_objects o
+        where 
+          o.id = c.inv_object_id
+          and o.aggregate_role = 'MRT-collection'
+      )
+      order by c.mnemonic

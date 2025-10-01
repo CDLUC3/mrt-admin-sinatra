@@ -726,8 +726,7 @@ items:
       - title: Ingest Profiles
         route: /ops/collections/management/profiles
     - title: Storage Node Config
-      route: /ops/collections/storage-node-config
-      tbd: true
+      route: /ops/db-queue/collections/storage-node-config
     - path: db
       title: DB config
       route: /ops/collections/db

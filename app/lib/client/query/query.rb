@@ -5,6 +5,7 @@ require 'mysql2'
 require 'yaml'
 require_relative '../uc3_client'
 require_relative '../../ui/context'
+require_relative 'query_resolvers'
 
 # Scope custom code for UC3 to distinguish from 3rd party classes
 module UC3Query
@@ -191,7 +192,7 @@ module UC3Query
       { status: 'OK', message: "Update completed. #{stmt.affected_rows} rows" }
     end
 
-    def query(path, urlparams, sqlsym: :sql, dispcols: [], resolver: UC3Query::QueryClient.method(:default_resolver))
+    def query(path, urlparams, sqlsym: :sql, dispcols: [], resolver: UC3Query::QueryResolvers.method(:default_resolver))
       table = AdminUI::FilterTable.empty
       query = @queries.fetch(path.to_sym, {})
 
@@ -263,86 +264,6 @@ module UC3Query
       end
       record_status(path, table.status) if query.fetch(:status_check, false)
       table
-    end
-
-    def self.default_resolver(row)
-      row
-    end
-
-    def self.obj_info_resolver(row)
-      row['metadata'] = []
-      row['metadata'] << "What: #{row['erc_what']}"
-      row['metadata'] << "Who: #{row['erc_who']}"
-      row['metadata'] << "When: #{row['erc_when']}"
-      row['metadata'] << "Own: #{row['name']}"
-
-      row['actions'] = []
-      row['actions'] << {
-        value: 'Trigger Replication',
-        href: "/queries-update/replic/trigger?inv_object_id=#{row['inv_object_id']}",
-        cssclass: 'button',
-        post: true,
-        disabled: storage_mgt_disabled?
-      }
-      row
-    end
-
-    def self.obj_node_resolver(row)
-      pstr = "?inv_object_id=#{row['inv_object_id']}&inv_node_id=#{row['node_id']}"
-      row['description'] = [row['node_number'], row['description'], row['acceess_mode']]
-      row['actions'] = []
-      row['actions'] << {
-        value: 'Re-audit All Files',
-        href: "/queries-update/audit/reset#{pstr}",
-        cssclass: 'button',
-        post: true,
-        disabled: storage_mgt_disabled?
-      }
-      row['actions'] << {
-        value: 'Re-audit Unverified',
-        href: "/queries-update/audit/reset-unverified#{pstr}",
-        cssclass: 'button',
-        post: true,
-        disabled: storage_mgt_disabled?
-      }
-      if row['role'] == 'primary'
-        row['actions'] << {
-          value: 'Get Manifest',
-          href: "/ops/storage/manifest?node_number=#{row['node_number']}&ark=#{row['ark']}",
-          cssclass: 'button',
-          disabled: storage_mgt_disabled?(strict: true)
-        }
-        row['actions'] << {
-          value: "Get Ingest Checkm (v#{row['version_number']})",
-          href: "/ops/storage/ingest-checkm?node_number=#{row['node_number']}" \
-                "&ark=#{row['ark']}&version_number=#{row['version_number']}",
-          cssclass: 'button',
-          disabled: storage_mgt_disabled?(strict: true)
-        }
-        row['actions'] << {
-          value: 'Get Storage Manifest Yaml',
-          href: "/ops/storage/manifest-yaml?node_number=#{row['node_number']}&ark=#{row['ark']}",
-          cssclass: 'button',
-          disabled: storage_mgt_disabled?(strict: true)
-        }
-        row['actions'] << {
-          value: 'Rebuild Inventory',
-          href: "/ops/inventory/rebuild?node_number=#{row['node_number']}&ark=#{row['ark']}",
-          cssclass: 'button button_red',
-          confmsg: %(Are you sure you want to rebuild the INV entry for this ark?
-            A new inv_object_id will be assigned.),
-          post: true,
-          disabled: storage_mgt_disabled?
-        }
-        row['actions'] << {
-          value: 'Clear Scan Entries for Ark',
-          href: "/queries-update/storage-maints/clear-entries-for-ark?ark=#{row['ark']}",
-          cssclass: 'button',
-          post: true,
-          disabled: storage_mgt_disabled?
-        }
-      end
-      row
     end
 
     attr_accessor :queries
