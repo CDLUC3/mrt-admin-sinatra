@@ -107,7 +107,7 @@ module UC3Query
 
     def self.audit_status_resolver(row)
       row['actions'] = []
-      if row['acount'].positive?
+      if row['acount'].positive? && !['processing', 'unknown'].include?(row['astatus'])
         row['actions'] << {
           value: 'Re-try Audit',
           href: "/queries-update/audit/status-reset?status=#{row['astatus']}",
