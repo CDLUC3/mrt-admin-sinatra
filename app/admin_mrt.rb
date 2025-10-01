@@ -164,13 +164,6 @@ get '/clients' do
   )
 end
 
-get '/ops/storage/scans' do
-  adminui_show_markdown(
-    AdminUI::Context.new(request.path),
-    'app/markdown/mrt/storage_scans.md'
-  )
-end
-
 get '/**' do
   adminui_show_none(
     AdminUI::Context.new(request.path)

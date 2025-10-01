@@ -118,5 +118,9 @@ module UC3Query
       end
       row
     end
+
+    def self.storage_scan_resolver(row)
+      row
+    end
   end
 end

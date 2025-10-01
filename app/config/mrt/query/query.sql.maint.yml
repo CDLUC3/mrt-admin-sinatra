@@ -29,3 +29,79 @@ queries:
           and o.aggregate_role = 'MRT-collection'
       )
       order by c.mnemonic
+  /ops/storage/scans:
+    sql: |
+      select
+        n.number,
+        case
+          when description is null then 'No description'
+          else description
+        end as description,
+        access_mode,
+        ifnull(nc.file_count, 0) + ifnull(nc.object_count, 0) as pcount,
+        iss.scan_status,
+        iss.created,
+        iss.updated,
+        (
+          select
+            count(*)
+          from
+            inv.inv_storage_maints ism
+          where
+            n.id = ism.inv_node_id
+          and
+            maint_status = 'review'
+        ) as num_review,
+        (
+          select
+            count(*)
+          from
+            inv.inv_storage_maints ism
+          where
+            n.id = ism.inv_node_id
+          and
+            maint_status = 'delete'
+        ) as num_deletes,
+        (
+          select
+            count(*)
+          from
+            inv.inv_storage_maints ism
+          where
+            n.id = ism.inv_node_id
+          and
+            maint_status = 'hold'
+        ) as num_holds,
+        (
+          select
+            count(*)
+          from
+            inv.inv_storage_maints ism
+          where
+            n.id = ism.inv_node_id
+        ) as num_maints,
+        ifnull(iss.keys_processed, 0) as keys_processed,
+        case
+          when ifnull(nc.file_count, 0) + ifnull(nc.object_count, 0) = 0 then 100
+          else round((ifnull(iss.keys_processed, 0) / (ifnull(nc.file_count, 0) + ifnull(nc.object_count, 0))) * 100, 2)
+        end as percent_complete,
+        iss.id as inv_scan_id,
+        '' actions
+      from
+        inv.inv_nodes n
+      left join billing.node_counts nc
+        on n.id = nc.inv_node_id
+      left join (
+        select
+          inv_node_id,
+          max(id) as inv_storage_scan_id
+        from
+          inv.inv_storage_scans
+        group by
+          inv_node_id
+      ) ls
+        on n.id = ls.inv_node_id
+      left join inv.inv_storage_scans iss
+        on ls.inv_storage_scan_id = iss.id
+      order by
+        pcount desc

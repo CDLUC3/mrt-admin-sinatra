@@ -121,6 +121,17 @@ module Sinatra
         )
       end
 
+      app.get '/ops/storage/scans' do
+        adminui_show_table(
+          AdminUI::Context.new(request.path),
+          UC3Query::QueryClient.client.query(
+            request.path,
+            request.params,
+            resolver: UC3Query::QueryResolvers.method(:storage_scan_resolver)
+          )
+        )
+      end
+
       app.get '/ops/db-queue/audit/counts-by-state' do
         adminui_show_table(
           AdminUI::Context.new(request.path),

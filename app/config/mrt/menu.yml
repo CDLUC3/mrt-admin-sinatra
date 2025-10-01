@@ -787,7 +787,6 @@ items:
         tbd: true
   - title: Storage Scans
     route: /ops/storage/scans
-    tbd: true
   - title: Cloudwatch Logs
     route: /ops/cloudwatch
     disable: default, docker
