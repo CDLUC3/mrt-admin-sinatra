@@ -327,12 +327,12 @@ module UC3Query
         }
         row['actions'] << {
           value: 'Rebuild Inventory',
-          href: "/tbd/#{row['inv_object_id']}",
+          href: "/ops/inventory/rebuild?node_number=#{row['node_number']}&ark=#{row['ark']}",
           cssclass: 'button button_red',
           confmsg: %(Are you sure you want to rebuild the INV entry for this ark?
             A new inv_object_id will be assigned.),
           post: true,
-          disabled: storage_mgt_disabled? || true
+          disabled: storage_mgt_disabled?
         }
         row['actions'] << {
           value: 'Clear Scan Entries for Ark',

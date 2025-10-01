@@ -98,8 +98,8 @@ a.button {
   background-color: navy;
   color: white;
 }
-a.button_red {
-  color: red !important;
+a.button_red::after {
+  content: " ⚠️";
 }
 
 a.buttontbd {

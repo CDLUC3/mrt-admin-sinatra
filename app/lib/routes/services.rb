@@ -164,6 +164,37 @@ module Sinatra
         collections_init.to_json
       end
 
+      app.post '/ops/inventory/rebuild' do
+        data = {
+          url: manifest_url(request.params),
+          responseForm: 'json'
+        }
+
+        deleteurl = "#{inventory_host}/object/#{CGI.escape(request.params['ark'])}"
+        resp = delete_url_resp(deleteurl)
+        if resp.code.to_i == 200
+          addurl = "#{inventory_host}/add"
+          resp = post_url_multipart(addurl, data)
+          if resp.code.to_i == 200
+            url = "/queries/repository/object-ark?ark=#{CGI.escape(request.params['ark'])}"
+            {
+              message: "Sucessfully re-added #{request.params['ark']}",
+              redirect: url,
+              modal: true
+            }.to_json
+          else
+            content_type :json
+            { uri: addurl, message: "ERROR re-adding object: #{resp.code}" }.to_json
+          end
+        else
+          content_type :json
+          { uri: deleteurl, message: "ERROR deleting object: #{resp.code}" }.to_json
+        end
+      rescue StandardError => e
+        content_type :json
+        { uri: deleteurl, message: "Exception while rebuilding inventory: #{e}" }.to_json
+      end
+
       app.get '/ops/storage/manifest' do
         url = "#{store_host}/manifest/#{request.params['node_number']}/#{CGI.escape(request.params['ark'])}"
         puts "URL: #{url}"
@@ -175,7 +206,9 @@ module Sinatra
       end
 
       app.get '/ops/storage/manifest-yaml' do
+        puts "Manifest URL: #{manifest_url(request.params)}"
         data = get_url_body(manifest_url(request.params))
+        puts "Manifest Data: #{data.inspect}"
         content_type :yaml
         ManifestToYaml.new.load_xml(data)
       end
@@ -329,6 +362,7 @@ module Sinatra
       { uri: uri, error: e.to_s }.to_json
     end
 
+    # this method may be over-customized for EZID.  Consider refactoring.
     def post_url_body(url, body: nil, user: nil, password: nil)
       puts "URI: #{url}, body: #{body}, user: #{user}, password: #{'****' if password}"
       uri = URI.parse(url)
@@ -358,15 +392,29 @@ module Sinatra
       { uri: uri, error: e.to_s }.to_json
     end
 
+    def delete_url_resp(url, body: nil)
+      uri = URI.parse(url)
+      puts "Delete URI: #{url}, body: #{body}"
+      req = Net::HTTP::Delete.new(uri)
+      req['Content-Type'] = '*/*'
+      # req['Accept'] = 'text/plain'
+      req.body = body
+
+      Net::HTTP.start(uri.hostname, uri.port, use_ssl: uri.scheme == 'https') do |http|
+        http.request(req)
+      end
+    end
+
     def post_url_multipart(url, params)
-      puts "POST #{url} with #{params.inspect}"
+      puts "Multipart POST #{url} with #{params.inspect}"
       uri = URI.parse(url)
       req = Net::HTTP::Post::Multipart.new(uri, params)
+      puts "Request: #{req.inspect}"
       response = Net::HTTP.start(uri.hostname, uri.port) do |http|
         http.request(req)
       end
       puts "Response: #{response.inspect}"
-      response.body
+      response
     end
   end
 
