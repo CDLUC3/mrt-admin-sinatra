@@ -1151,7 +1151,7 @@ queries:
       order by
         verified
       LIMIT 1
-  /ops/db-queue/audit/active-batches:
+  /ops/db-queue/audit/active-batches/view:
     status: PASS
     status_check: true
     sql: |
@@ -1195,6 +1195,7 @@ queries:
       select
         'unverified' as astatus,
         acount,
+        '' actions,
         case
           when acount > 0 then 'FAIL'
           else 'PASS'
@@ -1212,6 +1213,7 @@ queries:
       select
         'size-mismatch' as astatus,
         acount,
+        '' actions,
         case
           when acount > 0 then 'FAIL'
           else 'PASS'
@@ -1229,6 +1231,7 @@ queries:
       select
         'digest-mismatch' as astatus,
         acount,
+        '' actions,
         case
           when acount > 0 then 'FAIL'
           else 'PASS'
@@ -1246,6 +1249,7 @@ queries:
       select
         'system-unavailable' as astatus,
         acount,
+        '' actions,
         case
           when acount > 0 then 'WARN'
           else 'PASS'
@@ -1263,6 +1267,7 @@ queries:
       select
         'processing' as astatus,
         acount,
+        '' actions,
         'PASS' as status
       from
         (
@@ -1277,6 +1282,7 @@ queries:
       select
         'unknown' as astatus,
         acount,
+        '' actions,
         case
           when acount > 0 then 'PASS'
           else 'PASS'

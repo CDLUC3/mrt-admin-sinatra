@@ -666,7 +666,21 @@ items:
       - title: Oldest Audit Check
         route: /ops/db-queue/audit/oldest-audit-check
       - title: Active Batches
+        path: active-batches
         route: /ops/db-queue/audit/active-batches
+        breadcrumb: true
+        items:
+        - title: View Active Batches
+          route: /ops/db-queue/audit/active-batches/view
+        - title: Clear Older Than 24h
+          route: /queries-update/audit/active-batches-clear?hours=24
+          method: post
+        - title: Clear Older Than 2h
+          route: /queries-update/audit/active-batches-clear?hours=2
+          method: post
+        - title: Clear Older Than 1h
+          route: /queries-update/audit/active-batches-clear?hours=1
+          method: post
       - title: Counts by State
         route: /ops/db-queue/audit/counts-by-state
       - title: Audit - New UCB Content

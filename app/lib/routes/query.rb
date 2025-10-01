@@ -100,6 +100,11 @@ module Sinatra
         )
       end
 
+      app.post '/queries-update/audit/active-batches-clear' do
+        UC3Query::QueryClient.client.query_update(request.path, request.params)
+        redirect '/ops/db-queue/audit/active-batches/view'
+      end
+
       app.post '/queries-update/**' do
         content_type :json
         UC3Query::QueryClient.client.query_update(request.path, request.params).to_json
@@ -112,6 +117,17 @@ module Sinatra
             request.path,
             request.params,
             resolver: UC3Query::QueryResolvers.method(:collection_nodes_resolver)
+          )
+        )
+      end
+
+      app.get '/ops/db-queue/audit/counts-by-state' do
+        adminui_show_table(
+          AdminUI::Context.new(request.path),
+          UC3Query::QueryClient.client.query(
+            request.path,
+            request.params,
+            resolver: UC3Query::QueryResolvers.method(:audit_status_resolver)
           )
         )
       end

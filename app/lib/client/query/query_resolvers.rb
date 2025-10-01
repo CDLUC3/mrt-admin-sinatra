@@ -104,5 +104,19 @@ module UC3Query
       row['status'] = 'FAIL' if prim.empty?
       row
     end
+
+    def self.audit_status_resolver(row)
+      row['actions'] = []
+      if row['acount'].positive?
+        row['actions'] << {
+          value: 'Re-try Audit',
+          href: "/queries-update/audit/status-reset?status=#{row['astatus']}",
+          post: true,
+          cssclass: 'button',
+          disabled: storage_mgt_disabled?
+        }
+      end
+      row
+    end
   end
 end

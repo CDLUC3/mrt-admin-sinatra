@@ -1,4 +1,19 @@
 queries:
+  /queries-update/audit/active-batches-clear:
+    update: true
+    sql: |
+      UPDATE
+        inv.inv_audits
+      SET
+        status='unknown',
+        verified=null
+      WHERE
+        status='processing'
+      AND
+        ifnull(verified, '1970-01-01') < date_add(now(), INTERVAL -? HOUR)
+    parameters:
+    - name: hours
+      type: integer
   /queries-update/audit/reset:
     update: true
     sql: |
