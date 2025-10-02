@@ -63,13 +63,14 @@ ecs-dbsnapshot:
     val: 600
 ecs-stg:
   host: 
-    ssm: /uc3/mrt/stg/billing/db-host
+    ssm: /uc3/mrt/stg/inv/db-host
   database: 
+    # billing is intentional
     ssm: /uc3/mrt/stg/billing/db-name
   username: 
-    ssm: /uc3/mrt/stg/billing/readwrite/db-user
+    ssm: /uc3/mrt/stg/inv/readwrite/db-user
   password: 
-    ssm: /uc3/mrt/stg/billing/readwrite/db-password
+    ssm: /uc3/mrt/stg/inv/readwrite/db-password
   base_url:
     env: base_url
   read_timeout:
@@ -78,13 +79,14 @@ ecs-stg:
     val: 600
 ecs-prd:
   host: 
-    ssm: /uc3/mrt/prd/billing/db-host
+    ssm: /uc3/mrt/prd/inv/db-host
   database: 
+    # billing is intentional
     ssm: /uc3/mrt/prd/billing/db-name
   username: 
-    ssm: /uc3/mrt/prd/billing/readwrite/db-user
+    ssm: /uc3/mrt/prd/inv/readwrite/db-user
   password: 
-    ssm: /uc3/mrt/prd/billing/readwrite/db-password
+    ssm: /uc3/mrt/prd/inv/readwrite/db-password
   base_url:
     env: base_url
   read_timeout:
