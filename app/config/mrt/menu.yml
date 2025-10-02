@@ -584,6 +584,7 @@ items:
       method: post
       disable: ecs-stg, ecs-prd
     - title: ZooKeeper Stat
+      disable: ecs-stg, ecs-prd
       route: /ops/zk/stat
   - path: ingest-folders
     title: Ingest Folders

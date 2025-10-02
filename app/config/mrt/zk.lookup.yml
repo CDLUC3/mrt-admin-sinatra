@@ -1,0 +1,32 @@
+docker: &docker
+  zkconn: 
+    env: ZKCONN
+    default: zoo:2181
+  admin_port:
+    env: ZK_ADMIN_PORT
+    default: 8080
+  admin_user:
+    env: ZK_ADMIN_USER
+    default: root
+  admin_pass:
+    env: ZK_ADMIN_PASS
+    default: root_passwd
+  snapshot_dir:
+    env: ZK_SNAPSHOT_DIR
+    default: /tdr/ingest/queue/zk-snapshots
+dockerlocal:
+  <<: *docker
+ecs-dev:
+  <<: *docker
+ecs-ephemeral:
+  <<: *docker
+ecs-dbsnapshot:
+  <<: *docker
+ecs-stg:
+  # Admin port not yet exposed in stg/prd, wait for migration to ECS
+  <<: *docker
+ecs-prd:
+  # Admin port not yet exposed in stg/prd, wait for migration to ECS
+  <<: *docker
+default:
+  <<: *docker 

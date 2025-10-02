@@ -18,7 +18,10 @@ module UC3Queue
     end
 
     def initialize
-      map = UC3::UC3Client.lookup_map_by_filename('app/config/mrt/zk.yml')
+      map = UC3::UC3Client.lookup_map_by_filename(
+        'app/config/mrt/zk.lookup.yml',
+        key: ENV.fetch('configkey', 'default')
+      )
       zkconn = map.fetch('zkconn', '')
       raise 'ZK connection string not defined' if zkconn.empty?
 
