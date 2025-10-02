@@ -577,10 +577,12 @@ items:
       route: /ops/zk/snapshot
       confmsg: This will snapshot ZooKeeper and save to EFS
       method: post
+      disable: ecs-stg, ecs-prd
     - title: Restore ZooKeeper
       route: /ops/zk/restore
       confmsg: This will restore ZooKeeper from a snapshot saved to EFS
       method: post
+      disable: ecs-stg, ecs-prd
     - title: ZooKeeper Stat
       route: /ops/zk/stat
   - path: ingest-folders

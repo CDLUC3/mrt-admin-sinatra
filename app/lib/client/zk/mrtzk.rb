@@ -677,7 +677,8 @@ module UC3Queue
         data << {
           conf: JSON.parse(`curl -H #{zk_auth} http://#{zkhost}:#{@admin_port}/commands/conf`),
           lead: JSON.parse(`curl -H #{zk_auth} http://#{zkhost}:#{@admin_port}/commands/lead`),
-          lsnp: JSON.parse(`curl -H #{zk_auth} http://#{zkhost}:#{@admin_port}/commands/lsnp`)
+          lsnp: JSON.parse(`curl -H #{zk_auth} http://#{zkhost}:#{@admin_port}/commands/lsnp`),
+          stat: JSON.parse(`curl -H #{zk_auth} http://#{zkhost}:#{@admin_port}/commands/stat`)
         }
       rescue StandardError => e
         data << { error: "Error connecting to ZK host #{zkhost}: #{e.message}" }

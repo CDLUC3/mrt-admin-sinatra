@@ -130,7 +130,11 @@ module AdminUI
           @route_names.each do |key, value|
             next unless File.dirname(key) == route
 
-            desc += "\n- [#{value[:title]}](#{value[:route]})"
+            desc += if %w[post delete].include?(value[:method])
+                      "\n- #{value[:title]} ⚙️"
+                    else
+                      "\n- [#{value[:title]}](#{value[:route]})"
+                    end
           end
         end
       end
@@ -187,7 +191,8 @@ module AdminUI
       @confmsg = confmsg
       @classes = classes
 
-      @parent.top.route_names[route_normalized] = { title: title, description: description, route: @route }
+      @parent.top.route_names[route_normalized] =
+        { title: title, description: description, route: @route, method: @method }
     end
 
     attr_accessor :title, :route, :description, :tbd, :breadcrumb, :external, :method, :confmsg, :classes
