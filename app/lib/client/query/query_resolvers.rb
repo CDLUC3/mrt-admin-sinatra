@@ -28,7 +28,7 @@ module UC3Query
         href: "/queries-update/replic/trigger?inv_object_id=#{row['inv_object_id']}",
         cssclass: 'button',
         post: true,
-        disabled: storage_mgt_disabled?
+        disabled: storage_mgt_disabled?(strict: true)
       }
       row
     end
@@ -42,14 +42,14 @@ module UC3Query
         href: "/queries-update/audit/reset#{pstr}",
         cssclass: 'button',
         post: true,
-        disabled: storage_mgt_disabled?
+        disabled: storage_mgt_disabled?(strict: true)
       }
       row['actions'] << {
         value: 'Re-audit Unverified',
         href: "/queries-update/audit/reset-unverified#{pstr}",
         cssclass: 'button',
         post: true,
-        disabled: storage_mgt_disabled?
+        disabled: storage_mgt_disabled?(strict: true)
       }
       if row['role'] == 'primary'
         row['actions'] << {
@@ -78,14 +78,14 @@ module UC3Query
           confmsg: %(Are you sure you want to rebuild the INV entry for this ark?
             A new inv_object_id will be assigned.),
           post: true,
-          disabled: storage_mgt_disabled?
+          disabled: storage_mgt_disabled?(strict: true)
         }
         row['actions'] << {
           value: 'Clear Scan Entries for Ark',
           href: "/queries-update/storage-maints/clear-entries-for-ark?ark=#{row['ark']}",
           cssclass: 'button',
           post: true,
-          disabled: storage_mgt_disabled?
+          disabled: storage_mgt_disabled?(strict: true)
         }
       end
       row
