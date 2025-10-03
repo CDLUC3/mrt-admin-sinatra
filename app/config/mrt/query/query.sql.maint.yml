@@ -32,38 +32,75 @@ queries:
       ),
       nprimary as (
         select
-          ? as num,
-          'primary' as role
+          n.id,
+          'primary' as role,
+          n.number as node_number,
+          n.description,
+          n.access_mode,
+          0 as count,
+          0 as total,
+          100 as pct_complete,
+          '' as actions
+        from inv.inv_nodes n
+        where number = ?
       ),
       nsecondary as (
         select
-          n.number as num,
-          'secondary' as role
+          n.id,
+          'secondary' as role,
+          n.number as node_number,
+          n.description,
+          n.access_mode,
+          0 as count,
+          0 as total,
+          100 as pct_complete,
+          '' as actions
         from
           inv.inv_collections_inv_nodes cn
         join inv.inv_nodes n
           on cn.inv_node_id = n.id
         join collection c
           on cn.inv_collection_id = c.id
+      ),
+      actual as (
+        select 
+          n.id,
+          inio.role,
+          n.number as node_number, 
+          n.description,
+          n.access_mode,
+          count(*) as count,
+          0 as total,
+          100 as pct_complete,
+          '' as actions
+        from inv.inv_collections_inv_objects icio
+        inner join collection c
+          on icio.inv_collection_id = c.id
+        inner join inv.inv_nodes_inv_objects inio
+          on icio.inv_object_id = inio.inv_object_id
+        inner join inv.inv_nodes n
+          on inio.inv_node_id = n.id
+        group by n.id, n.number, inio.role
+      ),
+      pcount as (
+        select ifnull(sum(count), 0) as count 
+        from actual 
+        where role = 'primary'
       )
 
-      select 0 as id, num as node_number, role, 0 as count from nprimary
+      select a.*, pc.count as total from actual a, pcount pc
       union
-      select 0 as id,num as node_number, role, 0 as count from nsecondary
+      select p.*, pc.count as total from nprimary p, pcount pc
+        where not exists (
+          select 1 from actual aa 
+          where aa.node_number=p.node_number
+        )
       union
-      select 
-        n.id,
-        n.number as node_number, 
-        inio.role,
-        count(*) as count
-      from inv.inv_collections_inv_objects icio
-      inner join collection c
-        on icio.inv_collection_id = c.id
-      inner join inv.inv_nodes_inv_objects inio
-        on icio.inv_object_id = inio.inv_object_id
-      inner join inv.inv_nodes n
-        on inio.inv_node_id = n.id
-      group by n.id, n.number, inio.role
+      select s.*, pc.count as total from nsecondary s, pcount pc
+        where not exists (
+          select 1 from actual aa 
+          where aa.node_number = s.node_number
+        )
     parameters:
     - name: inv_collection_id
       type: integer

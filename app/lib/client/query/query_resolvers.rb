@@ -91,19 +91,32 @@ module UC3Query
       row
     end
 
-    def self.collection_nodes_resolver(row)
+    def self.collections_nodes_resolver(row)
       prim = UC3S3::ConfigObjectsClient.client.storage_node_for_mnemonic(row['mnemonic'])
       row['primary_node'] = prim
 
       row['actions'] = []
       row['actions'] << {
         value: 'Manage Nodes',
-        href: '/ops/collections/storage-node-config/collection' \
+        href: "/ops/collections/storage-node-config/#{row['mnemonic']}_Storage_Nodes" \
               "?inv_collection_id=#{row['id']}&primary=#{prim}",
         cssclass: 'button',
         disabled: storage_mgt_disabled?(strict: true) || prim.empty?
       }
       row['status'] = 'FAIL' if prim.empty?
+      row
+    end
+
+    def self.collection_nodes_resolver(row)
+      row['actions'] = []
+      unless row['role'] == 'primary'
+        row['actions'] << {
+          value: 'Remove Secondary Node',
+          href: '#',
+          cssclass: 'button',
+          disabled: true
+        }
+      end
       row
     end
 

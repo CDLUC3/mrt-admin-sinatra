@@ -1,0 +1,26 @@
+<div>
+<fieldset>
+  <legend>Collection Processing Status</legend>
+  <div>
+  <label for="processing_status">Processing Status</label>
+  <output id="processing_status" name="processing_status"/>
+  </div>
+  <input type="button" disabled value="Lock Collection"/>
+  <input type="button" disabled value="Unlock Collection"/>
+</fieldset>
+</div>
+<div>
+<fieldset>
+  <legend>Add Storage Node</legend>
+  <select id="addnode" name="addnode">
+    <option value=""></option>
+    <% nodes.each do |key, value| %>
+      <option value="<%= key %>"><%= value %></option>
+    <% end %>
+  </select>
+  <input type="submit" disabled value="Add Node"/">
+</fieldset>
+</div>
+<div class='tablewrap'>
+  <%= table.render %>
+</div>

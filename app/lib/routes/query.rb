@@ -110,13 +110,27 @@ module Sinatra
         UC3Query::QueryClient.client.query_update(request.path, request.params).to_json
       end
 
+      app.get '/ops/collections/storage-node-config/**' do
+        erb :coll_node_table,
+          :layout => :page_layout,
+          :locals => {
+            context: AdminUI::Context.new(request.path),
+            table: UC3Query::QueryClient.client.query(
+              '/ops/collections/storage-node-config/collection',
+              request.params,
+              resolver: UC3Query::QueryResolvers.method(:collection_nodes_resolver)
+            ),
+            nodes: get_nodes
+          }
+      end
+
       app.get '/ops/collections/storage-node-config' do
         adminui_show_table(
           AdminUI::Context.new(request.path),
           UC3Query::QueryClient.client.query(
             request.path,
             request.params,
-            resolver: UC3Query::QueryResolvers.method(:collection_nodes_resolver)
+            resolver: UC3Query::QueryResolvers.method(:collections_nodes_resolver)
           )
         )
       end

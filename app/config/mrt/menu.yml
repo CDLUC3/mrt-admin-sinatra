@@ -7,8 +7,6 @@ items:
   - title: Consistency Reports
     route: /queries/consistency
     breadcrumb: true
-    description: |
-      _Daily Consistency Report Checks have not yet been implemented._
   - title: Daily Consistency Checks
     route: /queries/consistency/daily
   - title: Batches
@@ -675,6 +673,8 @@ items:
         items:
         - title: View Active Batches
           route: /ops/db-queue/audit/active-batches/view
+          description: |
+            Use the menu to find options to clear active batches based on age.
         - title: Clear Older Than 24h
           route: /queries-update/audit/active-batches-clear?hours=24
           method: post
