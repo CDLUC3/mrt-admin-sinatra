@@ -9,6 +9,7 @@ queries:
         group by inv_collection_id
       )
       select
+        c.id,
         c.mnemonic,
         c.name,
         c.ark,
@@ -29,6 +30,50 @@ queries:
           and o.aggregate_role = 'MRT-collection'
       )
       order by c.mnemonic
+  /ops/db-queue/collections/storage-node-config/collection:
+    sql: |
+      with collection as (
+        select ? as id
+      ),
+      nprimary as (
+        select
+          ? as num,
+          'primary' as role
+      ),
+      nsecondary as (
+        select
+          n.number as num,
+          'secondary' as role
+        from
+          inv.inv_collections_inv_nodes cn
+        join inv.inv_nodes n
+          on cn.inv_node_id = n.id
+        join collection c
+          on cn.inv_collection_id = c.id
+      )
+
+      select 0 as id, num as node_number, role, 0 as count from nprimary
+      union
+      select 0 as id,num as node_number, role, 0 as count from nsecondary
+      union
+      select 
+        n.id,
+        n.number as node_number, 
+        inio.role,
+        count(*) as count
+      from inv.inv_collections_inv_objects icio
+      inner join collection c
+        on icio.inv_collection_id = c.id
+      inner join inv.inv_nodes_inv_objects inio
+        on icio.inv_object_id = inio.inv_object_id
+      inner join inv.inv_nodes n
+        on inio.inv_node_id = n.id
+      group by n.id, n.number, inio.role
+    parameters:
+    - name: inv_collection_id
+      type: integer
+    - name: primary
+      type: integer
   /ops/storage/scans:
     sql: |
       select
@@ -105,3 +150,13 @@ queries:
         on ls.inv_storage_scan_id = iss.id
       order by
         pcount desc
+  /ops/log-consistency:
+    update: true
+    sql: |
+      insert into daily_consistency_checks(check_name, status)
+      values(?, ?)
+    parameters:
+      - name: check_name
+        type: string
+      - name: status
+        type: string

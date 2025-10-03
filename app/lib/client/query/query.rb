@@ -169,7 +169,7 @@ module UC3Query
       Mustache.render(sql, @fragments.merge(tparm))
     end
 
-    def query_update(path, urlparams, sqlsym: :sql)
+    def query_update(path, urlparams = {}, sqlsym: :sql, purpose: '')
       query = @queries.fetch(path.to_sym, {})
 
       sql = query.fetch(sqlsym, '')
@@ -181,15 +181,43 @@ module UC3Query
 
         params = resolve_parameters(query.fetch(:parameters, []), urlparams)
 
+        puts "#{purpose} SQL: #{sql}; Params: #{params}; #{urlparams}"
         stmt.execute(*params)
-        puts "SQL: #{sql}; Params: #{params}; #{stmt.affected_rows}"
+        puts "#{purpose} SQL: #{sql}; Params: #{params}; #{stmt.affected_rows}"
       rescue StandardError => e
         return {
           status: 'FAIL',
-          message: "#{e.class}: #{e}"
+          message: "#{purpose} SQL: #{e.class}: #{e}"
         }
       end
-      { status: 'OK', message: "Update completed. #{stmt.affected_rows} rows" }
+      { status: 'OK', message: "#{purpose} Update completed. #{stmt.affected_rows} rows" }
+    end
+
+    def run_query(path, urlparams = {}, sqlsym: :sql)
+      query = @queries.fetch(path.to_sym, {})
+
+      sql = query.fetch(sqlsym, '')
+      return [] if sql.empty?
+      return [] if query.fetch(:update, false)
+
+      # get know query parameters from yaml
+      pagination = pagination_params(query, path, urlparams)
+      tparm = template_params(query, urlparams, pagination)
+
+      # Design idea: allow sql to be an array of sql statements.
+      # This would permit us to create temporary tables to use in subsequent queries.
+
+      sql = resolve_sql(sql, tparm)
+      return [] unless enabled
+
+      stmt = @client.prepare(sql)
+
+      params = resolve_parameters(query.fetch(:parameters, []), urlparams)
+      res = []
+      stmt.execute(*params).each do |row|
+        res << row.to_h
+      end
+      res
     end
 
     def query(path, urlparams, sqlsym: :sql, dispcols: [], resolver: UC3Query::QueryResolvers.method(:default_resolver))
@@ -288,10 +316,10 @@ module UC3Query
     def reset_new_ucb_content(path, urlparams)
       table = query(path, urlparams)
       table.table_data.each do |row|
-        query_update('/queries-update/audit/reset', {
-          inv_object_id: row['inv_object_id'],
-          inv_node_id: 16
-        })
+        params = {}
+        params['inv_object_id'] = row['inv_object_id']
+        params['inv_node_id'] = 16
+        query_update('/queries-update/audit/reset', params, purpose: 'Reset Audit for New UCB Content')
         # TODO: evaluate return object and present results
       end
       table

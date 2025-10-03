@@ -721,7 +721,7 @@ items:
     breadcrumb: true
     items:
     - path: management
-      title: Collection Management
+      title: Collection Creation
       breadcrumb: true
       route: /ops/collections/management
       items:

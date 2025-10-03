@@ -55,15 +55,17 @@ module UC3
       qc = UC3Query::QueryClient.client
       if !qc.nil? && qc.enabled
         begin
-          sql = %{
-              insert into daily_consistency_checks(check_name, status)
-              values(?, ?)
-            }
-          qc.run_sql(sql, [path, status.to_s])
+          params = {}
+          params['check_name'] = path
+          params['status'] = status.to_s
+          qc.query_update(
+            '/ops/log-consistency',
+            params,
+            purpose: 'Record Consistency status'
+          )
         rescue StandardError => e
           puts "Error recording status for #{path}: #{e.message}"
         end
-        return
       end
       puts "Status for #{path} is #{status}"
     end

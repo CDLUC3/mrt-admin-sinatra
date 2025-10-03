@@ -92,15 +92,17 @@ module UC3Query
     end
 
     def self.collection_nodes_resolver(row)
+      prim = UC3S3::ConfigObjectsClient.client.storage_node_for_mnemonic(row['mnemonic'])
+      row['primary_node'] = prim
+
       row['actions'] = []
       row['actions'] << {
         value: 'Manage Nodes',
-        href: '#',
+        href: '/ops/db-queue/collections/storage-node-config/collection' \
+              "?inv_collection_id=#{row['id']}&primary=#{prim}",
         cssclass: 'button',
-        disabled: storage_mgt_disabled? || true
+        disabled: storage_mgt_disabled?(strict: true) || prim.empty?
       }
-      prim = UC3S3::ConfigObjectsClient.client.storage_node_for_mnemonic(row['mnemonic'])
-      row['primary_node'] = prim
       row['status'] = 'FAIL' if prim.empty?
       row
     end

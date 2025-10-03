@@ -217,7 +217,7 @@ module Sinatra
         nodenum = request.params['node_number']
         ark = request.params['ark']
         ver = request.params['version_number']
-        url = "#{store_host}/ingestlink/#{nodenum}/#{CGI.escape(ark)}/#{ver}"
+        url = "#{store_host}/ingestlink/#{nodenum}/#{CGI.escape(ark)}/#{ver}?presign=true"
         puts "URL: #{url}"
         get_url(url, ctype: :text)
       end
@@ -243,77 +243,15 @@ module Sinatra
       qc = UC3Query::QueryClient.client
       if !qc.nil? && qc.enabled
         begin
-          sql = %(
-            select * from inv.inv_nodes
-          )
-          if qc.run_sql(sql).empty?
-            qc.run_sql(%(
-              insert into inv.inv_nodes(
-                number,
-                media_type,
-                media_connectivity,
-                access_mode,
-                access_protocol,
-                node_form,
-                node_protocol,
-                logical_volume,
-                external_provider,
-                verify_on_read,
-                verify_on_write,
-                base_url
-              )
-              select
-                7777,
-                'magnetic-disk',
-                'cloud',
-                'on-line',
-                's3',
-                'physical',
-                'http',
-                'yaml:7777',
-                'nodeio',
-                1,
-                1,
-                'http://store:8080/store'
-              union
-              select
-                8888,
-                'magnetic-disk',
-                'cloud',
-                'on-line',
-                's3',
-                'physical',
-                'http',
-                'yaml:8888',
-                'nodeio',
-                1,
-                1,
-                'http://store:8080/store'
-            ))
+          if qc.run_query('/init/check-nodes').empty?
+            qc.query_update('/init/create-nodes', purpose: 'Add Test Storage Nodes')
             resp << { action: 'Add test storage nodes', result: 'success' }
           else
             resp << { action: 'Add test storage nodes', result: 'skipped - already exists' }
           end
 
-          sql = %(
-            select * from billing.daily_node_counts
-          )
-          if qc.run_sql(sql).empty?
-            qc.run_sql(%(
-              insert into billing.daily_node_counts(
-                as_of_date,
-                inv_node_id,
-                number,
-                object_count,
-                object_count_primary,
-                object_count_secondary,
-                file_count,
-                billable_size
-              )
-              select
-                date(now()), id, number, 1, 0, 0, 0, 0
-              from inv.inv_nodes;
-            ))
+          if qc.run_query('/init/check-node-counts').empty?
+            qc.query_update('/init/create-node-counts', purpose: 'Add Test Storage Node Counts')
             resp << { action: 'Add test storage node counts', result: 'success' }
           else
             resp << { action: 'Add test storage node counts', result: 'skipped - already exists' }
@@ -337,9 +275,21 @@ module Sinatra
           c[:ark], c[:name], c[:mnemonic], public: c.fetch(:public, false)
         )
         begin
-          resp << ::JSON.parse(r)
+          resp << ::JSON.parse(r.body)
         rescue StandardError => e
           resp << { action: "Create Collection #{c[:name]}", error: e.to_s }
+        end
+        begin
+          params = {}
+          params['ark'] = c[:ark]
+          r = UC3Query::QueryClient.client.query_update(
+            '/init/create-collection-nodes',
+            params,
+            purpose: "Create Storage Nodes for Collection #{c[:ark]}"
+          )
+          resp << r
+        rescue StandardError => e
+          resp << { action: "Create Storage Nodes for Collection #{c[:name]}", error: e.to_s }
         end
       end
       resp
@@ -409,12 +359,9 @@ module Sinatra
       puts "Multipart POST #{url} with #{params.inspect}"
       uri = URI.parse(url)
       req = Net::HTTP::Post::Multipart.new(uri, params)
-      puts "Request: #{req.inspect}"
-      response = Net::HTTP.start(uri.hostname, uri.port) do |http|
+      Net::HTTP.start(uri.hostname, uri.port) do |http|
         http.request(req)
       end
-      puts "Response: #{response.inspect}"
-      response
     end
   end
 
