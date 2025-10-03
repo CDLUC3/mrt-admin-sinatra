@@ -213,11 +213,7 @@ module UC3Query
       stmt = @client.prepare(sql)
 
       params = resolve_parameters(query.fetch(:parameters, []), urlparams)
-      res = []
-      stmt.execute(*params).each do |row|
-        res << row.to_h
-      end
-      res
+      stmt.execute(*params).map(&:to_h)
     end
 
     def query(path, urlparams, sqlsym: :sql, dispcols: [], resolver: UC3Query::QueryResolvers.method(:default_resolver))
