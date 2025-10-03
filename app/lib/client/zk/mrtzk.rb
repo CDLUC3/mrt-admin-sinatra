@@ -17,23 +17,26 @@ module UC3Queue
       UC3::UC3Client.clients.fetch(self.class.to_s, ZKClient.new)
     end
 
+    def zk
+      ZK.new(@zkconn, timeout: 2)
+    end
+
     def initialize
       map = UC3::UC3Client.lookup_map_by_filename(
         'app/config/mrt/zk.lookup.yml',
         key: ENV.fetch('configkey', 'default')
       )
-      zkconn = map.fetch('zkconn', '')
+      @zkconn = map.fetch('zkconn', '')
       raise 'ZK connection string not defined' if zkconn.empty?
 
       puts "Creating Zookeeper connection to #{zkconn}."
       # NOTE: that this timeout (in sec) is for the creation of the connection
-      @zk = ZK.new(zkconn, timeout: 2)
-      raise "ZK init error #{zkconn}" if @zk.nil?
-      raise "ZK connection error #{zkconn}" unless @zk.connected?
+      zkcli = zk
+      raise "ZK init error #{@zkconn}" if zkcli.nil?
+      raise "ZK connection error #{@zkconn}" unless zkcli.connected?
 
-      puts "ZooKeeper connection established: #{@zk.inspect}"
       @zk_hosts = []
-      zkconn.split(',').each do |zkhost|
+      @zkconn.split(',').each do |zkhost|
         @zk_hosts << zkhost.split(':').first
       end
       @admin_port = map.fetch('admin_port', 8080)
@@ -43,16 +46,16 @@ module UC3Queue
       super(enabled: true)
     rescue StandardError => e
       puts "ZooKeeper Creation Error: #{e.message}"
-      @zk = nil
       super(enabled: false, message: e.to_s)
     end
 
     def enabled
-      @zk.nil? ? false : @zk.connected?
+      zkcli = zk
+      zkcli.nil? ? false : zk.connected?
     end
 
     def batches(route)
-      batches = MerrittZK::Batch.list_batches_as_json(@zk)
+      batches = MerrittZK::Batch.list_batches_as_json(zk)
       table = AdminUI::FilterTable.new(
         columns: [
           AdminUI::Column.new(:id, header: 'Batch ID'),
@@ -120,7 +123,7 @@ module UC3Queue
       @colls = {}
 
       if enabled
-        jobs = MerrittZK::Job.list_jobs_as_json(@zk)
+        jobs = MerrittZK::Job.list_jobs_as_json(zk)
         jobs = [] if jobs.nil?
         jobs.each do |job|
           @colls[job[:profile]] ||= {}
@@ -174,7 +177,7 @@ module UC3Queue
       @colls = {}
 
       if enabled
-        jobs = MerrittZK::Job.list_jobs_as_json(@zk)
+        jobs = MerrittZK::Job.list_jobs_as_json(zk)
         jobs = [] if jobs.nil?
         jobs.each do |job|
           key = "#{job[:profile]}:#{job[:bid]}"
@@ -229,7 +232,7 @@ module UC3Queue
     def jobs(params)
       jobs = []
       if enabled
-        jobs = MerrittZK::Job.list_jobs_as_json(@zk)
+        jobs = MerrittZK::Job.list_jobs_as_json(zk)
         status = 'PASS'
       else
         status = 'ERROR'
@@ -316,7 +319,7 @@ module UC3Queue
     def assembly_requests(route)
       jobs = []
       if enabled
-        jobs = MerrittZK::Access.list_jobs_as_json(@zk)
+        jobs = MerrittZK::Access.list_jobs_as_json(zk)
         status = 'PASS'
       else
         status = 'ERROR'
@@ -514,7 +517,7 @@ module UC3Queue
     def dump_nodes(route, params)
       nodedump = []
       if enabled
-        nodedump = MerrittZK::NodeDump.new(@zk, params).listing
+        nodedump = MerrittZK::NodeDump.new(zk, params).listing
         status = 'PASS'
       end
 
@@ -527,122 +530,130 @@ module UC3Queue
         dump_node_table(nodedump, status)
       end
     end
-    attr_reader :zk
 
     def pause_ingest
-      MerrittZK::Locks.lock_ingest_queue(@zk)
+      MerrittZK::Locks.lock_ingest_queue(zk)
     end
 
     def unpause_ingest
-      MerrittZK::Locks.unlock_ingest_queue(@zk)
+      MerrittZK::Locks.unlock_ingest_queue(zk)
     end
 
     def cleanup_ingest_queue
-      MerrittZK::Batch.delete_completed_batches(@zk)
+      MerrittZK::Batch.delete_completed_batches(zk)
     end
 
     def pause_access_small
-      MerrittZK::Locks.lock_small_access_queue(@zk)
+      MerrittZK::Locks.lock_small_access_queue(zk)
     end
 
     def unpause_access_small
-      MerrittZK::Locks.unlock_small_access_queue(@zk)
+      MerrittZK::Locks.unlock_small_access_queue(zk)
     end
 
     def pause_access_large
-      MerrittZK::Locks.lock_large_access_queue(@zk)
+      MerrittZK::Locks.lock_large_access_queue(zk)
     end
 
     def unpause_access_large
-      MerrittZK::Locks.unlock_large_access_queue(@zk)
+      MerrittZK::Locks.unlock_large_access_queue(zk)
     end
 
     def cleanup_access_queue
+      zkcli = zk
       puts 'Cleaning up access jobs'
-      jobs = MerrittZK::Access.list_jobs_as_json(@zk)
+      jobs = MerrittZK::Access.list_jobs_as_json(zkcli)
       jobs = [] if jobs.nil?
       jobs.each do |job|
         qn = job.fetch(:queueNode, MerrittZK::Access::SMALL).gsub(%r{^/access/}, '')
         j = MerrittZK::Access.new(qn, job.fetch(:id, ''))
-        j.load(@zk)
+        j.load(zkcli)
         next unless j.status.deletable?
 
-        j.delete(@zk)
+        j.delete(zkcli)
       end
     end
 
     def delete_access(queuename, queueid)
+      zkcli = zk
       j = MerrittZK::Access.new(queuename, queueid)
-      j.load(@zk)
-      j.set_status(@zk, MerrittZK::AccessState::Deleted)
+      j.load(zkcli)
+      j.set_status(zkcli, MerrittZK::AccessState::Deleted)
     end
 
     def delete_ingest_job(queueid)
+      zkcli = zk
       j = MerrittZK::Job.new(queueid)
-      j.load(@zk)
-      j.set_status(@zk, MerrittZK::JobState::Deleted)
+      j.load(zkcli)
+      j.set_status(zkcli, MerrittZK::JobState::Deleted)
     end
 
     def requeue_ingest_job(queueid)
+      zkcli = zk
       job = MerrittZK::Job.new(queueid)
-      job.load(@zk)
+      job.load(zkcli)
 
-      js = job.json_property(@zk, MerrittZK::ZkKeys::STATUS)
+      js = job.json_property(zkcli, MerrittZK::ZkKeys::STATUS)
       laststat = js.fetch(:last_successful_status, '')
 
-      job.lock(@zk)
+      job.lock(zkcli)
 
       case laststat
       when 'Pending', '', nil
-        job.set_status(@zk, MerrittZK::JobState::Estimating, job_retry: true)
+        job.set_status(zkcli, MerrittZK::JobState::Estimating, job_retry: true)
       when 'Estimating'
-        job.set_status(@zk, MerrittZK::JobState::Provisioning, job_retry: true)
+        job.set_status(zkcli, MerrittZK::JobState::Provisioning, job_retry: true)
       when 'Provisioning'
-        job.set_status(@zk, MerrittZK::JobState::Downloading, job_retry: true)
+        job.set_status(zkcli, MerrittZK::JobState::Downloading, job_retry: true)
       when 'Downloading'
-        job.set_status(@zk, MerrittZK::JobState::Processing, job_retry: true)
+        job.set_status(zkcli, MerrittZK::JobState::Processing, job_retry: true)
       when 'Processing'
-        job.set_status(@zk, MerrittZK::JobState::Recording, job_retry: true)
+        job.set_status(zkcli, MerrittZK::JobState::Recording, job_retry: true)
       when 'Recording'
-        job.set_status(@zk, MerrittZK::JobState::Notify, job_retry: true)
+        job.set_status(zkcli, MerrittZK::JobState::Notify, job_retry: true)
       end
 
-      job.unlock(@zk)
+      job.unlock(zkcli)
     end
 
     def hold_ingest_job(queueid)
+      zkcli = zk
       j = MerrittZK::Job.new(queueid)
-      j.load(@zk)
-      j.set_status(@zk, MerrittZK::JobState::Held)
+      j.load(zkcli)
+      j.set_status(zkcli, MerrittZK::JobState::Held)
     end
 
     def release_ingest_job(queueid)
+      zkcli = zk
       j = MerrittZK::Job.new(queueid)
-      j.load(@zk)
-      j.set_status(@zk, MerrittZK::JobState::Pending)
+      j.load(zkcli)
+      j.set_status(zkcli, MerrittZK::JobState::Pending)
     end
 
     def delete_ingest_batch(queueid)
+      zkcli = zk
       b = MerrittZK::Batch.new(queueid)
-      b.load(@zk)
-      b.set_status(@zk, MerrittZK::BatchState::Deleted)
+      b.load(zkcli)
+      b.set_status(zkcli, MerrittZK::BatchState::Deleted)
     end
 
     def update_reporting_ingest_batch(queueid)
+      zkcli = zk
       b = MerrittZK::Batch.new(queueid)
-      b.load(@zk)
-      b.set_status(@zk, MerrittZK::BatchState::UpdateReporting)
+      b.load(zkcli)
+      b.set_status(zkcli, MerrittZK::BatchState::UpdateReporting)
     end
 
     def requeue_access(queuename, queueid)
+      zkcli = zk
       j = MerrittZK::Access.new(queuename, queueid)
-      j.load(@zk)
-      j.set_status(@zk, MerrittZK::AccessState::Pending)
+      j.load(zkcli)
+      j.set_status(zkcli, MerrittZK::AccessState::Pending)
     end
 
     def fake_access
       MerrittZK::Access.create_assembly(
-        @zk,
+        zk,
         MerrittZK::Access::SMALL,
         {
           'cloud-content-byte': 17_079,
@@ -690,21 +701,23 @@ module UC3Queue
     end
 
     def create_node(path, data: nil)
-      return if @zk.exists?(path)
+      zkcli = zk
+      return if zkcli.exists?(path)
 
       if data.nil?
-        @zk.create(path)
+        zkcli.create(path)
       else
-        @zk.create(path, data: data)
+        zkcli.create(path, data: data)
       end
     rescue StandardError => e
       puts "Error creating node #{path}: #{e.message}"
     end
 
     def delete_node(path)
+      zkcli = zk
       return if path.split('/').length < 2
 
-      @zk.rm_rf(path) if @zk.exists?(path)
+      zkcli.rm_rf(path) if zkcli.exists?(path)
     rescue StandardError => e
       puts "Error deleting node #{path}: #{e.message}"
     end

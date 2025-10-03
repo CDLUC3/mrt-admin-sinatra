@@ -46,6 +46,20 @@ queries:
         1,
         1,
         'http://store:8080/store'
+      union
+      select
+        8889,
+        'magnetic-disk',
+        'cloud',
+        'on-line',
+        's3',
+        'physical',
+        'http',
+        'yaml:8889',
+        'nodeio',
+        1,
+        1,
+        'http://store:8080/store'
   /init/check-node-counts:
     sql: |
       select * from billing.daily_node_counts
