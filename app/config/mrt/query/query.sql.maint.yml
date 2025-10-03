@@ -1,5 +1,5 @@
 queries:
-  /ops/db-queue/collections/storage-node-config:
+  /ops/collections/storage-node-config:
     sql: |
       with node_counts as (
         select 
@@ -23,14 +23,9 @@ queries:
       from inv.inv_collections c
       left join node_counts nc
         on c.id = nc.inv_collection_id
-      where exists (
-        select 1 from inv.inv_objects o
-        where 
-          o.id = c.inv_object_id
-          and o.aggregate_role = 'MRT-collection'
-      )
+      {{{COLLFILTER}}}
       order by c.mnemonic
-  /ops/db-queue/collections/storage-node-config/collection:
+  /ops/collections/storage-node-config/collection:
     sql: |
       with collection as (
         select ? as id

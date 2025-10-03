@@ -63,15 +63,6 @@ queries:
       from inv.inv_objects o
       left join inv.inv_collections c on c.inv_object_id = o.id
       where o.aggregate_role='MRT-collection'
-  /queries/misc/collection:
-    sql: |
-      select ark, name from inv.inv_collections
-      where exists (
-        select 1 from inv.inv_objects o
-        where 
-          o.id = inv.inv_collections.inv_object_id
-          and o.aggregate_role = 'MRT-collection'
-      ) order by name
   /queries/misc/admin-types:
     sql: |
       select 

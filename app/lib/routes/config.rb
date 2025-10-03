@@ -33,7 +33,7 @@ module Sinatra
 
     def get_collections
       data = {}
-      UC3Query::QueryClient.client.query('/queries/misc/collection', {}).table_data.each do |row|
+      UC3Query::QueryClient.client.query('/queries/misc/collections', {}).table_data.each do |row|
         data[row[:ark]] = row[:name]
       end
       data

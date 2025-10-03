@@ -1,4 +1,13 @@
 fragments:
+  COLLFILTER:
+    where
+      c.mnemonic not in ('mrt_curatorial_classes', 'mrt_owners', 'mrt_system_classes')
+      and exists (
+        select 1 from inv.inv_objects o
+        where 
+          o.id = c.inv_object_id
+          and o.aggregate_role = 'MRT-collection'
+      )
   MIME:
     select
       distinct
@@ -726,13 +735,13 @@ queries:
     totals: true
     sql: |
       select
-        id as inv_collection_id,
-        mnemonic,
-        name as collection_name,
-        ark
+        c.id as inv_collection_id,
+        c.mnemonic,
+        c.name as collection_name,
+        c.ark
       from
-        inv.inv_collections
-      where
-        mnemonic is not null
+        inv.inv_collections c
+      {{{COLLFILTER}}}
+        and c.mnemonic is not null
       order by
-        mnemonic
+        c.mnemonic

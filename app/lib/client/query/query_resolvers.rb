@@ -98,7 +98,7 @@ module UC3Query
       row['actions'] = []
       row['actions'] << {
         value: 'Manage Nodes',
-        href: '/ops/db-queue/collections/storage-node-config/collection' \
+        href: '/ops/collections/storage-node-config/collection' \
               "?inv_collection_id=#{row['id']}&primary=#{prim}",
         cssclass: 'button',
         disabled: storage_mgt_disabled?(strict: true) || prim.empty?

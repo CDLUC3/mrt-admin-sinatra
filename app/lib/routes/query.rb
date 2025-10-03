@@ -110,7 +110,7 @@ module Sinatra
         UC3Query::QueryClient.client.query_update(request.path, request.params).to_json
       end
 
-      app.get '/ops/db-queue/collections/storage-node-config' do
+      app.get '/ops/collections/storage-node-config' do
         adminui_show_table(
           AdminUI::Context.new(request.path),
           UC3Query::QueryClient.client.query(
@@ -143,11 +143,16 @@ module Sinatra
         )
       end
 
-      app.get '/ops/db-queue/**' do
-        adminui_show_table(
-          AdminUI::Context.new(request.path),
-          UC3Query::QueryClient.client.query(request.path, request.params)
-        )
+      [
+        '/ops/db-queue/**',
+        '/ops/collections/**'
+      ].each do |path|
+        app.get path do
+          adminui_show_table(
+            AdminUI::Context.new(request.path),
+            UC3Query::QueryClient.client.query(request.path, request.params)
+          )
+        end
       end
 
       # This should be a post request, but it is easier to automate as a consistency check if it is done as a get
