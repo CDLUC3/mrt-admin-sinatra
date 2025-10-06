@@ -299,7 +299,7 @@ module UC3
           /ops/db-queue/audit/counts-by-state
           /ops/db-queue/audit/oldest-audit-check
           /ops/db-queue/audit/30-days
-          /ops/db-queue/audit/active-batches/view
+          /ops/db-queue/audit/active-batches
           /ops/db-queue/audit/new-ucb-content
           /ops/db-queue-update/audit/reset-new-ucb-content
           /ops/db-queue/replication/failed

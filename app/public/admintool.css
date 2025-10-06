@@ -242,3 +242,13 @@ form.admintool label {
   display: inline-block;
   font-weight: bold;
 }
+
+input[type='submit'] {
+  padding: 5px 10px;
+  margin: 3px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  border-radius: 8px; 
+}

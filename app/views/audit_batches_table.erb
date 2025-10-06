@@ -1,0 +1,14 @@
+<div>
+<fieldset>
+  <legend>Release Old Audit Batches</legend>
+  <% hours.each do |hour| %>
+  <form method="POST" action="/queries-update/audit/active-batches-clear">
+    <input type="hidden" name="hours" value="<%= hour %>"/>
+    <input type="submit" value="Release Batches Older than <%= hour %> Hours"/>
+  </form>
+  <% end %>
+</fieldset>
+</div>
+<div class='tablewrap'>
+  <%= table.render %>
+</div>

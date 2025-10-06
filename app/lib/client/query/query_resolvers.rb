@@ -103,6 +103,13 @@ module UC3Query
         cssclass: 'button',
         disabled: storage_mgt_disabled?(strict: true) || prim.empty?
       }
+      row['actions'] << {
+        value: 'Obsolete Nodes',
+        href: "/ops/collections/obsolete-node-data/#{row['mnemonic']}_Obsolete_Node_Data" \
+              "?inv_collection_id=#{row['id']}&primary=#{prim}",
+        cssclass: 'button',
+        disabled: storage_mgt_disabled?(strict: true) || prim.empty?
+      }
       row['status'] = 'FAIL' if prim.empty?
       row
     end

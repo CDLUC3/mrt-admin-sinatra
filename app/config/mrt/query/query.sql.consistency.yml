@@ -1151,7 +1151,7 @@ queries:
       order by
         verified
       LIMIT 1
-  /ops/db-queue/audit/active-batches/view:
+  /ops/db-queue/audit/active-batches:
     status: PASS
     status_check: true
     sql: |

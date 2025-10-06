@@ -100,9 +100,22 @@ module Sinatra
         )
       end
 
+      app.get '/ops/db-queue/audit/active-batches' do
+        erb :audit_batches_table,
+          :layout => :page_layout,
+          :locals => {
+            context: AdminUI::Context.new(request.path),
+            table: UC3Query::QueryClient.client.query(
+              request.path,
+              request.params
+            ),
+            hours: [24, 2, 1]
+          }
+      end
+
       app.post '/queries-update/audit/active-batches-clear' do
         UC3Query::QueryClient.client.query_update(request.path, request.params)
-        redirect '/ops/db-queue/audit/active-batches/view'
+        redirect '/ops/db-queue/audit/active-batches'
       end
 
       app.post '/queries-update/**' do
@@ -158,8 +171,7 @@ module Sinatra
       end
 
       [
-        '/ops/db-queue/**',
-        '/ops/collections/**'
+        '/ops/db-queue/**'
       ].each do |path|
         app.get path do
           adminui_show_table(

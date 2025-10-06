@@ -12,13 +12,15 @@
 <div>
 <fieldset>
   <legend>Add Storage Node</legend>
+  <form method="POST" action="/ops/collections/storage-node-add">
   <select id="addnode" name="addnode">
     <option value=""></option>
     <% nodes.each do |key, value| %>
       <option value="<%= key %>"><%= value %></option>
     <% end %>
   </select>
-  <input type="submit" disabled value="Add Node"/">
+  <input type="submit" value="Add Node"/">
+  </form>
 </fieldset>
 </div>
 <div class='tablewrap'>
