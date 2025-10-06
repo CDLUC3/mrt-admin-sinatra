@@ -38,8 +38,8 @@ module UC3Code
             format: ARTFORMAT,
             namespace: ARTNAMESPACE
           )
-        rescue StandardError => e
-          puts "Client ERR: #{e}: #{@client}"
+        rescue StandardError
+          # puts "Client ERR: #{e}: #{@client}"
           return res
         end
         pv.versions.each do |v|
@@ -63,8 +63,8 @@ module UC3Code
             format: ARTFORMAT,
             namespace: ARTNAMESPACE
           )
-        rescue StandardError => e
-          puts "Client ERR: #{e}: #{@client}"
+        rescue StandardError
+          # puts "Client ERR: #{e}: #{@client}"
           return res
         end
         pv.versions.each do |v|

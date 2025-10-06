@@ -115,7 +115,18 @@ module Sinatra
 
       app.post '/queries-update/audit/active-batches-clear' do
         UC3Query::QueryClient.client.query_update(request.path, request.params)
-        redirect '/ops/db-queue/audit/active-batches'
+        redirect request.referrer
+      end
+
+      app.post '/queries-update/storage-nodes/add' do
+        res = UC3Query::QueryClient.client.query_update(request.path, request.params)
+        puts res.to_json
+        if res.fetch(:status, 'FAIL') == 'OK'
+          res = UC3Query::QueryClient.client.query_update('/queries-update/storage-nodes/trigger-replication',
+            request.params)
+          puts res.to_json
+        end
+        redirect request.referrer
       end
 
       app.post '/queries-update/**' do
@@ -133,7 +144,10 @@ module Sinatra
               request.params,
               resolver: UC3Query::QueryResolvers.method(:collection_nodes_resolver)
             ),
-            nodes: get_nodes
+            nodes: get_nodes,
+            inv_collection_id: request.params.fetch('inv_collection_id', '-1'),
+            mnemonic: request.params.fetch('mnemonic', 'coll'),
+            primary: request.params.fetch('primary', '-1')
           }
       end
 

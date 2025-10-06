@@ -99,7 +99,7 @@ module UC3Query
       row['actions'] << {
         value: 'Manage Nodes',
         href: "/ops/collections/storage-node-config/#{row['mnemonic']}_Storage_Nodes" \
-              "?inv_collection_id=#{row['id']}&primary=#{prim}",
+              "?inv_collection_id=#{row['id']}&primary=#{prim}&mnemonic=#{row['mnemonic']}",
         cssclass: 'button',
         disabled: storage_mgt_disabled?(strict: true) || prim.empty?
       }
@@ -116,12 +116,14 @@ module UC3Query
 
     def self.collection_nodes_resolver(row)
       row['actions'] = []
-      unless row['role'] == 'primary'
+      if row['role'] == 'secondary'
         row['actions'] << {
           value: 'Remove Secondary Node',
-          href: '#',
+          href: "/queries-update/storage-nodes/delete?inv_collection_id=#{row['inv_collection_id']}" \
+                "&node_number=#{row['node_number']}",
           cssclass: 'button',
-          disabled: true
+          post: true,
+          disabled: storage_mgt_disabled?
         }
       end
       row

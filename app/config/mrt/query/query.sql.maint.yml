@@ -32,13 +32,13 @@ queries:
       ),
       nprimary as (
         select
-          n.id,
+          (select id from collection) as inv_collection_id,
+          n.id as inv_node_id,
           'primary' as role,
           n.number as node_number,
           n.description,
           n.access_mode,
           0 as count,
-          0 as total,
           100 as pct_complete,
           '' as actions
         from inv.inv_nodes n
@@ -46,13 +46,13 @@ queries:
       ),
       nsecondary as (
         select
-          n.id,
+          c.id as inv_collection_id,
+          n.id as inv_node_id,
           'secondary' as role,
           n.number as node_number,
           n.description,
           n.access_mode,
           0 as count,
-          0 as total,
           100 as pct_complete,
           '' as actions
         from
@@ -64,13 +64,13 @@ queries:
       ),
       actual as (
         select 
-          n.id,
+          c.id as inv_collection_id,
+          n.id as inv_node_id,
           inio.role,
           n.number as node_number, 
           n.description,
           n.access_mode,
           count(*) as count,
-          0 as total,
           100 as pct_complete,
           '' as actions
         from inv.inv_collections_inv_objects icio
@@ -89,6 +89,32 @@ queries:
       )
 
       select a.*, pc.count as total from actual a, pcount pc
+      where a.role = 'primary'
+      union
+      select a.*, pc.count as total from actual a, pcount pc
+      where a.role = 'secondary'
+      and exists (
+          select 1 from nsecondary s 
+          where a.node_number = s.node_number
+        )
+      union
+      select 
+        a.inv_collection_id,
+        a.inv_node_id,
+        'obsolete' as role,
+        a.node_number,
+        a.description,
+        a.access_mode,
+        a.count,
+        pc.count as total,
+        100 as pct_complete,
+        '' as actions
+      from actual a, pcount pc
+      where a.role = 'secondary'
+      and not exists (
+          select 1 from nsecondary s
+          where a.node_number = s.node_number
+        )
       union
       select p.*, pc.count as total from nprimary p, pcount pc
         where not exists (

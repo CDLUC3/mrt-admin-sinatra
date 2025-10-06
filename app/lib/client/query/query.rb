@@ -181,9 +181,7 @@ module UC3Query
 
         params = resolve_parameters(query.fetch(:parameters, []), urlparams)
 
-        puts "#{purpose} SQL: #{sql}; Params: #{params}; #{urlparams}"
         stmt.execute(*params)
-        puts "#{purpose} SQL: #{sql}; Params: #{params}; #{stmt.affected_rows}"
       rescue StandardError => e
         return {
           status: 'FAIL',

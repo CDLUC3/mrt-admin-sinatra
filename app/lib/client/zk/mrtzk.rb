@@ -25,7 +25,6 @@ module UC3Queue
       @zkconn = map.fetch('zkconn', '')
       raise 'ZK connection string not defined' if @zkconn.empty?
 
-      puts "Creating Zookeeper connection to #{@zkconn}."
       # NOTE: that this timeout (in sec) is for the creation of the connection
       ZK.open(@zkconn, timeout: 2) do |zk|
         raise "ZK init error #{@zkconn}" if zk.nil?

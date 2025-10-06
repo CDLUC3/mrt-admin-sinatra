@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'octokit'
-require 'aws-sdk-ssm'
+require 'aws-sdk-ssm' unless ENV.fetch('MERRITT_ECS', '').empty?
 require_relative '../../ui/table'
 require_relative '../uc3_client'
 
@@ -27,8 +27,8 @@ module UC3Code
       opts[:access_token] = token unless token.empty?
       begin
         @client = Octokit::Client.new(opts)
-      rescue StandardError => e
-        puts "GitHub client error #{e}"
+      rescue StandardError
+        # puts "GitHub client error #{e}"
       end
       @tags = {}
       @since = Time.now - (2 * 365 * 24 * 60 * 60)

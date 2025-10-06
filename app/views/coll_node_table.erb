@@ -12,17 +12,39 @@
 <div>
 <fieldset>
   <legend>Add Storage Node</legend>
-  <form method="POST" action="/ops/collections/storage-node-add">
-  <select id="addnode" name="addnode">
+  <form method="POST" action="/queries-update/storage-nodes/add">
+  <input type="hidden" name="inv_collection_id" value="<%= inv_collection_id %>">
+  <select id="addnode" name="node_number">
     <option value=""></option>
     <% nodes.each do |key, value| %>
       <option value="<%= key %>"><%= value %></option>
     <% end %>
   </select>
-  <input type="submit" value="Add Node"/">
+  <input id="submit" type="submit" disabled value="Add Node"/">
   </form>
 </fieldset>
 </div>
 <div class='tablewrap'>
   <%= table.render %>
 </div>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $("#addnode").on("change", function(){
+      $("#submit").attr("disabled", true);
+      var n = $(this).val();
+      if (n == "") {
+        return;
+      }
+      var found = false;
+      $("td.node_number").each(function(){
+        if ($(this).parent("tr").find("td.role").text() == "obsolete") {
+          return;
+        }
+        found = found || ($(this).text() == n);
+      })
+      if (!found) {
+        $("#submit").attr("disabled", false);
+      }
+    })
+  });
+</script>

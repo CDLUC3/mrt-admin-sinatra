@@ -39,7 +39,7 @@ module UC3S3
         )
         @config_objects = YAML.safe_load(resp.body.read, symbolize_names: true)
       rescue StandardError => e
-        puts e
+        # puts e
         raise "Unable to load configuration data from S3: #{e}"
       end
 
@@ -50,8 +50,7 @@ module UC3S3
       )
       super(enabled: !@config_objects.empty?)
     rescue StandardError => e
-      puts e
-      puts e.backtrace
+      # puts e
       super(enabled: false, message: e.to_s)
     end
 

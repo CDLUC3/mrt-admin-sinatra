@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'aws-sdk-ssm'
+require 'aws-sdk-ssm' unless ENV.fetch('MERRITT_ECS', '').empty?
 require 'mustache'
 require 'yaml'
 require_relative '../ui/table'
@@ -53,21 +53,20 @@ module UC3
 
     def record_status(path, status)
       qc = UC3Query::QueryClient.client
-      if !qc.nil? && qc.enabled
-        begin
-          params = {}
-          params['check_name'] = path
-          params['status'] = status.to_s
-          qc.query_update(
-            '/ops/log-consistency',
-            params,
-            purpose: 'Record Consistency status'
-          )
-        rescue StandardError => e
-          puts "Error recording status for #{path}: #{e.message}"
-        end
+      return unless !qc.nil? && qc.enabled
+
+      begin
+        params = {}
+        params['check_name'] = path
+        params['status'] = status.to_s
+        qc.query_update(
+          '/ops/log-consistency',
+          params,
+          purpose: 'Record Consistency status'
+        )
+      rescue StandardError => e
+        puts "Error recording status for #{path}: #{e.message}"
       end
-      puts "Status for #{path} is #{status}"
     end
 
     def date_format(date, convert_timezone: false)
@@ -139,9 +138,11 @@ module UC3
     end
 
     def self.lookup_map(map, key: nil, symbolize_names: false)
-      ssm = Aws::SSM::Client.new(
-        region: UC3::UC3Client.region
-      )
+      unless ENV.fetch('MERRITT_ECS', '').empty?
+        ssm = Aws::SSM::Client.new(
+          region: UC3::UC3Client.region
+        )
+      end
       map = map.fetch(key, {}) unless key.nil?
       map.clone.each do |key, value|
         if key == '_fixed'

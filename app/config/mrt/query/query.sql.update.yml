@@ -131,7 +131,7 @@ queries:
         select
           1
         from
-          inv_collections_inv_objects icio
+          inv.inv_collections_inv_objects icio
         where
           icio.inv_collection_id = ?
         and

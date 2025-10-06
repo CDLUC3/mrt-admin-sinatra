@@ -30,8 +30,8 @@ module UC3Code
           imglist = @client.list_images(
             repository_name: image
           )
-        rescue StandardError => e
-          puts "Client ERR: #{e}: #{@client}"
+        rescue StandardError
+          # puts "Client ERR: #{e}: #{@client}"
           return res
         end
         imglist.image_ids.each do |img|
@@ -194,8 +194,8 @@ module UC3Code
             arr << t
           end
         end
-      rescue StandardError => e
-        puts "Client ERR: #{e}"
+      rescue StandardError
+        # puts "Client ERR: #{e}"
       end
       arr
     end
