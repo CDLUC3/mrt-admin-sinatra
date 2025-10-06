@@ -106,9 +106,9 @@ queries:
         a.description,
         a.access_mode,
         a.count,
-        pc.count as total,
         100 as pct_complete,
-        '' as actions
+        '' as actions,
+        pc.count as total
       from actual a, pcount pc
       where a.role = 'secondary'
       and not exists (

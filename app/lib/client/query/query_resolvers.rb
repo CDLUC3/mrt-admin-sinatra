@@ -103,13 +103,6 @@ module UC3Query
         cssclass: 'button',
         disabled: storage_mgt_disabled?(strict: true) || prim.empty?
       }
-      row['actions'] << {
-        value: 'Obsolete Nodes',
-        href: "/ops/collections/obsolete-node-data/#{row['mnemonic']}_Obsolete_Node_Data" \
-              "?inv_collection_id=#{row['id']}&primary=#{prim}",
-        cssclass: 'button',
-        disabled: storage_mgt_disabled?(strict: true) || prim.empty?
-      }
       row['status'] = 'FAIL' if prim.empty?
       row
     end
@@ -122,6 +115,18 @@ module UC3Query
           href: "/queries-update/storage-nodes/delete?inv_collection_id=#{row['inv_collection_id']}" \
                 "&node_number=#{row['node_number']}",
           cssclass: 'button',
+          post: true,
+          disabled: storage_mgt_disabled?
+        }
+      end
+
+      if row['role'] == 'obsolete'
+        row['actions'] << {
+          value: 'Start Deletion Process',
+          title: 'Initiate a process to delete data from this node.  Deletions will occur in batches of 50.',
+          href: "/queries-update/storage-nodes/remove-obsolete?inv_collection_id=#{row['inv_collection_id']}" \
+                "&node_number=#{row['node_number']}",
+          cssclass: 'button button_red',
           post: true,
           disabled: storage_mgt_disabled?
         }
