@@ -124,7 +124,7 @@ module UC3Query
         row['actions'] << {
           value: 'Start Deletion Process',
           title: 'Initiate a process to delete data from this node.  Deletions will occur in batches of 50.',
-          href: "/queries-update/storage-nodes/remove-obsolete?inv_collection_id=#{row['inv_collection_id']}" \
+          href: "/ops/storage-nodes/remove-obsolete?inv_collection_id=#{row['inv_collection_id']}" \
                 "&node_number=#{row['node_number']}",
           cssclass: 'button button_red',
           post: true,

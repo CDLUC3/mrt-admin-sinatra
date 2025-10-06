@@ -161,7 +161,7 @@ queries:
       type: integer
     - name: node_number
       type: integer
-  /queries-update/storage-nodes/get-batch-of-arks-to-delete:
+  /ops/storage-nodes/remove-obsolete:
     update: false
     sql: |
       SELECT
@@ -190,7 +190,9 @@ queries:
         )
         limit 50
     parameters:
-    - name: inv_node_id
+    - name: inv_collection_id
+      type: integer
+    - name: node_number
       type: integer
   /queries-update/storage-maints/clear-entries-for-ark:
     update: true

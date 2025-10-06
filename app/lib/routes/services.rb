@@ -195,6 +195,31 @@ module Sinatra
         { uri: deleteurl, message: "Exception while rebuilding inventory: #{e}" }.to_json
       end
 
+      app.post '/ops/storage-nodes/remove-obsolete' do
+        arks = UC3Query::QueryClient.client.run_query(request.path, request.params)
+        nodenumber = request.params.fetch('node_number', -1)
+        success = 0
+        fail = 0
+        puts "ARKS #{arks}"
+        arks.each do |row|
+          ark = row.fetch('ark', '')
+          next if ark.empty?
+
+          deleteurl = "#{replic_host}/delete/#{nodenumber}/#{CGI.escape(ark)}"
+          puts deleteurl
+          dresp = delete_url_resp(deleteurl)
+          if dresp.code.to_i == 200
+            success += 1
+          else
+            fail += 1
+          end
+        end
+
+        content_type :json
+        { message: "Deleted objects: #{success}; failed: #{fail}" }.to_json
+      end
+
+
       app.get '/ops/storage/manifest' do
         url = "#{store_host}/manifest/#{request.params['node_number']}/#{CGI.escape(request.params['ark'])}"
         puts "URL: #{url}"
