@@ -175,6 +175,7 @@ module UC3Query
         cssclass: 'button'
       }
       status = row.fetch('scan_status', '')
+      status = '' if status.nil?
       if %w[completed cancelled].include?(status) || status.empty?
         row['actions'] << {
           value: 'Start Scan',
