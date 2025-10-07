@@ -174,16 +174,16 @@ module UC3Query
         href: "/ops/storage/scan/history?node_number=#{row['node_number']}",
         cssclass: 'button'
       }
-      if %w['' completed cancelled].include?(row['scan_status'])
+      if %w['' completed cancelled].include?(row.fetch('scan_status', ''))
         row['actions'] << {
           value: 'Start Scan',
-          href: "/ops/storage/scan/start?node_number=#{row['node_number']}",
+          href: "/ops/storage/scan/start?node_number=#{row.fetch('node_number', 0)}",
           cssclass: 'button',
           post: true,
           disabled: storage_mgt_disabled?(strict: true)
         }
       end
-      if %w[pending].include?(row['scan_status'])
+      if %w[pending].include?(row.fetch('scan_status', ''))
         row['actions'] << {
           value: 'Resume Scan',
           href: "/ops/storage/scan/resume?inv_scan_id=#{row['inv_scan_id']}",
@@ -192,7 +192,7 @@ module UC3Query
           disabled: storage_mgt_disabled?(strict: true)
         }
       end
-      if %w[pending started].include?(row['scan_status'])
+      if %w[pending started].include?(row.fetch('scan_status', ''))
         row['actions'] << {
           value: 'Cancel Scan',
           href: "/ops/storage/scan/cancel?inv_scan_id=#{row['inv_scan_id']}",
@@ -204,25 +204,25 @@ module UC3Query
       if row.fetch('num_review', 0).positive?
         row['num_review'] = {
           value: row['num_review'],
-          href: "/ops/storage/scan/cancel?node_number=#{row['node_number']}&status=review"
+          href: "/ops/storage/scan/cancel?node_number=#{row.fetch('node_number', 0)}&status=review"
         }
       end
       if row.fetch('num_hold', 0).positive?
         row['num_hold'] = {
           value: row['num_hold'],
-          href: "/ops/storage/scan/cancel?node_number=#{row['node_number']}&status=review"
+          href: "/ops/storage/scan/cancel?node_number=#{row.fetch('node_number', 0)}&status=review"
         }
       end
       if row.fetch('num_deletes', 0).positive?
         row['num_deletes'] = {
           value: row['num_deletes'],
-          href: "/ops/storage/scan/cancel?node_number=#{row['node_number']}&status=review"
+          href: "/ops/storage/scan/cancel?node_number=#{row.fetch('node_number', 0)}&status=review"
         }
       end
       if row.fetch('num_maints', 0).positive?
         row['num_maints'] = {
           value: row['num_maints'],
-          href: "/ops/storage/scan/cancel?node_number=#{row['node_number']}&status=review"
+          href: "/ops/storage/scan/cancel?node_number=#{row.fetch('node_number', 0)}&status=review"
         }
       end
       row
