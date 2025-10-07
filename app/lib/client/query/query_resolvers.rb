@@ -174,7 +174,7 @@ module UC3Query
         href: "/ops/storage/scan/history?node_number=#{row['node_number']}",
         cssclass: 'button'
       }
-      if %w['' completed cancelled].include?(row.fetch('scan_status', ''))
+      if ['', 'completed', 'cancelled'].include?(row.fetch('scan_status', ''))
         row['actions'] << {
           value: 'Start Scan',
           href: "/ops/storage/scan/start?node_number=#{row.fetch('node_number', 0)}",
