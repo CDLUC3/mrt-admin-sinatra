@@ -174,7 +174,9 @@ module UC3Query
         href: "/ops/storage/scan/history?node_number=#{row['node_number']}",
         cssclass: 'button'
       }
-      if ['', 'completed', 'cancelled'].include?(row.fetch('scan_status', ''))
+      status = row.fetch('scan_status', '')
+      puts "Status [#{status}]"
+      if ['', 'completed', 'cancelled'].include?(status)
         row['actions'] << {
           value: 'Start Scan',
           href: "/ops/storage/scan/start?node_number=#{row.fetch('node_number', 0)}",
@@ -183,7 +185,7 @@ module UC3Query
           disabled: storage_mgt_disabled?(strict: true)
         }
       end
-      if %w[pending].include?(row.fetch('scan_status', ''))
+      if %w[pending].include?(status)
         row['actions'] << {
           value: 'Resume Scan',
           href: "/ops/storage/scan/resume?inv_scan_id=#{row['inv_scan_id']}",
@@ -192,7 +194,7 @@ module UC3Query
           disabled: storage_mgt_disabled?(strict: true)
         }
       end
-      if %w[pending started].include?(row.fetch('scan_status', ''))
+      if %w[pending started].include?(status)
         row['actions'] << {
           value: 'Cancel Scan',
           href: "/ops/storage/scan/cancel?inv_scan_id=#{row['inv_scan_id']}",
