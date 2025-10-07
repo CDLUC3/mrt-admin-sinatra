@@ -80,6 +80,9 @@ th.jobdata,
 td.jobdata {
   width: 180px;
 }
+
+th.nodedesc,
+td.nodedesc,
 th.metadata,
 td.metadata {
   width: 250px;
@@ -149,6 +152,9 @@ td.mnemonics span.val {
   white-space: nowrap;
   overflow-x: clip;
 }
+
+th.nodedesc span.val,
+td.nodedesc span.val,
 td.metadata span.val,
 td.artifacts span.val,
 td.images span.val {
@@ -251,4 +257,8 @@ input[type='submit'] {
   display: inline-block;
   font-size: 16px;
   border-radius: 8px; 
+}
+
+form {
+  display: inline-block;
 }

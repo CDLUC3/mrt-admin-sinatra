@@ -142,7 +142,8 @@ module Sinatra
             table: UC3Query::QueryClient.client.query(
               '/ops/collections/storage-node-config/collection',
               request.params,
-              resolver: UC3Query::QueryResolvers.method(:collection_nodes_resolver)
+              resolver: UC3Query::QueryResolvers.method(:single_collection_nodes_resolver),
+              dispcols: %w[role node_number description access_mode count total pct_complete actions]
             ),
             nodes: get_nodes,
             inv_collection_id: request.params.fetch('inv_collection_id', '-1'),
@@ -163,14 +164,20 @@ module Sinatra
       end
 
       app.get '/ops/storage/scans' do
-        adminui_show_table(
-          AdminUI::Context.new(request.path),
-          UC3Query::QueryClient.client.query(
-            request.path,
-            request.params,
-            resolver: UC3Query::QueryResolvers.method(:storage_scan_resolver)
-          )
-        )
+        erb :storage_scan_table,
+          :layout => :page_layout,
+          :locals => {
+            context: AdminUI::Context.new(request.path),
+            table: UC3Query::QueryClient.client.query(
+              request.path,
+              request.params,
+              resolver: UC3Query::QueryResolvers.method(:storage_scan_resolver),
+              dispcols: %w[
+                nodedesc scan_status created num_review num_deletes num_holds num_maints
+                keys_processed percent_complete actions
+]
+            )
+          }
       end
 
       app.get '/ops/db-queue/audit/counts-by-state' do
@@ -185,7 +192,8 @@ module Sinatra
       end
 
       [
-        '/ops/db-queue/**'
+        '/ops/db-queue/**',
+        '/ops/storage/scan/**'
       ].each do |path|
         app.get path do
           adminui_show_table(

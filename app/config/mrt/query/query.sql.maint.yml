@@ -135,7 +135,7 @@ queries:
   /ops/storage/scans:
     sql: |
       select
-        n.number,
+        n.number as node_number,
         case
           when description is null then 'No description'
           else description
@@ -208,6 +208,54 @@ queries:
         on ls.inv_storage_scan_id = iss.id
       order by
         pcount desc
+  /ops/storage/scan/history:
+    sql: |
+      select
+        n.number as node_number,
+        case
+          when description is null then 'No description'
+          else description
+        end as description,
+        access_mode,
+        nc.file_count + nc.object_count as pcount,
+        s.created,
+        s.updated,
+        s.scan_status,
+        s.scan_type,
+        s.keys_processed,
+        (
+          select
+            max(created)
+          from
+            inv.inv_storage_scans ls
+          where
+            n.id = ls.inv_node_id
+        ) as latest_scan,
+        (
+          select
+            count(*)
+          from
+            inv.inv_storage_maints ism
+          where
+            s.id = ism.inv_storage_scan_id
+          and
+            maint_status = 'review'
+        ) as num_review,
+        s.id
+      from
+        inv.inv_nodes n
+      inner join inv.inv_storage_scans s
+        on n.id = s.inv_node_id
+      inner join billing.node_counts nc
+        on n.id = nc.inv_node_id
+      where
+        n.number = ?
+      order by
+        pcount desc,
+        created desc
+    parameters:
+    - name: node_number
+      type: integer
   /ops/log-consistency:
     update: true
     sql: |

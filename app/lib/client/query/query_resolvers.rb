@@ -107,7 +107,8 @@ module UC3Query
       row
     end
 
-    def self.collection_nodes_resolver(row)
+    def self.single_collection_nodes_resolver(row)
+      row['pct_complete'] = row['total'].to_i.zero? ? 100.0 : 100.0 * row['count'].to_i / row['total'].to_i
       row['actions'] = []
       if row['role'] == 'secondary'
         row['actions'] << {
@@ -149,6 +150,81 @@ module UC3Query
     end
 
     def self.storage_scan_resolver(row)
+      row['nodedesc'] = [
+        row['node_number'],
+        row['description'],
+        row['access_mode'],
+        "Count: #{row['pcount']}"
+      ]
+
+      # storage-delete-node-key
+      # storage-delete-node-page
+      # storage-perform-delete-node-key
+      # storage-perform-delete-node-batch
+      # storage-hold-node-key
+      # storage-hold-node-page
+      # storage-review-node-key
+      # storage-review-node-page
+      # storage-review-csv
+      # apply-review-changes
+
+      row['actions'] = []
+      row['actions'] << {
+        value: 'Scan History',
+        href: "/ops/storage/scan/history?node_number=#{row['node_number']}",
+        cssclass: 'button'
+      }
+      if %w['' completed cancelled].include?(row['scan_status'])
+        row['actions'] << {
+          value: 'Start Scan',
+          href: "/ops/storage/scan/start?node_number=#{row['node_number']}",
+          cssclass: 'button',
+          post: true,
+          disabled: storage_mgt_disabled?(strict: true)
+        }
+      end
+      if %w[pending].include?(row['scan_status'])
+        row['actions'] << {
+          value: 'Resume Scan',
+          href: "/ops/storage/scan/resume?inv_scan_id=#{row['inv_scan_id']}",
+          cssclass: 'button',
+          post: true,
+          disabled: storage_mgt_disabled?(strict: true)
+        }
+      end
+      if %w[pending started].include?(row['scan_status'])
+        row['actions'] << {
+          value: 'Cancel Scan',
+          href: "/ops/storage/scan/cancel?inv_scan_id=#{row['inv_scan_id']}",
+          cssclass: 'button',
+          post: true,
+          disabled: storage_mgt_disabled?(strict: true)
+        }
+      end
+      if row.fetch('num_review', 0).positive?
+        row['num_review'] = {
+          value: row['num_review'],
+          href: "/ops/storage/scan/cancel?node_number=#{row['node_number']}&status=review"
+        }
+      end
+      if row.fetch('num_hold', 0).positive?
+        row['num_hold'] = {
+          value: row['num_hold'],
+          href: "/ops/storage/scan/cancel?node_number=#{row['node_number']}&status=review"
+        }
+      end
+      if row.fetch('num_deletes', 0).positive?
+        row['num_deletes'] = {
+          value: row['num_deletes'],
+          href: "/ops/storage/scan/cancel?node_number=#{row['node_number']}&status=review"
+        }
+      end
+      if row.fetch('num_maints', 0).positive?
+        row['num_maints'] = {
+          value: row['num_maints'],
+          href: "/ops/storage/scan/cancel?node_number=#{row['node_number']}&status=review"
+        }
+      end
       row
     end
   end

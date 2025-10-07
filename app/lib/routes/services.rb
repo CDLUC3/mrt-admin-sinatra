@@ -200,7 +200,6 @@ module Sinatra
         nodenumber = request.params.fetch('node_number', -1)
         success = 0
         fail = 0
-        puts "ARKS #{arks}"
         arks.each do |row|
           ark = row.fetch('ark', '')
           next if ark.empty?
@@ -219,7 +218,6 @@ module Sinatra
         { message: "Deleted objects: #{success}; failed: #{fail}" }.to_json
       end
 
-
       app.get '/ops/storage/manifest' do
         url = "#{store_host}/manifest/#{request.params['node_number']}/#{CGI.escape(request.params['ark'])}"
         puts "URL: #{url}"
@@ -231,9 +229,7 @@ module Sinatra
       end
 
       app.get '/ops/storage/manifest-yaml' do
-        puts "Manifest URL: #{manifest_url(request.params)}"
         data = get_url_body(manifest_url(request.params))
-        puts "Manifest Data: #{data.inspect}"
         content_type :yaml
         ManifestToYaml.new.load_xml(data)
       end
@@ -243,8 +239,30 @@ module Sinatra
         ark = request.params['ark']
         ver = request.params['version_number']
         url = "#{store_host}/ingestlink/#{nodenum}/#{CGI.escape(ark)}/#{ver}?presign=true"
-        puts "URL: #{url}"
         get_url(url, ctype: :text)
+      end
+
+      app.post '/ops/storage/scans/cancel-all-scans' do
+        post_url("#{replic_host}/scan/allow/false?t=json")
+      end
+
+      app.post '/ops/storage/scans/allow-all' do
+        post_url("#{replic_host}/scan/allow/true?t=json")
+      end
+
+      app.post '/ops/storage/scan/start' do
+        post_url_message("#{replic_host}/scan/start/#{request.params.fetch('node_number', 'na')}?t=json",
+          message: 'Scan Started')
+      end
+
+      app.post '/ops/storage/scan/resume' do
+        post_url_message("#{replic_host}/scan/restart/#{request.params.fetch('inv_scan_id', 'na')}?t=json",
+          message: 'Scan Restarted')
+      end
+
+      app.post '/ops/storage/scan/cancel' do
+        post_url_message("#{replic_host}/scan/cancel/#{request.params.fetch('inv_scan_id', 'na')}?t=json",
+          message: 'Scan Cancelled')
       end
     end
 
@@ -365,6 +383,13 @@ module Sinatra
     rescue StandardError => e
       content_type :json
       { uri: uri, error: e.to_s }.to_json
+    end
+
+    def post_url_message(url, body: nil, user: nil, password: nil, message: '')
+      jsonbody = post_url_body(url, body: body, user: user, password: password)
+      json = ::JSON.parse(jsonbody)
+      json['message'] = message unless message.empty?
+      json.to_json
     end
 
     def delete_url_resp(url, body: nil)

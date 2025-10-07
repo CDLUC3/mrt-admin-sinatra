@@ -1,0 +1,14 @@
+<div>
+<fieldset>
+  <legend>Storage Scans</legend>
+  <form method="POST" action="/ops/storage/scans/cancel-all-scans">
+    <input type="submit" value="Cancel All Scans"/>
+  </form>
+  <form method="POST" action="/ops/storage/scans/allow-all">
+    <input type="submit" value="Allow Storage Scans"/>
+  </form>
+</fieldset>
+</div>
+<div class='tablewrap'>
+  <%= table.render %>
+</div>

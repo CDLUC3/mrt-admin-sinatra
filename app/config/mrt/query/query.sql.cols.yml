@@ -78,6 +78,8 @@ columns:
       cssclass: float
     sdsc_bytes_gb:
       cssclass: float
+    nodedesc:
+      header: Node Desc
   patterns:
     '^\d{4}-\d{2}-\d{2}$':
       cssclass: float
