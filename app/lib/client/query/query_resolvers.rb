@@ -206,25 +206,25 @@ module UC3Query
       if row.fetch('num_review', 0).positive?
         row['num_review'] = {
           value: row['num_review'],
-          href: "/ops/storage/scan/cancel?node_number=#{row.fetch('node_number', 0)}&status=review"
+          href: "/ops/storage/scan/review-state?node_number=#{row.fetch('node_number', 0)}&status=review"
         }
       end
       if row.fetch('num_hold', 0).positive?
         row['num_hold'] = {
           value: row['num_hold'],
-          href: "/ops/storage/scan/cancel?node_number=#{row.fetch('node_number', 0)}&status=review"
+          href: "/ops/storage/scan/review-state?node_number=#{row.fetch('node_number', 0)}&status=hold"
         }
       end
       if row.fetch('num_deletes', 0).positive?
         row['num_deletes'] = {
           value: row['num_deletes'],
-          href: "/ops/storage/scan/cancel?node_number=#{row.fetch('node_number', 0)}&status=review"
+          href: "/ops/storage/scan/review-state?node_number=#{row.fetch('node_number', 0)}&status=delete"
         }
       end
       if row.fetch('num_maints', 0).positive?
         row['num_maints'] = {
           value: row['num_maints'],
-          href: "/ops/storage/scan/cancel?node_number=#{row.fetch('node_number', 0)}&status=review"
+          href: "/ops/storage/scan/review?node_number=#{row.fetch('node_number', 0)}"
         }
       end
       row

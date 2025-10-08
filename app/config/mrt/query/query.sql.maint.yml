@@ -1,3 +1,23 @@
+fragments:
+  SCANREV:
+    select
+      ism.s3key,
+      ism.file_created,
+      ism.size,
+      ism.maint_status,
+      ism.maint_type,
+      ism.note,
+      n.number,
+      ism.id,
+      o.id as objid
+    from
+      inv.inv_storage_maints ism
+    inner join inv.inv_nodes n
+      on n.id = ism.inv_node_id
+    left join inv.inv_objects o
+      on o.ark = substring(ism.s3key, 1, locate('|', ism.s3key) -1)
+    where
+      n.number = ?
 queries:
   /ops/collections/storage-node-config:
     sql: |
@@ -266,3 +286,18 @@ queries:
         type: string
       - name: status
         type: string
+  /ops/storage/scan/review:
+    sql: |
+      {{{SCANREV}}}
+  parameters:
+    - name: node_number
+      type: integer
+  /ops/storage/scan/review-state:
+    sql: |
+      {{{SCANREV}}}
+      and maint_status = ?
+    parameters:
+    - name: node_number
+      type: integer
+    - name: status
+      type: string
