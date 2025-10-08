@@ -240,7 +240,7 @@ module UC3Query
       if row['inv_object_id']
         row['s3key_annotated'] << {
           value: row['inv_object_id'],
-          href: "/queries/repository/object?inv_object_id=#{row['objid']}"
+          href: "/queries/repository/object?inv_object_id=#{row['inv_object_id']}"
         }
       end
       row['note'] = [
@@ -254,7 +254,7 @@ module UC3Query
           value: 'Mark for Delete',
           href: '#',
           post: true,
-          cssclass: 'button',
+          cssclass: 'button button_red',
           disabled: storage_mgt_disabled?
         }
       end

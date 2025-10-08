@@ -88,8 +88,6 @@ td.jobdata {
   width: 180px;
 }
 
-th.note,
-td.note,
 th.nodedesc,
 td.nodedesc,
 th.metadata,
@@ -110,8 +108,13 @@ a.button {
   background-color: navy;
   color: white;
 }
+
+input.button_red {
+  border-color: red;
+}
 a.button_red::after {
   content: " ⚠️";
+  border-color: red;
 }
 
 a.buttontbd {

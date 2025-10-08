@@ -181,7 +181,7 @@ module Sinatra
       end
 
       app.get '/ops/storage/scan/review*' do
-        erb :storage_scan_table,
+        erb :storage_scan_review_table,
           :layout => :page_layout,
           :locals => {
             context: AdminUI::Context.new(request.path),
@@ -190,9 +190,9 @@ module Sinatra
               request.params,
               resolver: UC3Query::QueryResolvers.method(:storage_scan_review_resolver),
               dispcols: %w[
-                s3key_annotated note actions
-]
-            )
+                s3key_annotated maint_type maint_status note actions]
+            ),
+            status: request.params.fetch('status', 'review')
           }
       end
 

@@ -1,0 +1,34 @@
+<div>
+<fieldset>
+  <legend>Review Actions</legend>
+  <% if status != 'delete' %>
+  <form method="POST" action="#">
+    <input type="submit" value="Mark Page for Delete"/>
+  </form>
+  <% end %>
+  <% if status != 'review' %>
+  <form method="POST" action="#">
+    <input type="submit" value="Mark Page for Review"/>
+  </form>
+  <% end %>
+  <% if status != 'hold' %>
+  <form method="POST" action="#">
+    <input type="submit" value="Mark Page for Hold"/>
+  </form>
+  <% end %>
+  <% if status == 'delete' %>
+  <form method="POST" action="#">
+    <input type="submit" value="Process Deletions" class="button_red"/>
+  </form>
+  <% end %>
+  <form method="POST" action="#">
+    <input type="submit" value="Download Review List as CSV"/>
+  </form>
+  <form method="POST" action="#">
+    <input type="submit" value="Apply Review Changes from CSV"/>
+  </form>
+</fieldset>
+</div>
+<div class='tablewrap'>
+  <%= table.render %>
+</div>
