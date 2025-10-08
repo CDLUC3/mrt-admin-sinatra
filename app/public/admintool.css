@@ -160,6 +160,8 @@ td.mnemonics span.val {
   overflow-x: clip;
 }
 
+th.note span.val,
+td.note span.val,
 th.s3key_annotated span.val,
 td.s3key_annotated span.val,
 th.nodedesc span.val,

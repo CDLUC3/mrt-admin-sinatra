@@ -190,7 +190,7 @@ module Sinatra
               request.params,
               resolver: UC3Query::QueryResolvers.method(:storage_scan_review_resolver),
               dispcols: %w[
-                s3key_annotated maint_status maint_type note actions
+                s3key_annotated note actions
 ]
             )
           }
