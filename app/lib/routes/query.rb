@@ -180,6 +180,22 @@ module Sinatra
           }
       end
 
+      app.get '/ops/storage/scan/review*' do
+        erb :storage_scan_table,
+          :layout => :page_layout,
+          :locals => {
+            context: AdminUI::Context.new(request.path),
+            table: UC3Query::QueryClient.client.query(
+              request.path,
+              request.params,
+              resolver: UC3Query::QueryResolvers.method(:storage_scan_review_resolver),
+              dispcols: %w[
+                s3key_annotated maint_status maint_type note actions
+]
+            )
+          }
+      end
+
       app.get '/ops/db-queue/audit/counts-by-state' do
         adminui_show_table(
           AdminUI::Context.new(request.path),

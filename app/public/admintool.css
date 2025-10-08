@@ -54,9 +54,9 @@ td.data {
   width: 150px;
 }
 
-th.s3key,
-td.s3key {
-  width: 350px;
+th.s3key_annotated,
+td.s3key_annotated {
+  width: 400px;
 }
 
 th.sha, 
@@ -158,6 +158,8 @@ td.mnemonics span.val {
   overflow-x: clip;
 }
 
+th.s3key_annotated span.val,
+td.s3key_annotated span.val,
 th.nodedesc span.val,
 td.nodedesc span.val,
 td.metadata span.val,

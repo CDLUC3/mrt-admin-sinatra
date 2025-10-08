@@ -229,5 +229,15 @@ module UC3Query
       end
       row
     end
+
+    def self.storage_scan_review_resolver(row)
+      row['s3key_annotated'] = [
+        row['s3key'],
+        "Node: #{row['node_number']}",
+        row['file_created'],
+        "Size: #{row['size']}"
+      ]
+      row
+    end
   end
 end
