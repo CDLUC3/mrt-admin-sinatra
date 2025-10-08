@@ -190,10 +190,11 @@ module Sinatra
               request.params,
               resolver: UC3Query::QueryResolvers.method(:storage_scan_review_resolver),
               dispcols: %w[
-                s3key_annotated maint_type maint_status note actions]
+                s3key_annotated maint_type maint_status note actions
+]
             ),
             status: request.params.fetch('status', 'review'),
-            node_number: request.params.fetch('node_number', 0),
+            node_number: request.params.fetch('node_number', 0)
           }
       end
 

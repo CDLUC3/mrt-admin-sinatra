@@ -209,10 +209,10 @@ queries:
   /queries-update/storage-maints/update-status:
     update: true
     sql: |
-      UDPDATE
+      UPDATE
         inv.inv_storage_maints
       SET
-        maint_status= ?
+        maint_status = ?
       WHERE
         maint_status != 'removed'
       and
@@ -220,7 +220,7 @@ queries:
     parameters:
     - name: status
       type: string
-    - name: id
+    - name: maint_id
       type: integer
   /queries-update/storage-maints/batch-update-status:
     update: true

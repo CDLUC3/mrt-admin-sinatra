@@ -8,7 +8,7 @@ fragments:
       ism.maint_type,
       ism.note,
       n.number as node_number,
-      ism.id,
+      ism.id as maint_id,
       o.id as inv_object_id,
       '' as actions
     from

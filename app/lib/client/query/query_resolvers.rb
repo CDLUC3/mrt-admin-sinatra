@@ -252,16 +252,16 @@ module UC3Query
       if row['maint_status'] != 'delete'
         row['actions'] << {
           value: 'Mark for Delete',
-          href: '#',
+          href: "/queries-update/storage-maints/update-status?maint_id=#{row['maint_id']}&status=delete",
           post: true,
-          cssclass: 'button button_red',
+          cssclass: 'button',
           disabled: storage_mgt_disabled?
         }
       end
       if row['maint_status'] != 'review'
         row['actions'] << {
           value: 'Mark for Review',
-          href: '#',
+          href: "/queries-update/storage-maints/update-status?maint_id=#{row['maint_id']}&status=review",
           post: true,
           cssclass: 'button',
           disabled: storage_mgt_disabled?
@@ -270,7 +270,7 @@ module UC3Query
       if row['maint_status'] != 'hold'
         row['actions'] << {
           value: 'Mark for Hold',
-          href: '#',
+          href: "/queries-update/storage-maints/update-status?maint_id=#{row['maint_id']}&status=hold",
           post: true,
           cssclass: 'button',
           disabled: storage_mgt_disabled?
@@ -279,9 +279,9 @@ module UC3Query
       if row['maint_status'] == 'delete'
         row['actions'] << {
           value: 'Process Delete',
-          href: '#',
+          href: "/ops/storage/scan/delete?maint_id=#{row['maint_id']}",
           post: true,
-          cssclass: 'button',
+          cssclass: 'button button_red',
           disabled: storage_mgt_disabled?
         }
       end
