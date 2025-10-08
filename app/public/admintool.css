@@ -54,6 +54,11 @@ td.data {
   width: 150px;
 }
 
+th.s3key,
+td.s3key {
+  width: 350px;
+}
+
 th.sha, 
 td.sha {
   width: 250px;

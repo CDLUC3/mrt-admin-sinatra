@@ -7,9 +7,10 @@ fragments:
       ism.maint_status,
       ism.maint_type,
       ism.note,
-      n.number,
+      n.number as node_number,
       ism.id,
-      o.id as objid
+      o.id as inv_object_id,
+      '' as actions
     from
       inv.inv_storage_maints ism
     inner join inv.inv_nodes n
@@ -289,7 +290,7 @@ queries:
   /ops/storage/scan/review:
     sql: |
       {{{SCANREV}}}
-  parameters:
+    parameters:
     - name: node_number
       type: integer
   /ops/storage/scan/review-state:
