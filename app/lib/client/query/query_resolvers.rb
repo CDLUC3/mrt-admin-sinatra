@@ -248,6 +248,43 @@ module UC3Query
         "Status: #{row['maint_status']}",
         "Note: #{row['note']}"
       ]
+      row['actions'] = []
+      if row['maint_status'] != 'delete'
+        row['actions'] << {
+          value: 'Mark for Delete',
+          href: '#',
+          post: true,
+          cssclass: 'button',
+          disabled: storage_mgt_disabled?
+        }
+      end
+      if row['maint_status'] != 'review'
+        row['actions'] << {
+          value: 'Mark for Review',
+          href: '#',
+          post: true,
+          cssclass: 'button',
+          disabled: storage_mgt_disabled?
+        }
+      end
+      if row['maint_status'] != 'hold'
+        row['actions'] << {
+          value: 'Mark for Hold',
+          href: '#',
+          post: true,
+          cssclass: 'button',
+          disabled: storage_mgt_disabled?
+        }
+      end
+      if row['maint_status'] == 'delete'
+        row['actions'] << {
+          value: 'Process Delete',
+          href: '#',
+          post: true,
+          cssclass: 'button',
+          disabled: storage_mgt_disabled?
+        }
+      end
       row
     end
   end

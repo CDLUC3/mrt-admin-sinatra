@@ -88,6 +88,8 @@ td.jobdata {
   width: 180px;
 }
 
+th.note,
+td.note,
 th.nodedesc,
 td.nodedesc,
 th.metadata,
