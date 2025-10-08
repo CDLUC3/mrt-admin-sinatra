@@ -109,12 +109,12 @@ a.button {
   color: white;
 }
 
+a.button_red,
 input.button_red {
-  border-color: red;
+  border: thin solid red;
 }
 a.button_red::after {
   content: " ⚠️";
-  border-color: red;
 }
 
 a.buttontbd {

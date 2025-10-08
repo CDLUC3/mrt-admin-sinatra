@@ -1,5 +1,12 @@
 <div>
 <fieldset>
+  <legend>Review States</legend>
+  <a href="/ops/storage/scan/review?node_number=<%= node_number %>">All</a>
+  <a href="/ops/storage/scan/review-state?node_number=<%= node_number %>&status=delete">Delete</a>
+  <a href="/ops/storage/scan/review-state?node_number=<%= node_number %>&status=review">Review</a>
+  <a href="/ops/storage/scan/review-state?node_number=<%= node_number %>&status=hold">Hold</a>
+</fieldset>
+<fieldset>
   <legend>Review Actions</legend>
   <% if status != 'delete' %>
   <form method="POST" action="#">

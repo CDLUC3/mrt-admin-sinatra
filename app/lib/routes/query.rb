@@ -192,7 +192,8 @@ module Sinatra
               dispcols: %w[
                 s3key_annotated maint_type maint_status note actions]
             ),
-            status: request.params.fetch('status', 'review')
+            status: request.params.fetch('status', 'review'),
+            node_number: request.params.fetch('node_number', 0),
           }
       end
 
