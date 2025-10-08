@@ -237,6 +237,12 @@ module UC3Query
         row['file_created'],
         "Size: #{row['size']}"
       ]
+      if row['objid']
+        row['s3key_annotated'] << {
+          value: row['objid'],
+          href: "/queries/repository/object?inv_object_id=#{row['objid']}"
+        }
+      end
       row
     end
   end

@@ -56,7 +56,9 @@ td.data {
 
 th.s3key_annotated,
 td.s3key_annotated {
-  width: 400px;
+  width: 450px;
+  min-width: 400px;
+  padding-left: 20px;
 }
 
 th.sha, 
