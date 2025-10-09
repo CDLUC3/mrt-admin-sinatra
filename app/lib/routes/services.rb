@@ -265,6 +265,16 @@ module Sinatra
           message: 'Scan Cancelled')
       end
 
+      app.post '/ops/storage/scan/delete' do
+        delete_url_message("#{replic_host}/scandelete/#{request.params.fetch('maint_id', 0)}?t=json",
+          message: 'Scan Item Removed from Cloud Storage')
+      end
+
+      app.post '/ops/storage/scan/batch-delete' do
+        delete_url_message("#{replic_host}/scandelete-list/#{request.params.fetch('node_number', 0)}?t=json",
+          message: 'Scan Delete Batch Initiated')
+      end
+
       app.post '/ops/storage/scan/applycsv' do
         count = 0
         errors = 0
@@ -435,6 +445,13 @@ module Sinatra
       Net::HTTP.start(uri.hostname, uri.port, use_ssl: uri.scheme == 'https') do |http|
         http.request(req)
       end
+    end
+
+    def delete_url_message(url, body: nil, message: '')
+      resp = delete_url_resp(url, body: body)
+      json = ::JSON.parse(resp.body)
+      json['message'] = message unless message.empty?
+      json.to_json
     end
 
     def post_url_multipart(url, params)

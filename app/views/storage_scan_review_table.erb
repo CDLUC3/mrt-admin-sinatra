@@ -30,7 +30,8 @@
   </form>
   <% end %>
   <% if status == 'delete' %>
-  <form method="POST" action="#">
+  <form method="POST" action="/ops/storage/scan/batch-delete">
+    <input type="hidden" name="node_number" value="<%= node_number %>">
     <input type="submit" value="Process Deletions" class="button_red"/>
   </form>
   <% end %>
