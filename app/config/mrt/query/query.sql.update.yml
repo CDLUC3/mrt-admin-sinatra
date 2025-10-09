@@ -245,11 +245,11 @@ queries:
             number = ?
         )
     parameters:
-    - name: status
+    - name: maint_status
       type: string
     - name: note
       type: string
-    - name: id
+    - name: maint_id
       type: integer
     - name: node_number
       type: integer

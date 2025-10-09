@@ -264,6 +264,38 @@ module Sinatra
         post_url_message("#{replic_host}/scan/cancel/#{request.params.fetch('inv_scan_id', 'na')}?t=json",
           message: 'Scan Cancelled')
       end
+
+      app.post '/ops/storage/scan/applycsv' do
+        count = 0
+        errors = 0
+        CSV.parse(request.body.read).each_with_index do |row, i|
+          next if i.zero?
+
+          row[11] = '' if row[11].nil?
+          row[12] = '' if row[12].nil?
+          next if row[11].empty? && row[12].empty?
+          next if row[9] == row[11] && row[10] == row[12]
+
+          params = {}
+          params['maint_status'] = row[11]
+          params['note'] = row[12]
+          params['node_number'] = row[0].to_i
+          params['maint_id'] = row[1].to_i
+          res = UC3Query::QueryClient.client.query_update(
+            '/queries-update/storage-maints/apply-review-change',
+            params
+          )
+          if res.fetch(:status, '') == 'OK'
+            puts params
+            count += 1
+          else
+            puts res
+            errors += 1
+          end
+        end
+        content_type :json
+        { message: "Changes applied #{count}; Errors: #{errors}" }.to_json
+      end
     end
 
     def manifest_url(params)

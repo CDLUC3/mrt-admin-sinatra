@@ -101,16 +101,14 @@ module Sinatra
       end
 
       app.get '/ops/db-queue/audit/active-batches' do
-        erb :audit_batches_table,
-          :layout => :page_layout,
-          :locals => {
-            context: AdminUI::Context.new(request.path),
-            table: UC3Query::QueryClient.client.query(
-              request.path,
-              request.params
-            ),
+        adminui_show_table(
+          AdminUI::Context.new(request.path),
+          UC3Query::QueryClient.client.query(request.path, request.params),
+          erb: :audit_batches_table,
+          locals: {
             hours: [24, 2, 1]
           }
+        )
       end
 
       app.post '/queries-update/storage-maints/batch-update-status' do
@@ -146,21 +144,22 @@ module Sinatra
       end
 
       app.get '/ops/collections/storage-node-config/**' do
-        erb :coll_node_table,
-          :layout => :page_layout,
-          :locals => {
-            context: AdminUI::Context.new(request.path),
-            table: UC3Query::QueryClient.client.query(
-              '/ops/collections/storage-node-config/collection',
-              request.params,
-              resolver: UC3Query::QueryResolvers.method(:single_collection_nodes_resolver),
-              dispcols: %w[role node_number description access_mode count total pct_complete actions]
-            ),
+        adminui_show_table(
+          AdminUI::Context.new(request.path),
+          UC3Query::QueryClient.client.query(
+            '/ops/collections/storage-node-config/collection',
+            request.params,
+            resolver: UC3Query::QueryResolvers.method(:single_collection_nodes_resolver),
+            dispcols: %w[role node_number description access_mode count total pct_complete actions]
+          ),
+          erb: :coll_node_table,
+          locals: {
             nodes: get_nodes,
             inv_collection_id: request.params.fetch('inv_collection_id', '-1'),
             mnemonic: request.params.fetch('mnemonic', 'coll'),
             primary: request.params.fetch('primary', '-1')
           }
+        )
       end
 
       app.get '/ops/collections/storage-node-config' do
@@ -175,38 +174,53 @@ module Sinatra
       end
 
       app.get '/ops/storage/scans' do
-        erb :storage_scan_table,
-          :layout => :page_layout,
-          :locals => {
-            context: AdminUI::Context.new(request.path),
-            table: UC3Query::QueryClient.client.query(
-              request.path,
-              request.params,
-              resolver: UC3Query::QueryResolvers.method(:storage_scan_resolver),
-              dispcols: %w[
-                nodedesc scan_status created num_review num_deletes num_holds num_maints
-                keys_processed percent_complete actions
+        adminui_show_table(
+          AdminUI::Context.new(request.path),
+          UC3Query::QueryClient.client.query(
+            request.path,
+            request.params,
+            resolver: UC3Query::QueryResolvers.method(:storage_scan_resolver),
+            dispcols: %w[
+              nodedesc scan_status created num_review num_deletes num_holds num_maints
+              keys_processed percent_complete actions
 ]
-            )
-          }
+          ),
+          erb: :storage_scan_table
+        )
       end
 
       app.get '/ops/storage/scan/review*' do
-        erb :storage_scan_review_table,
-          :layout => :page_layout,
-          :locals => {
-            context: AdminUI::Context.new(request.path),
-            table: UC3Query::QueryClient.client.query(
-              request.path,
-              request.params,
-              resolver: UC3Query::QueryResolvers.method(:storage_scan_review_resolver),
-              dispcols: %w[
-                maint_id s3key_annotated maint_type maint_status note actions
+        adminui_show_table(
+          AdminUI::Context.new(request.path),
+          UC3Query::QueryClient.client.query(
+            request.path,
+            request.params,
+            resolver: UC3Query::QueryResolvers.method(:storage_scan_review_resolver),
+            dispcols: %w[
+              maint_id s3key_annotated maint_type maint_status note actions
 ]
-            ),
-            status: request.params.fetch('status', 'review'),
+          ),
+          erb: :storage_scan_review_table,
+          locals: {
+            status: request.params.fetch('status', ''),
             node_number: request.params.fetch('node_number', 0)
           }
+        )
+      end
+
+      app.get '/ops/storage/scan/csvfile' do
+        adminui_show_table(
+          AdminUI::Context.new(request.path),
+          UC3Query::QueryClient.client.query(
+            request.path,
+            request.params,
+            resolver: UC3Query::QueryResolvers.method(:storage_scan_csv_resolver),
+            dispcols: %w[
+              node_number maint_id key_ark key_ver key_folder key_file maint_type
+              file_created size maint_status note new_status new_note
+]
+          )
+        )
       end
 
       app.get '/ops/db-queue/audit/counts-by-state' do

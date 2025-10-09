@@ -1,5 +1,21 @@
 fragments:
-  SCANREV:
+  SCANREVCSV:
+    select
+      n.number as node_number,
+      ism.id as maint_id,
+      ism.s3key,
+      '' as key_ark,
+      '' as key_ver,
+      '' as key_folder,
+      '' as key_file,
+      ism.maint_type,
+      ism.file_created,
+      ism.size,
+      ism.maint_status,
+      ism.note,
+      '' as new_status,
+      '' as new_note
+  SCANREVSEL:
     select
       ism.s3key,
       ism.file_created,
@@ -11,6 +27,7 @@ fragments:
       ism.id as maint_id,
       o.id as inv_object_id,
       '' as actions
+  SCANREV:
     from
       inv.inv_storage_maints ism
     inner join inv.inv_nodes n
@@ -19,6 +36,8 @@ fragments:
       on o.ark = substring(ism.s3key, 1, locate('|', ism.s3key) -1)
     where
       n.number = ?
+    and
+      maint_status != 'removed' 
 queries:
   /ops/collections/storage-node-config:
     sql: |
@@ -287,14 +306,23 @@ queries:
         type: string
       - name: status
         type: string
+  /ops/storage/scan/csvfile:
+    sql: |
+      {{{SCANREVCSV}}}
+      {{{SCANREV}}}
+    parameters:
+    - name: node_number
+      type: integer
   /ops/storage/scan/review:
     sql: |
+      {{{SCANREVSEL}}}
       {{{SCANREV}}}
     parameters:
     - name: node_number
       type: integer
   /ops/storage/scan/review-state:
     sql: |
+      {{{SCANREVSEL}}}
       {{{SCANREV}}}
       and maint_status = ?
     parameters:

@@ -34,18 +34,35 @@
     <input type="submit" value="Process Deletions" class="button_red"/>
   </form>
   <% end %>
-  <form method="POST" action="#">
+  <% if status.empty? %>
+  <form method="GET" action="/ops/storage/scan/csvfile">
+    <input type="hidden" name="admintoolformat" value="csv">
+    <input type="hidden" name="node_number" value="<%= node_number %>">
     <input type="submit" value="Download Review List as CSV"/>
   </form>
-  <form method="POST" action="#">
-    <input type="submit" value="Apply Review Changes from CSV"/>
-  </form>
+  <input id="applycsv" data="<%= node_number %>" type="button" value="Apply Review Changes from CSV"/>
+  <% end %>
 </fieldset>
 </div>
 <div class='tablewrap'>
   <%= table.render %>
 </div>
 <script type="text/javascript">
+  async function apply_csv_changes(nodenum) {
+    var [fileHandle] = await window.showOpenFilePicker();
+    const file = await fileHandle.getFile();
+    const contents = await file.text();
+    $.ajax({
+      dataType: "json",
+      method: "POST",
+      contentType: "text/plain; charset=utf-8",
+      url: '/ops/storage/scan/applycsv',
+      data: contents,
+      success: successHandler,
+      error: errorHandler
+    });  
+  }
+
   $(document).ready(function() {
     var arr = [];
     $("tr.data th.maint_id").each(function(){
@@ -54,5 +71,9 @@
     $("#delete_ids").val(arr.join(","));
     $("#hold_ids").val(arr.join(","));
     $("#review_ids").val(arr.join(","));
+
+    $("#applycsv").on('click', function(){
+      apply_csv_changes($(this).attr('data'));
+    });
   })
 </script>  

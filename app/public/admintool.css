@@ -265,7 +265,7 @@ form.admintool label {
   font-weight: bold;
 }
 
-input[type='submit'] {
+input[type='submit'], input[type='button'] {
   padding: 5px 10px;
   margin: 3px;
   text-align: center;

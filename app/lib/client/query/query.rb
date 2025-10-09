@@ -107,15 +107,22 @@ module UC3Query
       )
     end
 
-    def result_header(path, sql)
-      sep = path.index('?') ? '&' : '?'
+    def self.make_url_with_key(path, params, key, value)
+      p = params.clone
+      uri = URI(path)
+      p[key] = value
+      uri.query = URI.encode_www_form(p)
+      uri.to_s
+    end
+
+    def result_header(path, params, sql)
       <<~HTML
         <details>
           <summary>SQL</summary>
           <div>
-            <a href='#{path}#{sep}format=json'>JSON</a>
-            <a href='#{path}#{sep}format=csv'>CSV</a>
-            <a href='#{path}#{sep}format=text'>TEXT</a>
+            <a href="#{UC3Query::QueryClient.make_url_with_key(path, params, 'admintoolformat', 'json')}">JSON</a>
+            <a href="#{UC3Query::QueryClient.make_url_with_key(path, params, 'admintoolformat', 'csv')}">CSV</a>
+            <a href="#{UC3Query::QueryClient.make_url_with_key(path, params, 'admintoolformat', 'text')}">TEXT</a>
           </div>
           <pre>#{@formatter.format(sql).gsub(' (', '(')}</pre>
         </details>
@@ -247,7 +254,7 @@ module UC3Query
                end
 
         description = Mustache.render(query.fetch(:description, ''), tparm)
-        description += result_header(path, sql)
+        description += result_header(path, urlparams, sql)
         table = AdminUI::FilterTable.new(
           columns: cols,
           totals: query.fetch(:totals, false),
@@ -279,7 +286,7 @@ module UC3Query
       rescue StandardError => e
         arr = [
           "#{e.class}: #{e}",
-          result_header(path, sql),
+          result_header(path, urlparams, sql),
           params.to_s,
           "Connect timeout: #{@dbconf[:connect_timeout]}",
           "Read timeout: #{@dbconf[:read_timeout]}"

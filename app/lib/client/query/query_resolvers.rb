@@ -287,5 +287,19 @@ module UC3Query
       end
       row
     end
+
+    def self.storage_scan_csv_resolver(row)
+      arr = row.fetch('s3key', '').split('|')
+      row['key_ark'] = arr[0]
+      row['key_ver'] = arr[1]
+      m = %r{^(producer|system)/(.*)$}.match(arr[2])
+      if m
+        row['key_folder'] = m[1]
+        row['key_file'] = m[2]
+      else
+        row['key_file'] = arr[2]
+      end
+      row
+    end
   end
 end

@@ -28,7 +28,7 @@ AdminUI::Context.index_md = 'app/markdown/mrt/index.md'
 
 register Sinatra::Contrib
 
-def adminui_show_table_format(context, table, format)
+def adminui_show_table_format(context, table, format, erb: :table, locals: {})
   halt 404, 'Not Found' if table.nil?
 
   case format
@@ -49,24 +49,23 @@ def adminui_show_table_format(context, table, format)
     content_type :text
     halt 200, table.to_csv
   else
-    erb :table,
+    locals[:context] = context
+    locals[:table] = table
+    erb erb,
       :layout => :page_layout,
-      :locals => {
-        context: context,
-        table: table
-      }
+      :locals => locals
   end
 end
 
-def adminui_show_table(context, table)
-  fmt = request.params.fetch('format', '')
-  adminui_show_table_format(context, table, fmt) unless fmt.empty?
+def adminui_show_table(context, table, erb: :table, locals: {})
+  fmt = request.params.fetch('admintoolformat', '')
+  adminui_show_table_format(context, table, fmt, erb: erb, locals: locals) unless fmt.empty?
   respond_to do |format|
     format.json do
-      adminui_show_table_format(context, table, 'json')
+      adminui_show_table_format(context, table, 'json', erb: erb, locals: locals)
     end
     format.html do
-      adminui_show_table_format(context, table, 'html')
+      adminui_show_table_format(context, table, 'html', erb: erb, locals: locals)
     end
   end
 end

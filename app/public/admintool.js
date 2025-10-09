@@ -17,6 +17,42 @@ function applySearchBox() {
   });
 }
 
+var successHandler = function(data) {
+  if (data['message']) {
+    if (data['modal']) {
+      confirm(data['message']);
+    } else {
+      $("#alertmsg").text(data['message']).dialog({
+        create: function(event, ui) {
+          $(event.target).parent().css('position', 'fixed');
+        },
+        show: { effect: "blind", duration: 800 },
+        position: { my: "right", at: "left", of: self }
+      });
+    }
+    if (data['redirect']) {
+      document.location = data['redirect'];
+    }
+  }
+};
+
+var errorHandler = function( xhr, status ) {
+  var msg = "";
+  if (xhr.status == 404) {
+    msg = "Error 404: Not Found";
+  } else {
+    msg = xhr.responseText;
+  }
+
+  $("#alertmsg").text(msg).dialog({
+    create: function(event, ui) {
+      $(event.target).parent().css('position', 'fixed');
+    },
+    show: { effect: "blind", duration: 800 },
+    position: { my: "right", at: "left", of: self }
+  });
+}
+
 function applyButtonControls() {
   // Allow links to be disabled in table displays
   $("table.data a").on("click", function() {
@@ -42,40 +78,8 @@ function applyButtonControls() {
         contentType: "text/plain; charset=utf-8",
         url: $(this).attr('url'),
         data: $(this).attr('data'),
-        success: function(data) {
-          if (data['message']) {
-            if (data['modal']) {
-              confirm(data['message']);
-            } else {
-              $("#alertmsg").text(data['message']).dialog({
-                create: function(event, ui) {
-                  $(event.target).parent().css('position', 'fixed');
-                },
-                show: { effect: "blind", duration: 800 },
-                position: { my: "right", at: "left", of: self }
-              });
-            }
-            if (data['redirect']) {
-              document.location = data['redirect'];
-            }
-          }
-        },
-        error: function( xhr, status ) {
-          var msg = "";
-          if (xhr.status == 404) {
-            msg = "Error 404: Not Found";
-          } else {
-            msg = xhr.responseText;
-          }
-
-          $("#alertmsg").text(msg).dialog({
-            create: function(event, ui) {
-              $(event.target).parent().css('position', 'fixed');
-            },
-            show: { effect: "blind", duration: 800 },
-            position: { my: "right", at: "left", of: self }
-          });
-        }
+        success: successHandler,
+        error: errorHandler
       });
     }
   });
