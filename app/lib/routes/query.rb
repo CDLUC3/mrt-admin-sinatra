@@ -203,7 +203,8 @@ module Sinatra
           erb: :storage_scan_review_table,
           locals: {
             status: request.params.fetch('status', ''),
-            node_number: request.params.fetch('node_number', 0)
+            node_number: request.params.fetch('node_number', 0),
+            storage_mgt_disabled: UC3Query::QueryResolvers.storage_mgt_disabled?
           }
         )
       end

@@ -222,6 +222,8 @@ queries:
             inv.inv_storage_maints ism
           where
             n.id = ism.inv_node_id
+          and
+            maint_status != 'removed'
         ) as num_maints,
         ifnull(iss.keys_processed, 0) as keys_processed,
         case

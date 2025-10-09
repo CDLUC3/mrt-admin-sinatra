@@ -245,7 +245,7 @@ module UC3Query
           href: "/queries-update/storage-maints/update-status?maint_id=#{row['maint_id']}&status=delete",
           post: true,
           cssclass: 'button',
-          disabled: storage_mgt_disabled?
+          disabled: storage_mgt_disabled?(strict: true)
         }
       end
       if row['maint_status'] != 'review'
@@ -254,7 +254,7 @@ module UC3Query
           href: "/queries-update/storage-maints/update-status?maint_id=#{row['maint_id']}&status=review",
           post: true,
           cssclass: 'button',
-          disabled: storage_mgt_disabled?
+          disabled: storage_mgt_disabled?(strict: true)
         }
       end
       if row['maint_status'] != 'hold'
@@ -263,7 +263,7 @@ module UC3Query
           href: "/queries-update/storage-maints/update-status?maint_id=#{row['maint_id']}&status=hold",
           post: true,
           cssclass: 'button',
-          disabled: storage_mgt_disabled?
+          disabled: storage_mgt_disabled?(strict: true)
         }
       end
       if row['maint_status'] == 'delete'
