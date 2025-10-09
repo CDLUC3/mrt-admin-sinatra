@@ -189,7 +189,7 @@ module Sinatra
         )
       end
 
-      app.get '/ops/storage/scan/review*' do
+      app.get '/ops/storage/scans/review*' do
         adminui_show_table(
           AdminUI::Context.new(request.path),
           UC3Query::QueryClient.client.query(
@@ -208,7 +208,7 @@ module Sinatra
         )
       end
 
-      app.get '/ops/storage/scan/csvfile' do
+      app.get '/ops/storage/scans/csvfile' do
         adminui_show_table(
           AdminUI::Context.new(request.path),
           UC3Query::QueryClient.client.query(
@@ -236,7 +236,7 @@ module Sinatra
 
       [
         '/ops/db-queue/**',
-        '/ops/storage/scan/**'
+        '/ops/storage/scans/**'
       ].each do |path|
         app.get path do
           adminui_show_table(

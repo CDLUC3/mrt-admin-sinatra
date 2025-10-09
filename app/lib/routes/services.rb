@@ -250,32 +250,32 @@ module Sinatra
         post_url("#{replic_host}/scan/allow/true?t=json")
       end
 
-      app.post '/ops/storage/scan/start' do
+      app.post '/ops/storage/scans/start' do
         post_url_message("#{replic_host}/scan/start/#{request.params.fetch('node_number', 'na')}?t=json",
           message: 'Scan Started')
       end
 
-      app.post '/ops/storage/scan/resume' do
+      app.post '/ops/storage/scans/resume' do
         post_url_message("#{replic_host}/scan/restart/#{request.params.fetch('inv_scan_id', 'na')}?t=json",
           message: 'Scan Restarted')
       end
 
-      app.post '/ops/storage/scan/cancel' do
+      app.post '/ops/storage/scans/cancel' do
         post_url_message("#{replic_host}/scan/cancel/#{request.params.fetch('inv_scan_id', 'na')}?t=json",
           message: 'Scan Cancelled')
       end
 
-      app.post '/ops/storage/scan/delete' do
+      app.post '/ops/storage/scans/delete' do
         delete_url_message("#{replic_host}/scandelete/#{request.params.fetch('maint_id', 0)}?t=json",
           message: 'Scan Item Removed from Cloud Storage')
       end
 
-      app.post '/ops/storage/scan/batch-delete' do
+      app.post '/ops/storage/scans/batch-delete' do
         delete_url_message("#{replic_host}/scandelete-list/#{request.params.fetch('node_number', 0)}?t=json",
           message: 'Scan Delete Batch Initiated')
       end
 
-      app.post '/ops/storage/scan/applycsv' do
+      app.post '/ops/storage/scans/applycsv' do
         count = 0
         errors = 0
         CSV.parse(request.body.read).each_with_index do |row, i|

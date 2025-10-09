@@ -157,21 +157,10 @@ module UC3Query
         "Count: #{row['pcount']}"
       ]
 
-      # storage-delete-node-key
-      # storage-delete-node-page
-      # storage-perform-delete-node-key
-      # storage-perform-delete-node-batch
-      # storage-hold-node-key
-      # storage-hold-node-page
-      # storage-review-node-key
-      # storage-review-node-page
-      # storage-review-csv
-      # apply-review-changes
-
       row['actions'] = []
       row['actions'] << {
         value: 'Scan History',
-        href: "/ops/storage/scan/history?node_number=#{row['node_number']}",
+        href: "/ops/storage/scans/history?node_number=#{row['node_number']}",
         cssclass: 'button'
       }
       status = row.fetch('scan_status', '')
@@ -179,16 +168,17 @@ module UC3Query
       if %w[completed cancelled].include?(status) || status.empty?
         row['actions'] << {
           value: 'Start Scan',
-          href: "/ops/storage/scan/start?node_number=#{row.fetch('node_number', 0)}",
+          href: "/ops/storage/scans/start?node_number=#{row.fetch('node_number', 0)}",
           cssclass: 'button',
           post: true,
           disabled: storage_mgt_disabled?(strict: true)
         }
+        row['percent_complete'] = ''
       end
       if %w[pending].include?(status)
         row['actions'] << {
           value: 'Resume Scan',
-          href: "/ops/storage/scan/resume?inv_scan_id=#{row['inv_scan_id']}",
+          href: "/ops/storage/scans/resume?inv_scan_id=#{row['inv_scan_id']}",
           cssclass: 'button',
           post: true,
           disabled: storage_mgt_disabled?(strict: true)
@@ -197,7 +187,7 @@ module UC3Query
       if %w[pending started].include?(status)
         row['actions'] << {
           value: 'Cancel Scan',
-          href: "/ops/storage/scan/cancel?inv_scan_id=#{row['inv_scan_id']}",
+          href: "/ops/storage/scans/cancel?inv_scan_id=#{row['inv_scan_id']}",
           cssclass: 'button',
           post: true,
           disabled: storage_mgt_disabled?(strict: true)
@@ -206,25 +196,25 @@ module UC3Query
       if row.fetch('num_review', 0).positive?
         row['num_review'] = {
           value: row['num_review'],
-          href: "/ops/storage/scan/review-state?node_number=#{row.fetch('node_number', 0)}&status=review"
+          href: "/ops/storage/scans/review-state?node_number=#{row.fetch('node_number', 0)}&status=review"
         }
       end
       if row.fetch('num_hold', 0).positive?
         row['num_hold'] = {
           value: row['num_hold'],
-          href: "/ops/storage/scan/review-state?node_number=#{row.fetch('node_number', 0)}&status=hold"
+          href: "/ops/storage/scans/review-state?node_number=#{row.fetch('node_number', 0)}&status=hold"
         }
       end
       if row.fetch('num_deletes', 0).positive?
         row['num_deletes'] = {
           value: row['num_deletes'],
-          href: "/ops/storage/scan/review-state?node_number=#{row.fetch('node_number', 0)}&status=delete"
+          href: "/ops/storage/scans/review-state?node_number=#{row.fetch('node_number', 0)}&status=delete"
         }
       end
       if row.fetch('num_maints', 0).positive?
         row['num_maints'] = {
           value: row['num_maints'],
-          href: "/ops/storage/scan/review?node_number=#{row.fetch('node_number', 0)}"
+          href: "/ops/storage/scans/review?node_number=#{row.fetch('node_number', 0)}"
         }
       end
       row
@@ -279,7 +269,7 @@ module UC3Query
       if row['maint_status'] == 'delete'
         row['actions'] << {
           value: 'Process Delete',
-          href: "/ops/storage/scan/delete?maint_id=#{row['maint_id']}",
+          href: "/ops/storage/scans/delete?maint_id=#{row['maint_id']}",
           post: true,
           cssclass: 'button button_red',
           disabled: storage_mgt_disabled?

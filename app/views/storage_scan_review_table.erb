@@ -1,10 +1,10 @@
 <div>
 <fieldset>
   <legend>Review States</legend>
-  <a href="/ops/storage/scan/review?node_number=<%= node_number %>">All</a>
-  <a href="/ops/storage/scan/review-state?node_number=<%= node_number %>&status=delete">Delete</a>
-  <a href="/ops/storage/scan/review-state?node_number=<%= node_number %>&status=review">Review</a>
-  <a href="/ops/storage/scan/review-state?node_number=<%= node_number %>&status=hold">Hold</a>
+  <a href="/ops/storage/scans/review?node_number=<%= node_number %>">All</a>
+  <a href="/ops/storage/scans/review-state?node_number=<%= node_number %>&status=delete">Delete</a>
+  <a href="/ops/storage/scans/review-state?node_number=<%= node_number %>&status=review">Review</a>
+  <a href="/ops/storage/scans/review-state?node_number=<%= node_number %>&status=hold">Hold</a>
 </fieldset>
 <fieldset>
   <legend>Review Actions</legend>
@@ -30,13 +30,13 @@
   </form>
   <% end %>
   <% if status == 'delete' %>
-  <form method="POST" action="/ops/storage/scan/batch-delete">
+  <form method="POST" action="/ops/storage/scans/batch-delete">
     <input type="hidden" name="node_number" value="<%= node_number %>">
     <input type="submit" value="Process Deletions" class="button_red"/>
   </form>
   <% end %>
   <% if status.empty? %>
-  <form method="GET" action="/ops/storage/scan/csvfile">
+  <form method="GET" action="/ops/storage/scans/csvfile">
     <input type="hidden" name="admintoolformat" value="csv">
     <input type="hidden" name="node_number" value="<%= node_number %>">
     <input type="submit" value="Download Review List as CSV"/>
@@ -57,7 +57,7 @@
       dataType: "json",
       method: "POST",
       contentType: "text/plain; charset=utf-8",
-      url: '/ops/storage/scan/applycsv',
+      url: '/ops/storage/scans/applycsv',
       data: contents,
       success: successHandler,
       error: errorHandler

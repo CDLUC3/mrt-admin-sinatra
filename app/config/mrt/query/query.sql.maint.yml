@@ -248,7 +248,7 @@ queries:
         on ls.inv_storage_scan_id = iss.id
       order by
         pcount desc
-  /ops/storage/scan/history:
+  /ops/storage/scans/history:
     sql: |
       select
         n.number as node_number,
@@ -306,21 +306,21 @@ queries:
         type: string
       - name: status
         type: string
-  /ops/storage/scan/csvfile:
+  /ops/storage/scans/csvfile:
     sql: |
       {{{SCANREVCSV}}}
       {{{SCANREV}}}
     parameters:
     - name: node_number
       type: integer
-  /ops/storage/scan/review:
+  /ops/storage/scans/review:
     sql: |
       {{{SCANREVSEL}}}
       {{{SCANREV}}}
     parameters:
     - name: node_number
       type: integer
-  /ops/storage/scan/review-state:
+  /ops/storage/scans/review-state:
     sql: |
       {{{SCANREVSEL}}}
       {{{SCANREV}}}
