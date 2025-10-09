@@ -672,8 +672,6 @@ queries:
         on n.id = nc.inv_node_id
       left join lim
         on n.number = lim.node
-      where
-        ifnull(nc.object_count, 0) > 0
       order by
         n.number
   /queries/collections:
