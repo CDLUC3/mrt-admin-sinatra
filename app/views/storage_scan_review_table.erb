@@ -9,17 +9,23 @@
 <fieldset>
   <legend>Review Actions</legend>
   <% if status != 'delete' %>
-  <form method="POST" action="#">
+  <form method="POST" action="/queries-update/storage-maints/batch-update-status">
+    <input type="hidden" name="status" value="delete">
+    <input type="hidden" name="idlist" value="" id="delete_ids">
     <input type="submit" value="Mark Page for Delete"/>
   </form>
   <% end %>
   <% if status != 'review' %>
-  <form method="POST" action="#">
+  <form method="POST" action="/queries-update/storage-maints/batch-update-status">
+    <input type="hidden" name="status" value="review">
+    <input type="hidden" name="idlist" value="" id="review_ids">
     <input type="submit" value="Mark Page for Review"/>
   </form>
   <% end %>
   <% if status != 'hold' %>
-  <form method="POST" action="#">
+  <form method="POST" action="/queries-update/storage-maints/batch-update-status">
+    <input type="hidden" name="status" value="hold">
+    <input type="hidden" name="idlist" value="" id="hold_ids">
     <input type="submit" value="Mark Page for Hold"/>
   </form>
   <% end %>
@@ -39,3 +45,14 @@
 <div class='tablewrap'>
   <%= table.render %>
 </div>
+<script type="text/javascript">
+  $(document).ready(function() {
+    var arr = [];
+    $("tr.data th.maint_id").each(function(){
+      arr.push($(this).text());
+    });
+    $("#delete_ids").val(arr.join(","));
+    $("#hold_ids").val(arr.join(","));
+    $("#review_ids").val(arr.join(","));
+  })
+</script>  

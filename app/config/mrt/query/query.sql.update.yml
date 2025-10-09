@@ -222,23 +222,7 @@ queries:
       type: string
     - name: maint_id
       type: integer
-  /queries-update/storage-maints/batch-update-status:
-    update: true
-    sql: |
-      UDPDATE
-        inv.inv_storage_maints
-      SET
-        maint_status= ?
-      WHERE
-        maint_status != 'removed'
-      and
-        id in ()
-    parameters:
-    - name: status
-      type: string
-    - name: idlist
-      # need to code support for a list
-      type: list
+
   /queries-update/storage-maints/apply-review-change:
     update: true
     sql: |

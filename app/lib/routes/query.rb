@@ -113,9 +113,20 @@ module Sinatra
           }
       end
 
+      app.post '/queries-update/storage-maints/batch-update-status' do
+        request.params.fetch('idlist', '').split(',') do |id|
+          cparams = {}
+          cparams['maint_id'] = id
+          cparams['status'] = request.params['status']
+          UC3Query::QueryClient.client.query_update(
+            '/queries-update/storage-maints/update-status', cparams
+          )
+        end
+        redirect request.referrer
+      end
+
       app.post '/queries-update/audit/active-batches-clear' do
         UC3Query::QueryClient.client.query_update(request.path, request.params)
-        redirect request.referrer
       end
 
       app.post '/queries-update/storage-nodes/add' do
@@ -190,7 +201,7 @@ module Sinatra
               request.params,
               resolver: UC3Query::QueryResolvers.method(:storage_scan_review_resolver),
               dispcols: %w[
-                s3key_annotated maint_type maint_status note actions
+                maint_id s3key_annotated maint_type maint_status note actions
 ]
             ),
             status: request.params.fetch('status', 'review'),

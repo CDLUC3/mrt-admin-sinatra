@@ -84,6 +84,8 @@ columns:
       filterable: true
     maint_type:
       filterable: true
+    maint_id:
+      id: true
   patterns:
     '^\d{4}-\d{2}-\d{2}$':
       cssclass: float
