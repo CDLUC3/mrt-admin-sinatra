@@ -273,7 +273,7 @@ module Sinatra
 
           row[11] = '' if row[11].nil?
           row[12] = '' if row[12].nil?
-          next if row[11].empty? && row[12].empty?
+          next if row[11].empty?
           next if row[9] == row[11] && row[10] == row[12]
 
           params = {}
