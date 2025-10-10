@@ -39,6 +39,7 @@ module UC3Queue
       @admin_user = map.fetch('admin_user', 'root')
       @admin_passwd = map.fetch('admin_passwd', 'root_passwd')
       @snapshot_path = map.fetch('snapshot_path', '/tdr/ingest/queue/zk-snapshots')
+      @cache = {}
       super(enabled: true)
     rescue StandardError => e
       puts "ZooKeeper Creation Error: #{e.message}"
@@ -781,7 +782,14 @@ module UC3Queue
       puts "Error unlocking collection #{mnemonic}: #{e.message}"
     end
 
+    def clear_cache
+      @cache = {}
+    end
+
     def locked_collections
+      locked = @cache[:locked]
+      return locked unless locked.nil?
+
       locked = {}
       ZK.open(@zkconn, timeout: 2) do |zk|
         params = {}
@@ -792,6 +800,7 @@ module UC3Queue
           end
         end
       end
+      @cache[:locked] = locked
       locked
     rescue StandardError => e
       puts "Error listing locked collections: #{e.message}"
