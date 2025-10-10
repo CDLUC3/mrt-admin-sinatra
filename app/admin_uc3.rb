@@ -2,6 +2,8 @@
 
 require 'sinatra'
 require 'sinatra/base'
+require 'sinatra/contrib'
+require_relative 'admin_common'
 require_relative 'lib/routes/home'
 require_relative 'lib/routes/resources'
 require_relative 'lib/routes/query'
@@ -16,11 +18,10 @@ AdminUI::Context.css = '/uc3/custom.css'
 AdminUI::Context.index_md = 'app/markdown/uc3/index.md'
 
 get '/' do
-  erb :index,
-    :layout => :page_layout,
-    :locals => {
-      context: AdminUI::Context.new(request.path)
-    }
+  adminui_show_markdown(
+    AdminUI::Context.new(request.path),
+    AdminUI::Context.index_md
+  )
 end
 
 get '/context' do
