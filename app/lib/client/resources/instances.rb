@@ -44,6 +44,13 @@ module UC3Resources
           values: [program]
         }
       end
+      envfilt = ENV.fetch('SSM_ROOT_PATH', '').split('/')
+      unless envfilt.empty?
+        filters << {
+          name: 'tag:Environment',
+          values: [envfilt[-1]]
+        }
+      end
       table = AdminUI::FilterTable.new(
         columns: [
           AdminUI::Column.new(:name, header: 'Name'),
