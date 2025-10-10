@@ -6,7 +6,6 @@ require 'sinatra/contrib'
 require_relative 'admin_common'
 require_relative 'lib/routes/home'
 require_relative 'lib/routes/resources'
-require_relative 'lib/routes/query'
 
 set :bind, '0.0.0.0'
 

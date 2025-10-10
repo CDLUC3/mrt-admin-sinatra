@@ -260,7 +260,10 @@ module AdminUI
       @description = TopMenu.instance.description_for_route(@route)
       @breadcrumbs = breadcrumbs
       # Breadcrumbs are an array of hashes with keys :title and :url
-      @ctime = File.ctime('/var/task/Gemfile.lock').strftime('%Y%m%d_%H%M%S')
+      
+      @ctime = File.exist?('/var/tast/Gemfile.lock') ? 
+        File.ctime('/var/task/Gemfile.lock').strftime('%Y%m%d_%H%M%S') : 
+        Time.now.strftime('%Y%m%d_%H%M%S')
     end
 
     def classes

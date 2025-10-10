@@ -17,7 +17,7 @@ module Sinatra
       app.get '/infra/instances' do
         adminui_show_table(
           AdminUI::Context.new(request.path),
-          UC3Resources::InstancesClient.new.list_instances
+          UC3Resources::InstancesClient.new.list_instances(request.params)
         )
       end
 

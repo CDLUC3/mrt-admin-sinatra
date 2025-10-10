@@ -31,7 +31,7 @@ Sinatra based admin tool for the new Merritt AWS account.
 
 ### Merritt app
 ```
-bundle exec puma app/config_mrt.ru
+MERRITT_ECS=x bundle exec puma app/config_mrt.ru
 ```
 
 Resources for deploying as a lambda
@@ -41,7 +41,7 @@ Resources for deploying as a lambda
 
 ### UC3-focuesed app
 ```
-bundle exec puma app/config_uc3.ru
+MERRITT_ECS=x bundle exec puma app/config_uc3.ru
 ```
 
 Resources for deploying as a lambda

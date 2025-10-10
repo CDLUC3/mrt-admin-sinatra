@@ -35,7 +35,15 @@ module UC3Resources
     #   values: ['dev']
     # }
     # ]
-    def list_instances(filters: {})
+    def list_instances(params)
+      filters = []
+      program = params.fetch(:program, '')
+      unless program.empty?
+        filters << {
+          name: 'tag:Program',
+          values: [program]
+        }
+      end
       table = AdminUI::FilterTable.new(
         columns: [
           AdminUI::Column.new(:name, header: 'Name'),
@@ -72,6 +80,7 @@ module UC3Resources
         end
       end
       instances.sort.each do |_key, value|
+        next unless program.empty? || program == value['program']
         table.add_row(AdminUI::Row.make_row(table.columns, value))
       end
       table
