@@ -37,7 +37,7 @@ module UC3Resources
     # ]
     def list_instances(params)
       filters = []
-      program = params.fetch(:program, '')
+      program = params.fetch('program', '')
       unless program.empty?
         filters << {
           name: 'tag:Program',
@@ -68,7 +68,7 @@ module UC3Resources
       return table unless enabled
 
       instances = {}
-      @client.describe_instances(filters: filters).reservations.each do |res|
+      @client.describe_instances({filters: filters}).reservations.each do |res|
         res.instances.each do |inst|
           name = inst.tags.find { |t| t.key == 'Name' }&.value
           instances[name] = {
@@ -87,7 +87,6 @@ module UC3Resources
         end
       end
       instances.sort.each do |_key, value|
-        next unless program.empty? || program == value['program']
         table.add_row(AdminUI::Row.make_row(table.columns, value))
       end
       table
