@@ -291,5 +291,30 @@ module UC3Query
       end
       row
     end
+
+    def self.collections_resolver(row)
+      locked_coll = UC3Queue::ZKClient.client.locked_collections
+      row['locked'] = locked_coll.fetch(row['mnemonic'], false)
+      row['actions'] = []
+
+      unless row['locked']
+        row['actions'] << {
+          value: 'Lock Collection',
+          href: "/ops/zk/collection/lock?mnemonic=#{row['mnemonic']}",
+          post: true,
+          cssclass: 'button'
+        }
+      end
+
+      if row['locked']
+        row['actions'] << {
+          value: 'Unlock Collection',
+          href: "/ops/zk/collection/unlock?mnemonic=#{row['mnemonic']}",
+          post: true,
+          cssclass: 'button'
+        }
+      end
+      row
+    end
   end
 end

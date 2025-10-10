@@ -7,7 +7,7 @@ module UC3Ldap
   # map of ldap collection to collection
   class LDAPCollectionMapList
     def initialize(ldapcli)
-      @colltable = UC3Query::QueryClient.client.query('/queries/misc/collections', {})
+      @colltable = UC3Query::QueryClient.client.query('/ops/collections/list', {})
       @ldapcli = ldapcli
       @ldapcoll = []
       if @ldapcli.enabled

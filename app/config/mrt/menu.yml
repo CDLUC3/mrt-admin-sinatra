@@ -704,6 +704,8 @@ items:
     classes: needs-db
     breadcrumb: true
     items:
+    - title: List Collections
+      route: /ops/collections/list
     - path: management
       title: Collection Creation
       breadcrumb: true
@@ -1063,8 +1065,6 @@ items:
     path: queries
     classes: needs-db
     items:
-    - title: List Collections (Simple)
-      route: /queries/misc/collections
     - title: List First 1000 Objects (Simple)
       route: /queries/misc/objects
     - title: DB time

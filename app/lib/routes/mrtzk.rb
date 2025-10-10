@@ -323,6 +323,18 @@ module Sinatra
         content_type :json
         UC3Queue::ZKClient.client.zk_stat.to_json
       end
+
+      app.post '/ops/zk/collection/lock' do
+        UC3Queue::ZKClient.client.lock_collection(request.params['mnemonic'])
+        content_type :json
+        { message: "Collection #{request.params['mnemonic']} Locked" }.to_json
+      end
+
+      app.post '/ops/zk/collection/unlock' do
+        UC3Queue::ZKClient.client.unlock_collection(request.params['mnemonic'])
+        content_type :json
+        { message: "Collection #{request.params['mnemonic']} Unlocked" }.to_json
+      end
     end
   end
 

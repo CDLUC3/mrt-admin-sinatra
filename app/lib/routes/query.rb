@@ -86,7 +86,7 @@ module Sinatra
         else
           adminui_show_table(
             AdminUI::Context.new(request.path),
-            UC3Query::QueryClient.client.query('/queries/collections', request.params)
+            UC3Query::QueryClient.client.query('/queries/collections/choose', request.params)
           )
         end
       end
@@ -232,6 +232,17 @@ module Sinatra
             request.path,
             request.params,
             resolver: UC3Query::QueryResolvers.method(:audit_status_resolver)
+          )
+        )
+      end
+
+      app.get '/ops/collections/list' do
+        adminui_show_table(
+          AdminUI::Context.new(request.path),
+          UC3Query::QueryClient.client.query(
+            request.path,
+            request.params,
+            resolver: UC3Query::QueryResolvers.method(:collections_resolver)
           )
         )
       end

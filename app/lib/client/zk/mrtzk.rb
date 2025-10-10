@@ -758,5 +758,43 @@ module UC3Queue
     rescue StandardError => e
       puts "Error deleting node #{path}: #{e.message}"
     end
+
+    def lock_collection(mnemonic)
+      return if mnemonic.nil?
+      return if mnemonic.empty?
+
+      ZK.open(@zkconn, timeout: 2) do |zk|
+        MerrittZK::Locks.lock_collection(zk, mnemonic)
+      end
+    rescue StandardError => e
+      puts "Error locking collection #{mnemonic}: #{e.message}"
+    end
+
+    def unlock_collection(mnemonic)
+      return if mnemonic.nil?
+      return if mnemonic.empty?
+
+      ZK.open(@zkconn, timeout: 2) do |zk|
+        MerrittZK::Locks.unlock_collection(zk, mnemonic)
+      end
+    rescue StandardError => e
+      puts "Error unlocking collection #{mnemonic}: #{e.message}"
+    end
+
+    def locked_collections
+      locked = {}
+      ZK.open(@zkconn, timeout: 2) do |zk|
+        params = {}
+        params['zkpath'] = '/locks/collections'
+        MerrittZK::NodeDump.new(zk, params).listing.each do |coll|
+          coll.each_key do |path|
+            locked[path.split('/')[-1]] = true
+          end
+        end
+      end
+      locked
+    rescue StandardError => e
+      puts "Error listing locked collections: #{e.message}"
+    end
   end
 end

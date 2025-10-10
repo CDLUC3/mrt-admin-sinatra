@@ -674,7 +674,7 @@ queries:
         on n.number = lim.node
       order by
         n.number
-  /queries/collections:
+  /queries/collections/choose:
     description: |
       _Please Choose the Collection for this Report_
     sql: |
@@ -729,14 +729,16 @@ queries:
     - name: mnemonic
       type: string
     save_to_cloud: "reports/ucsc-objects-{{mnemonic}}.csv"
-  /queries/misc/collections:
+  /ops/collections/list:
     totals: true
     sql: |
       select
         c.id as inv_collection_id,
         c.mnemonic,
         c.name as collection_name,
-        c.ark
+        c.ark,
+        '' locked,
+        '' actions
       from
         inv.inv_collections c
       {{{COLLFILTER}}}
