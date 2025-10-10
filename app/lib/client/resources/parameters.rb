@@ -41,7 +41,7 @@ module UC3Resources
       params = {}
 
       next_token = 'na'
-      opt = { path: '/uc3', recursive: true }
+      opt = { path: ENV.fetch('SSM_ROOT_PATH', '/uc3'), recursive: true }
       while next_token
         res = @client.get_parameters_by_path(opt)
         res.parameters.each do |param|
