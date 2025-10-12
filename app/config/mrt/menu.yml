@@ -1069,11 +1069,20 @@ items:
       route: /queries/misc/objects
     - title: DB time
       route: /queries/misc/now
-    - title: List Consistency Checks
-      route: /test/consistency/links
-    - title: List All routes
-      route: /test/routes/links
     - title: Admin Objects
       route: /queries/misc/admin
     - title: Admin Object Types
       route: /queries/misc/admin-types
+  - title: Testing
+    path: test 
+    route: /test
+    breadcrumb: true
+    items:
+    - title: List Consistency Checks
+      route: /test/consistency/links
+    - title: List All routes
+      route: /test/routes/links
+    - title: Load Test Data
+      route: /test/load/data
+      disable: ecs-stg, ecs-prd, ecs-dbsnapshot
+      method: post

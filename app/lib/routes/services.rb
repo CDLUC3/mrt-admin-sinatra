@@ -306,6 +306,39 @@ module Sinatra
         content_type :json
         { message: "Changes applied #{count}; Errors: #{errors}" }.to_json
       end
+
+      app.post '/test/load/data' do
+        test_data_dir = "#{UC3::FileSystemClient::DIR}/test-data"
+        `mkdir -p #{test_data_dir}`
+        sample_data = 'https://raw.githubusercontent.com/CDLUC3/mrt-doc/refs/heads/main/sampleFiles/'
+        %w[merritt_demo cdl_dryaddev].each do |mnemonic|
+          [
+            'sampleBatchOfContainers.checkm', 
+            'sampleBatchOfFiles.checkm', 
+            'sampleBatchOfManifests.checkm'
+          ].each do |fname|
+            file = "#{test_data_dir}/#{fname}"
+            url = "#{sample_data}/#{fname}"
+            `curl -L -o #{file} #{url} 2>/dev/null` unless File.exist?(file)
+            load_test_file_to_merritt(file, mnemonic)
+            sleep 5
+          end
+        end
+        redirect '/ops/zk/ingest/jobs-by-collection'
+      end
+    end
+
+    def load_test_file_to_merritt(file, mnemonic)
+      puts "Loading #{file} to #{mnemonic} #{ui_host}/object/update"
+
+      puts `curl -H 'Accept: application/json' \
+        -F 'file=@#{file}' \
+        -F 'type=manifest' \
+        -F 'submitter=merritt-test' \
+        -F 'responseForm=xml' \
+        -F 'profile=#{mnemonic}_content' \
+        --user 'merritt-test:password' #{ui_host}/object/update
+      `      
     end
 
     def manifest_url(params)
