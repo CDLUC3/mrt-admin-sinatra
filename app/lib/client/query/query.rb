@@ -177,12 +177,14 @@ module UC3Query
     end
 
     def query_update(path, urlparams = {}, sqlsym: :sql, purpose: '')
+      puts 6666
       query = @queries.fetch(path.to_sym, {})
 
       sql = query.fetch(sqlsym, '')
       return { message: 'SQL is empty' } if sql.empty?
       return { message: 'Not an update query' } unless query.fetch(:update, false)
 
+      puts 7777
       begin
         stmt = @client.prepare(sql)
 
