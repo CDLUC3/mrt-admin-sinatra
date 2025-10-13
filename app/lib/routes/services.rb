@@ -313,8 +313,8 @@ module Sinatra
         sample_data = 'https://raw.githubusercontent.com/CDLUC3/mrt-doc/refs/heads/main/sampleFiles/'
         %w[merritt_demo cdl_dryaddev].each do |mnemonic|
           [
-            'sampleBatchOfContainers.checkm', 
-            'sampleBatchOfFiles.checkm', 
+            'sampleBatchOfContainers.checkm',
+            'sampleBatchOfFiles.checkm',
             'sampleBatchOfManifests.checkm'
           ].each do |fname|
             file = "#{test_data_dir}/#{fname}"
@@ -338,7 +338,7 @@ module Sinatra
         -F 'responseForm=xml' \
         -F 'profile=#{mnemonic}_content' \
         --user 'merritt-test:password' #{ui_host}/object/update
-      `      
+      `
     end
 
     def manifest_url(params)

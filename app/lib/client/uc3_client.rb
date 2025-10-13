@@ -55,6 +55,7 @@ module UC3
       qc = UC3Query::QueryClient.client
       puts 3333
       return unless !qc.nil? && qc.enabled
+
       puts 4444
 
       begin

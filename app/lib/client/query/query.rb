@@ -188,6 +188,8 @@ module UC3Query
 
         params = resolve_parameters(query.fetch(:parameters, []), urlparams)
 
+        puts "Executing: #{sql} with #{params}"
+
         stmt.execute(*params)
       rescue StandardError => e
         return {
