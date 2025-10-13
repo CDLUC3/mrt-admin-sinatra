@@ -959,7 +959,6 @@ queries:
     limit:
       enabled: true
     status: PASS
-    status_check: true
     sql: |
       {{{UNREPLICATED}}}
       {{{OBJQ}}}
