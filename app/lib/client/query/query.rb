@@ -196,7 +196,7 @@ module UC3Query
         stmt.execute(*params)
         puts 9999
       rescue StandardError => e
-        puts 1122
+        puts "1122 #{purpose} SQL: #{e.class}: #{e}"
         return {
           status: 'FAIL',
           message: "#{purpose} SQL: #{e.class}: #{e}"
