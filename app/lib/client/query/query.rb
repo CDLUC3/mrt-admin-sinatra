@@ -187,13 +187,16 @@ module UC3Query
       puts 7777
       begin
         stmt = @client.prepare(sql)
+        puts 8888
 
         params = resolve_parameters(query.fetch(:parameters, []), urlparams)
 
         puts "Executing: #{sql} with #{params}"
 
         stmt.execute(*params)
+        puts 9999
       rescue StandardError => e
+        puts 1122
         return {
           status: 'FAIL',
           message: "#{purpose} SQL: #{e.class}: #{e}"
