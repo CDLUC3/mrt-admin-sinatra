@@ -587,6 +587,7 @@ items:
   - path: ingest-folders
     title: Ingest Folders
     route: /ops/ingest-folders
+    disable: ecs-stg, ecs-prd
     breadcrumb: true
     items:
     - title: Ingest Folders

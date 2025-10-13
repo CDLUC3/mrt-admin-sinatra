@@ -293,7 +293,9 @@ module UC3Query
         ]
         table = AdminUI::FilterTable.empty(arr.join('<hr/>'), status: :ERROR, status_message: e.to_s)
       end
+      puts 1111
       record_status(path, table.status) if query.fetch(:status_check, false)
+      puts 2222
       table
     end
 
