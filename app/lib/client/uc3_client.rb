@@ -53,10 +53,7 @@ module UC3
 
     def record_status(path, status)
       qc = UC3Query::QueryClient.client
-      puts 3333
       return unless !qc.nil? && qc.enabled
-
-      puts 4444
 
       begin
         params = {}
@@ -67,7 +64,6 @@ module UC3
           params,
           purpose: 'Record Consistency status'
         )
-        puts 5555
       rescue StandardError => e
         puts "Error recording status for #{path}: #{e.message}"
       end

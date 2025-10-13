@@ -177,26 +177,20 @@ module UC3Query
     end
 
     def query_update(path, urlparams = {}, sqlsym: :sql, purpose: '')
-      puts 6666
       query = @queries.fetch(path.to_sym, {})
 
       sql = query.fetch(sqlsym, '')
       return { message: 'SQL is empty' } if sql.empty?
       return { message: 'Not an update query' } unless query.fetch(:update, false)
 
-      puts 7777
       begin
         stmt = @client.prepare(sql)
-        puts 8888
 
         params = resolve_parameters(query.fetch(:parameters, []), urlparams)
 
-        puts "Executing: #{sql} with #{params}"
-
         stmt.execute(*params)
-        puts 9999
       rescue StandardError => e
-        puts "1122 #{purpose} SQL: #{e.class}: #{e}"
+        puts "#{purpose} SQL: #{e.class}: #{e}"
         return {
           status: 'FAIL',
           message: "#{purpose} SQL: #{e.class}: #{e}"
@@ -300,9 +294,7 @@ module UC3Query
         ]
         table = AdminUI::FilterTable.empty(arr.join('<hr/>'), status: :ERROR, status_message: e.to_s)
       end
-      puts 1111
       record_status(path, table.status) if query.fetch(:status_check, false)
-      puts 2222
       table
     end
 
