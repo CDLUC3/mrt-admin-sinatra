@@ -91,11 +91,17 @@ module Sinatra
         )
       end
 
-      app.get '/ops/zk/ingest/jobs-by-collection' do
-        adminui_show_table(
-          AdminUI::Context.new(request.path),
-          UC3Queue::ZKClient.client.jobs_by_collection(request.path, request.params)
-        )
+      [
+        '/ops/zk/ingest/jobs-by-collection',
+        '/ops/zk/ingest/jobs-by-collection/filtered',
+        '/ops/zk/ingest/jobs-by-collection-and-batch/filtered'
+      ].each do |path|
+        app.get path do
+          adminui_show_table(
+            AdminUI::Context.new(request.path),
+            UC3Queue::ZKClient.client.jobs_by_collection(request.path, request.params)
+          )
+        end
       end
 
       app.get '/ops/zk/ingest/jobs-by-collection-and-batch' do

@@ -155,11 +155,11 @@ module UC3Queue
               table.columns,
               {
                 profile: {
-                  href: "/ops/zk/ingest/jobs-by-collection?profile=#{profile}",
+                  href: "/ops/zk/ingest/jobs-by-collection/filtered?profile=#{profile}",
                   value: profile
                 },
                 jobstatus: {
-                  href: "/ops/zk/ingest/jobs-by-collection?profile=#{profile}&status=#{jobstatus}",
+                  href: "/ops/zk/ingest/jobs-by-collection/filtered?profile=#{profile}&status=#{jobstatus}",
                   value: jobstatus
                 },
                 jobCount: job_count,
@@ -215,11 +215,11 @@ module UC3Queue
               {
                 profile: profile,
                 bid: {
-                  href: "/ops/zk/ingest/jobs-by-collection?profile=#{profile}&bid=#{bid}",
+                  href: "/ops/zk/ingest/jobs-by-collection-and-batch/filtered?profile=#{profile}&bid=#{bid}",
                   value: bid
                 },
                 jobstatus: {
-                  href: "/ops/zk/ingest/jobs-by-collection?profile=#{profile}&bid=#{bid}&status=#{jobstatus}",
+                  href: "/ops/zk/ingest/jobs-by-collection-and-batch/filtered?profile=#{profile}&bid=#{bid}&status=#{jobstatus}",
                   value: jobstatus
                 },
                 jobCount: job_count,
