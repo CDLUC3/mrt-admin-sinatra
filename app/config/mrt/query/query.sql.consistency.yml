@@ -1295,6 +1295,26 @@ queries:
           where
             status = 'unknown'
         ) as qcount
+  /ops/db-queue/audit/counts-by-state/objlist:
+    limit:
+      enabled: true
+    sql: |
+      {{{OBJQ}}}
+    template-params:
+      WHERE: |
+        where exists (
+          select
+            1
+          from
+            inv.inv_audits a
+          where
+            o.id = a.inv_object_id
+          and
+            a.status = ?
+        )
+    parameters:
+    - name: status
+      type: string
   /ops/db-queue/audit/new-ucb-content:
     status: PASS
     status_check: true

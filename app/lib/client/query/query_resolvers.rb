@@ -146,6 +146,12 @@ module UC3Query
           disabled: storage_mgt_disabled?
         }
       end
+      if row['acount'].positive?
+        row['acount'] = {
+          value: row['acount'],
+          href: "/ops/db-queue/audit/counts-by-state/objlist?status=#{row['astatus']}"
+        }
+      end
       row
     end
 
