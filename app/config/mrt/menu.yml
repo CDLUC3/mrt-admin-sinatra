@@ -1087,3 +1087,38 @@ items:
       route: /test/load/data
       disable: ecs-stg, ecs-prd, ecs-dbsnapshot
       method: post
+    - title: Force Scan Error
+      route: /test/no-action-scan
+      disable: ecs-stg, ecs-prd, ecs-dbsnapshot
+      description: |
+        ### Create Scan Errors 
+
+        Attach to the merritt-dev container
+        
+        ```
+        session mrt-ecs-dev-stack/merrittdev
+        ```
+
+        From the session, run the following script 
+        
+        ```
+        /create-scan-error.sh
+        ```
+
+    - title: Force Test Fixity Error
+      route: /test/no-action-fixity
+      disable: ecs-stg, ecs-prd, ecs-dbsnapshot
+      description: |
+        ### Create Test Fixity Errors 
+
+        Attach to the merritt-dev container
+
+        ```
+        session mrt-ecs-dev-stack/merrittdev
+        ```
+
+        From the session, run the following script 
+        
+        ```
+        /create-audit-error.sh
+        ```
