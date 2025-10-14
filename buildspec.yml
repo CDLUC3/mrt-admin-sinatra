@@ -50,6 +50,12 @@ phases:
         aws ecs update-service --cluster mrt-ecs-dbsnapshot-stack --service admintool \
           --desired-count 2 --output yaml --no-cli-pager \
           --force-new-deployment || echo "Skip ecs-dbsnapshot Deployment"
+        
+        aws lambda update-function-code \
+          --function-name arn:aws:lambda:us-west-2:451826914157:function:uc3-mrt-admintool-img-dev \
+          --image-uri ${ECR_REGISTRY}/mrt-admin-sinatra:ecs-dev \
+          --output text --region us-west-2 \
+          --no-cli-pager || echo "Skip Lambda Deployment"
       fi
     - |
       if [[ "$ADMIN_MODE" == "build" ]]

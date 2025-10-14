@@ -973,7 +973,7 @@ items:
         method: post
       - title: Redeploy ZooKeeper
         route: /infra/ecs/run/merrittdev/redeployZk
-        disable: default, docker
+        disable: default, docker, ecs-stg, ecs-prd, ecs-dbsnapshot
         confmsg: This will run a job in the merrittdev container
         method: post
     - title: Stack Init 
@@ -1052,37 +1052,52 @@ items:
       route: /test/load/data
       disable: ecs-stg, ecs-prd, ecs-dbsnapshot
       method: post
-    - title: Force Scan Error
+    - title: "Info: How To Force Scan Errors"
       route: /test/no-action-scan
       disable: ecs-stg, ecs-prd, ecs-dbsnapshot
       description: |
         ### Create Scan Errors 
 
-        Attach to the merritt-dev container
+        #### Attach to the merritt-dev container
+        
+        docker-compose
         
         ```
-        session mrt-ecs-dev-stack/merrittdev
+        docker compose run --rm merrittdev /bin/bash
         ```
 
-        From the session, run the following script 
+        ecs
+
+        ```
+        session mrt-{{{MERRITT_ECS}}}-stack/merrittdev
+        ```
+
+        #### From the session, run the following script 
         
         ```
         /create-scan-error.sh
         ```
 
-    - title: Force Test Fixity Error
+    - title: "Info: How To Force Test Fixity Errors"
       route: /test/no-action-fixity
       disable: ecs-stg, ecs-prd, ecs-dbsnapshot
       description: |
         ### Create Test Fixity Errors 
 
-        Attach to the merritt-dev container
+        #### Attach to the merritt-dev container
+
+        docker-compose
+
+        ```
+        docker compose run --rm merrittdev /bin/bash
+        ```
+        ecs
 
         ```
         session mrt-ecs-dev-stack/merrittdev
         ```
 
-        From the session, run the following script 
+        #### From the session, run the following script 
         
         ```
         /create-audit-error.sh
