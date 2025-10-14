@@ -335,7 +335,6 @@ module Sinatra
 
       puts `curl -H 'Accept: application/json' \
         -F 'file=@#{file}' \
-        -F 'type=#{type}' \
         -F 'title=#{type}: #{file}' \
         -F 'submitter=merritt-test' \
         -F 'responseForm=xml' \
