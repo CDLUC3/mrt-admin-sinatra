@@ -523,63 +523,28 @@ items:
       route: /ops/zk/ingest
       breadcrumb: true
       items:
-      - title: Pause
-        route: /ops/zk/ingest/pause
-        confmsg: This will pause the ingest queue until the queue is unpaused.
-        method: post
-      - title: Unpause
-        route: /ops/zk/ingest/unpause
-        confmsg: This will resume ingest processing if the queue is currently paused.
-        method: post
       - title: Ingest Batches
         route: /ops/zk/ingest/batches
       - title: Jobs by Collection
         route: /ops/zk/ingest/jobs-by-collection
       - title: Jobs by Collection and Batch
         route: /ops/zk/ingest/jobs-by-collection-and-batch
-      - title: Cleanup Queue
-        route: /ops/zk/ingest/cleanup-queue
-        confmsg: This will cleanup all completed and deleted batches in the ingest queue.
-        method: post
+      - title: Ingest Queue Maintenance
+        route: /ops/zk/ingest/maintenance
     - path: access-queue
       title: Access Queue
       route: /ops/zk/access
       breadcrumb: true
       items:
-      - title: Pause Small Queue
-        route: /ops/zk/access/pause-small
-        confmsg: This pause all processing of the small access queue.  Note that the large access queue may still process small items.
-        method: post
-      - title: Unpause Small Queue
-        confmsg: This resume processing of the small access queue if the queue is in a paused state.
-        route: /ops/zk/access/unpause-small
-        method: post
-      - title: Pause Large Queue
-        route: /ops/zk/access/pause-large
-        confmsg: This pause all processing of the large access queue.
-        method: post
-      - title: Unpause Large Queue
-        route: /ops/zk/access/unpause-large
-        confmsg: This resume processing of the large access queue if the queue is in a paused state.
-        method: post
       - title: View Queue
         route: /ops/zk/access/jobs
-      - title: Cleanup Queue
-        route: /ops/zk/access/cleanup-queue
-        confmsg: This will clean up all access jobs in a completed or deleted state.
-        method: post
+      - title: Access Queue Maintenance
+        route: /ops/zk/access/maintenance
       - title: Create Fake Access Request
         route: /ops/zk/access/fake
         method: post
-    - title: Snapshot ZooKeeper
-      route: /ops/zk/snapshot
-      confmsg: This will snapshot ZooKeeper and save to EFS
-      method: post
-      disable: ecs-stg, ecs-prd
-    - title: Restore ZooKeeper
-      route: /ops/zk/restore
-      confmsg: This will restore ZooKeeper from a snapshot saved to EFS
-      method: post
+    - title: ZK Maintenance
+      route: /ops/zk/maintenance
       disable: ecs-stg, ecs-prd
     - title: ZooKeeper Stat
       disable: ecs-stg, ecs-prd

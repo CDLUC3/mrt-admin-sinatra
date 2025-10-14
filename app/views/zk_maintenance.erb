@@ -1,0 +1,12 @@
+<div>
+<fieldset>
+  <legend>Maintain Zookeeper</legend>
+  <form method="POST" action="/ops/zk/snapshot">
+    <input type="submit" value="Snapshot ZK and Save to Filesystem"/>
+  </form>
+  <form method="POST" action="/ops/zk/restore">
+    <input type="submit" value="Restore ZK from Filesystem" class="button_red"
+    onclick="return confirm('This will erase the current ZooKeeper state and restore from the snapshot. Are you sure you want to proceed?')"/>
+  </form>
+</fieldset>
+</div>

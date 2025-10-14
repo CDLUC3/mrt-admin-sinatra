@@ -341,6 +341,24 @@ module Sinatra
         content_type :json
         { message: "Collection #{request.params['mnemonic']} Unlocked" }.to_json
       end
+ 
+      app.get '/ops/zk/ingest/maintenance' do
+        erb :zk_ingest_maintenance, layout: :page_layout, locals: {
+          context: AdminUI::Context.new(request.path)
+        }
+      end
+
+      app.get '/ops/zk/access/maintenance' do
+        erb :zk_access_maintenance, layout: :page_layout, locals: {
+          context: AdminUI::Context.new(request.path)
+        }
+      end
+
+      app.get '/ops/zk/maintenance' do
+        erb :zk_maintenance, layout: :page_layout, locals: {
+          context: AdminUI::Context.new(request.path)
+        }
+      end
     end
   end
 
