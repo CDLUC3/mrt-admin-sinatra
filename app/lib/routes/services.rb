@@ -311,16 +311,18 @@ module Sinatra
         test_data_dir = "#{UC3::FileSystemClient::DIR}/test-data"
         `mkdir -p #{test_data_dir}`
         sample_data = 'https://raw.githubusercontent.com/CDLUC3/mrt-doc/refs/heads/main/sampleFiles/'
-        %w[merritt_demo cdl_dryaddev].each do |mnemonic|
+        %w[merritt_demo cdl_dryaddev escholarship terry_test].each do |mnemonic|
           [
-            'sampleBatchOfContainers.checkm',
-            'sampleBatchOfFiles.checkm',
-            'sampleBatchOfManifests.checkm'
-          ].each do |fname|
-            file = "#{test_data_dir}/#{fname}"
-            url = "#{sample_data}/#{fname}"
+            { type: 'container-batch-manifest', file: 'sampleBatchOfContainers.checkm' },
+            { type: 'object-manifest', file: 'sampleBatchOfFiles.checkm' },
+            { type: 'batch-manifest', file: 'sampleBatchOfManifests.checkm' },
+            { type: 'container', file: 'jazzbears.zip' },
+            { type: 'file', file: 'bigHunt2.jpg' }
+          ].each do |subm|
+            file = "#{test_data_dir}/#{subm[:file]}"
+            url = "#{sample_data}/#{subm[:file]}"
             `curl -L -o #{file} #{url} 2>/dev/null` unless File.exist?(file)
-            load_test_file_to_merritt(file, mnemonic)
+            load_test_file_to_merritt(file, subm[:type], mnemonic)
             sleep 5
           end
         end
@@ -328,12 +330,13 @@ module Sinatra
       end
     end
 
-    def load_test_file_to_merritt(file, mnemonic)
+    def load_test_file_to_merritt(file, type, mnemonic)
       puts "Loading #{file} to #{mnemonic} #{ui_host}/object/update"
 
       puts `curl -H 'Accept: application/json' \
         -F 'file=@#{file}' \
-        -F 'type=manifest' \
+        -F 'type=#{type}' \
+        -F 'title=#{type}: #{file}' \
         -F 'submitter=merritt-test' \
         -F 'responseForm=xml' \
         -F 'profile=#{mnemonic}_content' \

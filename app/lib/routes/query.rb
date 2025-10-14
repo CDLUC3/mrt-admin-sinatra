@@ -64,7 +64,8 @@ module Sinatra
 
       app.post '/queries/update-billing' do
         UC3Query::QueryClient.client.update_billing
-        redirect '/queries/repository/collections/bytes'
+        content_type :json
+        { message: 'udpate_billing complete' }.to_json
       end
 
       app.get '/queries/recent/ingests/today' do
