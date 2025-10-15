@@ -12,7 +12,8 @@ module UC3Query
       stack_name = UC3::UC3Client.stack_name
       return [UC3::UC3Client::ECS_DBSNAPSHOT].include?(stack_name) if strict
 
-      [UC3::UC3Client::ECS_DBSNAPSHOT, UC3::UC3Client::ECS_PRD].include?(stack_name)
+      # use this to disable buttons in prd/stg if needed
+      [UC3::UC3Client::ECS_DBSNAPSHOT].include?(stack_name)
     end
 
     def self.obj_info_resolver(row)
@@ -300,13 +301,13 @@ module UC3Query
 
     def self.collections_resolver(row)
       locked_coll = UC3Queue::ZKClient.client.locked_collections
-      row['locked'] = locked_coll.fetch(row['mnemonic'], false)
+      row['locked'] = locked_coll.fetch("#{row['mnemonic']}_content", false)
       row['actions'] = []
 
       unless row['locked']
         row['actions'] << {
           value: 'Lock Collection',
-          href: "/ops/zk/collection/lock?mnemonic=#{row['mnemonic']}",
+          href: "/ops/zk/collection/lock?mnemonic=#{row['mnemonic']}_content",
           post: true,
           cssclass: 'button'
         }
@@ -315,7 +316,7 @@ module UC3Query
       if row['locked']
         row['actions'] << {
           value: 'Unlock Collection',
-          href: "/ops/zk/collection/unlock?mnemonic=#{row['mnemonic']}",
+          href: "/ops/zk/collection/unlock?mnemonic=#{row['mnemonic']}_content",
           post: true,
           cssclass: 'button'
         }

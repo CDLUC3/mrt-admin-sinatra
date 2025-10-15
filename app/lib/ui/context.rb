@@ -286,8 +286,7 @@ module AdminUI
 
     def description
       description = Redcarpet::Markdown.new(Redcarpet::Render::HTML.new, fenced_code_blocks: true).render(@description)
-      deescription = Mustache.render(description, ENV)
-      deescription
+      Mustache.render(description, ENV)
     end
 
     def to_h

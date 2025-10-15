@@ -209,17 +209,18 @@ module UC3Queue
         profile, bid = key.split(':', 2)
         @colls[key].keys.sort.each do |jobstatus|
           job_count = @colls[key][jobstatus].size
+          jcb = '/ops/zk/ingest/jobs-by-collection-and-batch/filtered'
           table.add_row(
             AdminUI::Row.make_row(
               table.columns,
               {
                 profile: profile,
                 bid: {
-                  href: "/ops/zk/ingest/jobs-by-collection-and-batch/filtered?profile=#{profile}&bid=#{bid}",
+                  href: "#{jcb}?profile=#{profile}&bid=#{bid}",
                   value: bid
                 },
                 jobstatus: {
-                  href: "/ops/zk/ingest/jobs-by-collection-and-batch/filtered?profile=#{profile}&bid=#{bid}&status=#{jobstatus}",
+                  href: "#{jcb}?profile=#{profile}&bid=#{bid}&status=#{jobstatus}",
                   value: jobstatus
                 },
                 jobCount: job_count,

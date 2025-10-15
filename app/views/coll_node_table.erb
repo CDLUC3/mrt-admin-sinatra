@@ -1,16 +1,5 @@
 <div>
 <fieldset>
-  <legend>Collection Processing Status</legend>
-  <div>
-  <label for="processing_status">Processing Status</label>
-  <output id="processing_status" name="processing_status"/>
-  </div>
-  <input type="button" disabled value="Lock Collection"/>
-  <input type="button" disabled value="Unlock Collection"/>
-</fieldset>
-</div>
-<div>
-<fieldset>
   <legend>Add Storage Node</legend>
   <form method="POST" action="/queries-update/storage-nodes/add">
   <input type="hidden" name="inv_collection_id" value="<%= inv_collection_id %>">
