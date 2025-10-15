@@ -496,6 +496,8 @@ queries:
     sql: |
       {{{MIME}}}
   /queries/use-cases/largest-objects:
+    description: |
+      Objects with the largest billable size.
     limit:
       enabled: true
     totals: true
@@ -514,6 +516,8 @@ queries:
         order by
           billable_size desc
   /queries/use-cases/most-files:
+    description: |
+      Objects with the largest number of files.
     limit:
       enabled: true
     totals: true
@@ -644,6 +648,14 @@ queries:
             'ucb_lib_prechmat', 'ucb_lib_stone_rubbings'
           )
   /ops/storage/db/nodes:
+    description: |
+      This report lists all defined storage nodes in the inventory database. 
+      The report displays the last daily count of objects and files for each storage node (captured in the billing database).
+
+      - SKIP: No set allocation for the storage node
+      - ERROR: Node size > 95% allocation
+      - WARN: Node size > 90% allocation
+      - PASS: Node size <= 90% allocation
     status: PASS
     status_check: true
     sql: |
@@ -723,6 +735,10 @@ queries:
     - name: mnemonic
       type: string
   /queries/content/mnemonic/ucsc-objects:
+    description: |
+      Objects for a Mnemonic with extensions originally requested by UCSC.
+      - mime types
+      - local ids
     sql: |
       {{{UCSCOBJ}}}
     parameters:

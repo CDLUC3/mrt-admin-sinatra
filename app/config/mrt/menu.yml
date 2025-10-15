@@ -219,6 +219,8 @@ items:
         title: By Mime Group
         route: /queries/repository/mimes/group
         breadcrumb: true
+        description: |
+          A high-level _Mime Group_ is assigned to each Mime Type based on the work of the UC Digital Preservation Strategy working group.
         items:
         - title: software
           route: /queries/repository/mimes/group/software
@@ -241,6 +243,18 @@ items:
         - title: web
           route: /queries/repository/mimes/group/web
     - title: Campus Invoices
+      description: |
+        The Merritt Invoice report calculates the Merritt recharge for each campus.  
+
+        The report accounts for the significant recharge calculations that were implemented in FY2019, 
+        including the 10TB storage allocation made available to each main campus library free of recharge.
+    
+        As of June 2023, the pre-2019 chargeback calculations are no longer supported.
+
+        - [FY Begin 2022](invoices/2022)
+        - [FY Begin 2023](invoices/2023)
+        - [FY Begin 2024](invoices/2024)
+        - [FY Begin 2025](invoices/2025)
       path: invoices
       route: /queries/repository/campus/invoices
       breadcrumb: true
@@ -1061,7 +1075,7 @@ items:
         #### Attach to the merritt-dev container
         
         docker-compose
-        
+
         ```
         docker compose run --rm merrittdev /bin/bash
         ```

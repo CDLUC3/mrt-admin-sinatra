@@ -117,14 +117,18 @@ module UC3Query
 
     def result_header(path, params, sql)
       <<~HTML
+        <hr/>
         <details>
-          <summary>SQL</summary>
+          <summary>Details</summary>
           <div>
             <a href="#{UC3Query::QueryClient.make_url_with_key(path, params, 'admintoolformat', 'json')}">JSON</a>
             <a href="#{UC3Query::QueryClient.make_url_with_key(path, params, 'admintoolformat', 'csv')}">CSV</a>
             <a href="#{UC3Query::QueryClient.make_url_with_key(path, params, 'admintoolformat', 'text')}">TEXT</a>
           </div>
+          <h4>SQL</h4>
           <pre>#{@formatter.format(sql).gsub(' (', '(')}</pre>
+          <h4>Params</h4>
+          <span>#{params.inspect}</span>
         </details>
       HTML
     end

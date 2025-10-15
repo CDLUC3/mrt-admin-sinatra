@@ -365,6 +365,8 @@ fragments:
       start
 queries:
   /queries/recent/ingests:
+    description: |
+      Lists the batches ingested on a specific date.  Edit the URL parameter to change the date of focus.
     sql: |
       select
         profile,
@@ -568,6 +570,9 @@ queries:
       order by
         audit_date desc
   /queries/repository/last-month/producer-files:
+    description: 
+      This report shows the producer file count added each Merritt collection
+      week by week for the last 4 weeks.
     totals: true
     template-params:
       FIELD: cast(ifnull(sum(ocmud.count_files), 0) as signed)
@@ -580,6 +585,9 @@ queries:
     sql: |
       {{{COLLTOTAL}}}
   /queries/repository/all-time/producer-files:
+    description: |
+      This report shows the cumulative producer file count in each Merritt collection
+      for the prior 5 years.
     totals: true
     template-params:
       FIELD: cast(sum(ocmud.count_files) as signed)
@@ -589,6 +597,9 @@ queries:
     sql: |
       {{{COLLTOTAL}}}
   /queries/repository/last-month/file-size:
+    description: 
+      This report shows the byte count added each Merritt collection
+      week by week for the last 4 weeks.
     totals: true
     template-params:
       FIELD: sum(ocmud.billable_size) / 1000000000.0
@@ -601,6 +612,9 @@ queries:
     sql: |
       {{{COLLTOTAL}}}
   /queries/repository/all-time/file-size:
+    description: |
+      This report shows the cumulative byte count totals in each Merritt collection
+      for the prior 5 years.
     totals: true
     template-params:
       FIELD: sum(ocmud.billable_size) / 1000000000.0
@@ -610,6 +624,9 @@ queries:
     sql: |
       {{{COLLTOTAL}}}
   /queries/repository/all-time/cuml-file-size:
+    description: |
+      This report shows the cumulative byte count totals in each Merritt collection
+      for the prior 3 years and a forecasted total for the next 3 years.
     totals: true
     template-params:
       FIELD: sum(ocmud.billable_size) / 1000000000.0

@@ -855,6 +855,9 @@ queries:
       group by
         ownark, own.name
   /queries/recent/by-collection:
+    description: |
+      This report lists the last ingest performed for each Merritt collection.  
+      Results are sorted from collection most recently updated to least recently updated.
     sql:
       select
         c.id inv_collection_id,
@@ -1188,6 +1191,13 @@ queries:
       group by
         verified
   /ops/db-queue/audit/counts-by-state:
+    description: |
+      Count the number of files with an irregular audit status.  
+
+      - For status `unknown` and `processing`, no action is generally required.  These states indicate that an item is being processed.
+      - For status `system-unavailable` or `unverified`, a retry is generally recommended.
+      - A status of `size-mismatch` or `digest-mismatch` indicates that either a copy error occurred or this could show evidence of bit rot.  Immediate investigation is required.
+      - Files with a status of `verified` are explicitly excluded from this report for performance reasons.
     status: PASS
     status_check: true
     sql: |
