@@ -60,15 +60,13 @@ module UC3Resources
       end
       table = AdminUI::FilterTable.new(
         columns: [
-          AdminUI::Column.new(:name, header: 'Name'),
-          AdminUI::Column.new(:id, header: 'ID'),
+          AdminUI::Column.new(:servername, header: 'Name'),
           AdminUI::Column.new(:program, header: 'Program', filterable: true),
           AdminUI::Column.new(:service, header: 'Service', filterable: true),
           AdminUI::Column.new(:subservice, header: 'Susbervice', filterable: true),
           AdminUI::Column.new(:env, header: 'Environment', filterable: true),
           AdminUI::Column.new(:type, header: 'Type', filterable: true),
           AdminUI::Column.new(:state, header: 'State', filterable: true),
-          AdminUI::Column.new(:launch, header: 'Launch'),
           AdminUI::Column.new(:az, header: 'AZ', filterable: true),
           AdminUI::Column.new(:data, header: 'Server Data')
         ]
@@ -80,14 +78,12 @@ module UC3Resources
         res.instances.each do |inst|
           name = inst.tags.find { |t| t.key == 'Name' }&.value
           instances[name] = {
-            name: name,
-            id: inst.instance_id,
+            servername: [ name, inst.instance_id, date_format(inst.launch_time, convert_timezone: true) ],
             program: inst.tags.find { |t| t.key == 'Program' }&.value,
             service: inst.tags.find { |t| t.key == 'Service' }&.value,
             subservice: inst.tags.find { |t| t.key == 'Subservice' }&.value,
             env: inst.tags.find { |t| t.key == 'Environment' }&.value,
             type: inst.instance_type,
-            launch: date_format(inst.launch_time, convert_timezone: true),
             state: inst.state.name,
             az: inst.placement.availability_zone,
             cssclass: "data #{inst.state.name}"

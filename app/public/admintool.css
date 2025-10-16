@@ -88,6 +88,8 @@ td.jobdata {
   width: 180px;
 }
 
+th.servername,
+td.servername,
 th.nodedesc,
 td.nodedesc,
 th.metadata,
@@ -165,6 +167,8 @@ td.mnemonics span.val {
   overflow-x: clip;
 }
 
+th.servername span.val,
+td.servername span.val,
 th.note span.val,
 td.note span.val,
 th.s3key_annotated span.val,
