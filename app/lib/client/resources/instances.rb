@@ -86,14 +86,34 @@ module UC3Resources
             type: inst.instance_type,
             state: inst.state.name,
             az: inst.placement.availability_zone,
-            cssclass: "data #{inst.state.name}"
+            cssclass: "data #{inst.state.name}",
           }
+          instances[name][:data] = get_data(name, instances[name]) if service == 'mrt'
         end
       end
       instances.sort.each do |_key, value|
         table.add_row(AdminUI::Row.make_row(table.columns, value))
       end
       table
+    end
+
+    def get_data(name,instance)
+      subservice = instance[:subservice]
+      if subservice == 'ingest'
+        return get_url("https://#{name}:33121/static/build.content.txt", ctype: :text)
+      elsif subservice == 'audit'
+        return get_url("https://#{name}:37001/static/build.content.txt", ctype: :text)
+      elsif subservice == 'inventory'
+        return get_url("https://#{name}:36121/static/build.content.txt", ctype: :text)
+      elsif subservice == 'replic'
+        return get_url("https://#{name}:38001/static/build.content.txt", ctype: :text)
+      elsif subservice == 'store'
+        return get_url("https://#{name}:35121/static/build.content.txt", ctype: :text)
+      elsif subservice == 'access'
+        return get_url("https://#{name}:35121/static/build.content.txt", ctype: :text)
+      elsif subservice == 'ui'
+        return JSON.parse(get_url("https://#{name}:26181/static/state", ctype: :json))['version']
+      end
     end
   end
 end

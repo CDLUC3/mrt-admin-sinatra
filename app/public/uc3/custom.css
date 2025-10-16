@@ -53,3 +53,7 @@ nav a:hover {
 nav ul.submenu {
   background-color: #333;
 }
+
+li.search {
+  display: none;
+}

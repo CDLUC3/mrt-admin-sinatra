@@ -14,15 +14,10 @@ items:
     - title: Help
       route: /help
 - path: resources
-  title: AWS
+  title: Infrastructure Reports
+  route: /infra
+  breadcrumb: true
   items:
-  - title: Infrastructure Reports
-    route: /infra
-    breadcrumb: true
-    description: |
-      ## Reports on the AWS infrastructure
-      - [Instances](/infra/instances?program=uc3)
-      - [SSM Parameters](/infra/parameters)
   - title: UC3 Instances
     route: /infra/instances?program=uc3
   - title: Merritt Instances
