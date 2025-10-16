@@ -156,6 +156,11 @@ fragments:
       mnemonic
 queries:
   /queries/repository/campus/invoices/2022/CDL:
+    description: &campus_invoices |
+      The Merritt Invoice report calculates the Merritt recharge for each campus.  
+
+      The report accounts for the significant recharge calculations that were implemented in FY2019, 
+      including the 10TB storage allocation made available to each main campus library free of recharge.
     totals: true
     template-params:
       CAMPUS: CDL
@@ -165,6 +170,7 @@ queries:
     sql: |
       {{{INVOICE}}}
   /queries/repository/campus/invoices/2022/UCB:
+    description: *campus_invoices
     totals: true
     template-params:
       CAMPUS: UCB
@@ -174,6 +180,7 @@ queries:
     sql: |
       {{{INVOICE}}}
   /queries/repository/campus/invoices/2022/UCD:
+    description: *campus_invoices
     totals: true
     template-params:
       CAMPUS: UCD
@@ -183,6 +190,7 @@ queries:
     sql: |
       {{{INVOICE}}}
   /queries/repository/campus/invoices/2022/UCI:
+    description: *campus_invoices
     totals: true
     template-params:
       CAMPUS: UCI
@@ -192,6 +200,7 @@ queries:
     sql: |
       {{{INVOICE}}}
   /queries/repository/campus/invoices/2022/UCLA:
+    description: *campus_invoices
     totals: true
     template-params:
       CAMPUS: UCLA
@@ -201,6 +210,7 @@ queries:
     sql: |
       {{{INVOICE}}}
   /queries/repository/campus/invoices/2022/UCM:
+    description: *campus_invoices
     totals: true
     template-params:
       CAMPUS: UCM
@@ -210,6 +220,7 @@ queries:
     sql: |
       {{{INVOICE}}}
   /queries/repository/campus/invoices/2022/UCR:
+    description: *campus_invoices
     totals: true
     template-params:
       CAMPUS: UCR
@@ -219,6 +230,7 @@ queries:
     sql: |
       {{{INVOICE}}}
   /queries/repository/campus/invoices/2022/UCSB:
+    description: *campus_invoices
     totals: true
     template-params:
       CAMPUS: UCSB
@@ -228,6 +240,7 @@ queries:
     sql: |
       {{{INVOICE}}}
   /queries/repository/campus/invoices/2022/UCSC:
+    description: *campus_invoices
     totals: true
     template-params:
       CAMPUS: UCSC
@@ -237,6 +250,7 @@ queries:
     sql: |
       {{{INVOICE}}}
   /queries/repository/campus/invoices/2022/UCSD:
+    description: *campus_invoices
     totals: true
     template-params:
       CAMPUS: UCSD
@@ -246,6 +260,7 @@ queries:
     sql: |
       {{{INVOICE}}}
   /queries/repository/campus/invoices/2022/UCSF:
+    description: *campus_invoices
     totals: true
     template-params:
       CAMPUS: UCSF
@@ -255,6 +270,7 @@ queries:
     sql: |
       {{{INVOICE}}}
   /queries/repository/campus/invoices/2022/Other:
+    description: *campus_invoices
     totals: true
     template-params:
       CAMPUS: Other
@@ -264,6 +280,7 @@ queries:
     sql: |
       {{{INVOICE}}}
   /queries/repository/campus/invoices/2023/CDL:
+    description: *campus_invoices
     totals: true
     template-params:
       CAMPUS: CDL
@@ -273,6 +290,7 @@ queries:
     sql: |
       {{{INVOICE}}}
   /queries/repository/campus/invoices/2023/UCB:
+    description: *campus_invoices
     totals: true
     template-params:
       CAMPUS: UCB
@@ -282,6 +300,7 @@ queries:
     sql: |
       {{{INVOICE}}}
   /queries/repository/campus/invoices/2023/UCD:
+    description: *campus_invoices
     totals: true
     template-params:
       CAMPUS: UCD
@@ -291,6 +310,7 @@ queries:
     sql: |
       {{{INVOICE}}}
   /queries/repository/campus/invoices/2023/UCI:
+    description: *campus_invoices
     totals: true
     template-params:
       CAMPUS: UCI
@@ -300,6 +320,7 @@ queries:
     sql: |
       {{{INVOICE}}}
   /queries/repository/campus/invoices/2023/UCLA:
+    description: *campus_invoices
     totals: true
     template-params:
       CAMPUS: UCLA
@@ -309,6 +330,7 @@ queries:
     sql: |
       {{{INVOICE}}}
   /queries/repository/campus/invoices/2023/UCM:
+    description: *campus_invoices
     totals: true
     template-params:
       CAMPUS: UCM
@@ -318,6 +340,7 @@ queries:
     sql: |
       {{{INVOICE}}}
   /queries/repository/campus/invoices/2023/UCR:
+    description: *campus_invoices
     totals: true
     template-params:
       CAMPUS: UCR
@@ -327,6 +350,7 @@ queries:
     sql: |
       {{{INVOICE}}}
   /queries/repository/campus/invoices/2023/UCSB:
+    description: *campus_invoices
     totals: true
     template-params:
       CAMPUS: UCSB
@@ -336,6 +360,7 @@ queries:
     sql: |
       {{{INVOICE}}}
   /queries/repository/campus/invoices/2023/UCSC:
+    description: *campus_invoices
     totals: true
     template-params:
       CAMPUS: UCSC
@@ -345,6 +370,7 @@ queries:
     sql: |
       {{{INVOICE}}}
   /queries/repository/campus/invoices/2023/UCSD:
+    description: *campus_invoices
     totals: true
     template-params:
       CAMPUS: UCSD
@@ -354,6 +380,7 @@ queries:
     sql: |
       {{{INVOICE}}}
   /queries/repository/campus/invoices/2023/UCSF:
+    description: *campus_invoices
     totals: true
     template-params:
       CAMPUS: UCSF
@@ -363,6 +390,7 @@ queries:
     sql: |
       {{{INVOICE}}}
   /queries/repository/campus/invoices/2023/Other:
+    description: *campus_invoices
     totals: true
     template-params:
       CAMPUS: Other
@@ -372,6 +400,7 @@ queries:
     sql: |
       {{{INVOICE}}}
   /queries/repository/campus/invoices/2024/CDL:
+    description: *campus_invoices
     totals: true
     template-params:
       CAMPUS: CDL
@@ -381,6 +410,7 @@ queries:
     sql: |
       {{{INVOICE}}}
   /queries/repository/campus/invoices/2024/UCB:
+    description: *campus_invoices
     totals: true
     template-params:
       CAMPUS: UCB
@@ -390,6 +420,7 @@ queries:
     sql: |
       {{{INVOICE}}}
   /queries/repository/campus/invoices/2024/UCD:
+    description: *campus_invoices
     totals: true
     template-params:
       CAMPUS: UCD
@@ -399,7 +430,8 @@ queries:
     sql: |
       {{{INVOICE}}}
   /queries/repository/campus/invoices/2024/UCI:
-    totals: true
+    description: *campus_invoices
+    totals: true  
     template-params:
       CAMPUS: UCI
     template-sql:
@@ -408,6 +440,7 @@ queries:
     sql: |
       {{{INVOICE}}}
   /queries/repository/campus/invoices/2024/UCLA:
+    description: *campus_invoices
     totals: true
     template-params:
       CAMPUS: UCLA
@@ -417,6 +450,7 @@ queries:
     sql: |
       {{{INVOICE}}}
   /queries/repository/campus/invoices/2024/UCM:
+    description: *campus_invoices
     totals: true
     template-params:
       CAMPUS: UCM
@@ -426,6 +460,7 @@ queries:
     sql: |
       {{{INVOICE}}}
   /queries/repository/campus/invoices/2024/UCR:
+    description: *campus_invoices
     totals: true
     template-params:
       CAMPUS: UCR
@@ -435,6 +470,7 @@ queries:
     sql: |
       {{{INVOICE}}}
   /queries/repository/campus/invoices/2024/UCSB:
+    description: *campus_invoices
     totals: true
     template-params:
       CAMPUS: UCSB
@@ -444,6 +480,7 @@ queries:
     sql: |
       {{{INVOICE}}}
   /queries/repository/campus/invoices/2024/UCSC:
+    description: *campus_invoices
     totals: true
     template-params:
       CAMPUS: UCSC
@@ -453,6 +490,7 @@ queries:
     sql: |
       {{{INVOICE}}}
   /queries/repository/campus/invoices/2024/UCSD:
+    description: *campus_invoices
     totals: true
     template-params:
       CAMPUS: UCSD
@@ -462,6 +500,7 @@ queries:
     sql: |
       {{{INVOICE}}}
   /queries/repository/campus/invoices/2024/UCSF:
+    description: *campus_invoices
     totals: true
     template-params:
       CAMPUS: UCSF
@@ -471,6 +510,7 @@ queries:
     sql: |
       {{{INVOICE}}}
   /queries/repository/campus/invoices/2024/Other:
+    description: *campus_invoices
     totals: true
     template-params:
       CAMPUS: Other
@@ -480,6 +520,7 @@ queries:
     sql: |
       {{{INVOICE}}}
   /queries/repository/campus/invoices/2025/CDL:
+    description: *campus_invoices
     totals: true
     template-params:
       CAMPUS: CDL
@@ -489,6 +530,7 @@ queries:
     sql: |
       {{{INVOICE}}}
   /queries/repository/campus/invoices/2025/UCB:
+    description: *campus_invoices
     totals: true
     template-params:
       CAMPUS: UCB
@@ -498,6 +540,7 @@ queries:
     sql: |
       {{{INVOICE}}}
   /queries/repository/campus/invoices/2025/UCD:
+    description: *campus_invoices
     totals: true
     template-params:
       CAMPUS: UCD
@@ -507,6 +550,7 @@ queries:
     sql: |
       {{{INVOICE}}}
   /queries/repository/campus/invoices/2025/UCI:
+    description: *campus_invoices
     totals: true
     template-params:
       CAMPUS: UCI
@@ -516,6 +560,7 @@ queries:
     sql: |
       {{{INVOICE}}}
   /queries/repository/campus/invoices/2025/UCLA:
+    description: *campus_invoices
     totals: true
     template-params:
       CAMPUS: UCLA
@@ -525,6 +570,7 @@ queries:
     sql: |
       {{{INVOICE}}}
   /queries/repository/campus/invoices/2025/UCM:
+    description: *campus_invoices
     totals: true
     template-params:
       CAMPUS: UCM
@@ -534,6 +580,7 @@ queries:
     sql: |
       {{{INVOICE}}}
   /queries/repository/campus/invoices/2025/UCR:
+    description: *campus_invoices
     totals: true
     template-params:
       CAMPUS: UCR
@@ -543,6 +590,7 @@ queries:
     sql: |
       {{{INVOICE}}}
   /queries/repository/campus/invoices/2025/UCSB:
+    description: *campus_invoices
     totals: true
     template-params:
       CAMPUS: UCSB
@@ -552,6 +600,7 @@ queries:
     sql: |
       {{{INVOICE}}}
   /queries/repository/campus/invoices/2025/UCSC:
+    description: *campus_invoices
     totals: true
     template-params:
       CAMPUS: UCSC
@@ -561,6 +610,7 @@ queries:
     sql: |
       {{{INVOICE}}}
   /queries/repository/campus/invoices/2025/UCSD:
+    description: *campus_invoices
     totals: true
     template-params:
       CAMPUS: UCSD
@@ -570,6 +620,7 @@ queries:
     sql: |
       {{{INVOICE}}}
   /queries/repository/campus/invoices/2025/UCSF:
+    description: *campus_invoices
     totals: true
     template-params:
       CAMPUS: UCSF
@@ -579,6 +630,7 @@ queries:
     sql: |
       {{{INVOICE}}}
   /queries/repository/campus/invoices/2025/Other:
+    description: *campus_invoices
     totals: true
     template-params:
       CAMPUS: Other

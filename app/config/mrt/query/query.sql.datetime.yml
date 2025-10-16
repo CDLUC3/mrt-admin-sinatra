@@ -429,114 +429,161 @@ queries:
       order by 
         start
   /ops/db-queue/replication/activity/last-min:
+    description: &repl_activity |
+      Count the number of object replications performed over a period of time.
+      The need for replication is driven by ingest actions or by the reconfiguration of storage nodes, 
+      so the number of records processed over time may be irregular.
     sql: |
       {{{REPLACT}}}
     template-sql:
       DATES: |
         {{{LASTMIN}}}
   /ops/db-queue/replication/activity/last-5min:
+    description: *repl_activity
     sql: |
       {{{REPLACT}}}
     template-sql:
       DATES: |
         {{{LAST5MIN}}}
   /ops/db-queue/replication/activity/last-hour:
+    description: *repl_activity  
     sql: |
       {{{REPLACT}}}
     template-sql:
       DATES: |
         {{{LASTHOUR}}}
   /ops/db-queue/replication/activity/since-midnight:
+    description: *repl_activity
     sql: |
       {{{REPLACT}}}
     template-sql:
       DATES: |
         {{{SINCEMIDNIGHT}}}
   /ops/db-queue/replication/activity/yesterday:
+    description: *repl_activity
     sql: |
       {{{REPLACT}}}
     template-sql:
       DATES: |
         {{{YESTERDAY}}}
   /ops/db-queue/replication/activity/2days-ago:
+    description: *repl_activity
     sql: |
       {{{REPLACT}}}
     template-sql:
       DATES: |
         {{{2DAYS}}}
   /ops/db-queue/replication/activity/7days:
+    description: *repl_activity
     sql: |
       {{{REPLACT}}}
     template-sql:
       DATES: |
         {{{7DAYS}}}
   /ops/db-queue/replication/activity/30days:
+    description: *repl_activity
     sql: |
       {{{REPLACT}}}
     template-sql:
       DATES: |
         {{{30DAYS}}}
   /ops/db-queue/replication/activity/30-60-days-ago:
+    description: *repl_activity
     sql: |
       {{{REPLACT}}}
     template-sql:
       DATES: |
         {{{30TO60DAYS}}}
   /ops/db-queue/audit/activity/last-min:
+    description: &auditactivity | 
+      This report identifies the number of files that have been processed by the audit service in the last hour or minute.
+
+      Note: the audit service performs database updates in batches, so these number will tend to be reported in multiples of 248 records.
     sql: |
       {{{AUDITACT}}}
     template-sql:
       DATES: |
         {{{LASTMIN}}}
   /ops/db-queue/audit/activity/last-5min:
+    description: *auditactivity
     sql: |
       {{{AUDITACT}}}
     template-sql:
       DATES: |
         {{{LAST5MIN}}}
   /ops/db-queue/audit/activity/last-hour:
+    description: *auditactivity
     sql: |
       {{{AUDITACT}}}
     template-sql:
       DATES: |
         {{{LASTHOUR}}}
   /ops/db-queue/audit/activity/since-midnight:
+    description: *auditactivity
     sql: |
       {{{AUDITACT}}}
     template-sql:
       DATES: |
         {{{SINCEMIDNIGHT}}}
   /ops/db-queue/audit/activity/yesterday:
+    description: *auditactivity
     sql: |
       {{{AUDITACT}}}
     template-sql:
       DATES: |
         {{{YESTERDAY}}}
   /ops/db-queue/audit/activity/2days-ago:
+    description: *auditactivity
     sql: |
       {{{AUDITACT}}}
     template-sql:
       DATES: |
         {{{2DAYS}}}
   /ops/db-queue/audit/activity/7days:
+    description: *auditactivity
     sql: |
       {{{AUDITACT}}}
     template-sql:
       DATES: |
         {{{7DAYS}}}
   /ops/db-queue/audit/activity/30days:
+    description: *auditactivity
     sql: |
       {{{AUDITACT}}}
     template-sql:
       DATES: |
         {{{30DAYS}}}
   /ops/db-queue/audit/activity/30-60-days-ago:
+    description: *auditactivity
     sql: |
       {{{AUDITACT}}}
     template-sql:
       DATES: |
         {{{30TO60DAYS}}}
   /ops/db-queue/audit/30-days:
+    description: |
+      Report on the number of files/bytes audited each day for the past 30-90 days.
+      This report uses aggregate data from the billing database which is computed on a daily basis.
+      This report will attempt to identify any significant degredation in performance from the audit service over the prior 6 day period.
+      Performance issues older than 6 days are ignored by the report.
+
+      ### Calculations - Revised June 2022
+      
+      |Criteria                      |Total|60 days|90 days|
+      |------------------------------|-----|-------|-------|
+      |Files Processed               |140m |2.3m   |1.55m  |
+      |Online (total-nearline) Bytes |735T |12T    |8T     |
+
+      
+      ### Criteria - Revised June 2022
+
+      | Status | Criteria |
+      | ------ | -------- |
+      | SKIP   | Test is skipped in the stage environment |
+      | PASS   | Process more than 2.3m files  **AND** more than 12T of online content |
+      | INFO   | Process more than 1.55m files **AND** more than 8T of online content |
+      | FAIL   | Process less than 1.55m files **AND** less than 8T of online content |
+      | WARN   | Process more than 1.55m files **OR**  more than 8T of online content. Ignore after 6 days |
     status: PASS
     status_check: true
     sql: |

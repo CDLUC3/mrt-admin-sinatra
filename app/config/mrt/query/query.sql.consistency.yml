@@ -563,6 +563,13 @@ queries:
   /queries/consistency/replication/objects-2:
     status: PASS
     description: |
+      This report will query `inv_nodes_inv_objects` to count the number of objects having an irregular number of replicated copies. 
+      The Merritt system typically has one primary copy of an object and 2 secondary copies.
+
+      Objects with only 1 or 2 copies likely indicate that replication is in progress or replication failed for the object.
+      Objects with more than 3 copies could indicate a misconfiguration of storage nodes for a collection.
+      An error captured by this report can often be directly correlated with an error in the ConsistencyFilesQuery report.
+
       - [Object List: Older than 2 days](/queries/consistency/replication/objects-2/objlist?days=2)
       - [Object List: Older than 1 day](/queries/consistency/replication/objects-2/objlist?days=1)
       - [Object List: Any time](/queries/consistency/replication/objects-2/objlist?days=0)
@@ -590,6 +597,13 @@ queries:
   /queries/consistency/replication/objects-1:
     status: PASS
     description: |
+      This report will query `inv_nodes_inv_objects` to count the number of objects having an irregular number of replicated copies. 
+      The Merritt system typically has one primary copy of an object and 2 secondary copies.
+
+      Objects with only 1 or 2 copies likely indicate that replication is in progress or replication failed for the object.
+      Objects with more than 3 copies could indicate a misconfiguration of storage nodes for a collection.
+      An error captured by this report can often be directly correlated with an error in the ConsistencyFilesQuery report.
+
       - [Object List: Older than 2 days](/queries/consistency/replication/objects-1/objlist?days=2)
       - [Object List: Older than 1 day](/queries/consistency/replication/objects-1/objlist?days=1)
       - [Object List: Any time](/queries/consistency/replication/objects-1/objlist?days=0)
@@ -616,6 +630,13 @@ queries:
       type: integer
   /queries/consistency/replication/objects-4:
     description: |
+      This report will query `inv_nodes_inv_objects` to count the number of objects having an irregular number of replicated copies. 
+      The Merritt system typically has one primary copy of an object and 2 secondary copies.
+
+      Objects with only 1 or 2 copies likely indicate that replication is in progress or replication failed for the object.
+      Objects with more than 3 copies could indicate a misconfiguration of storage nodes for a collection.
+      An error captured by this report can often be directly correlated with an error in the ConsistencyFilesQuery report.
+
       - [Object List: Older than 2 days](/queries/consistency/replication/objects-4/objlist?days=2)
       - [Object List: Older than 1 day](/queries/consistency/replication/objects-4/objlist?days=1)
       - [Object List: Any time](/queries/consistency/replication/objects-4/objlist?days=0)
@@ -643,6 +664,13 @@ queries:
       type: integer
   /queries/consistency/replication/files-2:
     description: |
+      This report will query `inv_audits` to count the number of files having an irregular number of recorded copies. 
+      The Merritt system typically has one primary copy of an object and 2 secondary copies.
+
+      Files with only 1 or 2 copies likely indicate that replication is in progress or replication failed for the object.
+      Files with more than 3 copies could indicate a misconfiguration of storage nodes for a collection.
+
+      An error captured by this report can often be directly correlated with an error in the ConsistencyObjectsQuery report.
       - [Object List: Older than 2 days](/queries/consistency/replication/files-2/objlist?days=2)
       - [Object List: Older than 1 day](/queries/consistency/replication/files-2/objlist?days=1)
       - [Object List: Any time](/queries/consistency/replication/files-2/objlist?days=0)
@@ -670,6 +698,14 @@ queries:
       type: integer
   /queries/consistency/replication/files-1:
     description: |
+      This report will query `inv_audits` to count the number of files having an irregular number of recorded copies. 
+      The Merritt system typically has one primary copy of an object and 2 secondary copies.
+
+      Files with only 1 or 2 copies likely indicate that replication is in progress or replication failed for the object.
+      Files with more than 3 copies could indicate a misconfiguration of storage nodes for a collection.
+
+      An error captured by this report can often be directly correlated with an error in the ConsistencyObjectsQuery report.
+
       - [Object List: Older than 2 days](/queries/consistency/replication/files-1/objlist?days=2)
       - [Object List: Older than 1 day](/queries/consistency/replication/files-1/objlist?days=1)
       - [Object List: Any time](/queries/consistency/replication/files-1/objlist?days=0)
@@ -697,6 +733,14 @@ queries:
       type: integer
   /queries/consistency/replication/files-4:
     description: |
+      This report will query `inv_audits` to count the number of files having an irregular number of recorded copies. 
+      The Merritt system typically has one primary copy of an object and 2 secondary copies.
+
+      Files with only 1 or 2 copies likely indicate that replication is in progress or replication failed for the object.
+      Files with more than 3 copies could indicate a misconfiguration of storage nodes for a collection.
+
+      An error captured by this report can often be directly correlated with an error in the ConsistencyObjectsQuery report.
+
       - [Object List: Older than 2 days](/queries/consistency/replication/files-4/objlist?days=2)
       - [Object List: Older than 1 day](/queries/consistency/replication/files-4/objlist?days=1)
       - [Object List: Any time](/queries/consistency/replication/files-4/objlist?days=0)
@@ -723,6 +767,9 @@ queries:
     - name: days
       type: integer
   /queries/consistency/obj-comp/mult-colls:
+    description: |
+      Count objects that have been assigned to multiple Merritt collections.
+      Objects residing in multiple collections is a legacy Merritt feature.
     status: PASS
     status_check: true
     totals: true
@@ -743,6 +790,11 @@ queries:
     status: PASS
     status_check: true
     description: |
+      Enumerate objects containing irregularities in the `inv_versions` table: Same version number created twice
+      This issue has occurred ~170 times in the life of the system.  In most instances, the issue was resolved by rebuilding the inventory record.
+      A couple of items required manual reassembly of the inventory record from cloud storage entries.
+      The Merritt Team is implementing changes to prevent this issue from occurring in the future.
+
       - [Object List](/queries/consistency/obj-comp/version-clobber/objlist )
     sql: |
       with gap as (
@@ -785,6 +837,11 @@ queries:
         {{{VERCLOBBER}}}
   /queries/consistency/obj-comp/objects-no-local-id:
     description: |
+      This report will examine objects without a localid that seem to expect one based on `inv_objects.erc_where`.
+
+      - Objects older than 1 year will be treated as an INFO.
+      - Objects older than 1 month will be treated as a WARN.
+
       - [Object List](/queries/consistency/obj-comp/objects-no-local-id/objlist)
     status: PASS
     status_check: true
@@ -837,6 +894,9 @@ queries:
         and
           erc_where != concat(o.ark, ' ; (:unas)')
   /queries/consistency/obj-comp/local-id-no-ark:
+    description: |
+      List counts of localids with no corresponding arks.  
+      No [resolution](https://github.com/CDLUC3/mrt-doc/issues/1047) has been implemented yet.
     status: PASS
     sql: |
       SELECT
@@ -879,6 +939,9 @@ queries:
         modified desc
   /ops/db-queue/replication/required:
     description: |
+      This report generates a list of objects requiring replication, based on entries in the `inv_nodes_inv_objects` 
+      table that have a primary copy of an object but no secondary copy.
+      
       - [Object List: Older than 2 days](/ops/db-queue/replication/required/objlist?days=2)
       - [Object List: Older than 1 day](/ops/db-queue/replication/required/objlist?days=1)
       - [Object List: Any time](/ops/db-queue/replication/required/objlist?days=0)
@@ -973,6 +1036,20 @@ queries:
     - name: days
       type: integer
   /ops/db-queue/replication/in-progress:
+    description: |
+      This report generates a list of objects for which replication has been initiated.
+      For objects with specific know replication issues, a category can be assigned to an object.
+
+      - *FAIL*: 
+        - Replication started more than 24 hours ago .
+      - *WARN*: 
+        - Replication started more than 4 hours ago.
+      - *PASS*: 
+        - Replication started less than 4 hours ago.
+        - Replication not yet started, it has been less than 4 hours since the object was created/modified.
+      - *INFO*: 
+        - Known replication exception has been coded into the report
+        - Replication not yet started, it has been more than 4 hours since the object was created/modified.
     status: PASS
     status_check: true
     sql: |
@@ -1035,6 +1112,10 @@ queries:
         bytes,
         status
   /ops/db-queue/replication/failed:
+    description: |
+      This report generates a list of objects for which replication has failed.
+      For objects with specific know replication issues, a category can be assigned to an object.
+      If replication has processed for only one node at the time the report is run, the status will report as a WARN.
     status: PASS
     status_check: true
     sql: |
@@ -1134,6 +1215,11 @@ queries:
       order by
         replic_start desc
   /ops/db-queue/audit/oldest-audit-check:
+    description: |
+      Identify the oldest previously audited file in the inventory database.
+      - If less than 60 days old, PASS
+      - If 60-90 days old, WARN.  Consider adding capacity to the audit service.
+      - If more than 90 days, ERROR.  The system is not meeting expectations for active fixity checking.
     status: PASS
     status_check: true
     sql: |
@@ -1154,6 +1240,11 @@ queries:
         verified
       LIMIT 1
   /ops/db-queue/audit/active-batches:
+    description: |
+      This report shows the size of the audit queue.  Since the audit service performs database updates to 248 records at a time, 
+      the entries in this report will generally be multiples of 248.  If the audit service is not gracefully shutdown, old queue entries will be reported.
+      Once these entries are older than 10 hours old, an error will be reported.
+      The collection admin tool has an action defined to clear old queue entries from the database.
     status: PASS
     status_check: true
     sql: |
@@ -1326,6 +1417,10 @@ queries:
     - name: status
       type: string
   /ops/db-queue/audit/new-ucb-content:
+    description: |
+      Merritt ensures that newly ingested UCB Library content has an immediate fixity check performed on it. 
+      Batches of 50 newly ingested objects have their fixity checks reset after 24 hours to ensure that the content is re-verified.
+      If an exceptionally large number of objects have been deposited, it may be necessary to manually run the reset process a few times.
     status: PASS
     status_check: true
     sql: |
@@ -1464,6 +1559,10 @@ queries:
           c.name,
           status
   /ops/collections/db/primary-config:
+    description: |
+      Report on collections with non-standard primary node configurations.
+      Collections that have been configured as "Public Collections" are currently recorded with an INFO status.  
+      Eventually, each of these collections will be re-configured to use SDSC as a primary node. 
     status: PASS
     status_check: true
     sql: |
@@ -1518,6 +1617,13 @@ queries:
         nodename,
         collection
   /ops/collections/db/secondary-config:
+    description: |
+      Report on collections with non-standard secondary node configurations.
+      Current standard configurations for secondary nodes include Glacier and Wasabi, or SDSC and Wasabi.
+      - PASS: has standard secondary nodes
+      - INFO: known exception (Wasabi test collection, SLA collections)
+      - WARN: collection is empty
+      - FAIL: collection has content and is not being replicated to a standard set of nodes
     status: PASS
     status_check: true
     sql: |

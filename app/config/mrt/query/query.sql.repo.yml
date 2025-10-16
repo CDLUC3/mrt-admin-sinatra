@@ -442,54 +442,66 @@ queries:
     sql: |
       {{{MIME}}}
   /queries/repository/mimes/group/audio:
+    description: &mime_group |
+      A high-level _Mime Group_ is assigned to each Mime Type based on the work of the UC Digital Preservation Strategy working group.
+
+      [Mime Group Mapping Logic](/markdown/mime.md)
     template-params:
       WHERE: where mime_group = 'audio'
     totals: true
     sql: |
       {{{MIME}}}
   /queries/repository/mimes/group/container:
+    description: *mime_group
     template-params:
       WHERE: where mime_group = 'container'
     totals: true
     sql: |
       {{{MIME}}}
   /queries/repository/mimes/group/data:
+    description: *mime_group
     template-params:
       WHERE: where mime_group = 'data'
     totals: true
     sql: |
       {{{MIME}}}
   /queries/repository/mimes/group/geo:
+    description: *mime_group
     template-params:
       WHERE: where mime_group = 'geo'
     totals: true
     sql: |
       {{{MIME}}}
   /queries/repository/mimes/group/image:
+    description: *mime_group
     template-params:
       WHERE: where mime_group = 'image'
     totals: true
     sql: |
       {{{MIME}}}
   /queries/repository/mimes/group/software:
+    description: *mime_group
     template-params:
       WHERE: where mime_group = 'software'
     totals: true
     sql: |
       {{{MIME}}}
   /queries/repository/mimes/group/text:
+    description: *mime_group
     template-params:
-      WHERE: where mime_group = 'textt'
+      WHERE: where mime_group = 'text'
     totals: true
     sql: |
       {{{MIME}}}
   /queries/repository/mimes/group/video:
+    description: *mime_group
     template-params:
       WHERE: where mime_group = 'video'
     totals: true
     sql: |
       {{{MIME}}}
   /queries/repository/mimes/group/web:
+    description: *mime_group
     template-params:
       WHERE: where mime_group = 'web'
     totals: true

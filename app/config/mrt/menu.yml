@@ -26,6 +26,7 @@ items:
       route: /help
   - title: Merritt Troubleshooting
     route: https://github.com/CDLUC3/mrt-doc-private/blob/main/docs/system-recovery/README.md
+    external: true
 - path: source
   title: Source
   route: /source
@@ -219,8 +220,6 @@ items:
         title: By Mime Group
         route: /queries/repository/mimes/group
         breadcrumb: true
-        description: |
-          A high-level _Mime Group_ is assigned to each Mime Type based on the work of the UC Digital Preservation Strategy working group.
         items:
         - title: software
           route: /queries/repository/mimes/group/software
@@ -243,18 +242,6 @@ items:
         - title: web
           route: /queries/repository/mimes/group/web
     - title: Campus Invoices
-      description: |
-        The Merritt Invoice report calculates the Merritt recharge for each campus.  
-
-        The report accounts for the significant recharge calculations that were implemented in FY2019, 
-        including the 10TB storage allocation made available to each main campus library free of recharge.
-    
-        As of June 2023, the pre-2019 chargeback calculations are no longer supported.
-
-        - [FY Begin 2022](invoices/2022)
-        - [FY Begin 2023](invoices/2023)
-        - [FY Begin 2024](invoices/2024)
-        - [FY Begin 2025](invoices/2025)
       path: invoices
       route: /queries/repository/campus/invoices
       breadcrumb: true
@@ -435,6 +422,8 @@ items:
       route: /queries/recent/bytes-by-years
   - path: use-cases
     title: Use Cases
+    breadcrumb: true
+    route: /queries/use-cases
     items:
     - title: Largest Objects
       route: /queries/use-cases/largest-objects
@@ -708,6 +697,11 @@ items:
         route: /ops/collections/management/create-collection
       - title: Ingest Profiles
         route: /ops/collections/management/profiles
+        description: |
+          List all *ingest profiles* known to the ingest server.
+          An ingest profile describes characteristics associated with a collection's configuration, 
+          such as its context mnemonic, description and primary storage node. 
+          These profiles are managed in a github repository and are deployed to a configuration S3 bucket.
     - title: Storage Node Config
       route: /ops/collections/storage-node-config
     - path: db
@@ -777,6 +771,11 @@ items:
       route: /ldap/collections
     - title: Missing LDAP Collections
       route: /ldap/collections-missing
+      description: |
+        Generate a report that maps entities in the Merritt LDAP database to entries in the Merritt inventory database.
+        
+        For any items that do not match, an error will be reported in the report.  
+        This indicates that maintenance needs to be performed on the LDAP entries for Merritt.
   - title: Deployment State
     route: /infra/ecs
     disable: default, docker

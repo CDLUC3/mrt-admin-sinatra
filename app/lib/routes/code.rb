@@ -69,27 +69,6 @@ module Sinatra
           }
       end
 
-      app.get '/source' do
-        adminui_show_markdown(
-          AdminUI::Context.new(request.path),
-          'app/markdown/mrt/source.md'
-        )
-      end
-
-      app.get '/source/conventions' do
-        adminui_show_markdown(
-          AdminUI::Context.new(request.path),
-          'app/markdown/mrt/source.md'
-        )
-      end
-
-      app.get '/source/conventions/*' do |md|
-        adminui_show_markdown(
-          AdminUI::Context.new(request.path),
-          "app/markdown/mrt/conventions/#{md}"
-        )
-      end
-
       app.post '/source/artifacts/delete/*' do |tag|
         srccode = UC3Code::SourceCodeClient.client
         arr = []

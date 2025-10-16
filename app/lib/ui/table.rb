@@ -193,8 +193,11 @@ module AdminUI
     def render_description
       return '' if @description.empty?
 
-      %(<div class='description'>#{Redcarpet::Markdown.new(Redcarpet::Render::HTML.new,
-        fenced_code_blocks: true).render(@description)}</div>)
+      %(<div class='description'>#{Redcarpet::Markdown.new(
+        Redcarpet::Render::HTML.new,
+        fenced_code_blocks: true, 
+        tables: true
+        ).render(@description)}</div>)
     end
 
     def to_csv

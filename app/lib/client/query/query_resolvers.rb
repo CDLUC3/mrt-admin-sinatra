@@ -57,6 +57,8 @@ module UC3Query
           value: 'Get Manifest',
           href: "/ops/storage/manifest?node_number=#{row['node_number']}&ark=#{row['ark']}",
           cssclass: 'button',
+          title: "Download the XML *storage manifest* representation of a object on a specific storage node." \
+            "This request will be forwarded to the storage service.",
           disabled: storage_mgt_disabled?(strict: true)
         }
         row['actions'] << {
@@ -64,12 +66,17 @@ module UC3Query
           href: "/ops/storage/ingest-checkm?node_number=#{row['node_number']}" \
                 "&ark=#{row['ark']}&version_number=#{row['version_number']}",
           cssclass: 'button',
+          title: "Download an *ingest manifest checkm* representation of an object on a specific storage node. " \
+            "This file could be utilized to re-ingest an object under a new ark.",
           disabled: storage_mgt_disabled?(strict: true)
         }
         row['actions'] << {
           value: 'Get Storage Manifest Yaml',
           href: "/ops/storage/manifest-yaml?node_number=#{row['node_number']}&ark=#{row['ark']}",
           cssclass: 'button',
+          title: "Download the XML *storage manifest* representation of a object on a specific storage node.  " \
+            "This request will be forwarded to the storage service.  " \
+            "The manifest xml file will be converted to a user-friendly yaml format.",
           disabled: storage_mgt_disabled?(strict: true)
         }
         row['actions'] << {
