@@ -195,9 +195,9 @@ module AdminUI
 
       %(<div class='description'>#{Redcarpet::Markdown.new(
         Redcarpet::Render::HTML.new,
-        fenced_code_blocks: true, 
+        fenced_code_blocks: true,
         tables: true
-        ).render(@description)}</div>)
+      ).render(@description)}</div>)
     end
 
     def to_csv

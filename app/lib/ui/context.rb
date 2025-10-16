@@ -286,8 +286,8 @@ module AdminUI
 
     def description
       description = Redcarpet::Markdown.new(
-        Redcarpet::Render::HTML.new, 
-        fenced_code_blocks: true, 
+        Redcarpet::Render::HTML.new,
+        fenced_code_blocks: true,
         tables: true
       ).render(@description)
       Mustache.render(description, ENV)

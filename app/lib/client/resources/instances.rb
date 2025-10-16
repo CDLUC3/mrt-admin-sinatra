@@ -38,10 +38,17 @@ module UC3Resources
     def list_instances(params)
       filters = []
       program = params.fetch('program', '')
+      service = params.fetch('service', '')
       unless program.empty?
         filters << {
           name: 'tag:Program',
           values: [program]
+        }
+      end
+      unless service.empty?
+        filters << {
+          name: 'tag:Service',
+          values: [service]
         }
       end
       envfilt = ENV.fetch('SSM_ROOT_PATH', '').split('/')
@@ -62,7 +69,8 @@ module UC3Resources
           AdminUI::Column.new(:type, header: 'Type', filterable: true),
           AdminUI::Column.new(:state, header: 'State', filterable: true),
           AdminUI::Column.new(:launch, header: 'Launch'),
-          AdminUI::Column.new(:az, header: 'AZ', filterable: true)
+          AdminUI::Column.new(:az, header: 'AZ', filterable: true),
+          AdminUI::Column.new(:data, header: 'Server Data')
         ]
       )
       return table unless enabled

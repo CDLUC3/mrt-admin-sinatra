@@ -106,7 +106,6 @@ module Sinatra
         redirect ENV.fetch('OPENSEARCH_URL', '/')
       end
 
-
       app.get '/markdown/*' do |md|
         adminui_show_markdown(
           AdminUI::Context.new(request.path),
@@ -114,6 +113,9 @@ module Sinatra
         )
       end
 
+      app.get '/index.html' do
+        redirect '/'
+      end
     end
   end
   register UC3HomeRoutes

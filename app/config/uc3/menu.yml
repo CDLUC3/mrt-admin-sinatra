@@ -2,7 +2,7 @@ items:
 - path: home
   title: AdminTool
   items:
-  - title: Home
+  - title: UC3 Server Listing and SSM Registry
     route: /
   - path: about
     title: About
@@ -25,5 +25,7 @@ items:
       - [SSM Parameters](/infra/parameters)
   - title: UC3 Instances
     route: /infra/instances?program=uc3
-  - title: UC3 SSM Parameters
+  - title: Merritt Instances
+    route: /infra/instances?program=uc3&service=mrt
+  - title: Merritt SSM Parameters
     route: /infra/parameters
