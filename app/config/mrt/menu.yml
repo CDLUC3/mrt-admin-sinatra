@@ -1,3 +1,21 @@
+# Menu configuration for Admin Tool
+# 
+# Structure:
+# items: List of top-level menu items
+#   path: Unique path identifier for items containing sub-items
+#   title: Display title for the menu item
+#   items: List of sub-items (optional)
+#   route: endpoint to navigate to (GET requests) or to invoke (POST and DELETE requests)
+#   breadcrumb: whether to add a breadcrumb node for this item (optional, default: false)
+#   external: indicates that the menu item will link outside the Admin Tool (optional, default: false)
+#     this is represented with a link icon in the UI
+#   disable: comma-separated list of deployment environments where the item should be disabled and hidden
+#   classes: list of special CSS classes that will render an item greyed out when a resource such as a DB or ZK connection is not available
+#   tbd: indicates that the menu item has not been implemented yet (optional, default: false)
+#   method: HTTP method to use when invoking the route (optional, default: get)
+#   confmsg: Confirmation message to display when invoking a POST or DELETE route (optional, default: title)
+#   description: Markdown description to display on the page (optional)
+#     otherwise, a list of sub-items (based on route) will be displayed
 items:
 - path: home
   title: AdminTool
@@ -44,9 +62,7 @@ items:
     path: tags
     breadcrumb: true
     items:
-    - title: Admin Tool - Main Acct
-      route: /source/tags/admin-mainacct
-    - title: Admin Tool (New)
+    - title: Admin Tool
       route: /source/tags/admintool
     - title: UI
       route: /source/tags/ui
@@ -65,9 +81,7 @@ items:
     path: images
     breadcrumb: true
     items:
-    - title: Admin Tool - Main Acct
-      route: /source/images/admin-mainacct
-    - title: Admin Tool (New)
+    - title: Admin Tool
       route: /source/images/admintool
     - title: UI
       route: /source/images/ui
