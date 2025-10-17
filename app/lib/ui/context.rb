@@ -36,8 +36,13 @@ module AdminUI
       paths.reverse.join('/')
     end
 
-    def add_submenu(path, title, breadcrumb: false, description: '', route: '', classes: '')
+    def add_submenu(path, title, item, classes)
       child = Menu.new(path, title, parent: self, classes: classes)
+
+      route = item.fetch(:route, '')
+      description = item.fetch(:description, '')
+      breadcrumb = item.fetch(:breadcrumb, false)
+
       if breadcrumb && !route.empty?
         child.top.route_names[route] =
           { title: title, description: description, breadcrumb: true, route: route }
@@ -46,10 +51,8 @@ module AdminUI
       child
     end
 
-    def add_menu_item(route, title, description: '', tbd: false, breadcrumb: false, external: false, method: 'get',
-      confmsg: '', classes: '')
-      mi = MenuItem.new(self, route, title, description: description, tbd: tbd, breadcrumb: breadcrumb,
-        external: external, method: method, confmsg: confmsg, classes: classes)
+    def add_menu_item(route, title, item, classes: '')
+      mi = MenuItem.new(self, route, title, item, classes: classes)
       @children << mi
       mi
     end
@@ -80,26 +83,26 @@ module AdminUI
       @instance
     end
 
-    def create_menu_item_for_path(path, route, title, description: '', tbd: false, breadcrumb: false, menu: false,
-      external: false, method: 'get', confmsg: '', classes: '')
+    def create_menu_item_for_path(path, item, classes)
+      route = item.fetch(:route, '')
+      menu = route.empty? || !item.fetch(:items, []).empty?
+
+      title = item.fetch(:title, '')
+
       parpath = path
       if @paths.key?(parpath)
         if menu
-          @paths[parpath].add_submenu(path, title, description: description, breadcrumb: breadcrumb, route: route,
-            classes: classes)
+          @paths[parpath].add_submenu(path, title, item, classes)
         else
-          @paths[parpath].add_menu_item(route, title, description: description, tbd: tbd, breadcrumb: breadcrumb,
-            external: external, method: method, confmsg: confmsg, classes: classes)
+          @paths[parpath].add_menu_item(route, title, item)
         end
       else
         parpath = File.dirname(path) until @paths.key?(parpath)
         if menu
-          @paths[parpath].add_submenu(path, title, description: description, breadcrumb: breadcrumb, route: route,
-            classes: classes)
+          @paths[parpath].add_submenu(path, title, item, classes)
         else
-          @paths[parpath].add_submenu(path, path, breadcrumb: breadcrumb, route: route, classes: classes)
-          create_menu_item_for_path(path, route, title, description: description, tbd: tbd, breadcrumb: breadcrumb,
-            menu: menu, external: external, method: method, confmsg: confmsg, classes: classes)
+          @paths[parpath].add_submenu(path, path, item, classes)
+          create_menu_item_for_path(path, item, classes)
         end
       end
     end
@@ -178,18 +181,17 @@ module AdminUI
 
   ## Menu item (hash of title, description and full route (path and query string)
   class MenuItem
-    def initialize(parent, route, title, description: '', tbd: false, breadcrumb: false, external: false,
-      method: 'get', confmsg: '', classes: '')
+    def initialize(parent, route, title, item, classes: '')
       @parent = parent
       @title = title
       @route = route
-      @tbd = tbd
-      @external = external
-      @method = method
-      @breadcrumb = breadcrumb
-      @description = description
-      @confmsg = confmsg
+      @confmsg = item.fetch(:confmsg, title)
       @classes = classes
+      @description = item.fetch(:description, '')
+      @tbd = item.fetch(:tbd, false)
+      @external = item.fetch(:external, false)
+      @method = item.fetch(:method, 'get')
+      @breadcrumb = item.fetch(:breadcrumb, false)
 
       @parent.top.route_names[route_normalized] =
         { title: title, description: description, route: @route, method: @method }

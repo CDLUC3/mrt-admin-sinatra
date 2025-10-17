@@ -9,28 +9,18 @@ require_relative '../client/uc3_client'
 module Sinatra
   # client specific routes
   module UC3HomeRoutes
+    ## Add menu item and its children recursively
+    # Params:
+    # +paths+:: Array of path components leading to this item
+    # +item+:: Hash of menu item attributes (as loaded from config)
+    # +classes+:: Special resource dependency classes to add to menu item; if blank, inherit from ancestors
     def self.add_menu_item(paths, item, classes: '')
       np = paths.clone
       leaf = item.fetch(:path, '')
-      title = item.fetch(:title, '')
-      route = item.fetch(:route, '')
-      confmsg = item.fetch(:confmsg, title)
       np.append(leaf) unless leaf.empty?
       items = item.fetch(:items, [])
       classes = item.fetch(:classes, classes)
-      AdminUI::TopMenu.instance.create_menu_item_for_path(
-        np.join('/'),
-        route,
-        title,
-        description: item.fetch(:description, ''),
-        confmsg: confmsg,
-        tbd: item.fetch(:tbd, false),
-        external: item.fetch(:external, false),
-        method: item.fetch(:method, 'get'),
-        breadcrumb: item.fetch(:breadcrumb, false),
-        menu: route.empty? || !items.empty?,
-        classes: classes
-      )
+      AdminUI::TopMenu.instance.create_menu_item_for_path(np.join('/'), item, classes)
       items.each do |citem|
         next if citem.fetch(:disable, '').split(/, */).include?(ENV.fetch('configkey', 'default'))
 
