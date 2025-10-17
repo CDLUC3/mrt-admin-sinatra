@@ -130,7 +130,7 @@ module UC3Resources
       elsif subservice == 'access'
         return get_url_body("http://#{name}.cdlib.org:35121/static/build.content.txt")
       elsif subservice == 'ui'
-        return get_url_json("http://#{name}.cdlib.org:26181/static/state.json").fetch('version', '')
+        return get_url_json("http://#{name}.cdlib.org:26181/state.json").fetch('version', '')
       end
     end
   end
