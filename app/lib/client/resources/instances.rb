@@ -118,19 +118,19 @@ module UC3Resources
     def get_merritt_data(name,instance)
       subservice = instance[:subservice]
       if subservice == 'ingest'
-        return get_url_body("https://#{name}.cdlib.org:33121/static/build.content.txt")
+        return get_url_body("http://#{name}.cdlib.org:33121/static/build.content.txt")
       elsif subservice == 'audit'
-        return get_url_body("https://#{name}.cdlib.org:37001/static/build.content.txt")
+        return get_url_body("http://#{name}.cdlib.org:37001/static/build.content.txt")
       elsif subservice == 'inventory'
-        return get_url_body("https://#{name}.cdlib.org:36121/static/build.content.txt")
+        return get_url_body("http://#{name}.cdlib.org:36121/static/build.content.txt")
       elsif subservice == 'replic'
-        return get_url_body("https://#{name}.cdlib.org:38001/static/build.content.txt")
+        return get_url_body("http://#{name}.cdlib.org:38001/static/build.content.txt")
       elsif subservice == 'store'
-        return get_url_body("https://#{name}.cdlib.org:35121/static/build.content.txt")
+        return get_url_body("http://#{name}.cdlib.org:35121/static/build.content.txt")
       elsif subservice == 'access'
-        return get_url_body("https://#{name}.cdlib.org:35121/static/build.content.txt")
+        return get_url_body("http://#{name}.cdlib.org:35121/static/build.content.txt")
       elsif subservice == 'ui'
-        return get_url_json("https://#{name}.cdlib.org:26181/static/state").fetch('version', '')
+        return get_url_json("http://#{name}.cdlib.org:26181/static/state").fetch('version', '')
       end
     end
   end
