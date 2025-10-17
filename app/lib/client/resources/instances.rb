@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'aws-sdk-ec2'
+require 'net/http'
 require_relative '../uc3_client'
 
 # Scope custom code for UC3 to distinguish from 3rd party classes
@@ -95,6 +96,18 @@ module UC3Resources
         table.add_row(AdminUI::Row.make_row(table.columns, value))
       end
       table
+    end
+
+    # this is cloned from services.rb...
+    def get_url(url, ctype: :json)
+      uri = URI.parse(url)
+      response = Net::HTTP.get_response(uri)
+      data = response.body
+      content_type ctype
+      data
+    rescue StandardError => e
+      content_type :json
+      { uri: uri, error: e.to_s }.to_json
     end
 
     def get_data(name,instance)
