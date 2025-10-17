@@ -79,7 +79,7 @@ module UC3Resources
         res.instances.each do |inst|
           name = inst.tags.find { |t| t.key == 'Name' }&.value
           instances[name] = {
-            servername: [ name, inst.instance_id, date_format(inst.launch_time, convert_timezone: true) ],
+            servername: [name, inst.instance_id, date_format(inst.launch_time, convert_timezone: true)],
             program: inst.tags.find { |t| t.key == 'Program' }&.value,
             service: inst.tags.find { |t| t.key == 'Service' }&.value,
             subservice: inst.tags.find { |t| t.key == 'Subservice' }&.value,
@@ -87,7 +87,7 @@ module UC3Resources
             type: inst.instance_type,
             state: inst.state.name,
             az: inst.placement.availability_zone,
-            cssclass: "data #{inst.state.name}",
+            cssclass: "data #{inst.state.name}"
           }
           instances[name][:data] = get_merritt_data(name, instances[name]) if service == 'mrt'
         end
@@ -103,34 +103,35 @@ module UC3Resources
       uri = URI.parse(url)
       response = Net::HTTP.get_response(uri)
       response.body
-    rescue StandardError => e
-      ""
+    rescue StandardError
+      ''
     end
 
     def get_url_json(url)
       uri = URI.parse(url)
       response = Net::HTTP.get_response(uri)
       JSON.parse(response.body)
-    rescue StandardError => e
+    rescue StandardError
       {}
     end
 
-    def get_merritt_data(name,instance)
+    def get_merritt_data(name, instance)
       subservice = instance[:subservice]
-      if subservice == 'ingest'
-        return get_url_body("http://#{name}.cdlib.org:33121/static/build.content.txt")
-      elsif subservice == 'audit'
-        return get_url_body("http://#{name}.cdlib.org:37001/static/build.content.txt")
-      elsif subservice == 'inventory'
-        return get_url_body("http://#{name}.cdlib.org:36121/static/build.content.txt")
-      elsif subservice == 'replic'
-        return get_url_body("http://#{name}.cdlib.org:38001/static/build.content.txt")
-      elsif subservice == 'store'
-        return get_url_body("http://#{name}.cdlib.org:35121/static/build.content.txt")
-      elsif subservice == 'access'
-        return get_url_body("http://#{name}.cdlib.org:35121/static/build.content.txt")
-      elsif subservice == 'ui'
-        return get_url_json("http://#{name}.cdlib.org:26181/state.json").fetch('version', '')
+      case subservice
+      when 'ingest'
+        get_url_body("http://#{name}.cdlib.org:33121/static/build.content.txt")
+      when 'audit'
+        get_url_body("http://#{name}.cdlib.org:37001/static/build.content.txt")
+      when 'inventory'
+        get_url_body("http://#{name}.cdlib.org:36121/static/build.content.txt")
+      when 'replic'
+        get_url_body("http://#{name}.cdlib.org:38001/static/build.content.txt")
+      when 'store'
+        get_url_body("http://#{name}.cdlib.org:35121/static/build.content.txt")
+      when 'access'
+        get_url_body("http://#{name}.cdlib.org:35121/static/build.content.txt")
+      when 'ui'
+        get_url_json("http://#{name}.cdlib.org:26181/state.json").fetch('version', '')
       end
     end
   end
