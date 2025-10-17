@@ -89,7 +89,7 @@ module UC3Resources
             az: inst.placement.availability_zone,
             cssclass: "data #{inst.state.name}",
           }
-          instances[name][:data] = get_data(name, instances[name]) if service == 'mrt'
+          instances[name][:data] = get_merritt_data(name, instances[name]) if service == 'mrt'
         end
       end
       instances.sort.each do |_key, value|
@@ -115,22 +115,22 @@ module UC3Resources
       {}
     end
 
-    def get_data(name,instance)
+    def get_merritt_data(name,instance)
       subservice = instance[:subservice]
       if subservice == 'ingest'
-        return get_url_body("https://#{name}:33121/static/build.content.txt")
+        return get_url_body("https://#{name}.cdlib.org:33121/static/build.content.txt")
       elsif subservice == 'audit'
-        return get_url_body("https://#{name}:37001/static/build.content.txt")
+        return get_url_body("https://#{name}.cdlib.org:37001/static/build.content.txt")
       elsif subservice == 'inventory'
-        return get_url_body("https://#{name}:36121/static/build.content.txt")
+        return get_url_body("https://#{name}.cdlib.org:36121/static/build.content.txt")
       elsif subservice == 'replic'
-        return get_url_body("https://#{name}:38001/static/build.content.txt")
+        return get_url_body("https://#{name}.cdlib.org:38001/static/build.content.txt")
       elsif subservice == 'store'
-        return get_url_body("https://#{name}:35121/static/build.content.txt")
+        return get_url_body("https://#{name}.cdlib.org:35121/static/build.content.txt")
       elsif subservice == 'access'
-        return get_url_body("https://#{name}:35121/static/build.content.txt")
+        return get_url_body("https://#{name}.cdlib.org:35121/static/build.content.txt")
       elsif subservice == 'ui'
-        return get_url_json("https://#{name}:26181/static/state").fetch('version', '')
+        return get_url_json("https://#{name}.cdlib.org:26181/static/state").fetch('version', '')
       end
     end
   end

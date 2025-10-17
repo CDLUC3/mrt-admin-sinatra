@@ -1,6 +1,6 @@
 items:
 - path: home
-  title: AdminTool
+  title: UC3 AdminTool
   items:
   - title: UC3 Server Listing and SSM Registry
     route: /
