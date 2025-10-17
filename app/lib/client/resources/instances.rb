@@ -99,33 +99,38 @@ module UC3Resources
     end
 
     # this is cloned from services.rb...
-    def get_url(url, ctype: :json)
+    def get_url_body(url)
       uri = URI.parse(url)
       response = Net::HTTP.get_response(uri)
-      data = response.body
-      content_type ctype
-      data
+      response.body
     rescue StandardError => e
-      content_type :json
-      { uri: uri, error: e.to_s }.to_json
+      ""
+    end
+
+    def get_url_json(url)
+      uri = URI.parse(url)
+      response = Net::HTTP.get_response(uri)
+      JSON.parse(response.body)
+    rescue StandardError => e
+      {}
     end
 
     def get_data(name,instance)
       subservice = instance[:subservice]
       if subservice == 'ingest'
-        return get_url("https://#{name}:33121/static/build.content.txt", ctype: :text)
+        return get_url_body("https://#{name}:33121/static/build.content.txt")
       elsif subservice == 'audit'
-        return get_url("https://#{name}:37001/static/build.content.txt", ctype: :text)
+        return get_url_body("https://#{name}:37001/static/build.content.txt")
       elsif subservice == 'inventory'
-        return get_url("https://#{name}:36121/static/build.content.txt", ctype: :text)
+        return get_url_body("https://#{name}:36121/static/build.content.txt")
       elsif subservice == 'replic'
-        return get_url("https://#{name}:38001/static/build.content.txt", ctype: :text)
+        return get_url_body("https://#{name}:38001/static/build.content.txt")
       elsif subservice == 'store'
-        return get_url("https://#{name}:35121/static/build.content.txt", ctype: :text)
+        return get_url_body("https://#{name}:35121/static/build.content.txt")
       elsif subservice == 'access'
-        return get_url("https://#{name}:35121/static/build.content.txt", ctype: :text)
+        return get_url_body("https://#{name}:35121/static/build.content.txt")
       elsif subservice == 'ui'
-        return JSON.parse(get_url("https://#{name}:26181/static/state", ctype: :json))['version']
+        return get_url_json("https://#{name}:26181/static/state").fetch('version', '')
       end
     end
   end
