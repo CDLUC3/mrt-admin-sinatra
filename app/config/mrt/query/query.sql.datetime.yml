@@ -373,7 +373,7 @@ queries:
         batch_id,
         max(submitted) date_submitted,
         count(*) as object_count,
-        ifnull(sum(os.billable_size), 0) as total_size,
+        ifnull(sum(os.billable_size), 0) / 1000000000.0 as size_gb,
         ifnull(sum(os.file_count), 0) as total_files
       from
         inv.inv_ingests ing

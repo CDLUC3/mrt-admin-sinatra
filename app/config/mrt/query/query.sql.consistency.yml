@@ -534,6 +534,24 @@ fragments:
     )
 queries:
   /queries/consistency/daily:
+    description: |
+      This reports shows the set of daily data integrity checks performed by the Merritt system.
+
+      Each of these checks returns a status PASS, INFO, WARN, FAIL, SKIP which is reported in the check_status column. 
+
+      These reports are meant to be reviewed every business day. 
+
+      - PASS: no action required 
+      - INFO: the resulting state is not ideal, but no resolution is expected 
+      - WARN: this is either an early alert of a future problem or a relatively routine issue.  Action should be taken when possible.
+      - FAIL: Immediate action should be taken 
+      - SKIP: the status check is not currently applicable
+
+      The checked values are repeated in the status column.  
+      
+      Any check that is not current (not perfomed since midnight) will report SKIP.
+
+      If you click on a check_name, the test will be re-run and the status will be updated.
     sql: |
       with latest_checks as (
         select 
