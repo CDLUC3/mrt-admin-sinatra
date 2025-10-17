@@ -78,10 +78,6 @@ columns:
       cssclass: float
     sdsc_bytes_gb:
       cssclass: float
-    total_files:
-      cssclass: float
-    object_count:
-      cssclass: float
     nodedesc:
       header: Node Desc
     maint_status:

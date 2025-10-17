@@ -181,6 +181,8 @@ td.images span.val {
   display: list-item;
 }
 
+td.object_count, th.object_count,
+td.total_files, th.total_files,
 td.num_colls, th.num_colls,
 td.num_objs, th.num_objs,
 td.files, th.files,
