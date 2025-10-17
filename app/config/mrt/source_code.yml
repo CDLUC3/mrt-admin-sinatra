@@ -1,9 +1,4 @@
 repos:
-  admin-mainacct:
-    repo: CDLUC3/mrt-admin-lambda
-    image_repos:
-    - uc3-mrt-admin-lambda
-    - uc3-mrt-colladmin-lambda
   admintool:
     repo: CDLUC3/mrt-admin-sinatra
     image_repos:
