@@ -21,7 +21,7 @@ Application Configuration
   - [Initialization Code](/app/admin_uc3.rb)
 
 ### Merritt Admin Tool Framework
-- Request handling utilizes an [admin tool client](lib/client) to satisify the request
+- Request handling utilizes an [admin tool client](/app/lib/client) to satisify the request
   - query client: queries the Merritt inventory and billing databases
   - zookeeper client: queries the Merritt queuing system
   - ldap client: queries the Merritt user permission directory
