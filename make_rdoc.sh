@@ -1,2 +1,2 @@
 #! /bin/bash
-bundle exec rdoc app
+bundle exec rdoc -O app
