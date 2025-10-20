@@ -72,6 +72,7 @@ phases:
     - |
       if [[ "$ADMIN_MODE" == "build" ]]
       then
+        mkdir doc
         docker run --rm -v doc:/var/task/doc --entrypoint /var/task/make_rdoc.sh ${ECR_REGISTRY}/mrt-admin-sinatra:ecs-dev
         cp -r doc api/mrt-admin-sinatra/ruby
         aws s3 cp --recursive api s3://${S3CFBUCKET}/api 
