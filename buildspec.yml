@@ -73,7 +73,7 @@ phases:
       if [[ "$ADMIN_MODE" == "build" ]]
       then
         mkdir doc api/mrt-admin-sinatra/ruby
-        docker run --rm -v doc:/var/task/doc --entrypoint /var/task/make_rdoc.sh ${ECR_REGISTRY}/mrt-admin-sinatra:ecs-dev
+        docker run --rm -v "$(pwd)/doc:/var/task/doc" --entrypoint /var/task/make_rdoc.sh ${ECR_REGISTRY}/mrt-admin-sinatra:ecs-dev
         cp -r doc/* api/mrt-admin-sinatra/ruby/
         aws s3 cp --recursive api s3://${S3CFBUCKET}/api 
         aws cloudfront create-invalidation --distribution-id ${CFDISTRIBUTIONID} --paths /api/mrt-admin-sinatra/* --region us-east-1
