@@ -72,6 +72,11 @@ phases:
     - |
       if [[ "$ADMIN_MODE" == "build" ]]
       then
+        docker run --rm -v doc:/var/task/doc --entrypoint /var/task/make_rdoc.sh ${ECR_REGISTRY}/mrt-admin-sinatra:ecs-dev
+        cp -r doc api/mrt-admin-sinatra/ruby
+        aws s3 cp --recursive api s3://${S3CFBUCKET}/api 
+        aws cloudfront create-invalidation --distribution-id ${CFDISTRIBUTIONID} --paths /api/mrt-admin-sinatra/* --region us-east-1
+
         docker pull ${ECR_REGISTRY}/docker-hub/webpronl/reveal-md --quiet
         docker-compose -f present/deploy/docker-compose-static.yml up
         aws s3 rm --recursive --only-show-errors s3://${S3CFBUCKET}/present/ecs-deploy|| echo 'delete skipped'
