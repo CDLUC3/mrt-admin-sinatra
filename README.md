@@ -4,103 +4,84 @@ This lambda is part of the [Merritt Preservation System](https://github.com/CDLU
 
 ## Purpose
 
-Sinatra based admin tool for the new Merritt AWS account.
+This web application allows members of the Merritt Team to manage the Merritt Digital Preservation System.
 
-## Execution Options
+## Application Framework
 
-- Local ruby app (bundle exec, NO AWS auth)
-  - NO AWS API support
-  - NO local database
-  - NO VPC database connections (uc3)
-- Local ruby app (bundle exec, WITH AWS auth)
-  - NO AWS API support
-  - NO local database
-  - NO VPC database connections (uc3)
-- Local docker-compose stack (AWS auth does not transfer to containers)
-  - NO AWS API support
-  - HAS local database
-  - NO VPC database connections (uc3)
-- ECS Stack
-  - HAS local database or VPC database connection (vpc)
-  - HAS AWS API support
-- Lambda (VPC + NonVPC)
-  - NO local databse
-  - HAS VPC database connection (main account)
+This application is built on the [sinatra framework](https://sinatrarb.com/intro.html).
+- HTTP requests are made to the application
+- Requests are matched to a ["route"](app/lib/routes)
+
+Sinatra apps are typically run inside a puma webserver using rack.
+
+Application Configuration
+- [Merritt Admin Rack Config](app/config_mrt.ru)
+  - [Initialization Code](app/admin_mrt.rb)
+- [Main Acct Rack Config](app/config_uc3.ru)
+  - [Initialization Code](app/admin_uc3.rb)
+
+### Merritt Admin Tool Framework
+- Request handling utilizes an [admin tool client](lib/client) to satisify the request
+  - query client: queries the Merritt inventory and billing databases
+  - zookeeper client: queries the Merritt queuing system
+  - ldap client: queries the Merritt user permission directory
+  - code client: queries GitHub, CodeArtifact and Elastic Container Registry for information about Merritt code
+- Response are returned to the user
+  - some responses are returned to the user in JSON format
+  - most responses are returned in the user as HTML, preferable containing a table of data
+
+### Merritt Admin Tool Config Files
+
+#### Menu File
+
+The menu system for the Merritt Admin Tool is configured in a yaml file: [menu.yml](app/config/mrt/menu.yml).
+
+The hierarchy of the menu entries is used to generate breadcrumbs for each page that is displayed in the application.
+
+#### Lookup Files
+
+Merritt configuration is resloved using a lookup file.
+
+The top level keys of the yaml file allow different application configurations to be defined (ecs-prd, ecs-dev, docker).
+
+Lookup values can be resolved in 3 ways
+- ssm: ssm lookup, note that this is not appropriate for a docker compose stack
+- env: env lookup
+- val: hard coded
+
+When running in docker-compose, most values are resolved to a simple hard-coded value.
+
+#### Query Files
+
+- All of the SQL run by the Merritt Admin Tool is defined in a [query yaml file](app/config/mrt/query/).
+- Where possible, the keys within the yaml file match the route paths for the application.
+- To reduce code repetition, some queries are assembled using [mustache templates](https://github.com/mustache/mustache)
+- Some query columns have a special properties that are tied to the [column name](app/config/mrt/query/query.sql.cols.yml)
+  - these properties are used to format the column, to create hyperlinks, and to assign CSS classes
+- Other queries have a special [query resolver](app/lib/client/query/query_resolvers.rb) that can combine columns or generate action buttons
+- The Query definitions map named url parameters to positional parameters in an SQL prepared statement
+- A query definition might contain a markdown section that defines the purpose of a particular query
+
+## Admin Tool Deployments
+
+- This application is deployed as a web applications to the 5 Merritt ECS stacks.
+  - Merritt team members must authenticate with AWS cognito to access the application.
+- This application can be run on a developer desktop using [docker-compose](https://github.com/CDLUC3/merritt-docker/blob/main/README.md).
+- A pared down version of this application is also deployed to the CDL "main account" as a lambda.
+  - Merritt team members must authenticate with AWS cognito to access the application.
+  - Because of the mysql dependency within the application, the lambda code is deployed as a docker image.
 
 ## Local Testing
+
+The Merritt Admin tool can be run as a standalone ruby application although the standalone application 
+will not be able to connect to other Merritt microservices.
 
 ### Merritt app
 ```
 MERRITT_ECS=desktop bundle exec puma app/config_mrt.ru
 ```
 
-Resources for deploying as a lambda
-- https://github.com/CDLUC3/mrt-sceptre/tree/main/mrt-admin-sinatra
-- Because this application uses mysql, it must be packaged as a docker image
-- `ENV RACK_CONFIG=app/config_mrt.ru`
-
 ### UC3-focuesed app
 ```
 MERRITT_ECS=desktop bundle exec puma app/config_uc3.ru
 ```
-
-Resources for deploying as a lambda
-- a new sceptre deploy will need to be created to grant a different SSO group access
-- this could be deployed as a zip or as an image
-- `ENV RACK_CONFIG=app/config_uc3.ru`
-
-Building on EC2 in the main account... warning, this may break lambda deployment
-```
-bundle config set force_ruby_platform true
-```
-
-## Domains
-- PROD: 
-  - RDS: prod; S3: prod; ZK: prod; ZFS: prod
-  - Stack: prod (includes auto-scaling group services)
-- Stage: 
-  - RDS: stage; S3: prod; ZK: stage; ZFS: stage
-  - Stack: stage (includes auto-scaling group services)
-- Dev: new dev environment - daily deploy - daily CI/CD
-  - RDS: dev; S3: dev; ZK: dev; ZFS: dev
-  - Stack: dev (containers)
-- Dev DB: uses clone of RDS prod
-  - RDS: dev (prod clone); S3: docker volume; ZK: docker volume; ZFS: docker volume
-  - Stack: dev (containers)
-- Docker
-  - RDS: dev docker volume; S3: docker volume; ZK: docker volume; ZFS: docker volume
-  - Stack: dev (containers)
-
-## Resources needed
-- GitHub API token with read permission for our repos
-- https://github.com/CDLUC3/mrt-sceptre/tree/main/mrt-admin-sinatra
-- Gems
-  - GitHub octokit
-  - AWS code artifact
-  - AWS ecr
-  - AWS lambda
-
-## Features
-- https://github.com/CDLUC3/mrt-doc/issues/2123
-
-## Design Ideas
-
-### Assumptions
-- Application should be fully-testable with a desktop run of sinatra
-  - AWS credentials will grant access to resources
-  - some core components will be used for a UC3 admin tool
-    - code could be cloned or packaged as a library for re-use
-- Collection Admin
-  - eliminate SLA
-  - eliminate admin objects
-  - object/collection creation via inventory endpoints
-- Clean sinatra routing
-  - should each of the following be a separate module?
-  - place generic classes into a library/gem?
-  - import library/modules into the UC3 admin tool
-  - place as much config as possible into yaml
-    - SQL
-    - tag queries
-    - ssm queries
-
-
