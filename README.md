@@ -55,7 +55,7 @@ When running in docker-compose, most values are resolved to a simple hard-coded 
 
 #### Query Files
 
-- All of the SQL run by the Merritt Admin Tool is defined in a [query yaml file](/app/config/mrt/query/).
+- All of the SQL run by the Merritt Admin Tool is defined in a [query yaml file](/app/config/mrt/query/README.md).
 - Where possible, the keys within the yaml file match the route paths for the application.
 - To reduce code repetition, some queries are assembled using [mustache templates](https://github.com/mustache/mustache)
 - Some query columns have a special properties that are tied to the [column name](/app/config/mrt/query/query.sql.cols.yml)
