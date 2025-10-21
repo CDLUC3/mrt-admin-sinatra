@@ -6,6 +6,8 @@ This lambda is part of the [Merritt Preservation System](https://github.com/CDLU
 
 This web application allows members of the Merritt Team to manage the Merritt Digital Preservation System.
 
+- [Ruby Docs](https://merritt.uc3dev.cdlib.org/api/mrt-admin-sinatra/ruby)
+
 ## Application Framework
 
 This application is built on the [sinatra framework](https://sinatrarb.com/intro.html).
