@@ -121,7 +121,7 @@ module UC3S3
         notsub += "Notification.#{i + 1}: #{n.strip}\n"
       end
       profile.gsub!(/^Notification\..*$/, notsub.strip)
-      now = Time.now.utc.strftime('%Y-%m-%dT%H:%M:%S-%z')
+      now = Time.now.strftime('%Y-%m-%dT%H:%M:%S%z')
       profile.gsub!('${CREATIONDATE}', now)
       profile.gsub!('${MODIFICATIONDATE}', now)
       profile.gsub!('${STORAGENODE}', params.fetch('primarynode', ''))
