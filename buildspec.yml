@@ -3,7 +3,7 @@ version: 0.2
 phases:
   install:
     commands:
-    - apt-get install -y yq
+    - yum install -y yq
   
   pre_build:
     on-failure: ABORT
