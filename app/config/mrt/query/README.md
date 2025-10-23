@@ -78,8 +78,13 @@ queries:
       This report will query `inv_nodes_inv_objects` to count the number of objects having an irregular number of replicated copies. 
       The Merritt system typically has one primary copy of an object and 2 secondary copies.
     # template-params: Optional.  Name/value pairs to be edited into a query using Mustache templating
-    template-params:
-      COPIES: 2
+    # template-params
+    #   COPIES: 2
+    #   WHERE: foo = 'bar'
+    # template-sql: run a query that is used as input into another query
+    # template-sql:
+    #   RANGE: |
+    #     {{{CUMLYEARS}}}
     # status_check: Optional.  If true, it triggers the results to be saved as a consistency check.
     status_check: true
     # totals: Optional.  If true, numeric columns will be summed and displayed as a table footer.

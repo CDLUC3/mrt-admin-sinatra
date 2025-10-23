@@ -1,3 +1,5 @@
+# The consistency reports contain many SQL fragments in order to utilize the same fragment to return 
+# BOTH totals and object lists.
 fragments:
   COLLQ: |
     select

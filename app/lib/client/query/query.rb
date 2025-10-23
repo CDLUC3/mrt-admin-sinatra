@@ -79,6 +79,7 @@ module UC3Query
         end
       rescue StandardError => e
         puts "(Query3) #{e.class}: #{e}"
+        raise e
       end
       hasharr
     end
@@ -203,12 +204,13 @@ module UC3Query
       { status: 'OK', message: "#{purpose} Update completed. #{stmt.affected_rows} rows" }
     end
 
+    # Obtain a query result as an array hash objects (vs a FilterTable) that can be used in other processing
     def run_query(path, urlparams = {}, sqlsym: :sql)
       query = @queries.fetch(path.to_sym, {})
 
       sql = query.fetch(sqlsym, '')
-      return [] if sql.empty?
-      return [] if query.fetch(:update, false)
+      raise "SQL is empty" if sql.empty?
+      raise "Update query cannot be run with run_query" if query.fetch(:update, false)
 
       # get know query parameters from yaml
       pagination = pagination_params(query, path, urlparams)
@@ -218,7 +220,7 @@ module UC3Query
       # This would permit us to create temporary tables to use in subsequent queries.
 
       sql = resolve_sql(sql, tparm)
-      return [] unless enabled
+      raise "QueryClient is not enabled" unless enabled
 
       stmt = @client.prepare(sql)
 
@@ -229,12 +231,11 @@ module UC3Query
     end
 
     def query(path, urlparams, sqlsym: :sql, dispcols: [], resolver: UC3Query::QueryResolvers.method(:default_resolver))
-      table = AdminUI::FilterTable.empty
       query = @queries.fetch(path.to_sym, {})
 
       sql = query.fetch(sqlsym, '')
-      return table if sql.empty?
-      return table if query.fetch(:update, false)
+      return AdminUI::FilterTable.empty("SQL is empty for #{path}") if sql.empty?
+      return AdminUI::FilterTable.empty("Cannot run an update query with query()") if query.fetch(:update, false)
 
       # get know query parameters from yaml
       pagination = pagination_params(query, path, urlparams)
@@ -244,7 +245,7 @@ module UC3Query
       # This would permit us to create temporary tables to use in subsequent queries.
 
       sql = resolve_sql(sql, tparm)
-      return AdminUI::FilterTable.empty(sql) unless enabled
+      return AdminUI::FilterTable.empty("Query Client not enabled. SQL: #{sql}") unless enabled
 
       begin
         stmt = @client.prepare(sql)

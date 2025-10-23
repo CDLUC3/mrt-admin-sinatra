@@ -92,6 +92,16 @@ module Sinatra
         end
       end
 
+      app.get '/queries/repository/campus/invoices/*/*' do
+        request.params['year'] = params[:splat][0]
+        request.params['campus'] = params[:splat][1]
+
+        adminui_show_table(
+          AdminUI::Context.new(request.path),
+          UC3Query::QueryClient.client.query('/queries/repository/campus/invoices', request.params)
+        )
+      end
+
       app.get '/queries/**' do
         request.params[:term] = URI.decode_www_form_component(request.params[:term]) if request.params.key?(:term)
 

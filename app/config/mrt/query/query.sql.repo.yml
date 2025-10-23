@@ -375,6 +375,9 @@ queries:
         order by
           ogroup,
           own_name
+  # Because of the finite number of campuses and the finite number of mime groups, the following queries use template params
+  # rather than using url params.  If the number of mime groups were to expand significantly then URL parameters might be 
+  # a better choice here.
   /queries/repository/mimes/campus/CDL:
     template-params:
       WHERE: where ogroup = 'CDL'
