@@ -1,6 +1,10 @@
 version: 0.2
 
 phases:
+  install:
+    commands:
+    - apt-get install -y yq
+  
   pre_build:
     on-failure: ABORT
     commands:
@@ -18,6 +22,9 @@ phases:
     - echo "Branchtag ${BRANCHTAG}; COMMITDATE=${COMMITDATE}; REPONAME=${REPONAME}; BRANCHNAME=${BRANCHNAME}"
     - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin ${ECR_REGISTRY}
 
+    - DEVBUCK=$(aws ssm get-parameter --name /uc3/mrt/config-bucket-dev --query Parameter.Value --output text)
+    - aws s3 cp s3://${DEVBUCK}/uc3/mrt/mrt-ecs-manifest/ecs-release-manifest.yaml /tmp/ecs-release-manifest.yaml
+    - yq '."ecs-tagmap"."mrt-admin-sinatra"' /tmp/ecs-release-manifest.yaml
   build:
     on-failure: CONTINUE
     commands:
