@@ -4,7 +4,7 @@ phases:
   install:
     commands:
     - python3 -m pip install --upgrade pip
-    - pip instal yq
+    - pip install yq
   
   pre_build:
     on-failure: ABORT
