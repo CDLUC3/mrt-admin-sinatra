@@ -9,6 +9,10 @@ require_relative 'query_resolvers'
 
 # Scope custom code for UC3 to distinguish from 3rd party classes
 module UC3Query
+  # Error raised when a query is empty
+  class EmptyQueryError < StandardError; 
+  end
+
   # Query for repository images by tag
   class QueryClient < UC3::UC3Client
     def self.client
@@ -209,8 +213,8 @@ module UC3Query
       query = @queries.fetch(path.to_sym, {})
 
       sql = query.fetch(sqlsym, '')
-      raise "SQL is empty" if sql.empty?
-      raise "Update query cannot be run with run_query" if query.fetch(:update, false)
+      raise EmptyQueryError, "SQL is empty for #{path}" if sql.empty?
+      raise EmptyQueryError, "Update query cannot be run with run_query" if query.fetch(:update, false)
 
       # get know query parameters from yaml
       pagination = pagination_params(query, path, urlparams)
@@ -220,7 +224,7 @@ module UC3Query
       # This would permit us to create temporary tables to use in subsequent queries.
 
       sql = resolve_sql(sql, tparm)
-      raise "QueryClient is not enabled" unless enabled
+      raise EmptyQueryError, "QueryClient is not enabled" unless enabled
 
       stmt = @client.prepare(sql)
 
@@ -234,8 +238,8 @@ module UC3Query
       query = @queries.fetch(path.to_sym, {})
 
       sql = query.fetch(sqlsym, '')
-      return AdminUI::FilterTable.empty("SQL is empty for #{path}") if sql.empty?
-      return AdminUI::FilterTable.empty("Cannot run an update query with query()") if query.fetch(:update, false)
+      raise EmptyQueryError, "SQL is empty for #{path}" if sql.empty?
+      raise EmptyQueryError, "Update query cannot be run with run_query" if query.fetch(:update, false)
 
       # get know query parameters from yaml
       pagination = pagination_params(query, path, urlparams)
@@ -245,7 +249,7 @@ module UC3Query
       # This would permit us to create temporary tables to use in subsequent queries.
 
       sql = resolve_sql(sql, tparm)
-      return AdminUI::FilterTable.empty("Query Client not enabled. SQL: #{sql}") unless enabled
+      raise EmptyQueryError, "QueryClient is not enabled" unless enabled
 
       begin
         stmt = @client.prepare(sql)
@@ -301,6 +305,8 @@ module UC3Query
       end
       record_status(path, table.status) if query.fetch(:status_check, false)
       table
+    rescue EmptyQueryError => e
+      AdminUI::FilterTable.empty
     end
 
     attr_accessor :queries

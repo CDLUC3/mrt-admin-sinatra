@@ -375,141 +375,28 @@ queries:
         order by
           ogroup,
           own_name
-  # Because of the finite number of campuses and the finite number of mime groups, the following queries use template params
-  # rather than using url params.  If the number of mime groups were to expand significantly then URL parameters might be 
-  # a better choice here.
-  /queries/repository/mimes/campus/CDL:
+  /queries/repository/mimes/campus:
     template-params:
-      WHERE: where ogroup = 'CDL'
+      WHERE: where ogroup = ?
     totals: true
     sql: |
       {{{MIME}}}
-  /queries/repository/mimes/campus/UCB:
-    template-params:
-      WHERE: where ogroup = 'UCB'
-    totals: true
-    sql: |
-      {{{MIME}}}
-  /queries/repository/mimes/campus/UCD:
-    template-params:
-      WHERE: where ogroup = 'UCD'
-    totals: true
-    sql: |
-      {{{MIME}}}
-  /queries/repository/mimes/campus/UCI:
-    template-params:
-      WHERE: where ogroup = 'UCI'
-    totals: true
-    sql: |
-      {{{MIME}}}
-  /queries/repository/mimes/campus/UCLA:
-    template-params:
-      WHERE: where ogroup = 'UCLA'
-    totals: true
-    sql: |
-      {{{MIME}}}
-  /queries/repository/mimes/campus/UCM:
-    template-params:
-      WHERE: where ogroup = 'UCM'
-    totals: true
-    sql: |
-      {{{MIME}}}
-  /queries/repository/mimes/campus/UCSB:
-    template-params:
-      WHERE: where ogroup = 'UCSB'
-    totals: true
-    sql: |
-      {{{MIME}}}
-  /queries/repository/mimes/campus/UCSC:
-    template-params:
-      WHERE: where ogroup = 'UCSC'
-    totals: true
-    sql: |
-      {{{MIME}}}
-  /queries/repository/mimes/campus/UCSD:
-    template-params:
-      WHERE: where ogroup = 'UCSD'
-    totals: true
-    sql: |
-      {{{MIME}}}
-  /queries/repository/mimes/campus/UCSF:
-    template-params:
-      WHERE: where ogroup = 'UCSF'
-    totals: true
-    sql: |
-      {{{MIME}}}
-  /queries/repository/mimes/campus/Other:
-    template-params:
-      WHERE: where ogroup = 'Other'
-    totals: true
-    sql: |
-      {{{MIME}}}
-  /queries/repository/mimes/group/audio:
-    description: &mime_group |
+    parameters:
+    - name: campus
+      type: string
+  /queries/repository/mimes/group:
+    description: |
       A high-level _Mime Group_ is assigned to each Mime Type based on the work of the UC Digital Preservation Strategy working group.
 
       [Mime Group Mapping Logic](/markdown/mime.md)
     template-params:
-      WHERE: where mime_group = 'audio'
+      WHERE: where mime_group = ?
     totals: true
     sql: |
       {{{MIME}}}
-  /queries/repository/mimes/group/container:
-    description: *mime_group
-    template-params:
-      WHERE: where mime_group = 'container'
-    totals: true
-    sql: |
-      {{{MIME}}}
-  /queries/repository/mimes/group/data:
-    description: *mime_group
-    template-params:
-      WHERE: where mime_group = 'data'
-    totals: true
-    sql: |
-      {{{MIME}}}
-  /queries/repository/mimes/group/geo:
-    description: *mime_group
-    template-params:
-      WHERE: where mime_group = 'geo'
-    totals: true
-    sql: |
-      {{{MIME}}}
-  /queries/repository/mimes/group/image:
-    description: *mime_group
-    template-params:
-      WHERE: where mime_group = 'image'
-    totals: true
-    sql: |
-      {{{MIME}}}
-  /queries/repository/mimes/group/software:
-    description: *mime_group
-    template-params:
-      WHERE: where mime_group = 'software'
-    totals: true
-    sql: |
-      {{{MIME}}}
-  /queries/repository/mimes/group/text:
-    description: *mime_group
-    template-params:
-      WHERE: where mime_group = 'text'
-    totals: true
-    sql: |
-      {{{MIME}}}
-  /queries/repository/mimes/group/video:
-    description: *mime_group
-    template-params:
-      WHERE: where mime_group = 'video'
-    totals: true
-    sql: |
-      {{{MIME}}}
-  /queries/repository/mimes/group/web:
-    description: *mime_group
-    template-params:
-      WHERE: where mime_group = 'web'
-    totals: true
-    sql: |
-      {{{MIME}}}
+    parameters:
+    - name: group
+      type: string
   /queries/use-cases/largest-objects:
     description: |
       Objects with the largest billable size.

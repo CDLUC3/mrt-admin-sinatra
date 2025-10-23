@@ -92,15 +92,48 @@ module Sinatra
         end
       end
 
+      [
+        '/queries/repository/campus/invoices',
+        '/queries/repository/mimes/campus',
+        '/queries/repository/mimes/group'
+      ].each do |path|
+        app.get path do
+          adminui_show_none(
+            AdminUI::Context.new(path)
+          )
+        end
+      end
+
       app.get '/queries/repository/campus/invoices/*/*' do
         request.params['year'] = params[:splat][0]
         request.params['campus'] = params[:splat][1]
 
+        if request.params['campus'].to_s.empty?
+          adminui_show_none(
+            AdminUI::Context.new(request.path)
+          )
+        else
+          adminui_show_table(
+            AdminUI::Context.new(request.path),
+            UC3Query::QueryClient.client.query('/queries/repository/campus/invoices', request.params)
+          )
+        end
+      end 
+
+      app.get '/queries/repository/mimes/campus/*' do
+        request.params['campus'] = params[:splat][0]
         adminui_show_table(
           AdminUI::Context.new(request.path),
-          UC3Query::QueryClient.client.query('/queries/repository/campus/invoices', request.params)
+          UC3Query::QueryClient.client.query('/queries/repository/mimes/campus', request.params)
         )
-      end
+      end 
+
+      app.get '/queries/repository/mimes/group/*' do
+        adminui_show_table(
+          AdminUI::Context.new(request.path),
+          UC3Query::QueryClient.client.query('/queries/repository/mimes/group', request.params)
+        )
+      end 
 
       app.get '/queries/**' do
         request.params[:term] = URI.decode_www_form_component(request.params[:term]) if request.params.key?(:term)
