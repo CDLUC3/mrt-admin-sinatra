@@ -10,7 +10,7 @@ require_relative 'query_resolvers'
 # Scope custom code for UC3 to distinguish from 3rd party classes
 module UC3Query
   # Error raised when a query is empty
-  class EmptyQueryError < StandardError; 
+  class EmptyQueryError < StandardError
   end
 
   # Query for repository images by tag
@@ -214,7 +214,7 @@ module UC3Query
 
       sql = query.fetch(sqlsym, '')
       raise EmptyQueryError, "SQL is empty for #{path}" if sql.empty?
-      raise EmptyQueryError, "Update query cannot be run with run_query" if query.fetch(:update, false)
+      raise EmptyQueryError, 'Update query cannot be run with run_query' if query.fetch(:update, false)
 
       # get know query parameters from yaml
       pagination = pagination_params(query, path, urlparams)
@@ -224,7 +224,7 @@ module UC3Query
       # This would permit us to create temporary tables to use in subsequent queries.
 
       sql = resolve_sql(sql, tparm)
-      raise EmptyQueryError, "QueryClient is not enabled" unless enabled
+      raise EmptyQueryError, 'QueryClient is not enabled' unless enabled
 
       stmt = @client.prepare(sql)
 
@@ -239,7 +239,7 @@ module UC3Query
 
       sql = query.fetch(sqlsym, '')
       raise EmptyQueryError, "SQL is empty for #{path}" if sql.empty?
-      raise EmptyQueryError, "Update query cannot be run with run_query" if query.fetch(:update, false)
+      raise EmptyQueryError, 'Update query cannot be run with run_query' if query.fetch(:update, false)
 
       # get know query parameters from yaml
       pagination = pagination_params(query, path, urlparams)
@@ -249,7 +249,7 @@ module UC3Query
       # This would permit us to create temporary tables to use in subsequent queries.
 
       sql = resolve_sql(sql, tparm)
-      raise EmptyQueryError, "QueryClient is not enabled" unless enabled
+      raise EmptyQueryError, 'QueryClient is not enabled' unless enabled
 
       begin
         stmt = @client.prepare(sql)
@@ -305,7 +305,7 @@ module UC3Query
       end
       record_status(path, table.status) if query.fetch(:status_check, false)
       table
-    rescue EmptyQueryError => e
+    rescue EmptyQueryError
       AdminUI::FilterTable.empty
     end
 

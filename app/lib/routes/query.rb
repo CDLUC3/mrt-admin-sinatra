@@ -118,7 +118,7 @@ module Sinatra
             UC3Query::QueryClient.client.query('/queries/repository/campus/invoices', request.params)
           )
         end
-      end 
+      end
 
       app.get '/queries/repository/mimes/campus/*' do
         request.params['campus'] = params[:splat][0]
@@ -126,14 +126,14 @@ module Sinatra
           AdminUI::Context.new(request.path),
           UC3Query::QueryClient.client.query('/queries/repository/mimes/campus', request.params)
         )
-      end 
+      end
 
       app.get '/queries/repository/mimes/group/*' do
         adminui_show_table(
           AdminUI::Context.new(request.path),
           UC3Query::QueryClient.client.query('/queries/repository/mimes/group', request.params)
         )
-      end 
+      end
 
       app.get '/queries/**' do
         request.params[:term] = URI.decode_www_form_component(request.params[:term]) if request.params.key?(:term)
