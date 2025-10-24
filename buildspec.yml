@@ -147,5 +147,5 @@ phases:
               --build-arg ECR_REGISTRY=${ECR_REGISTRY} \
               -t ${ECR_REGISTRY}/$REPONAME:$TAG_ECS .
           fi
-        end
+        done
       fi
