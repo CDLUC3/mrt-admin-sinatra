@@ -60,7 +60,7 @@ phases:
           --query 'length(taskArns)' \
           --output text)
 
-        if [ "$RUNNING_COUNT" -gt 0 ]
+        if [ $RUNNING_COUNT -gt 0 ]
         then
           aws ecs update-service --cluster mrt-ecs-dev-stack --service admintool \
             --desired-count 2 --output yaml --no-cli-pager \
