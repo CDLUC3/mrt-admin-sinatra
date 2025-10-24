@@ -23,9 +23,14 @@ phases:
     - echo "Branchtag ${BRANCHTAG}; COMMITDATE=${COMMITDATE}; REPONAME=${REPONAME}; BRANCHNAME=${BRANCHNAME}"
     - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin ${ECR_REGISTRY}
 
-    - DEVBUCK=$(aws ssm get-parameter --name /uc3/mrt/config-bucket-dev --query Parameter.Value --output text)
-    - aws s3 cp s3://${DEVBUCK}/uc3/mrt/mrt-ecs-manifest/ecs-release-manifest.yaml /tmp/ecs-release-manifest.yaml
-    - yq '."ecs-tagmap"."mrt-admin-sinatra"' /tmp/ecs-release-manifest.yaml
+    - |
+      DEVBUCK=$(aws ssm get-parameter --name /uc3/mrt/config-bucket-dev --query Parameter.Value --output text)
+      aws s3 cp s3://${DEVBUCK}/uc3/mrt/mrt-ecs-manifest/ecs-release-manifest.yaml /tmp/ecs-release-manifest.yaml
+      TAG_ECS_DEV=$(yq -r '."ecs-tagmap"."mrt-admin-sinatra"."ecs-dev"' /tmp/ecs-release-manifest.yaml)
+      TAG_ECS_EPHEMERAL=$(yq -r '."ecs-tagmap"."mrt-admin-sinatra"."ecs-ephemeral"' /tmp/ecs-release-manifest.yaml)
+      TAG_ECS_DBSNAPSHOT=$(yq -r '."ecs-tagmap"."mrt-admin-sinatra"."ecs-dbsnapshot"' /tmp/ecs-release-manifest.yaml)
+      TAG_ECS_STG=$(yq -r '."ecs-tagmap"."mrt-admin-sinatra"."ecs-stg"' /tmp/ecs-release-manifest.yaml)
+      TAG_ECS_PRD=$(yq -r '."ecs-tagmap"."mrt-admin-sinatra"."ecs-prd"' /tmp/ecs-release-manifest.yaml)
   build:
     on-failure: CONTINUE
     commands:
@@ -37,28 +42,59 @@ phases:
 
         docker build --quiet --push \
           --build-arg ECR_REGISTRY=${ECR_REGISTRY} \
-          -t ${ECR_REGISTRY}/mrt-admin-sinatra .
+          -t ${ECR_REGISTRY}/mrt-admin-sinatra:${DOCKTAG} .
       
-        docker build --quiet --push \
-          --build-arg ECR_REGISTRY=${ECR_REGISTRY} \
-          -t ${ECR_REGISTRY}/mrt-admin-sinatra:ecs-dev .
+        if [[ "$DOCKTAG" == "$TAG_ECS_DEV" ]]
+        then
+          docker build --quiet --push \
+            --build-arg ECR_REGISTRY=${ECR_REGISTRY} \
+            -t ${ECR_REGISTRY}/mrt-admin-sinatra:ecs-dev .
+
+          aws ecs update-service --cluster mrt-ecs-dev-stack --service admintool \
+            --desired-count 2 --output yaml --no-cli-pager \
+            --force-new-deployment || echo "Skip ecs-dev Deployment"
+        fi
+
+        if [[ "$DOCKTAG" == "$TAG_ECS_EPHEMERAL" ]]
+        then
+          docker build --quiet --push \
+            --build-arg ECR_REGISTRY=${ECR_REGISTRY} \
+            -t ${ECR_REGISTRY}/mrt-admin-sinatra:ecs-ephemeral .
+
+          aws ecs update-service --cluster mrt-ecs-ephemeral-stack --service admintool \
+            --desired-count 2 --output yaml --no-cli-pager \
+            --force-new-deployment || echo "Skip ecs-ephemeral Deployment"
+        fi
+
+        if [[ "$DOCKTAG" == "$TAG_ECS_DBSNAPSHOT" ]]
+        then
+          docker build --quiet --push \
+            --build-arg ECR_REGISTRY=${ECR_REGISTRY} \
+            -t ${ECR_REGISTRY}/mrt-admin-sinatra:ecs-dbsnapshot .
+
+          aws ecs update-service --cluster mrt-ecs-dbsnapshot-stack --service admintool \
+            --desired-count 2 --output yaml --no-cli-pager \
+            --force-new-deployment || echo "Skip ecs-dbsnapshot Deployment"
+        fi
+
+        if [[ "$DOCKTAG" == "$TAG_ECS_STG" ]]
+        then
+          docker build --quiet --push \
+            --build-arg ECR_REGISTRY=${ECR_REGISTRY} \
+            -t ${ECR_REGISTRY}/mrt-admin-sinatra:ecs-stg .
+        fi
+
+        if [[ "$DOCKTAG" == "$TAG_ECS_PRD" ]]
+        then
+          docker build --quiet --push \
+            --build-arg ECR_REGISTRY=${ECR_REGISTRY} \
+            -t ${ECR_REGISTRY}/mrt-admin-sinatra:ecs-prd .
+        fi
       fi
 
     - |
       if [[ "$ADMIN_MODE" == "build" ]]
       then
-        aws ecs update-service --cluster mrt-ecs-dev-stack --service admintool \
-          --desired-count 2 --output yaml --no-cli-pager \
-          --force-new-deployment || echo "Skip ecs-dev Deployment"
-
-        aws ecs update-service --cluster mrt-ecs-ephemeral-stack --service admintool \
-          --desired-count 2 --output yaml --no-cli-pager \
-          --force-new-deployment || echo "Skip ecs-ephemeral Deployment"
-
-        aws ecs update-service --cluster mrt-ecs-dbsnapshot-stack --service admintool \
-          --desired-count 2 --output yaml --no-cli-pager \
-          --force-new-deployment || echo "Skip ecs-dbsnapshot Deployment"
-        
         aws lambda update-function-code \
           --function-name arn:aws:lambda:us-west-2:451826914157:function:uc3-mrt-admintool-img-dev \
           --image-uri ${ECR_REGISTRY}/mrt-admin-sinatra:ecs-dev \
