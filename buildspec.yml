@@ -50,7 +50,7 @@ phases:
           -t ${ECR_REGISTRY}/$REPONAME:ecs-dev .
 
         aws ecs update-service --cluster mrt-ecs-dev-stack --service admintool \
-          --output yaml --no-cli-pager \
+          --desired-count 2 --output yaml --no-cli-pager \
           --force-new-deployment || echo "Skip ecs-dev Deployment"
       fi
 
@@ -61,7 +61,7 @@ phases:
           -t ${ECR_REGISTRY}/$REPONAME:ecs-ephemeral .
 
         aws ecs update-service --cluster mrt-ecs-ephemeral-stack --service admintool \
-          --output yaml --no-cli-pager \
+          --desired-count 2 --output yaml --no-cli-pager \
           --force-new-deployment || echo "Skip ecs-ephemeral Deployment"
       fi
 
@@ -72,7 +72,7 @@ phases:
           -t ${ECR_REGISTRY}/$REPONAME:ecs-dbsnapshot .
 
         aws ecs update-service --cluster mrt-ecs-dbsnapshot-stack --service admintool \
-          --output yaml --no-cli-pager \
+          --desired-count 2 --output yaml --no-cli-pager \
           --force-new-deployment || echo "Skip ecs-dbsnapshot Deployment"
       fi
 
