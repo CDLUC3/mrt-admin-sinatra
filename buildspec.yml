@@ -47,6 +47,7 @@ phases:
         --build-arg ECR_REGISTRY=${ECR_REGISTRY} \
         -t ${ECR_REGISTRY}/${REPONAME}:${DOCKTAG} .
     
+    - |
       if [[ "$DOCKTAG" == "$TAG_ECS_DEV" ]]
       then
         docker build --quiet --push \
@@ -127,19 +128,19 @@ phases:
     - |
       aws lambda update-function-code \
         --function-name arn:aws:lambda:us-west-2:451826914157:function:uc3-mrt-admintool-img-dev \
-        --image-uri ${ECR_REGISTRY}/${REPONAME}:ecs-dev \
+        --image-uri ${ECR_REGISTRY}/${REPONAME}:${DOCKTAG} \
         --output text --region us-west-2 \
         --no-cli-pager || echo "Skip Lambda Deployment"
 
       aws lambda update-function-code \
         --function-name arn:aws:lambda:us-west-2:451826914157:function:uc3-mrt-admintool-img-stg \
-        --image-uri ${ECR_REGISTRY}/${REPONAME}:ecs-dev \
+        --image-uri ${ECR_REGISTRY}/${REPONAME}:${DOCKTAG} \
         --output text --region us-west-2 \
         --no-cli-pager || echo "Skip Lambda Deployment"
 
       aws lambda update-function-code \
         --function-name arn:aws:lambda:us-west-2:451826914157:function:uc3-mrt-admintool-img-prd \
-        --image-uri ${ECR_REGISTRY}/${REPONAME}:ecs-dev \
+        --image-uri ${ECR_REGISTRY}/${REPONAME}:${DOCKTAG} \
         --output text --region us-west-2 \
         --no-cli-pager || echo "Skip Lambda Deployment"
 
