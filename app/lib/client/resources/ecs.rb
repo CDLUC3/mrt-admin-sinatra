@@ -39,7 +39,7 @@ module UC3Resources
               service_revision_arns: [sd.target_service_revision_arn]
             ).service_revisions.each do |sr|
               sr.container_images.each do |ci|
-                next if ci.image.to_s =~ /fluentbit/ # skip sidecar images
+                next if ci.image.to_s =~ /fluent-bit/ # skip sidecar images
                 digest = ci.image_digest
                 image = ci.image.to_s.gsub(%r{^.*amazonaws.com/}, '')
               end
