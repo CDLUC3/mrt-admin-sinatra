@@ -26,15 +26,15 @@ phases:
     - |
       DEVBUCK=$(aws ssm get-parameter --name /uc3/mrt/config-bucket-dev --query Parameter.Value --output text)
       aws s3 cp s3://${DEVBUCK}/uc3/mrt/mrt-ecs-manifest/ecs-release-manifest.yaml /tmp/ecs-release-manifest.yaml
-      TAG_ECS_DEV=$(yq -r '."ecs-tagmap"."${REPONAME}"."ecs-dev"' /tmp/ecs-release-manifest.yaml)
+      TAG_ECS_DEV=$(yq -r ".\"ecs-tagmap\".\"${REPONAME}\".\"ecs-dev\"" /tmp/ecs-release-manifest.yaml)
       echo TAG_ECS_DEV=$TAG_ECS_DEV
-      TAG_ECS_EPHEMERAL=$(yq -r '."ecs-tagmap"."${REPONAME}"."ecs-ephemeral"' /tmp/ecs-release-manifest.yaml)
+      TAG_ECS_EPHEMERAL=$(yq -r ".\"ecs-tagmap\".\"${REPONAME}\".\"ecs-ephemeral\"" /tmp/ecs-release-manifest.yaml)
       echo TAG_ECS_EPHEMERAL=$TAG_ECS_EPHEMERAL
-      TAG_ECS_DBSNAPSHOT=$(yq -r '."ecs-tagmap"."${REPONAME}"."ecs-dbsnapshot"' /tmp/ecs-release-manifest.yaml)
+      TAG_ECS_DBSNAPSHOT=$(yq -r ".\"ecs-tagmap\".\"${REPONAME}\".\"ecs-dbsnapshot\"" /tmp/ecs-release-manifest.yaml)
       echo TAG_ECS_DBSNAPSHOT=$TAG_ECS_DBSNAPSHOT
-      TAG_ECS_STG=$(yq -r '."ecs-tagmap"."${REPONAME}"."ecs-stg"' /tmp/ecs-release-manifest.yaml)
+      TAG_ECS_STG=$(yq -r ".\"ecs-tagmap\".\"${REPONAME}\".\"ecs-stg\"" /tmp/ecs-release-manifest.yaml)
       echo TAG_ECS_STG=$TAG_ECS_STG
-      TAG_ECS_PRD=$(yq -r '."ecs-tagmap"."${REPONAME}"."ecs-prd"' /tmp/ecs-release-manifest.yaml)
+      TAG_ECS_PRD=$(yq -r ".\"ecs-tagmap\".\"${REPONAME}\".\"ecs-prd\"" /tmp/ecs-release-manifest.yaml)
       echo TAG_ECS_PRD=$TAG_ECS_PRD
   build:
     on-failure: CONTINUE
