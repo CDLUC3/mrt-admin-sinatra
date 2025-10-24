@@ -173,7 +173,7 @@ phases:
       then
         for stack in ecs-dev ecs-ephemeral ecs-dbsnapshot ecs-stg ecs-prd
         do
-          TAG_ECS=$(yq -r '."ecs-tagmap"."${REPONAME}"."$stack"' /tmp/ecs-release-manifest.yaml)
+          TAG_ECS=$(yq -r ".\"ecs-tagmap\".\"${REPONAME}\".\"$stack\"" /tmp/ecs-release-manifest.yaml)
           if [[ "$DOCKTAG" != "$TAG_ECS" ]]
           then
             git checkout $TAG_ECS
