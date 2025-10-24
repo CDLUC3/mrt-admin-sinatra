@@ -24,7 +24,6 @@ phases:
     - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin ${ECR_REGISTRY}
 
     - |
-      REPONAME=mrt-admin-sinatra
       DEVBUCK=$(aws ssm get-parameter --name /uc3/mrt/config-bucket-dev --query Parameter.Value --output text)
       aws s3 cp s3://${DEVBUCK}/uc3/mrt/mrt-ecs-manifest/ecs-release-manifest.yaml /tmp/ecs-release-manifest.yaml
       TAG_ECS_DEV=$(yq -r '."ecs-tagmap"."$REPONAME"."ecs-dev"' /tmp/ecs-release-manifest.yaml)
@@ -49,9 +48,19 @@ phases:
           --build-arg ECR_REGISTRY=${ECR_REGISTRY} \
           -t ${ECR_REGISTRY}/$REPONAME:ecs-dev .
 
-        aws ecs update-service --cluster mrt-ecs-dev-stack --service admintool \
-          --desired-count 2 --output yaml --no-cli-pager \
-          --force-new-deployment || echo "Skip ecs-dev Deployment"
+        RUNNING_COUNT=$(aws ecs list-tasks \
+          --cluster mrt-ecs-dev-stack \
+          --service-name admintool \
+          --desired-status RUNNING \
+          --query 'length(taskArns)' \
+          --output text)
+
+        if [ "$RUNNING_COUNT" -gt 0 ]
+        then
+          aws ecs update-service --cluster mrt-ecs-dev-stack --service admintool \
+            --desired-count 2 --output yaml --no-cli-pager \
+            --force-new-deployment || echo "Skip ecs-dev Deployment"
+        fi  
       fi
 
       if [[ "$DOCKTAG" == "$TAG_ECS_EPHEMERAL" ]]
