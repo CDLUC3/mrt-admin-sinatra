@@ -179,7 +179,7 @@ phases:
             git checkout $TAG_ECS
             docker build --quiet --push \
               --build-arg ECR_REGISTRY=${ECR_REGISTRY} \
-              -t ${ECR_REGISTRY}/${REPONAME}:$TAG_ECS .
+              -t ${ECR_REGISTRY}/${REPONAME}:$stack .
           fi
         done
       fi
