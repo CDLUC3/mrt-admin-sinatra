@@ -103,7 +103,7 @@ module UC3Code
       cssclasses
     end
 
-    def actions(_repohash, tag, _commit, release, tagartifacts, tagimages, deployed, matching_tags)
+    def actions(_repohash, tag, _commit, _release, tagartifacts, tagimages, deployed, _matching_tags)
       actions = []
       unless tagartifacts.empty? || deployed
         actions << {
@@ -116,19 +116,17 @@ module UC3Code
         }
       end
 
-      unless tagimages.empty?
-        unless deployed
-          actions << {
-            value: 'Delete Images',
-            href: "/source/images/delete/#{tag}",
-            cssclass: 'button',
-            post: true,
-            disabled: false,
-            data: tagimages.join("\n")
-          }
-        end
-
+      if !tagimages.empty? && !deployed
+        actions << {
+          value: 'Delete Images',
+          href: "/source/images/delete/#{tag}",
+          cssclass: 'button',
+          post: true,
+          disabled: false,
+          data: tagimages.join("\n")
+        }
       end
+
       actions
     end
 
