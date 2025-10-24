@@ -21,6 +21,7 @@ phases:
     - DOCKTAG=$BRANCHTAG
     - COMMITDATE=`git --no-pager log -1 --pretty='format:%cd' --date='format:%Y-%m-%d %H:%M:%S'`
     - echo "Branchtag ${BRANCHTAG}; COMMITDATE=${COMMITDATE}; REPONAME=${REPONAME}; BRANCHNAME=${BRANCHNAME}"
+    - echo "MODE=${MODE}"
     - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin ${ECR_REGISTRY}
 
     - |
@@ -129,18 +130,21 @@ phases:
       aws lambda update-function-code \
         --function-name arn:aws:lambda:us-west-2:451826914157:function:uc3-mrt-admintool-img-dev \
         --image-uri ${ECR_REGISTRY}/${REPONAME}:${DOCKTAG} \
+        --query "service.deployments[0].[id,taskDefinition,status,desiredCount,createdAt]" \
         --output text --region us-west-2 \
         --no-cli-pager || echo "Skip Lambda Deployment"
 
       aws lambda update-function-code \
         --function-name arn:aws:lambda:us-west-2:451826914157:function:uc3-mrt-admintool-img-stg \
         --image-uri ${ECR_REGISTRY}/${REPONAME}:${DOCKTAG} \
+        --query "service.deployments[0].[id,taskDefinition,status,desiredCount,createdAt]" \
         --output text --region us-west-2 \
         --no-cli-pager || echo "Skip Lambda Deployment"
 
       aws lambda update-function-code \
         --function-name arn:aws:lambda:us-west-2:451826914157:function:uc3-mrt-admintool-img-prd \
         --image-uri ${ECR_REGISTRY}/${REPONAME}:${DOCKTAG} \
+        --query "service.deployments[0].[id,taskDefinition,status,desiredCount,createdAt]" \
         --output text --region us-west-2 \
         --no-cli-pager || echo "Skip Lambda Deployment"
 
