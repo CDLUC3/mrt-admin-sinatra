@@ -26,11 +26,11 @@ phases:
     - |
       DEVBUCK=$(aws ssm get-parameter --name /uc3/mrt/config-bucket-dev --query Parameter.Value --output text)
       aws s3 cp s3://${DEVBUCK}/uc3/mrt/mrt-ecs-manifest/ecs-release-manifest.yaml /tmp/ecs-release-manifest.yaml
-      TAG_ECS_DEV=$(yq -r '."ecs-tagmap"."$REPONAME"."ecs-dev"' /tmp/ecs-release-manifest.yaml)
-      TAG_ECS_EPHEMERAL=$(yq -r '."ecs-tagmap"."$REPONAME"."ecs-ephemeral"' /tmp/ecs-release-manifest.yaml)
-      TAG_ECS_DBSNAPSHOT=$(yq -r '."ecs-tagmap"."$REPONAME"."ecs-dbsnapshot"' /tmp/ecs-release-manifest.yaml)
-      TAG_ECS_STG=$(yq -r '."ecs-tagmap"."$REPONAME"."ecs-stg"' /tmp/ecs-release-manifest.yaml)
-      TAG_ECS_PRD=$(yq -r '."ecs-tagmap"."$REPONAME"."ecs-prd"' /tmp/ecs-release-manifest.yaml)
+      TAG_ECS_DEV=$(yq -r '."ecs-tagmap"."${REPONAME}"."ecs-dev"' /tmp/ecs-release-manifest.yaml)
+      TAG_ECS_EPHEMERAL=$(yq -r '."ecs-tagmap"."${REPONAME}"."ecs-ephemeral"' /tmp/ecs-release-manifest.yaml)
+      TAG_ECS_DBSNAPSHOT=$(yq -r '."ecs-tagmap"."${REPONAME}"."ecs-dbsnapshot"' /tmp/ecs-release-manifest.yaml)
+      TAG_ECS_STG=$(yq -r '."ecs-tagmap"."${REPONAME}"."ecs-stg"' /tmp/ecs-release-manifest.yaml)
+      TAG_ECS_PRD=$(yq -r '."ecs-tagmap"."${REPONAME}"."ecs-prd"' /tmp/ecs-release-manifest.yaml)
   build:
     on-failure: CONTINUE
     commands:
@@ -40,13 +40,13 @@ phases:
 
       docker build --quiet --push \
         --build-arg ECR_REGISTRY=${ECR_REGISTRY} \
-        -t ${ECR_REGISTRY}/$REPONAME:${DOCKTAG} .
+        -t ${ECR_REGISTRY}/${REPONAME}:${DOCKTAG} .
     
       if [[ "$DOCKTAG" == "$TAG_ECS_DEV" ]]
       then
         docker build --quiet --push \
           --build-arg ECR_REGISTRY=${ECR_REGISTRY} \
-          -t ${ECR_REGISTRY}/$REPONAME:ecs-dev .
+          -t ${ECR_REGISTRY}/${REPONAME}:ecs-dev .
 
         RUNNING_COUNT=$(aws ecs list-tasks \
           --cluster mrt-ecs-dev-stack \
@@ -67,7 +67,7 @@ phases:
       then
         docker build --quiet --push \
           --build-arg ECR_REGISTRY=${ECR_REGISTRY} \
-          -t ${ECR_REGISTRY}/$REPONAME:ecs-ephemeral .
+          -t ${ECR_REGISTRY}/${REPONAME}:ecs-ephemeral .
 
         aws ecs update-service --cluster mrt-ecs-ephemeral-stack --service admintool \
           --desired-count 2 --output yaml --no-cli-pager \
@@ -78,7 +78,7 @@ phases:
       then
         docker build --quiet --push \
           --build-arg ECR_REGISTRY=${ECR_REGISTRY} \
-          -t ${ECR_REGISTRY}/$REPONAME:ecs-dbsnapshot .
+          -t ${ECR_REGISTRY}/${REPONAME}:ecs-dbsnapshot .
 
         aws ecs update-service --cluster mrt-ecs-dbsnapshot-stack --service admintool \
           --desired-count 2 --output yaml --no-cli-pager \
@@ -89,41 +89,41 @@ phases:
       then
         docker build --quiet --push \
           --build-arg ECR_REGISTRY=${ECR_REGISTRY} \
-          -t ${ECR_REGISTRY}/$REPONAME:ecs-stg .
+          -t ${ECR_REGISTRY}/${REPONAME}:ecs-stg .
       fi
 
       if [[ "$DOCKTAG" == "$TAG_ECS_PRD" ]]
       then
         docker build --quiet --push \
           --build-arg ECR_REGISTRY=${ECR_REGISTRY} \
-          -t ${ECR_REGISTRY}/$REPONAME:ecs-prd .
+          -t ${ECR_REGISTRY}/${REPONAME}:ecs-prd .
       fi
 
     - |
       aws lambda update-function-code \
         --function-name arn:aws:lambda:us-west-2:451826914157:function:uc3-mrt-admintool-img-dev \
-        --image-uri ${ECR_REGISTRY}/$REPONAME:ecs-dev \
+        --image-uri ${ECR_REGISTRY}/${REPONAME}:ecs-dev \
         --output text --region us-west-2 \
         --no-cli-pager || echo "Skip Lambda Deployment"
 
       aws lambda update-function-code \
         --function-name arn:aws:lambda:us-west-2:451826914157:function:uc3-mrt-admintool-img-stg \
-        --image-uri ${ECR_REGISTRY}/$REPONAME:ecs-dev \
+        --image-uri ${ECR_REGISTRY}/${REPONAME}:ecs-dev \
         --output text --region us-west-2 \
         --no-cli-pager || echo "Skip Lambda Deployment"
 
       aws lambda update-function-code \
         --function-name arn:aws:lambda:us-west-2:451826914157:function:uc3-mrt-admintool-img-prd \
-        --image-uri ${ECR_REGISTRY}/$REPONAME:ecs-dev \
+        --image-uri ${ECR_REGISTRY}/${REPONAME}:ecs-dev \
         --output text --region us-west-2 \
         --no-cli-pager || echo "Skip Lambda Deployment"
 
     - |
-      mkdir -p doc api/$REPONAME/ruby
-      docker run --rm -v "$(pwd)/doc:/var/task/doc" --entrypoint /var/task/make_rdoc.sh ${ECR_REGISTRY}/$REPONAME:ecs-dev
-      cp -r doc/* api/$REPONAME/ruby/
+      mkdir -p doc api/${REPONAME}/ruby
+      docker run --rm -v "$(pwd)/doc:/var/task/doc" --entrypoint /var/task/make_rdoc.sh ${ECR_REGISTRY}/${REPONAME}:ecs-dev
+      cp -r doc/* api/${REPONAME}/ruby/
       aws s3 cp --recursive api s3://${S3CFBUCKET}/api 
-      aws cloudfront create-invalidation --distribution-id ${CFDISTRIBUTIONID} --paths /api/$REPONAME/* --region us-east-1
+      aws cloudfront create-invalidation --distribution-id ${CFDISTRIBUTIONID} --paths /api/${REPONAME}/* --region us-east-1
 
       docker pull ${ECR_REGISTRY}/docker-hub/webpronl/reveal-md --quiet
       docker-compose -f present/deploy/docker-compose-static.yml up
@@ -148,13 +148,13 @@ phases:
       then
         for stack in ecs-dev ecs-ephemeral ecs-dbsnapshot ecs-stg ecs-prd
         do
-          TAG_ECS=$(yq -r '."ecs-tagmap"."$REPONAME"."$stack"' /tmp/ecs-release-manifest.yaml)
+          TAG_ECS=$(yq -r '."ecs-tagmap"."${REPONAME}"."$stack"' /tmp/ecs-release-manifest.yaml)
           if [[ "$DOCKTAG" != "$TAG_ECS" ]]
           then
             git checkout $TAG_ECS
             docker build --quiet --push \
               --build-arg ECR_REGISTRY=${ECR_REGISTRY} \
-              -t ${ECR_REGISTRY}/$REPONAME:$TAG_ECS .
+              -t ${ECR_REGISTRY}/${REPONAME}:$TAG_ECS .
           fi
         done
       fi
