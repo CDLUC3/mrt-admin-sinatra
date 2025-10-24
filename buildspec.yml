@@ -74,9 +74,19 @@ phases:
           --build-arg ECR_REGISTRY=${ECR_REGISTRY} \
           -t ${ECR_REGISTRY}/${REPONAME}:ecs-ephemeral .
 
-        aws ecs update-service --cluster mrt-ecs-ephemeral-stack --service admintool \
-          --desired-count 2 --output yaml --no-cli-pager \
-          --force-new-deployment || echo "Skip ecs-ephemeral Deployment"
+        RUNNING_COUNT=$(aws ecs list-tasks \
+          --cluster mrt-ecs-ephemeral-stack \
+          --service-name admintool \
+          --desired-status RUNNING \
+          --query 'length(taskArns)' \
+          --output text)
+
+        if [ $RUNNING_COUNT -gt 0 ]
+        then
+          aws ecs update-service --cluster mrt-ecs-ephemeral-stack --service admintool \
+            --desired-count 2 --output yaml --no-cli-pager \
+            --force-new-deployment || echo "Skip ecs-ephemeral Deployment"
+        fi  
       fi
 
       if [[ "$DOCKTAG" == "$TAG_ECS_DBSNAPSHOT" ]]
@@ -85,9 +95,19 @@ phases:
           --build-arg ECR_REGISTRY=${ECR_REGISTRY} \
           -t ${ECR_REGISTRY}/${REPONAME}:ecs-dbsnapshot .
 
-        aws ecs update-service --cluster mrt-ecs-dbsnapshot-stack --service admintool \
-          --desired-count 2 --output yaml --no-cli-pager \
-          --force-new-deployment || echo "Skip ecs-dbsnapshot Deployment"
+        RUNNING_COUNT=$(aws ecs list-tasks \
+          --cluster mrt-ecs-dbsnapshot-stack \
+          --service-name admintool \
+          --desired-status RUNNING \
+          --query 'length(taskArns)' \
+          --output text)
+
+        if [ $RUNNING_COUNT -gt 0 ]
+        then
+          aws ecs update-service --cluster mrt-ecs-dbsnapshot-stack --service admintool \
+            --desired-count 2 --output yaml --no-cli-pager \
+            --force-new-deployment || echo "Skip ecs-dbsnapshot Deployment"
+        fi  
       fi
 
       if [[ "$DOCKTAG" == "$TAG_ECS_STG" ]]
