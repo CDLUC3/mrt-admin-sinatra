@@ -128,65 +128,6 @@ module UC3Code
           }
         end
 
-        actions << if matching_tags.include?(TAG_ECS_DEV)
-                     {
-                       value: "Untag #{TAG_ECS_DEV}",
-                       href: "/source/images/untag/#{TAG_ECS_DEV}",
-                       cssclass: 'button',
-                       post: true,
-                       disabled: false,
-                       data: tagimages.join("\n")
-                     }
-                   else
-                     {
-                       value: "Tag #{TAG_ECS_DEV}",
-                       href: "/source/images/retag/#{tag}/#{TAG_ECS_DEV}",
-                       cssclass: 'button',
-                       post: true,
-                       disabled: false,
-                       data: tagimages.join("\n")
-                     }
-                   end
-
-        if matching_tags.include?(TAG_ECS_STG)
-          actions << {
-            value: "Untag #{TAG_ECS_STG}",
-            href: "/source/images/untag/#{TAG_ECS_STG}",
-            cssclass: 'button',
-            post: true,
-            disabled: false,
-            data: tagimages.join("\n")
-          }
-        elsif UC3::UC3Client.semantic_prefix_tag?(tag)
-          actions << {
-            value: "Tag #{TAG_ECS_STG}",
-            href: "/source/images/retag/#{tag}/#{TAG_ECS_STG}",
-            cssclass: 'button',
-            post: true,
-            disabled: false,
-            data: tagimages.join("\n")
-          }
-        end
-
-        if matching_tags.include?(TAG_ECS_PRD)
-          actions << {
-            value: "Untag #{TAG_ECS_PRD}",
-            href: "/source/images/untag/#{TAG_ECS_PRD}",
-            cssclass: 'button',
-            post: true,
-            disabled: false,
-            data: tagimages.join("\n")
-          }
-        elsif UC3::UC3Client.semantic_tag?(tag) && !release.empty?
-          actions << {
-            value: "Tag #{TAG_ECS_PRD}",
-            href: "/source/images/retag/#{tag}/#{TAG_ECS_PRD}",
-            cssclass: 'button',
-            post: true,
-            disabled: false,
-            data: tagimages.join("\n")
-          }
-        end
       end
       actions
     end

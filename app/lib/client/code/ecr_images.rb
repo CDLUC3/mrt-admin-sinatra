@@ -74,26 +74,6 @@ module UC3Code
 
           rec[:deployed] = UC3::UC3Client.deployed_tag?(tag, rec[:matching_tags])
 
-          rec[:actions] << if rec[:matching_tags].include?(TAG_ECS_DEV)
-                             {
-                               value: "Untag #{TAG_ECS_DEV}",
-                               href: "/source/images/untag/#{TAG_ECS_DEV}",
-                               cssclass: 'button',
-                               post: true,
-                               disabled: false,
-                               data: tagimages.join("\n")
-                             }
-                           else
-                             {
-                               value: "Tag #{TAG_ECS_DEV}",
-                               href: "/source/images/retag/#{tag}/#{TAG_ECS_DEV}",
-                               cssclass: 'button',
-                               post: true,
-                               disabled: false,
-                               data: tagimages.join("\n")
-                             }
-                           end
-
           next if rec[:deployed]
 
           rec[:actions] << [
