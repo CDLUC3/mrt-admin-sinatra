@@ -40,6 +40,7 @@ module UC3Resources
             ).service_revisions.each do |sr|
               sr.container_images.each do |ci|
                 next if ci.image.to_s =~ /fluent-bit/ # skip sidecar images
+
                 digest = ci.image_digest
                 image = ci.image.to_s.gsub(%r{^.*amazonaws.com/}, '')
               end
