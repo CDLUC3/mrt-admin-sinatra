@@ -21,7 +21,6 @@ phases:
     - COMMITDATE=`git --no-pager log -1 --pretty='format:%cd' --date='format:%Y-%m-%d %H:%M:%S'`
     - BUILDDATE=$(date +"%Y%m%d-%H%M%S")
     - echo "Branchtag ${BRANCHTAG}; COMMITDATE=${COMMITDATE}; REPONAME=${REPONAME}; BRANCHNAME=${BRANCHNAME}"
-    - echo "MODE=${MODE}"
     - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin ${ECR_REGISTRY}
 
     - |
@@ -194,13 +193,7 @@ phases:
         do
           TAG_ECS=$(yq -r ".\"ecs-tagmap\".\"${REPONAME}\".\"$stack\"" /tmp/ecs-release-manifest.yaml)
 
-          pushed=$(gdate -d $(aws ecr describe-images --repository-name ${REPONAME} \
-            --image-ids imageTag=$stack 
-            --query "imageDetails[0].imagePushedAt" --output text) +%s || echo 0)
-          current=$(gdate +%s)
-
-          # do not archive more than once per hour
-          if [[ $current -gt pushed + 3600 ]]
+          if [[ "$BRANCHTAG" != "$TAG_ECS" ]]
           then
             git checkout $TAG_ECS
 
@@ -210,9 +203,18 @@ phases:
 
             case "$stack" in
               ecs-stg|ecs-prd)
-                docker build --quiet --push \
-                  --build-arg ECR_REGISTRY=${ECR_REGISTRY} \
-                  -t ${ECR_REGISTRY}/${REPONAME}:archive-${stack}-${BRANCHTAG}-${BUILDDATE} .
+                pushed=$(gdate -d $(aws ecr describe-images --repository-name ${REPONAME} \
+                  --image-ids imageTag=$stack 
+                  --query "imageDetails[0].imagePushedAt" --output text) +%s || echo 0)
+                current=$(gdate +%s)
+
+                # do not archive more than once per hour
+                if [[ $current -gt pushed + 3600 ]]
+                then
+                  docker build --quiet --push \
+                    --build-arg ECR_REGISTRY=${ECR_REGISTRY} \
+                    -t ${ECR_REGISTRY}/${REPONAME}:archive-${stack}-${BRANCHTAG}-${BUILDDATE} .
+                fi
             esac
           fi
         done
