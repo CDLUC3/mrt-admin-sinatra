@@ -37,6 +37,7 @@ module UC3Code
         imglist.image_ids.each do |img|
           tag = img.image_tag
           next if tag.nil?
+          next if tag =~ /^archive/
 
           rec = { tag: tag,
                   digest: img.image_digest,
