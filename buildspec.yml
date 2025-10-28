@@ -19,7 +19,8 @@ phases:
         BRANCHTAG=$BRANCHNAME
       fi
     - COMMITDATE=`git --no-pager log -1 --pretty='format:%cd' --date='format:%Y-%m-%d %H:%M:%S'`
-    - BUILDDATE=$(date +"%Y%m%d-%H%M%S")
+    - BUILDDATE=$(date -z America/Los_Angeles +"%Y%m%d-%H%M%S")
+    - echo "BUILDDATE=$BUILDDATE"
     - echo "Branchtag ${BRANCHTAG}; COMMITDATE=${COMMITDATE}; REPONAME=${REPONAME}; BRANCHNAME=${BRANCHNAME}"
     - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin ${ECR_REGISTRY}
 
