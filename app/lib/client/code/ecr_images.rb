@@ -46,7 +46,7 @@ module UC3Code
                   pulled: nil,
                   matching_tags: [],
                   actions: []
-}
+          }
           dig[img.image_digest] = dig.fetch(img.image_digest, [])
           dig[img.image_digest] << tag
           @client.describe_images(
@@ -171,6 +171,7 @@ module UC3Code
 
           img.image_tags.each do |t|
             next if t == tag
+            next if t =~ /^archive/
 
             arr << t
           end
