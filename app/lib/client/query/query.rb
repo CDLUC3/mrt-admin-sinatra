@@ -334,6 +334,7 @@ module UC3Query
         params = {}
         params['inv_object_id'] = row['inv_object_id']
         params['inv_node_id'] = 16
+        puts "Resetting... #{params}"
         query_update('/queries-update/audit/reset', params, purpose: 'Reset Audit for New UCB Content')
         # TODO: evaluate return object and present results
       end
