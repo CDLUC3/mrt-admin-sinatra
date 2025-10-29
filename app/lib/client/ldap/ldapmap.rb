@@ -33,6 +33,12 @@ module UC3Ldap
         ],
         status: @status
       )
+
+      skip_arks = %w[
+        ark:/13030/m5222s39 ark:/13030/m55v00fc ark:/13030/m5709fmd ark:/13030/m5b00k49
+        ark:/13030/m5sf2thd ark:/13030/p9jm23f5m ark:/99166/p93b5wf40
+      ]
+
       map = {}
       @colltable.table_data.each do |row|
         m = row[:mnemonic]
@@ -40,11 +46,6 @@ module UC3Ldap
         ark = row[:ark]
         next if ark.nil?
         next if m.to_s =~ /(_sla$|_service_level_agreement$|_curatorial_classes$|_system_classes$)/
-
-        skip_arks = %w[
-          ark:/13030/m5222s39 ark:/13030/m55v00fc ark:/13030/m5709fmd ark:/13030/m5b00k49
-          ark:/13030/m5sf2thd ark:/13030/p9jm23f5m ark:/99166/p93b5wf40
-        ]
 
         map[ark] = {
           ark: ark,
