@@ -78,8 +78,6 @@ module UC3Ldap
           map[ark][:status] = 'PASS'
           map[ark][:coll] = m
         else
-          puts "ark [#{ark}] #{skip_arks.include?(ark)}"
-
           map[ark] = {
             ark: ark,
             coll: m,

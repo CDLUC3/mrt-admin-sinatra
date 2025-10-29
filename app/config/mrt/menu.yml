@@ -54,9 +54,6 @@ items:
   - title: Tag Conventions
     external: true
     route: https://github.com/CDLUC3/mrt-admin-sinatra/blob/main/present/tagging/build.md
-  - title: Deploy Process
-    route: https://merritt.uc3dev.cdlib.org/present/ecs-deploy/build.html#/
-    external: true
   - title: Repostiory Tags
     route: /source/tags
     path: tags
