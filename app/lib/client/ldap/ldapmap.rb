@@ -45,6 +45,7 @@ module UC3Ldap
           ark:/13030/m5222s39 ark:/13030/m55v00fc ark:/13030/m5709fmd ark:/13030/m5b00k49
           ark:/13030/m5sf2thd ark:/13030/p9jm23f5m ark:/99166/p93b5wf40
         ]
+        puts "ARK [#{ark}] #{skip_arks.include?(ark)}"
 
         map[ark] = {
           ark: ark,
