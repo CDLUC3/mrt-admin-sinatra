@@ -1500,7 +1500,7 @@ queries:
     status_check: true
     sql: |
       select distinct
-        o.id, o.ark, o.modified, 'PASS' as status
+        o.id as inv_object_id, o.ark, o.modified, 'PASS' as status
       from
         inv.inv_objects o
       inner join
