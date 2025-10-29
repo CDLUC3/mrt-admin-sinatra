@@ -41,6 +41,11 @@ module UC3Ldap
         next if ark.nil?
         next if m.to_s =~ /(_sla$|_service_level_agreement$|_curatorial_classes$|_system_classes$)/
 
+        skip_arks = %w[
+          ark:/13030/m5222s39 ark:/13030/m55v00fc ark:/13030/m5709fmd ark:/13030/m5b00k49
+          ark:/13030/m5sf2thd ark:/13030/p9jm23f5m ark:/99166/p93b5wf40
+        ]
+
         map[ark] = {
           ark: ark,
           mnemonic: m,
@@ -58,7 +63,7 @@ module UC3Ldap
             redirect: true,
             disabled: false
           },
-          status: 'FAIL'
+          status: skip_arks.include?(ark) ? 'INFO' : 'FAIL'
         }
       end
 
