@@ -124,13 +124,19 @@ graph LR
 ### Commit/Tag CodeBuild Actions
 - `main` branch
   - Artifact: `subservice.version-SNAPSHOT.war`
-  - ECR Image: `subservice:dev`
+  - ECR Image:
+    - `subservice:main`
+    - `subservice:stack_name` (if main is registered in [ecs manifest](https://github.com/CDLUC3/mrt-service-release-manifest/blob/main/ecs-release-manifest.yaml))
 - `branch` branch
   - Artifact: `subservice.branch-SNAPSHOT`
-  - ECR Image: `subservice:branch`
+  - ECR Image:
+    - `subservice:branch`
+    - `subservice:stack_name` (if branch is registered in [ecs manifest](https://github.com/CDLUC3/mrt-service-release-manifest/blob/main/ecs-release-manifest.yaml))
 - `tag` tag
   - Artifact: `subservice.TAG`
-  - ECR Image: `subservice:tag`
+  - ECR Image:
+    - `subservice:tag`
+    - `subservice:stack_name` (if tag is registered in [ecs manifest](https://github.com/CDLUC3/mrt-service-release-manifest/blob/main/ecs-release-manifest.yaml))
 
 ----
 
@@ -144,6 +150,8 @@ Merritt Java services can be configured to auto-deploy to ECS Dev from the main 
 
 - Docker Image Tagged for ECS Deployment
   - `subservice:ecs-dev`
+  - `subservice:ecs-ephemeral`
+  - `subservice:ecs-dbsnapshot`
   - `subservice:ecs-stg`
   - `subservice:ecs-prd`
 
@@ -151,10 +159,10 @@ Merritt Java services can be configured to auto-deploy to ECS Dev from the main 
 
 ### Image Rebuild Conventions
 
-When the underlying image for a published service is updated, the following will be recreated in ECR.
+Each of the service branch/tags that are registered in the [ecs manifest](https://github.com/CDLUC3/mrt-service-release-manifest/blob/main/ecs-release-manifest.yaml) will be rebuilt daily.  Each rebuild will also create an "archive" tag.  A lifecycle policy will expire old archive tags based on image push date.
 
 - Docker Image Patched After Code Deployment of tag `tag`
-  - `subservice:tag-docker-YYMMDD`
+  - `subservice:archive-archive-${stack}-${TAG_OR_BRANCH}-${BUILDDATE}`
 
 ---
 
@@ -220,7 +228,7 @@ graph LR
 ### Commit/Tag CodeBuild Actions
 
 - `main` branch
-  - ECR Image: `subservice:dev`
+  - ECR Image: `subservice:ecs-dev`
 - `branch` branch
   - ECR Image: `subservice:branch`
 - `tag` tag
@@ -230,7 +238,7 @@ graph LR
 
 ### Auto Deployment
 
-Merritt UI and Admin Tool will auto-deploy to ECS from the main branch
+Merritt UI and Admin Tool will auto-deploy to ECS development environments from the main branch
 
 ----
 
@@ -238,6 +246,8 @@ Merritt UI and Admin Tool will auto-deploy to ECS from the main branch
 
 - Docker Image Tagged for ECS Deployment
   - `subservice:ecs-dev`
+  - `subservice:ecs-ephemeral`
+  - `subservice:ecs-dbsnapshot`
   - `subservice:ecs-stg`
   - `subservice:ecs-prd`
 
@@ -245,7 +255,7 @@ Merritt UI and Admin Tool will auto-deploy to ECS from the main branch
 
 ### Image Rebuild Conventions
 
-When the underlying image for a published service is updated, the following will be recreated in ECR.
+Each of the service branch/tags that are registered in the [ecs manifest](https://github.com/CDLUC3/mrt-service-release-manifest/blob/main/ecs-release-manifest.yaml) will be rebuilt daily.  Each rebuild will also create an "archive" tag.  A lifecycle policy will expire old archive tags based on image push date.
 
 - Docker Image Patched After Code Deployment of tag `tag`
-  - `subservice:tag-docker-YYMMDD`
+  - `subservice:archive-archive-${stack}-${TAG_OR_BRANCH}-${BUILDDATE}`
