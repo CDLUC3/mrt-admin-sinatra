@@ -362,7 +362,7 @@ module Sinatra
           ]
         )
         rows.each do |row|
-          cmd = UC3::UC3Client.stack_name == 'docker' ? 'docker compose exec -it merrittdev /bin/bash' : "session #{UC3::UC3Client.cluster_name}/merritt-dev"
+          cmd = UC3::UC3Client.stack_name == 'docker' ? 'docker compose exec -it merrittdev /bin/bash' : "session #{UC3::UC3Client.cluster_name}/merrittdev"
           cmd += "\n"
           cmd += "\n/set-credentials.sh" if %w[sdsc wasabi].include?(row[:profile])
           cmd += "\naws s3#{" --profile #{row[:profile]}" unless row[:profile].empty?} ls s3://#{row[:bucket]}/"
