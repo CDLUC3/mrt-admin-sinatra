@@ -732,6 +732,8 @@ items:
     classes: needs-db
     title: Storage
     items:
+    - title: Storage Config
+      route: /ops/storage/storage-config
     - path: db
       title: DB config
       route: /ops/storage/db
@@ -739,26 +741,6 @@ items:
       items:
       - title: Storage Nodes
         route: /ops/storage/db/nodes
-    - title: Test Nodes
-      path: test-nodes
-      route: /ops/storage/test-nodes
-      breadcrumb: true
-      items:
-      - title: S3
-        route: /ops/storage/test-nodes/s3
-        tbd: true
-      - title: S3 Assembly
-        route: /ops/storage/test-nodes/s3-assembly
-        tbd: true
-      - title: Glacier
-        route: /ops/storage/test-nodes/glacier
-        tbd: true
-      - title: SDSC
-        route: /ops/storage/test-nodes/sdsc
-        tbd: true
-      - title: Wasabi
-        route: /ops/storage/test-nodes/wasabi
-        tbd: true
   - title: Storage Scans
     route: /ops/storage/scans
   - title: Cloudwatch Logs

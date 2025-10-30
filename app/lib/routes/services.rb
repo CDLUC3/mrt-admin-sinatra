@@ -307,6 +307,73 @@ module Sinatra
         { message: "Changes applied #{count}; Errors: #{errors}" }.to_json
       end
 
+      app.get '/ops/storage/storage-config' do
+        rows = []
+        defprofile = case UC3::UC3Client.stack_name
+                     when UC3::UC3Client::ECS_EPHEMERAL
+                       'minio-ephemeral'
+                     when UC3::UC3Client::ECS_PRD, UC3::UC3Client::ECS_STG, UC3::UC3Client::ECS_DEV, UC3::UC3Client::ECS_DBSNAPSHOT
+                       ''
+                     else
+                       'minio-docker'
+                     end
+
+        nodes = ::JSON.parse(get_url_body("#{store_host}/jsonstatus"))
+        nodes.fetch('NodesStatus', []).each do |node|
+          row = {
+            node_number: node.fetch('node', ''),
+            bucket: node.fetch('bucket', ''),
+            description: node.fetch('description', ''),
+            profile: defprofile
+          }
+          row[:profile] = 'sdsc' if row[:bucket] =~ /sdsc/
+          row[:profile] = 'wasabi' if row[:bucket] =~ /wasabi/
+          rows << row
+        end
+
+        rows << {
+          bucket: ENV.fetch('S3CONFIG_BUCKET', ''),
+          description: 'Configuration Bucket. AWS CodeBuild copies configuration data from GitHub into this bucket.',
+          profile: defprofile
+        }
+        rows << {
+          bucket: ENV.fetch('S3REPORT_BUCKET', ''),
+          description: 'Reporting Bucket.' \
+                       'The Merritt Admin Tool builds static reports into this bucket. ' \
+                       'A lifecycle policy will expire content in this bucket.',
+          profile: defprofile
+        }
+        rows << {
+          bucket: ENV.fetch('S3WORKSPACE_BUCKET', ''),
+          description: 'Versioned Workspace Bucket. Merritt Ingest and Storage ' \
+                       'services will use this bucket for content that is actively being ingested. ' \
+                       'A lifecycle policy will function like a recycle bin for content that has been deleted ' \
+                       'from this bucket.',
+          profile: defprofile
+        }
+
+        table = AdminUI::FilterTable.new(
+          columns: [
+            AdminUI::Column.new(:description, header: 'Description'),
+            AdminUI::Column.new(:node_number, header: 'Node Number'),
+            AdminUI::Column.new(:bucket, header: 'Bucket'),
+            AdminUI::Column.new(:profile, header: 'Profile')
+          ]
+        )
+        rows.each do |row|
+          table.add_row(
+            AdminUI::Row.make_row(
+              table.columns,
+              row
+            )
+          )
+        end
+        adminui_show_table(
+          AdminUI::Context.new(request.path),
+          table
+        )
+      end
+
       app.post '/test/load/data' do
         test_data_dir = "#{UC3::FileSystemClient::DIR}/test-data"
         `mkdir -p #{test_data_dir}`
