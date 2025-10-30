@@ -159,3 +159,9 @@ span.role::after {
 span.role::before {
   content: "\00A0\00A0";
 }
+
+th.command, td.command {
+  font-family: monospace;
+  white-space: pre;
+  min-width: 400px;
+}

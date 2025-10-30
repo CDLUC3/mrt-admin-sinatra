@@ -312,10 +312,10 @@ module Sinatra
         defprofile = case UC3::UC3Client.stack_name
                      when UC3::UC3Client::ECS_EPHEMERAL
                        'minio-ephemeral'
-                     when UC3::UC3Client::ECS_PRD, UC3::UC3Client::ECS_STG, UC3::UC3Client::ECS_DEV, UC3::UC3Client::ECS_DBSNAPSHOT
-                       ''
-                     else
+                     when 'docker'
                        'minio-docker'
+                     else
+                       ''
                      end
 
         nodes = ::JSON.parse(get_url_body("#{store_host}/jsonstatus"))
@@ -357,10 +357,14 @@ module Sinatra
             AdminUI::Column.new(:description, header: 'Description'),
             AdminUI::Column.new(:node_number, header: 'Node Number'),
             AdminUI::Column.new(:bucket, header: 'Bucket'),
-            AdminUI::Column.new(:profile, header: 'Profile')
+            AdminUI::Column.new(:profile, header: 'Profile'),
+            AdminUI::Column.new(:command, header: 'Command')
           ]
         )
         rows.each do |row|
+          cmd = UC3::UC3Client.stack_name == 'docker' ? "docker compose exec -it merrittdev /bin/bash" : "session #{UC3::UC3Client.stack_name}/merritt-dev"
+          cmd += "\n\naws s3 #{"--profile #{row[:profile]}" unless row[:profile].empty?} ls s3://#{row[:bucket]}/"
+          row[:command] = cmd unless row[:bucket].empty?
           table.add_row(
             AdminUI::Row.make_row(
               table.columns,
