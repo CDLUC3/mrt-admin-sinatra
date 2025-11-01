@@ -198,7 +198,7 @@ module UC3Query
                       "7001:scanlist/#{node}.log"
                     end
           row['actions'] << {
-            value: "Start Scan Keylist",
+            value: 'Start Scan Keylist',
             href: "/ops/storage/scans/start?node_number=#{node}&keylist=#{keylist}",
             title: "Start a scan using the scanlist file in cloud storage #{keylist}",
             cssclass: 'button',
