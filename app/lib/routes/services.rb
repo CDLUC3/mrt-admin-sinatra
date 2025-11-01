@@ -251,8 +251,11 @@ module Sinatra
       end
 
       app.post '/ops/storage/scans/start' do
-        post_url_message("#{replic_host}/scan/start/#{request.params.fetch('node_number', 'na')}?t=json",
-          message: 'Scan Started')
+        node = request.params.fetch('node_number', 'na')
+        keylist = request.params.fetch('keylist', '')
+        url = "#{replic_host}/scan/start/#{node}?t=json"
+        url += "&keylist=#{keylist}" unless keylist.empty?
+        post_url_message(url, message: 'Scan Started')
       end
 
       app.post '/ops/storage/scans/resume' do

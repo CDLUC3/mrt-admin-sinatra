@@ -179,14 +179,33 @@ module UC3Query
       }
       status = row.fetch('scan_status', '')
       status = '' if status.nil?
+      node = row.fetch('node_number', 0).to_i
       if %w[completed cancelled].include?(status) || status.empty?
-        row['actions'] << {
-          value: 'Start Scan',
-          href: "/ops/storage/scans/start?node_number=#{row.fetch('node_number', 0)}",
-          cssclass: 'button',
-          post: true,
-          disabled: storage_mgt_disabled?(strict: true)
-        }
+        unless [9501, 9502].include?(node)
+          row['actions'] << {
+            value: 'Start Scan',
+            href: "/ops/storage/scans/start?node_number=#{node}",
+            cssclass: 'button',
+            post: true,
+            disabled: storage_mgt_disabled?(strict: true)
+          }
+        end
+
+        if [9501, 9502, 7777].include?(node)
+          keylist = if node == 7777
+                      '8888:scanlist/7777.log'
+                    else
+                      "7001:scanlist/#{node}.log"
+                    end
+          row['actions'] << {
+            value: "Start Scan Keylist",
+            href: "/ops/storage/scans/start?node_number=#{node}&keylist=#{keylist}",
+            title: "Start a scan using the scanlist file in cloud storage #{keylist}",
+            cssclass: 'button',
+            post: true,
+            disabled: storage_mgt_disabled?(strict: true)
+          }
+        end
         row['percent_complete'] = ''
       end
       if %w[pending].include?(status)
@@ -210,25 +229,25 @@ module UC3Query
       if row.fetch('num_review', 0).positive?
         row['num_review'] = {
           value: row['num_review'],
-          href: "/ops/storage/scans/review-state?node_number=#{row.fetch('node_number', 0)}&status=review"
+          href: "/ops/storage/scans/review-state?node_number=#{node}&status=review"
         }
       end
       if row.fetch('num_hold', 0).positive?
         row['num_hold'] = {
           value: row['num_hold'],
-          href: "/ops/storage/scans/review-state?node_number=#{row.fetch('node_number', 0)}&status=hold"
+          href: "/ops/storage/scans/review-state?node_number=#{node}&status=hold"
         }
       end
       if row.fetch('num_deletes', 0).positive?
         row['num_deletes'] = {
           value: row['num_deletes'],
-          href: "/ops/storage/scans/review-state?node_number=#{row.fetch('node_number', 0)}&status=delete"
+          href: "/ops/storage/scans/review-state?node_number=#{node}&status=delete"
         }
       end
       if row.fetch('num_maints', 0).positive?
         row['num_maints'] = {
           value: row['num_maints'],
-          href: "/ops/storage/scans/review?node_number=#{row.fetch('node_number', 0)}"
+          href: "/ops/storage/scans/review?node_number=#{node}"
         }
       end
       row
