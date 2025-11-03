@@ -203,6 +203,7 @@ module AdminUI
     def to_csv
       CSV.generate(encoding: Encoding::UTF_8) do |csv|
         row = @columns.map(&:header)
+        row[0] += '§' #force utf-8 for excel
         csv << row
         @rows.each do |row|
           data = []
