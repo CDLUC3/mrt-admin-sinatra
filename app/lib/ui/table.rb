@@ -201,7 +201,7 @@ module AdminUI
     end
 
     def to_csv
-      CSV.generate({ encoding: Encoding::UTF_8 }) do |csv|
+      CSV.generate(encoding: Encoding::UTF_8) do |csv|
         row = @columns.map(&:header)
         csv << row
         @rows.each do |row|
