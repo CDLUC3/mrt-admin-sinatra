@@ -283,13 +283,13 @@ module UC3Query
           end
         else
           rptpath = Mustache.render(s2c, urlparams)
-          "\uFEFF" + CSV.generate do |csv|
+          CSV.generate do |csv|
             crow = cols.map(&:header)
             csv << crow
             stmt.execute(*params).each do |row|
               csv << row.values
             end
-            UC3S3::ConfigObjectsClient.client.create_report(rptpath, csv.string)
+            UC3S3::ConfigObjectsClient.client.create_report(rptpath, "\uFEFF" + csv.string)
             return rptpath
           end
         end
