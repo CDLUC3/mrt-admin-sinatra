@@ -19,7 +19,6 @@ def adminui_show_table_format(context, table, format, erb: :table, locals: {})
   when 'csv'
     fname = "mrt-admin#{context.route.gsub('/', '-')}.#{Time.now.strftime('%Y%m%d-%H%M%S')}.csv"
     content_type 'text/csv', encoding: 'utf-8'
-    disposition "attachment; filename=\"#{fname}\""
     halt 200, { 'Content-Disposition' => "attachment; filename=\"#{fname}\"" },
       table.to_csv
   when 'text'
