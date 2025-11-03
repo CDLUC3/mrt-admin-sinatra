@@ -283,7 +283,7 @@ module UC3Query
           end
         else
           rptpath = Mustache.render(s2c, urlparams)
-          CSV.generate("\uFEFF") do |csv|
+          "\uFEFF" + CSV.generate do |csv|
             crow = cols.map(&:header)
             csv << crow
             stmt.execute(*params).each do |row|

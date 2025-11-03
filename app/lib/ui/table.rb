@@ -201,7 +201,8 @@ module AdminUI
     end
 
     def to_csv
-      CSV.generate("\uFEFF") do |csv|
+      # https://stackoverflow.com/a/51996135/3846548
+      "\uFEFF" + CSV.generate do |csv|
         row = @columns.map(&:header)
         csv << row
         @rows.each do |row|
