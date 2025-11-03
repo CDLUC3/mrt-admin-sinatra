@@ -289,7 +289,7 @@ module UC3Query
             stmt.execute(*params).each do |row|
               csv << row.values
             end
-            UC3S3::ConfigObjectsClient.client.create_report(rptpath, "\uFEFF" + csv.string)
+            UC3S3::ConfigObjectsClient.client.create_report(rptpath, "#{AdminUI::FilterTable::BOM}#{csv.string}")
             return rptpath
           end
         end

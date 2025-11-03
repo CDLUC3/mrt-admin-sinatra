@@ -7,6 +7,10 @@ require 'bigdecimal'
 module AdminUI
   # Table rendering classes
   class FilterTable
+    # Write a Byte Order Mark (BOM) to the start of CSV files for Excel compatibility
+    # https://stackoverflow.com/a/51996135/3846548
+    BOM = "\uFEFF"
+
     def self.empty(message = '', status: :SKIP, status_message: '')
       return FilterTable.new if message.empty?
 
@@ -201,8 +205,7 @@ module AdminUI
     end
 
     def to_csv
-      # https://stackoverflow.com/a/51996135/3846548
-      "\uFEFF" + CSV.generate do |csv|
+      AdminUI::FilterTable::BOM + CSV.generate do |csv|
         row = @columns.map(&:header)
         csv << row
         @rows.each do |row|
