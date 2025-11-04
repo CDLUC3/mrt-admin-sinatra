@@ -16,7 +16,7 @@ module Sinatra
         ldap.load
 
         adminui_show_table(
-          AdminUI::Context.new(request.path),
+          AdminUI::Context.new(request.path, request.params),
           ldap.users_table
         )
       end
@@ -28,7 +28,7 @@ module Sinatra
         roles = ldap.user_detail_records(user)
 
         adminui_show_table(
-          AdminUI::Context.new(request.path),
+          AdminUI::Context.new(request.path, request.params),
           ldap.user_details_table(roles)
         )
       end
@@ -40,7 +40,7 @@ module Sinatra
         roles = ldap.collection_detail_records(coll)
 
         adminui_show_table(
-          AdminUI::Context.new(request.path),
+          AdminUI::Context.new(request.path, request.params),
           ldap.collection_details_table(coll, roles)
         )
       end
@@ -52,7 +52,7 @@ module Sinatra
         perms = ldap.collection_perm_records(coll)
 
         erb :colladmin_collection_roles, layout: :page_layout, locals: {
-          context: AdminUI::Context.new(request.path),
+          context: AdminUI::Context.new(request.path, request.params),
           collection: coll,
           known_users: ldap.users.keys.join(','),
           perms: perms
@@ -80,7 +80,7 @@ module Sinatra
         ldap = UC3Ldap::LDAPClient.client
         ldap.load
         adminui_show_table(
-          AdminUI::Context.new(request.path),
+          AdminUI::Context.new(request.path, request.params),
           ldap.collections_table
         )
       end
@@ -89,7 +89,7 @@ module Sinatra
         ldap = UC3Ldap::LDAPClient.client
         ldap.load
         adminui_show_table(
-          AdminUI::Context.new(request.path),
+          AdminUI::Context.new(request.path, request.params),
           UC3Ldap::LDAPCollectionMapList.new(ldap).ldap_collection_map(request.path)
         )
       end

@@ -198,6 +198,14 @@ module UC3
     def self.keep_artifact_version?(ver)
       ver =~ /^\d+\.\d+-SNAPSHOT$/
     end
+
+    def self.make_url_with_key(path, params, key, value)
+      p = params.clone
+      uri = URI(path)
+      p[key] = value
+      uri.query = URI.encode_www_form(p)
+      uri.to_s
+    end
   end
 
   # browse ingest folder file system

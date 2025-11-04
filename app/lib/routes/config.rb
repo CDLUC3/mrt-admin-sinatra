@@ -46,7 +46,7 @@ module Sinatra
     def self.registered(app)
       app.get '/ops/collections/management/slas' do
         adminui_show_table(
-          AdminUI::Context.new(request.path),
+          AdminUI::Context.new(request.path, request.params),
           UC3Query::QueryClient.client.query('/queries/misc/admin-sla', {})
         )
       end
@@ -58,13 +58,13 @@ module Sinatra
 
       app.get '/ops/collections/management/create-sla' do
         erb :colladmin_sla, layout: :page_layout, locals: {
-          context: AdminUI::Context.new(request.path)
+          context: AdminUI::Context.new(request.path, request.params)
         }
       end
 
       app.get '/ops/collections/management/owners' do
         adminui_show_table(
-          AdminUI::Context.new(request.path),
+          AdminUI::Context.new(request.path, request.params),
           UC3Query::QueryClient.client.query('/queries/misc/admin-owner', {})
         )
       end
@@ -76,14 +76,14 @@ module Sinatra
 
       app.get '/ops/collections/management/create-owner' do
         erb :colladmin_owner, layout: :page_layout, locals: {
-          context: AdminUI::Context.new(request.path),
+          context: AdminUI::Context.new(request.path, request.params),
           slas: get_slas
         }
       end
 
       app.get '/ops/collections/management/collections' do
         adminui_show_table(
-          AdminUI::Context.new(request.path),
+          AdminUI::Context.new(request.path, request.params),
           UC3Query::QueryClient.client.query('/queries/misc/admin-collection', {})
         )
       end
@@ -91,7 +91,7 @@ module Sinatra
       app.post '/ops/collections/management/create-collection' do
         ark = UC3S3::ConfigObjectsClient.client.create_collection(request.params)
         erb :colladmin_profile, layout: :page_layout, locals: {
-          context: AdminUI::Context.new(request.path),
+          context: AdminUI::Context.new(request.path, request.params),
           profile: UC3S3::ConfigObjectsClient.client.make_profile(request.params, ark: ark),
           profile_name: "#{request.params.fetch('name', '')}_content"
         }
@@ -99,7 +99,7 @@ module Sinatra
 
       app.get '/ops/collections/management/create-collection' do
         erb :colladmin_collection, layout: :page_layout, locals: {
-          context: AdminUI::Context.new(request.path),
+          context: AdminUI::Context.new(request.path, request.params),
           owners: get_owners,
           notifications: get_notification_map,
           nodes: get_nodes
@@ -108,7 +108,7 @@ module Sinatra
 
       app.get '/ops/collections/management/profiles' do
         adminui_show_table(
-          AdminUI::Context.new(request.path),
+          AdminUI::Context.new(request.path, request.params),
           UC3S3::ConfigObjectsClient.client.list_profiles
         )
       end
@@ -120,7 +120,7 @@ module Sinatra
 
       app.get '/saved-reports/list' do
         adminui_show_table(
-          AdminUI::Context.new(request.path),
+          AdminUI::Context.new(request.path, request.params),
           UC3S3::ConfigObjectsClient.client.list_reports('reports/')
         )
       end
@@ -141,7 +141,7 @@ module Sinatra
         rpt = URI.decode_www_form_component(rpt)
 
         adminui_show_table(
-          AdminUI::Context.new(request.path),
+          AdminUI::Context.new(request.path, request.params),
           UC3S3::ConfigObjectsClient.client.get_report_url(rpt)
         )
       end

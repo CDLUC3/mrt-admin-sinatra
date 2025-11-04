@@ -55,7 +55,7 @@ module Sinatra
         end
 
         adminui_show_table(
-          AdminUI::Context.new(request.path),
+          AdminUI::Context.new(request.path, request.params),
           table
         )
       end
@@ -78,7 +78,7 @@ module Sinatra
         end
 
         adminui_show_table(
-          AdminUI::Context.new(request.path),
+          AdminUI::Context.new(request.path, request.params),
           table
         )
       end
@@ -98,7 +98,7 @@ module Sinatra
 
       app.get '/markdown/*' do |md|
         adminui_show_markdown(
-          AdminUI::Context.new(request.path),
+          AdminUI::Context.new(request.path, request.params),
           "app/markdown/mrt/#{md}"
         )
       end

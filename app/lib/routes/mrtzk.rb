@@ -12,7 +12,7 @@ module Sinatra
     def self.registered(app)
       app.get '/ops/zk/nodes/node-names' do
         adminui_show_table(
-          AdminUI::Context.new(request.path),
+          AdminUI::Context.new(request.path, request.params),
           UC3Queue::ZKClient.client.dump_nodes(request.path, request.params)
         )
       end
@@ -21,7 +21,7 @@ module Sinatra
         request.params['zkpath'] ||= '/'
         request.params['mode'] ||= 'test'
         adminui_show_table(
-          AdminUI::Context.new(request.path),
+          AdminUI::Context.new(request.path, request.params),
           UC3Queue::ZKClient.client.dump_nodes(request.path, request.params)
         )
       end
@@ -86,7 +86,7 @@ module Sinatra
 
       app.get '/ops/zk/ingest/batches' do
         adminui_show_table(
-          AdminUI::Context.new(request.path),
+          AdminUI::Context.new(request.path, request.params),
           UC3Queue::ZKClient.client.batches(request.path)
         )
       end
@@ -98,7 +98,7 @@ module Sinatra
       ].each do |path|
         app.get path do
           adminui_show_table(
-            AdminUI::Context.new(request.path),
+            AdminUI::Context.new(request.path, request.params),
             UC3Queue::ZKClient.client.jobs_by_collection(request.path, request.params),
             erb: :jobs_table
           )
@@ -107,7 +107,7 @@ module Sinatra
 
       app.get '/ops/zk/ingest/jobs-by-collection-and-batch' do
         adminui_show_table(
-          AdminUI::Context.new(request.path),
+          AdminUI::Context.new(request.path, request.params),
           UC3Queue::ZKClient.client.jobs_by_collection_and_batch(request.path, request.params)
         )
       end
@@ -154,7 +154,7 @@ module Sinatra
 
       app.get '/ops/zk/access/jobs' do
         adminui_show_table(
-          AdminUI::Context.new(request.path),
+          AdminUI::Context.new(request.path, request.params),
           UC3Queue::ZKClient.client.assembly_requests(request.path)
         )
       end
@@ -266,7 +266,7 @@ module Sinatra
 
       app.get '/ops/ingest-folders/list' do
         adminui_show_table(
-          AdminUI::Context.new(request.path),
+          AdminUI::Context.new(request.path, request.params),
           UC3::FileSystemClient.client.ingest_folders(request.path, request.params)
         )
       end
@@ -345,19 +345,19 @@ module Sinatra
 
       app.get '/ops/zk/ingest/maintenance' do
         erb :zk_ingest_maintenance, layout: :page_layout, locals: {
-          context: AdminUI::Context.new(request.path)
+          context: AdminUI::Context.new(request.path, request.params)
         }
       end
 
       app.get '/ops/zk/access/maintenance' do
         erb :zk_access_maintenance, layout: :page_layout, locals: {
-          context: AdminUI::Context.new(request.path)
+          context: AdminUI::Context.new(request.path, request.params)
         }
       end
 
       app.get '/ops/zk/maintenance' do
         erb :zk_maintenance, layout: :page_layout, locals: {
-          context: AdminUI::Context.new(request.path)
+          context: AdminUI::Context.new(request.path, request.params)
         }
       end
     end

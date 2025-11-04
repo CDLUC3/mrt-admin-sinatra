@@ -13,7 +13,7 @@ module Sinatra
         srccode = UC3Code::SourceCodeClient.client
 
         adminui_show_table(
-          AdminUI::Context.new(request.path),
+          AdminUI::Context.new(request.path, request.params),
           srccode.repo_tags(repo)
         )
       end
@@ -22,7 +22,7 @@ module Sinatra
         srccode = UC3Code::SourceCodeClient.client
 
         adminui_show_table(
-          AdminUI::Context.new(request.path),
+          AdminUI::Context.new(request.path, request.params),
           srccode.artifacts_table(repo)
         )
       end
@@ -31,7 +31,7 @@ module Sinatra
         srccode = UC3Code::SourceCodeClient.client
 
         adminui_show_table(
-          AdminUI::Context.new(request.path),
+          AdminUI::Context.new(request.path, request.params),
           srccode.images_table(repo)
         )
       end
@@ -47,7 +47,7 @@ module Sinatra
         srccode.artifact_manifest(artifact, version, asset).to_json
 
         adminui_show_table(
-          AdminUI::Context.new(request.path),
+          AdminUI::Context.new(request.path, request.params),
           srccode.artifact_manifest_table(srccode.artifact_manifest(artifact, version, asset))
         )
       end
@@ -64,7 +64,7 @@ module Sinatra
         erb :pre,
           :layout => :page_layout,
           :locals => {
-            context: AdminUI::Context.new(request.path),
+            context: AdminUI::Context.new(request.path, request.params),
             data: data
           }
       end

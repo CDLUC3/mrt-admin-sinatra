@@ -254,8 +254,9 @@ module AdminUI
       attr_accessor :css, :index_md
     end
 
-    def initialize(route, title: nil)
+    def initialize(route, params, title: nil)
       @route = route
+      @params = params
       page = TopMenu.instance.route_names[route]
       deftitle = title || File.basename(route).capitalize
       @title = page ? page.fetch(:title, deftitle) : deftitle
@@ -293,6 +294,14 @@ module AdminUI
         tables: true
       ).render(@description)
       Mustache.render(description, ENV)
+    end
+
+    def altformats
+      %(
+        <a href="#{UC3::UC3Client.make_url_with_key(@route, @params, 'admintoolformat', 'json')}">JSON</a>
+        <a href="#{UC3::UC3Client.make_url_with_key(@route, @params, 'admintoolformat', 'csv')}">CSV</a>
+        <a href="#{UC3::UC3Client.make_url_with_key(@route, @params, 'admintoolformat', 'text')}">TEXT</a>
+      )
     end
 
     def to_h

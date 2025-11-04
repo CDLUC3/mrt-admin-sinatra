@@ -14,13 +14,13 @@ module Sinatra
     def self.registered(app)
       app.get '/queries/repository' do
         adminui_show_none(
-          AdminUI::Context.new(request.path)
+          AdminUI::Context.new(request.path, request.params)
         )
       end
 
       app.get '/queries/consistency' do
         adminui_show_none(
-          AdminUI::Context.new(request.path)
+          AdminUI::Context.new(request.path, request.params)
         )
       end
 
@@ -34,7 +34,7 @@ module Sinatra
           erb :tables,
             layout: :page_layout,
             locals: {
-              context: AdminUI::Context.new(request.path),
+              context: AdminUI::Context.new(request.path, request.params),
               table: UC3Query::QueryClient.client.query(
                 request.path,
                 request.params,
@@ -78,7 +78,7 @@ module Sinatra
 
           if result.is_a?(AdminUI::FilterTable)
             adminui_show_table(
-              AdminUI::Context.new(request.path),
+              AdminUI::Context.new(request.path, request.params),
               result
             )
           else
@@ -86,7 +86,7 @@ module Sinatra
           end
         else
           adminui_show_table(
-            AdminUI::Context.new(request.path),
+            AdminUI::Context.new(request.path, request.params),
             UC3Query::QueryClient.client.query('/queries/collections/choose', request.params)
           )
         end
@@ -99,7 +99,7 @@ module Sinatra
       ].each do |path|
         app.get path do
           adminui_show_none(
-            AdminUI::Context.new(path)
+            AdminUI::Context.new(path, request.params)
           )
         end
       end
@@ -110,11 +110,11 @@ module Sinatra
 
         if request.params['campus'].to_s.empty?
           adminui_show_none(
-            AdminUI::Context.new(request.path)
+            AdminUI::Context.new(request.path, request.params)
           )
         else
           adminui_show_table(
-            AdminUI::Context.new(request.path),
+            AdminUI::Context.new(request.path, request.params),
             UC3Query::QueryClient.client.query('/queries/repository/campus/invoices', request.params)
           )
         end
@@ -123,14 +123,15 @@ module Sinatra
       app.get '/queries/repository/mimes/campus/*' do
         request.params['campus'] = params[:splat][0]
         adminui_show_table(
-          AdminUI::Context.new(request.path),
+          AdminUI::Context.new(request.path, request.params),
           UC3Query::QueryClient.client.query('/queries/repository/mimes/campus', request.params)
         )
       end
 
       app.get '/queries/repository/mimes/group/*' do
+        request.params['group'] = params[:splat][0]
         adminui_show_table(
-          AdminUI::Context.new(request.path),
+          AdminUI::Context.new(request.path, request.params),
           UC3Query::QueryClient.client.query('/queries/repository/mimes/group', request.params)
         )
       end
@@ -139,14 +140,14 @@ module Sinatra
         request.params[:term] = URI.decode_www_form_component(request.params[:term]) if request.params.key?(:term)
 
         adminui_show_table(
-          AdminUI::Context.new(request.path),
+          AdminUI::Context.new(request.path, request.params),
           UC3Query::QueryClient.client.query(request.path, request.params)
         )
       end
 
       app.get '/ops/db-queue/audit/active-batches' do
         adminui_show_table(
-          AdminUI::Context.new(request.path),
+          AdminUI::Context.new(request.path, request.params),
           UC3Query::QueryClient.client.query(request.path, request.params),
           erb: :audit_batches_table,
           locals: {
@@ -190,7 +191,7 @@ module Sinatra
 
       app.get '/ops/collections/storage-node-config/**' do
         adminui_show_table(
-          AdminUI::Context.new(request.path),
+          AdminUI::Context.new(request.path, request.params),
           UC3Query::QueryClient.client.query(
             '/ops/collections/storage-node-config/collection',
             request.params,
@@ -209,7 +210,7 @@ module Sinatra
 
       app.get '/ops/collections/storage-node-config' do
         adminui_show_table(
-          AdminUI::Context.new(request.path),
+          AdminUI::Context.new(request.path, request.params),
           UC3Query::QueryClient.client.query(
             request.path,
             request.params,
@@ -220,7 +221,7 @@ module Sinatra
 
       app.get '/ops/storage/scans' do
         adminui_show_table(
-          AdminUI::Context.new(request.path),
+          AdminUI::Context.new(request.path, request.params),
           UC3Query::QueryClient.client.query(
             request.path,
             request.params,
@@ -236,7 +237,7 @@ module Sinatra
 
       app.get '/ops/storage/scans/review*' do
         adminui_show_table(
-          AdminUI::Context.new(request.path),
+          AdminUI::Context.new(request.path, request.params),
           UC3Query::QueryClient.client.query(
             request.path,
             request.params,
@@ -256,7 +257,7 @@ module Sinatra
 
       app.get '/ops/storage/scans/csvfile' do
         adminui_show_table(
-          AdminUI::Context.new(request.path),
+          AdminUI::Context.new(request.path, request.params),
           UC3Query::QueryClient.client.query(
             request.path,
             request.params,
@@ -271,7 +272,7 @@ module Sinatra
 
       app.get '/ops/db-queue/audit/counts-by-state' do
         adminui_show_table(
-          AdminUI::Context.new(request.path),
+          AdminUI::Context.new(request.path, request.params),
           UC3Query::QueryClient.client.query(
             request.path,
             request.params,
@@ -282,7 +283,7 @@ module Sinatra
 
       app.get '/ops/collections/list' do
         adminui_show_table(
-          AdminUI::Context.new(request.path),
+          AdminUI::Context.new(request.path, request.params),
           UC3Query::QueryClient.client.query(
             request.path,
             request.params,
@@ -297,7 +298,7 @@ module Sinatra
       ].each do |path|
         app.get path do
           adminui_show_table(
-            AdminUI::Context.new(request.path),
+            AdminUI::Context.new(request.path, request.params),
             UC3Query::QueryClient.client.query(request.path, request.params)
           )
         end
@@ -307,21 +308,21 @@ module Sinatra
       # This is not yet tested on real data
       app.get '/ops/db-queue-update/audit/reset-new-ucb-content' do
         adminui_show_table(
-          AdminUI::Context.new(request.path),
+          AdminUI::Context.new(request.path, request.params),
           UC3Query::QueryClient.client.reset_new_ucb_content(request.path, request.params)
         )
       end
 
       app.get '/ops/collections/db/**' do
         adminui_show_table(
-          AdminUI::Context.new(request.path),
+          AdminUI::Context.new(request.path, request.params),
           UC3Query::QueryClient.client.query(request.path, request.params)
         )
       end
 
       app.get '/ops/storage/db/**' do
         adminui_show_table(
-          AdminUI::Context.new(request.path),
+          AdminUI::Context.new(request.path, request.params),
           UC3Query::QueryClient.client.query(request.path, request.params)
         )
       end

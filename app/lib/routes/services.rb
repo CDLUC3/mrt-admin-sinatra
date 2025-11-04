@@ -378,7 +378,7 @@ module Sinatra
           )
         end
         adminui_show_table(
-          AdminUI::Context.new(request.path),
+          AdminUI::Context.new(request.path, request.params),
           table
         )
       end

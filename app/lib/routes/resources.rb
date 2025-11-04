@@ -16,42 +16,42 @@ module Sinatra
     def self.registered(app)
       app.get '/infra/instances' do
         adminui_show_table(
-          AdminUI::Context.new(request.path),
+          AdminUI::Context.new(request.path, request.params),
           UC3Resources::InstancesClient.new.list_instances(request.params)
         )
       end
 
       app.get '/infra/parameters' do
         adminui_show_table(
-          AdminUI::Context.new(request.path),
+          AdminUI::Context.new(request.path, request.params),
           UC3Resources::ParametersClient.new.list_parameters
         )
       end
 
       app.get '/infra/buckets' do
         adminui_show_table(
-          AdminUI::Context.new(request.path),
+          AdminUI::Context.new(request.path, request.params),
           UC3Resources::BucketsClient.new.list_buckets
         )
       end
 
       app.get '/infra/functions' do
         adminui_show_table(
-          AdminUI::Context.new(request.path),
+          AdminUI::Context.new(request.path, request.params),
           UC3Resources::FunctionsClient.new.list_functions
         )
       end
 
       app.get '/infra/elbs' do
         adminui_show_table(
-          AdminUI::Context.new(request.path),
+          AdminUI::Context.new(request.path, request.params),
           UC3Resources::LoadBalancerClient.new.list_instances
         )
       end
 
       app.get '/infra/ecs' do
         adminui_show_table(
-          AdminUI::Context.new(request.path),
+          AdminUI::Context.new(request.path, request.params),
           UC3Resources::ServicesClient.new.list_services
         )
       end

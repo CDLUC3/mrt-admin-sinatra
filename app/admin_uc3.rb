@@ -18,7 +18,7 @@ AdminUI::Context.index_md = 'app/markdown/uc3/index.md'
 
 get '/' do
   adminui_show_markdown(
-    AdminUI::Context.new(request.path),
+    AdminUI::Context.new(request.path, request.params),
     AdminUI::Context.index_md
   )
 end
@@ -27,7 +27,7 @@ get '/context' do
   erb :table,
     :layout => :page_layout,
     :locals => {
-      context: AdminUI::Context.new(request.path),
+      context: AdminUI::Context.new(request.path, request.params),
       table: UC3::UC3Client.client.context
     }
 end
@@ -42,7 +42,7 @@ get '/clients' do
   erb :table,
     :layout => :page_layout,
     :locals => {
-      context: AdminUI::Context.new(request.path),
+      context: AdminUI::Context.new(request.path, request.params),
       table: UC3::UC3Client.client.client_list
     }
 end
@@ -51,6 +51,6 @@ get '/**' do
   erb :none,
     :layout => :page_layout,
     :locals => {
-      context: AdminUI::Context.new(request.path)
+      context: AdminUI::Context.new(request.path, request.params)
     }
 end

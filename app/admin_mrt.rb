@@ -31,14 +31,14 @@ register Sinatra::Contrib
 
 get '/' do
   adminui_show_markdown(
-    AdminUI::Context.new(request.path),
+    AdminUI::Context.new(request.path, request.params),
     AdminUI::Context.index_md
   )
 end
 
 get '/context' do
   adminui_show_table(
-    AdminUI::Context.new(request.path),
+    AdminUI::Context.new(request.path, request.params),
     UC3::UC3Client.client.context
   )
 end
@@ -79,14 +79,14 @@ get '/clients' do
   end
 
   adminui_show_table(
-    AdminUI::Context.new(request.path),
+    AdminUI::Context.new(request.path, request.params),
     UC3::UC3Client.client.client_list
   )
 end
 
 get '/**' do
   adminui_show_none(
-    AdminUI::Context.new(request.path)
+    AdminUI::Context.new(request.path, request.params)
   )
 end
 
