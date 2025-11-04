@@ -1,0 +1,42 @@
+<div>
+<div>Before releasing a job, <a href="/ops/collections/list">ensure that its collection is unlocked</a>.</div>
+<br>
+<fieldset>
+  <legend>Page Actions</legend>
+  <button id="release-all" type="button">Release All Held Jobs</button>
+</fieldset>
+</div>
+<div class='tablewrap'>
+  <%= table.render %>
+</div>
+<script type="text/javascript">
+  function release_job() {
+    $("a.release_button").each(function(){
+      if (!$(this).attr("disabled")) {
+        $(this).click();
+        setTimeout(function(){
+          release_job();
+        }, 800);     
+        return false;
+      }
+    });
+  }
+
+  $(document).ready(function() {
+    $("#release-all").on("click", function(){
+      $("#release-all").attr("disabled", true);
+      release_job();
+    });
+
+    var count = 0;
+    $("a.release_button").each(function(){
+      if (!$(this).attr("disabled")) {
+        count++;
+      }
+    });
+    
+    if (count == 0) {
+      $("#release-all").attr("disabled", true);
+    }
+  });
+</script>

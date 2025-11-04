@@ -684,7 +684,7 @@ items:
     classes: needs-db
     breadcrumb: true
     items:
-    - title: List Collections
+    - title: List Collections and Locks
       route: /ops/collections/list
     - path: management
       title: Collection Creation

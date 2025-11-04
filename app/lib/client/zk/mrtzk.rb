@@ -311,7 +311,7 @@ module UC3Queue
           value: 'Release',
           href: "/ops/zk/ingest/job/release/#{id}",
           post: true,
-          cssclass: 'button',
+          cssclass: 'button release_button',
           disabled: !%w[Held].include?(status)
         }
         table.add_row(

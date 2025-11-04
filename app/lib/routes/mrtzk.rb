@@ -99,7 +99,8 @@ module Sinatra
         app.get path do
           adminui_show_table(
             AdminUI::Context.new(request.path),
-            UC3Queue::ZKClient.client.jobs_by_collection(request.path, request.params)
+            UC3Queue::ZKClient.client.jobs_by_collection(request.path, request.params),
+            erb: :jobs_table
           )
         end
       end
