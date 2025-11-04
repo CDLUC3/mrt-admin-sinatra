@@ -31,7 +31,7 @@ register Sinatra::Contrib
 
 get '/' do
   adminui_show_markdown(
-    AdminUI::Context.new(request.path, request.params),
+    AdminUI::Context.new(request.path, request.params, show_formats: false),
     AdminUI::Context.index_md
   )
 end

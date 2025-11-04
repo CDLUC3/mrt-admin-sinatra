@@ -214,6 +214,18 @@ module AdminUI
             if col.is_a?(Hash)
               v = col.fetch(:value, '')
               v = v.to_s if v.is_a?(BigDecimal)
+            elsif col.is_a?(Array)
+              tv = []
+              col.each do |cc|
+                if cc.is_a?(Hash)
+                  vv = cc.fetch(:value, '')
+                  vv = vv.to_s if vv.is_a?(BigDecimal)
+                  tv << vv
+                else
+                  tv << cc.to_s
+                end
+              end
+              v = tv.join(',')
             else
               v = col.to_s
             end

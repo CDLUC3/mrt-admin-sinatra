@@ -31,34 +31,33 @@ module Sinatra
         '/queries/recent/objects'
       ].each do |path|
         app.get path do
-          erb :tables,
-            layout: :page_layout,
-            locals: {
-              context: AdminUI::Context.new(request.path, request.params),
-              table: UC3Query::QueryClient.client.query(
+          adminui_show_table(
+            AdminUI::Context.new(request.path, request.params),
+            UC3Query::QueryClient.client.query(
+              request.path,
+              request.params,
+              resolver: UC3Query::QueryResolvers.method(:obj_info_resolver),
+              dispcols: %w[
+                inv_object_id ark actions version_number mnemonics metadata local_ids created billable_size
+                file_count
+              ]
+            ),
+            erb: :tables,
+            aux_tables: [
+              UC3Query::QueryClient.client.query(
                 request.path,
                 request.params,
-                resolver: UC3Query::QueryResolvers.method(:obj_info_resolver),
-                dispcols: %w[
-                  inv_object_id ark actions version_number mnemonics metadata local_ids created billable_size
-                  file_count
-                ]
+                sqlsym: :repl_sql,
+                resolver: UC3Query::QueryResolvers.method(:obj_node_resolver),
+                dispcols: %w[role actions description created replicated unverified last_verified version_number]
               ),
-              aux_tables: [
-                UC3Query::QueryClient.client.query(
-                  request.path,
-                  request.params,
-                  sqlsym: :repl_sql,
-                  resolver: UC3Query::QueryResolvers.method(:obj_node_resolver),
-                  dispcols: %w[role actions description created replicated unverified last_verified version_number]
-                ),
-                UC3Query::QueryClient.client.query(
-                  request.path,
-                  request.params,
-                  sqlsym: :files_sql
-                )
-              ]
-            }
+              UC3Query::QueryClient.client.query(
+                request.path,
+                request.params,
+                sqlsym: :files_sql
+              )
+            ]
+          )
         end
       end
 

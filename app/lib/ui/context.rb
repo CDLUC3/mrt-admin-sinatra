@@ -254,7 +254,7 @@ module AdminUI
       attr_accessor :css, :index_md
     end
 
-    def initialize(route, params, title: nil)
+    def initialize(route, params, title: nil, show_formats: true)
       @route = route
       @params = params
       page = TopMenu.instance.route_names[route]
@@ -263,6 +263,7 @@ module AdminUI
       @description = TopMenu.instance.description_for_route(@route)
       @breadcrumbs = breadcrumbs
       # Breadcrumbs are an array of hashes with keys :title and :url
+      @show_formats = show_formats
 
       @ctime = if File.exist?('/var/tast/Gemfile.lock')
                  File.ctime('/var/task/Gemfile.lock').strftime('%Y%m%d_%H%M%S')
@@ -301,7 +302,7 @@ module AdminUI
         <a href="#{UC3::UC3Client.make_url_with_key(@route, @params, 'admintoolformat', 'json')}">JSON</a>
         <a href="#{UC3::UC3Client.make_url_with_key(@route, @params, 'admintoolformat', 'csv')}">CSV</a>
         <a href="#{UC3::UC3Client.make_url_with_key(@route, @params, 'admintoolformat', 'text')}">TEXT</a>
-      )
+      ) if @show_formats
     end
 
     def to_h
