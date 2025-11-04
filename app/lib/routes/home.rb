@@ -98,7 +98,7 @@ module Sinatra
 
       app.get '/markdown/*' do |md|
         adminui_show_markdown(
-          AdminUI::Context.new(request.path, request.params),
+          AdminUI::Context.new(request.path, request.params, show_formats: false),
           "app/markdown/mrt/#{md}"
         )
       end

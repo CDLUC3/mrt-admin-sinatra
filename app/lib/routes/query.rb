@@ -14,13 +14,13 @@ module Sinatra
     def self.registered(app)
       app.get '/queries/repository' do
         adminui_show_none(
-          AdminUI::Context.new(request.path, request.params)
+          AdminUI::Context.new(request.path, request.params, show_formats: false)
         )
       end
 
       app.get '/queries/consistency' do
         adminui_show_none(
-          AdminUI::Context.new(request.path, request.params)
+          AdminUI::Context.new(request.path, request.params, show_formats: false)
         )
       end
 
@@ -98,7 +98,7 @@ module Sinatra
       ].each do |path|
         app.get path do
           adminui_show_none(
-            AdminUI::Context.new(path, request.params)
+            AdminUI::Context.new(path, request.params, show_formats: false)
           )
         end
       end
@@ -109,7 +109,7 @@ module Sinatra
 
         if request.params['campus'].to_s.empty?
           adminui_show_none(
-            AdminUI::Context.new(request.path, request.params)
+            AdminUI::Context.new(request.path, request.params, show_formats: false)
           )
         else
           adminui_show_table(

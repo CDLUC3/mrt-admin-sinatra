@@ -86,7 +86,7 @@ end
 
 get '/**' do
   adminui_show_none(
-    AdminUI::Context.new(request.path, request.params)
+    AdminUI::Context.new(request.path, request.params, show_formats: false)
   )
 end
 
