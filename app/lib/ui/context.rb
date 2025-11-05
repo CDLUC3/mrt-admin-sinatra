@@ -298,11 +298,13 @@ module AdminUI
     end
 
     def altformats
+      return unless @show_formats
+
       %(
-        <a href="#{UC3::UC3Client.make_url_with_key(@route, @params, 'admintoolformat', 'json')}">JSON</a>
-        <a href="#{UC3::UC3Client.make_url_with_key(@route, @params, 'admintoolformat', 'csv')}">CSV</a>
-        <a href="#{UC3::UC3Client.make_url_with_key(@route, @params, 'admintoolformat', 'text')}">TEXT</a>
-      ) if @show_formats
+          <a href="#{UC3::UC3Client.make_url_with_key(@route, @params, 'admintoolformat', 'json')}">JSON</a>
+          <a href="#{UC3::UC3Client.make_url_with_key(@route, @params, 'admintoolformat', 'csv')}">CSV</a>
+          <a href="#{UC3::UC3Client.make_url_with_key(@route, @params, 'admintoolformat', 'text')}">TEXT</a>
+        )
     end
 
     def to_h

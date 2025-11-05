@@ -24,7 +24,7 @@ def adminui_show_table_format(context, table, format, erb: :table, locals: {}, a
   when 'csv'
     data = table.to_csv
     aux_tables.each do |aux_table|
-      data += "\n\n" + aux_table.to_csv
+      data += "\n\n#{aux_table.to_csv}"
     end
     fname = "mrt-admin#{context.route.gsub('/', '-')}.#{Time.now.strftime('%Y%m%d-%H%M%S')}.csv"
     content_type 'text/csv', charset: 'utf-8'
@@ -32,7 +32,7 @@ def adminui_show_table_format(context, table, format, erb: :table, locals: {}, a
   when 'text'
     data = table.to_csv
     aux_tables.each do |aux_table|
-      data += "\n\n" + aux_table.to_csv
+      data += "\n\n#{aux_table.to_csv}"
     end
     content_type :text, encoding: 'utf-8'
     halt 200, data
