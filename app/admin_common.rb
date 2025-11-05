@@ -9,21 +9,33 @@ def adminui_show_table_format(context, table, format, erb: :table, locals: {}, a
 
   case format
   when 'json'
+    data = []
+    data << table.table_data unless table.table_data.nil?
+    aux_tables.each do |aux_table|
+      data << aux_table.table_data
+    end
     content_type :json
     {
       context: context.to_h,
-      table: table.table_data,
+      table: data,
       status: table.status,
       status_message: table.status_message
     }.to_json
   when 'csv'
+    data = table.to_csv
+    aux_tables.each do |aux_table|
+      data += "\n\n" + aux_table.to_csv
+    end
     fname = "mrt-admin#{context.route.gsub('/', '-')}.#{Time.now.strftime('%Y%m%d-%H%M%S')}.csv"
     content_type 'text/csv', charset: 'utf-8'
-    halt 200, { 'Content-Disposition' => "attachment; filename=\"#{fname}\"" },
-      table.to_csv
+    halt 200, { 'Content-Disposition' => "attachment; filename=\"#{fname}\"" }, data
   when 'text'
+    data = table.to_csv
+    aux_tables.each do |aux_table|
+      data += "\n\n" + aux_table.to_csv
+    end
     content_type :text, encoding: 'utf-8'
-    halt 200, table.to_csv
+    halt 200, data
   else
     locals[:context] = context
     locals[:table] = table
