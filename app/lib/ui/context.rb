@@ -110,10 +110,11 @@ module AdminUI
     def initialize
       @paths = {}
       @route_names = {}
+      @skip_paths = []
       super('/', '', parent: nil)
     end
 
-    attr_accessor :paths, :route_names
+    attr_accessor :paths, :route_names, :skip_paths
 
     def breadcrumbs_for_route(route)
       breadcrumbs = []

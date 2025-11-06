@@ -325,19 +325,30 @@ module UC3
         @test_paths << name unless @consistency_checks.include?(name)
       end
 
+      skiplist = %w[
+        /ops/storage/manifest
+        /ops/storage/manifest-yaml
+        /ops/storage/ingest-checkm
+      ]
+
       Sinatra::Application.routes['GET'].each do |path, route|
         # .each_keys does not work, so make use of route object
         puts "Route #{path}: #{route.inspect}" unless route.empty?
         path = path.to_s
-        next if path.include? '**'
-        next if path.include? '*/*'
 
-        if path.include? '*'
+        next if path.include?('**')
+        next if path.include?('*/*')
+
+        if path.include?('*')
           if path.start_with?('/source/')
             UC3Code::SourceCodeClient.client.reponames.each do |repo|
               @test_paths << path.gsub('*', repo.to_s)
             end
           end
+        elsif skiplist.include?(path)
+          # skip from unit tests
+        elsif AdminUI::TopMenu.instance.skip_paths.include?(path)
+          # skip from unit tests
         else
           @test_paths << path
           # TODO: SSM documentation
@@ -353,8 +364,8 @@ module UC3
           end
         end
       end
-      @test_paths.sort!
-      @consistency_checks.sort!
+      @test_paths = @test_paths.uniq.sort
+      @consistency_checks = @consistency_checks.uniq.sort
     end
 
     def self.client

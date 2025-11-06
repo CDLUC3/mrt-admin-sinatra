@@ -22,7 +22,10 @@ module Sinatra
       classes = item.fetch(:classes, classes)
       AdminUI::TopMenu.instance.create_menu_item_for_path(np.join('/'), item, classes)
       items.each do |citem|
-        next if citem.fetch(:disable, '').split(/, */).include?(ENV.fetch('configkey', 'default'))
+        if citem.fetch(:disable, '').split(/, */).include?(ENV.fetch('configkey', 'default'))
+          AdminUI::TopMenu.instance.skip_paths << citem.fetch(:path, '')
+          next
+        end
 
         add_menu_item(np, citem, classes: classes)
       end
@@ -30,7 +33,10 @@ module Sinatra
 
     def self.load_menu_file(menu_file)
       UC3::UC3Client.load_config(menu_file).fetch(:items, {}).each do |menu|
-        next if menu.fetch(:disable, '').split(/, */).include?(ENV.fetch('configkey', 'default'))
+        if menu.fetch(:disable, '').split(/, */).include?(ENV.fetch('configkey', 'default'))
+          AdminUI::TopMenu.instance.skip_paths << menu.fetch(:path, '')
+          next
+        end
 
         add_menu_item([''], menu, classes: menu.fetch(:classes, ''))
       end

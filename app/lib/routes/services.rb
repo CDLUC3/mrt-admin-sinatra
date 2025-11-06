@@ -165,20 +165,29 @@ module Sinatra
       end
 
       app.post '/ops/inventory/rebuild' do
+        nodenum = request.params.fetch('node_number', '')
+        ark = request.params.fetch('ark', '')
+
+        if nodenum.empty? || ark.empty?
+          return adminui_show_none(
+            AdminUI::Context.new(request.path, request.params, show_formats: false)
+          )
+        end
+
         data = {
-          url: manifest_url(request.params),
+          url: manifest_url(nodenum, ark),
           responseForm: 'json'
         }
 
-        deleteurl = "#{inventory_host}/object/#{CGI.escape(request.params['ark'])}"
+        deleteurl = "#{inventory_host}/object/#{CGI.escape(ark)}"
         resp = delete_url_resp(deleteurl)
         if resp.code.to_i == 200
           addurl = "#{inventory_host}/add"
           resp = post_url_multipart(addurl, data)
           if resp.code.to_i == 200
-            url = "/queries/repository/object-ark?ark=#{CGI.escape(request.params['ark'])}"
+            url = "/queries/repository/object-ark?ark=#{CGI.escape(ark)}"
             {
-              message: "Sucessfully re-added #{request.params['ark']}",
+              message: "Sucessfully re-added #{ark} to inventory",
               redirect: url,
               modal: true
             }.to_json
@@ -219,25 +228,45 @@ module Sinatra
       end
 
       app.get '/ops/storage/manifest' do
-        url = "#{store_host}/manifest/#{request.params['node_number']}/#{CGI.escape(request.params['ark'])}"
-        puts "URL: #{url}"
+        nodenum = request.params.fetch('node_number', '')
+        ark = request.params.fetch('ark', '')
+
+        if nodenum.empty? || ark.empty?
+          return adminui_show_none(
+            AdminUI::Context.new(request.path, request.params, show_formats: false)
+          )
+        end
+
+        url = "#{store_host}/manifest/#{nodenum}/#{CGI.escape(ark)}"
         get_url(url, ctype: :xml)
       end
 
-      app.get '/ops/storage/manifest' do
-        get_url(manifest_url(request.params), ctype: :xml)
-      end
-
       app.get '/ops/storage/manifest-yaml' do
-        data = get_url_body(manifest_url(request.params))
+        nodenum = request.params.fetch('node_number', '')
+        ark = request.params.fetch('ark', '')
+
+        if nodenum.empty? || ark.empty?
+          return adminui_show_none(
+            AdminUI::Context.new(request.path, request.params, show_formats: false)
+          )
+        end
+
+        data = get_url_body(manifest_url(nodenum, ark))
         content_type :yaml
         ManifestToYaml.new.load_xml(data)
       end
 
       app.get '/ops/storage/ingest-checkm' do
-        nodenum = request.params['node_number']
-        ark = request.params['ark']
-        ver = request.params['version_number']
+        nodenum = request.params.fetch('node_number', '')
+        ark = request.params.fetch('ark', '')
+        ver = request.params.fetch('version_number', '')
+
+        if nodenum.empty? || ark.empty? || ver.empty?
+          return adminui_show_none(
+            AdminUI::Context.new(request.path, request.params, show_formats: false)
+          )
+        end
+
         url = "#{store_host}/ingestlink/#{nodenum}/#{CGI.escape(ark)}/#{ver}?presign=true"
         get_url(url, ctype: :text)
       end
@@ -419,8 +448,8 @@ module Sinatra
       `
     end
 
-    def manifest_url(params)
-      "#{store_host}/manifest/#{params['node_number']}/#{CGI.escape(params['ark'])}"
+    def manifest_url(node_number, ark)
+      "#{store_host}/manifest/#{node_number}/#{CGI.escape(ark)}"
     end
 
     def stack_init
