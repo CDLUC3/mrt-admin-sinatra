@@ -300,9 +300,7 @@ module UC3
       @test_paths = []
       @consistency_checks = []
 
-      UC3Query::QueryClient.client.queries.each_key do |name|
-        name = name.to_s
-        %w[
+      objlist_queries = %w[
           /queries/consistency/.*/
           /ops/collections/db/
           /ops/db-queue/audit/counts-by-state
@@ -315,7 +313,13 @@ module UC3
           /ops/db-queue/replication/in-progress
           /ops/db-queue/replication/required
           /ops/storage/db/nodes
-        ].each do |pattern|
+        ]
+
+      UC3Query::QueryClient.client.queries.each do |name, query|
+        next if query.fetch(:update, false) || query.fetch(:non_report, false)
+
+        name = name.to_s
+        objlist_queries.each do |pattern|
           next if name =~ %r{/objlist}
 
           @consistency_checks << name if name =~ /#{pattern}/

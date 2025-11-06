@@ -1,5 +1,6 @@
 queries:
   /init/check-nodes:
+    non_report: true
     sql: |
       select * from inv.inv_nodes
   /init/create-nodes:
@@ -61,6 +62,7 @@ queries:
         1,
         'http://store:8080/store'
   /init/check-node-counts:
+    non_report: true
     sql: |
       select * from billing.daily_node_counts
   /init/create-node-counts:

@@ -880,6 +880,8 @@ items:
       items:
       - title: Audit State
         route: /json/audit/state
+      - title: Audit Nodes
+        route: /json/audit/nodes
       - title: Audit Build Tag
         route: /json/audit/tag
       - title: Audit Start
@@ -903,6 +905,8 @@ items:
       items:
       - title: Replic State
         route: /json/replic/state
+      - title: Replic Nodes
+        route: /json/replic/nodes
       - title: Replic Build Tag
         route: /json/replic/tag
       - title: Replic Start
