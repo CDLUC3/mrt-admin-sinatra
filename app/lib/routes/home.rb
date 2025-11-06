@@ -23,7 +23,7 @@ module Sinatra
       AdminUI::TopMenu.instance.create_menu_item_for_path(np.join('/'), item, classes)
       items.each do |citem|
         if citem.fetch(:disable, '').split(/, */).include?(ENV.fetch('configkey', 'default'))
-          AdminUI::TopMenu.instance.skip_paths << citem.fetch(:path, '')
+          skipitem(citem)
           next
         end
 
@@ -31,10 +31,20 @@ module Sinatra
       end
     end
 
+    def self.skipitem(skipitem)
+      route = skipitem.fetch(:route, '')
+      AdminUI::TopMenu.instance.skip_paths << route unless route.empty?
+      skipitem.fetch(:items, []).each do |citem|
+        route = citem.fetch(:route, '')
+        AdminUI::TopMenu.instance.skip_paths << route unless route.empty?
+        skipitem(citem)
+      end
+    end
+
     def self.load_menu_file(menu_file)
       UC3::UC3Client.load_config(menu_file).fetch(:items, {}).each do |menu|
         if menu.fetch(:disable, '').split(/, */).include?(ENV.fetch('configkey', 'default'))
-          AdminUI::TopMenu.instance.skip_paths << menu.fetch(:path, '')
+          skipitem(menu)
           next
         end
 

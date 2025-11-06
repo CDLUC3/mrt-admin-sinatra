@@ -339,16 +339,19 @@ module UC3
         next if path.include?('**')
         next if path.include?('*/*')
 
-        if path.include?('*')
-          if path.start_with?('/source/')
-            UC3Code::SourceCodeClient.client.reponames.each do |repo|
-              @test_paths << path.gsub('*', repo.to_s)
-            end
-          end
-        elsif skiplist.include?(path)
+        if skiplist.include?(path)
           # skip from unit tests
         elsif AdminUI::TopMenu.instance.skip_paths.include?(path)
           # skip from unit tests
+        elsif path.include?('*')
+          if path.start_with?('/source/')
+            UC3Code::SourceCodeClient.client.reponames.each do |repo|
+              next if %w[ui admintool].include?(repo.to_s) && path.include?('artifacts')
+
+              rpath = path.gsub('*', repo.to_s)
+              @test_paths << rpath unless AdminUI::TopMenu.instance.skip_paths.include?(rpath)
+            end
+          end
         else
           @test_paths << path
           # TODO: SSM documentation
