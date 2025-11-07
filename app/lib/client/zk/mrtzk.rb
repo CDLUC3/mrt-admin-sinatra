@@ -12,7 +12,7 @@ module UC3Queue
   # VPC peering does not allow this, so this connection will not work until ZK is running in the UC3
   class ZKClient < UC3::UC3Client
     AGE_BATCHWARN = 3600 * 24 # 1 hour in seconds, converted to days
-    TDESC = "[Merritt ZooKeeper Data Design](https://github.com/CDLUC3/mrt-zk/blob/main/design/data.md)"
+    TDESC = '[Merritt ZooKeeper Data Design](https://github.com/CDLUC3/mrt-zk/blob/main/design/data.md)'
 
     def self.client
       UC3::UC3Client.clients.fetch(self.class.to_s, ZKClient.new)

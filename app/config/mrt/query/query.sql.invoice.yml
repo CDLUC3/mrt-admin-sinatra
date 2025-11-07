@@ -119,7 +119,7 @@ queries:
       from
         owner_collections c
       where
-        ogroup like ?
+        ogroup = ?
       union
       select
         'ZZ Campus 10TB Discount' as own_name,
