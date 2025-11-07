@@ -326,6 +326,8 @@ module UC3Query
     end
 
     def self.collections_resolver(row)
+      return row unless UC3Queue::ZKClient.client.enabled
+      
       locked_coll = UC3Queue::ZKClient.client.locked_collections
       row['locked'] = locked_coll.fetch("#{row['mnemonic']}_content", false)
       row['actions'] = []
