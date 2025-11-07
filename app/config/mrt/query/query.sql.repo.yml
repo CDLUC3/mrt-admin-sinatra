@@ -220,6 +220,8 @@ queries:
     parameters:
     - name: inv_object_id
       type: integer
+    unit_tests:
+    - ?inv_object_id=1
   /queries/repository/object-ark:
     limit:
       enabled: true
@@ -235,6 +237,8 @@ queries:
     parameters:
     - name: ark
       type: string
+    unit_tests:
+    - ?ark=ark%3A%2F13030%2Fc83r0qvx
   /queries/recent/objects:
     description: |
       Retrieves results from recently modified objects.
@@ -268,6 +272,8 @@ queries:
     parameters:
     - name: localid
       type: string
+    unit_tests:
+    - ?localid=foo
   /queries/repository/objects-erc-who:
     sql: |
       {{{OBJQ}}}
@@ -280,6 +286,8 @@ queries:
     parameters:
     - name: term
       type: string
+    unit_tests:
+    - ?term=Alice
   /queries/repository/objects-erc-what:
     sql: |
       {{{OBJQ}}}
@@ -292,6 +300,8 @@ queries:
     parameters:
     - name: term
       type: string
+    unit_tests:
+    - ?term=China
   /queries/repository/objects-erc-when:
     sql: |
       {{{OBJQ}}}
@@ -304,6 +314,8 @@ queries:
     parameters:
     - name: term
       type: string
+    unit_tests:
+    - ?term=2020
   /queries/repository/objects-by-filename:
     sql: |
       {{{OBJQ}}}
@@ -320,6 +332,8 @@ queries:
     parameters:
     - name: term
       type: string
+    unit_tests:
+    - ?term=README.md
   /queries/repository/objects-by-container:
     sql: |
       {{{OBJQ}}}
@@ -336,6 +350,8 @@ queries:
     parameters:
     - name: term
       type: string
+    unit_tests:
+    - ?term=sampleBatchOfContainers.checkm
   /queries/repository/collections/objects:
     totals: true
     sql: |
@@ -384,6 +400,8 @@ queries:
     parameters:
     - name: campus
       type: string
+    unit_tests:
+    - /CDL
   /queries/repository/mimes/group:
     description: |
       A high-level _Mime Group_ is assigned to each Mime Type based on the work of the UC Digital Preservation Strategy working group.
@@ -397,6 +415,8 @@ queries:
     parameters:
     - name: group
       type: string
+    unit_tests:
+    - /software
   /queries/use-cases/largest-objects:
     description: |
       Objects with the largest billable size.

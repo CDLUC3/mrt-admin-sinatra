@@ -294,39 +294,32 @@ module UC3
 
   # Identify routes for Consistency Checks and for Unit Testing
   class TestClient < UC3Client
+    OBJLIST_QUERIES = %w[
+      /queries/consistency/.*/
+      /ops/collections/db/
+      /ops/db-queue/audit/counts-by-state
+      /ops/db-queue/audit/oldest-audit-check
+      /ops/db-queue/audit/30-days
+      /ops/db-queue/audit/active-batches
+      /ops/db-queue/audit/new-ucb-content
+      /ops/db-queue-update/audit/reset-new-ucb-content
+      /ops/db-queue/replication/failed
+      /ops/db-queue/replication/in-progress
+      /ops/db-queue/replication/required
+      /ops/storage/db/nodes
+    ].freeze
+
     def initialize
       super(enabled: true)
 
-      @test_paths = %w[
-        /queries/repository/mimes/campus/CDL
-        /queries/repository/mimes/group/software
-        /queries/repository/object?inv_object_id=1
-        /queries/repository/objects-localid?localid=foo
-        /queries/repository/object-ark?ark=ark%3A%2F13030%2Fc83r0qvx
-        /repository/objects-erc-what?term=China
-      ]
+      @test_paths = []
       @consistency_checks = []
-
-      objlist_queries = %w[
-        /queries/consistency/.*/
-        /ops/collections/db/
-        /ops/db-queue/audit/counts-by-state
-        /ops/db-queue/audit/oldest-audit-check
-        /ops/db-queue/audit/30-days
-        /ops/db-queue/audit/active-batches
-        /ops/db-queue/audit/new-ucb-content
-        /ops/db-queue-update/audit/reset-new-ucb-content
-        /ops/db-queue/replication/failed
-        /ops/db-queue/replication/in-progress
-        /ops/db-queue/replication/required
-        /ops/storage/db/nodes
-      ]
 
       UC3Query::QueryClient.client.queries.each do |name, query|
         next if query.fetch(:update, false) || query.fetch(:non_report, false) || query.fetch(:test_skip, false)
 
         name = name.to_s
-        objlist_queries.each do |pattern|
+        OBJLIST_QUERIES.each do |pattern|
           next if name =~ %r{/objlist}
 
           @consistency_checks << name if name =~ /#{pattern}/
@@ -334,22 +327,35 @@ module UC3
         next if name =~ %r{/objlist}
 
         @test_paths << name unless @consistency_checks.include?(name)
+        query.fetch(:unit_tests, []).each do |params|
+          @test_paths << "#{name}#{params}"
+        end
       end
 
+      # These GET operations require specific url parameters that are not readily available for a unit test
+      # Also, these tests are not activated for every stack.
       skiplist = %w[
         /ops/storage/manifest
         /ops/storage/manifest-yaml
         /ops/storage/ingest-checkm
       ]
-      
-      skiplist += %w[
-        /ops/zk/ingest/jobs-by-collection/filtered
-        /ops/zk/ingest/jobs-by-collection-and-batch/filtered
-      ] if AdminUI::TopMenu.instance.skip_paths.include?('/ops/zk/ingest/jobs-by-collection')
-      
-      skiplist += %w[
-        /ops/zk/nodes/node-names
-      ] if AdminUI::TopMenu.instance.skip_paths.include?('/ops/zk/nodes')
+
+      # These GET operations require specific url parameters that are not readily available for a unit test
+      # Also, these tests are not activated for every stack.
+      if AdminUI::TopMenu.instance.skip_paths.include?('/ops/zk/ingest/jobs-by-collection')
+        skiplist += %w[
+          /ops/zk/ingest/jobs-by-collection/filtered
+          /ops/zk/ingest/jobs-by-collection-and-batch/filtered
+        ]
+      end
+
+      # These GET operations require specific url parameters that are not readily available for a unit test
+      # Also, these tests are not activated for every stack.
+      if AdminUI::TopMenu.instance.skip_paths.include?('/ops/zk/nodes')
+        skiplist += %w[
+          /ops/zk/nodes/node-names
+        ]
+      end
 
       Sinatra::Application.routes['GET'].each do |path, route|
         # .each_keys does not work, so make use of route object
