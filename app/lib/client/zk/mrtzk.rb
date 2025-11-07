@@ -12,6 +12,7 @@ module UC3Queue
   # VPC peering does not allow this, so this connection will not work until ZK is running in the UC3
   class ZKClient < UC3::UC3Client
     AGE_BATCHWARN = 3600 * 24 # 1 hour in seconds, converted to days
+    TDESC = "[Merritt ZooKeeper Data Design](https://github.com/CDLUC3/mrt-zk/blob/main/design/data.md)"
 
     def self.client
       UC3::UC3Client.clients.fetch(self.class.to_s, ZKClient.new)
@@ -397,7 +398,8 @@ module UC3Queue
           AdminUI::Column.new(:node, header: 'Node'),
           AdminUI::Column.new(:ref, header: 'Reference')
         ],
-        status: status
+        status: status,
+        description: TDESC
       )
       nodedump.each do |node|
         next unless node.is_a?(String)
@@ -424,7 +426,8 @@ module UC3Queue
       cols << AdminUI::Column.new(:action, header: 'Action') if mod
       table = AdminUI::FilterTable.new(
         columns: cols,
-        status: status
+        status: status,
+        description: TDESC
       )
       nodedump.each do |row|
         row.each do |node, value|
