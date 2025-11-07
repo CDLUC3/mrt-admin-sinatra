@@ -301,19 +301,19 @@ module UC3
       @consistency_checks = []
 
       objlist_queries = %w[
-          /queries/consistency/.*/
-          /ops/collections/db/
-          /ops/db-queue/audit/counts-by-state
-          /ops/db-queue/audit/oldest-audit-check
-          /ops/db-queue/audit/30-days
-          /ops/db-queue/audit/active-batches
-          /ops/db-queue/audit/new-ucb-content
-          /ops/db-queue-update/audit/reset-new-ucb-content
-          /ops/db-queue/replication/failed
-          /ops/db-queue/replication/in-progress
-          /ops/db-queue/replication/required
-          /ops/storage/db/nodes
-        ]
+        /queries/consistency/.*/
+        /ops/collections/db/
+        /ops/db-queue/audit/counts-by-state
+        /ops/db-queue/audit/oldest-audit-check
+        /ops/db-queue/audit/30-days
+        /ops/db-queue/audit/active-batches
+        /ops/db-queue/audit/new-ucb-content
+        /ops/db-queue-update/audit/reset-new-ucb-content
+        /ops/db-queue/replication/failed
+        /ops/db-queue/replication/in-progress
+        /ops/db-queue/replication/required
+        /ops/storage/db/nodes
+      ]
 
       UC3Query::QueryClient.client.queries.each do |name, query|
         next if query.fetch(:update, false) || query.fetch(:non_report, false)

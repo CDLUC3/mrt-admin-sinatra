@@ -518,11 +518,7 @@ queries:
         where
           pathname <> CONVERT(pathname USING ASCII) and source = 'producer'
         and
-          c.mnemonic in (
-            'mrt-demo', 'escholarship', 'ucb_lib_cal_cultures', 
-            'ucb_lib_dcpp', 'ucb_lib_metcalf', 'ucb_lib_jar',
-            'ucb_lib_prechmat', 'ucb_lib_stone_rubbings'
-          )
+          c.mnemonic = 'mrt-demo'
   /queries/use-cases/long-pathname-selected-collections:
     limit:
       enabled: true
