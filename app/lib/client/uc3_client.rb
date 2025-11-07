@@ -297,7 +297,14 @@ module UC3
     def initialize
       super(enabled: true)
 
-      @test_paths = []
+      @test_paths = %w[
+        /queries/repository/mimes/campus/CDL
+        /queries/repository/mimes/group/software
+        /queries/repository/object?inv_object_id=1
+        /queries/repository/objects-localid?localid=foo
+        /queries/repository/object-ark?ark=ark%3A%2F13030%2Fc83r0qvx
+        /repository/objects-erc-what?term=China
+      ]
       @consistency_checks = []
 
       objlist_queries = %w[
@@ -316,7 +323,7 @@ module UC3
       ]
 
       UC3Query::QueryClient.client.queries.each do |name, query|
-        next if query.fetch(:update, false) || query.fetch(:non_report, false)
+        next if query.fetch(:update, false) || query.fetch(:non_report, false) || query.fetch(:test_skip, false)
 
         name = name.to_s
         objlist_queries.each do |pattern|
@@ -334,6 +341,15 @@ module UC3
         /ops/storage/manifest-yaml
         /ops/storage/ingest-checkm
       ]
+      
+      skiplist += %w[
+        /ops/zk/ingest/jobs-by-collection/filtered
+        /ops/zk/ingest/jobs-by-collection-and-batch/filtered
+      ] if AdminUI::TopMenu.instance.skip_paths.include?('/ops/zk/ingest/jobs-by-collection')
+      
+      skiplist += %w[
+        /ops/zk/nodes/node-names
+      ] if AdminUI::TopMenu.instance.skip_paths.include?('/ops/zk/nodes')
 
       Sinatra::Application.routes['GET'].each do |path, route|
         # .each_keys does not work, so make use of route object

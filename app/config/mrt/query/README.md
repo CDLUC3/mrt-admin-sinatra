@@ -71,6 +71,7 @@ queries:
   /queries/consistency/replication/objects-2:
     # update: true.  If true, this indicates that the query performs an update.
     # non_report: true.  If true, this indicates that this query is not displayed as a report.
+    # test_skip: true.  If true, do not include query in the unit test run.
     # status: Optional. If provided, this sets a default status for the report. 
     status: PASS
     # description: Optional.  Markdown to display as a report description.

@@ -163,6 +163,7 @@ queries:
       type: integer
   /ops/storage-nodes/remove-obsolete:
     update: false
+    test_skip: true
     sql: |
       SELECT
         o.ark

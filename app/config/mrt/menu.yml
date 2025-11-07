@@ -734,6 +734,7 @@ items:
     items:
     - title: Storage Config
       route: /ops/storage/storage-config
+      disable: ecs-dbsnapshot
     - path: db
       title: DB config
       route: /ops/storage/db
