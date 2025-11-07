@@ -327,8 +327,12 @@ module UC3Queue
     def assembly_requests(route)
       jobs = []
       if enabled
-        ZK.open(@zkconn, timeout: 2) do |zk|
-          jobs = MerrittZK::Access.list_jobs_as_json(zk)
+        begin
+          ZK.open(@zkconn, timeout: 2) do |zk|
+            jobs = MerrittZK::Access.list_jobs_as_json(zk)
+          end
+        rescue StandardError
+          # handle case where no jobs exception is thrown 
         end
         status = 'PASS'
       else
