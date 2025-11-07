@@ -326,32 +326,32 @@ module UC3Query
     end
 
     def self.collections_resolver(row)
-      if UC3Queue::ZKClient.client.enabled
-        begin
-          locked_coll = UC3Queue::ZKClient.client.locked_collections
-          row['locked'] = locked_coll.fetch("#{row['mnemonic']}_content", false)
-          row['actions'] = []
+      begin
+        return row unless UC3Queue::ZKClient.client.enabled
 
-          unless row['locked']
-            row['actions'] << {
-              value: 'Lock Collection',
-              href: "/ops/zk/collection/lock?mnemonic=#{row['mnemonic']}_content",
-              post: true,
-              cssclass: 'button'
-            }
-          end
+        locked_coll = UC3Queue::ZKClient.client.locked_collections
+        row['locked'] = locked_coll.fetch("#{row['mnemonic']}_content", false)
+        row['actions'] = []
 
-          if row['locked']
-            row['actions'] << {
-              value: 'Unlock Collection',
-              href: "/ops/zk/collection/unlock?mnemonic=#{row['mnemonic']}_content",
-              post: true,
-              cssclass: 'button'
-            }
-          end
-        rescue StandardError
-          # handle zk errors silently
+        unless row['locked']
+          row['actions'] << {
+            value: 'Lock Collection',
+            href: "/ops/zk/collection/lock?mnemonic=#{row['mnemonic']}_content",
+            post: true,
+            cssclass: 'button'
+          }
         end
+
+        if row['locked']
+          row['actions'] << {
+            value: 'Unlock Collection',
+            href: "/ops/zk/collection/unlock?mnemonic=#{row['mnemonic']}_content",
+            post: true,
+            cssclass: 'button'
+          }
+        end
+      rescue StandardError
+        # handle zk errors silently
       end
       row
     end
