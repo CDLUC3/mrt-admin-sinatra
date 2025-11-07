@@ -332,7 +332,7 @@ module UC3Queue
             jobs = MerrittZK::Access.list_jobs_as_json(zk)
           end
         rescue StandardError
-          # handle case where no jobs exception is thrown 
+          # handle case where no jobs exception is thrown
         end
         status = 'PASS'
       else
