@@ -142,4 +142,6 @@ queries:
       type: integer
     - name: campus
       type: string
+    unit_tests:
+    - /2025/CDL
   

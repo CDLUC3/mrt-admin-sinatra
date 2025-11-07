@@ -481,7 +481,6 @@ queries:
       DATES: |
         {{{7DAYS}}}
   /ops/db-queue/replication/activity/30days:
-    test_skip: true
     description: *repl_activity
     sql: |
       {{{REPLACT}}}
@@ -489,7 +488,6 @@ queries:
       DATES: |
         {{{30DAYS}}}
   /ops/db-queue/replication/activity/30-60-days-ago:
-    test_skip: true
     description: *repl_activity
     sql: |
       {{{REPLACT}}}
@@ -549,6 +547,7 @@ queries:
       DATES: |
         {{{7DAYS}}}
   /ops/db-queue/audit/activity/30days:
+    test_skip: true
     description: *auditactivity
     sql: |
       {{{AUDITACT}}}
@@ -556,6 +555,7 @@ queries:
       DATES: |
         {{{30DAYS}}}
   /ops/db-queue/audit/activity/30-60-days-ago:
+    test_skip: true
     description: *auditactivity
     sql: |
       {{{AUDITACT}}}

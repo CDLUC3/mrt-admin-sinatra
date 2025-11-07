@@ -315,7 +315,7 @@ queries:
     - name: term
       type: string
     unit_tests:
-    - ?term=2020
+    - ?term=2020-01-01
   /queries/repository/objects-by-filename:
     sql: |
       {{{OBJQ}}}
