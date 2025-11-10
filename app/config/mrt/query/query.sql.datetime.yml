@@ -628,6 +628,18 @@ queries:
       {{{AUDITSTATS}}}
     template-params:
       DAYS: 90
+  /ops/db-queue/audit/180-days:
+    description: *auditstats
+    sql: |
+      {{{AUDITSTATS}}}
+    template-params:
+      DAYS: 180
+  /ops/db-queue/audit/365-days:
+    description: *auditstats
+    sql: |
+      {{{AUDITSTATS}}}
+    template-params:
+      DAYS: 365
   /queries/repository/last-month/producer-files:
     description: 
       This report shows the producer file count added each Merritt collection

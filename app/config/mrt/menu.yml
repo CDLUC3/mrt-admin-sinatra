@@ -658,6 +658,10 @@ items:
         route: /ops/db-queue/audit/30-days
       - title: Stats, Last 90 days
         route: /ops/db-queue/audit/90-days
+      - title: Stats, Last 180 days
+        route: /ops/db-queue/audit/180-days
+      - title: Stats, Last 365 days
+        route: /ops/db-queue/audit/365-days
       - title: Recent Activity
         route: /ops/db-queue/audit/activity
         breadcrumb: true
