@@ -654,14 +654,18 @@ items:
         route: /ops/db-queue/audit/new-ucb-content
       - title: Audit - Reset New UCB Content
         route: /ops/db-queue-update/audit/reset-new-ucb-content
-      - title: Stats, Last 30 days
-        route: /ops/db-queue/audit/30-days
-      - title: Stats, Last 90 days
-        route: /ops/db-queue/audit/90-days
-      - title: Stats, Last 180 days
-        route: /ops/db-queue/audit/180-days
-      - title: Stats, Last 365 days
-        route: /ops/db-queue/audit/365-days
+      - path: audit-stats
+        route: /ops/db-queue/audit/stats
+        title: Audit Stats
+        items:    
+        - title: Stats, Last 30 days
+          route: /ops/db-queue/audit/30-days
+        - title: Stats, Last 90 days
+          route: /ops/db-queue/audit/90-days
+        - title: Stats, Last 180 days
+          route: /ops/db-queue/audit/180-days
+        - title: Stats, Last 365 days
+          route: /ops/db-queue/audit/365-days
       - title: Recent Activity
         route: /ops/db-queue/audit/activity
         breadcrumb: true
@@ -741,15 +745,11 @@ items:
     - title: Storage Config
       route: /ops/storage/storage-config
       disable: ecs-dbsnapshot
-    - path: db
-      title: DB config
-      route: /ops/storage/db
-      breadcrumb: true
-      items:
-      - title: Storage Nodes
-        route: /ops/storage/db/nodes
+    - title: Storage Nodes
+      route: /ops/storage/db/nodes
   - title: Storage Scans
     route: /ops/storage/scans
+    disable: ecs-dbsnapshot
   - title: Cloudwatch Logs
     route: /ops/cloudwatch
     disable: default, docker

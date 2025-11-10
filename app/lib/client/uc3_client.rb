@@ -294,7 +294,7 @@ module UC3
 
   # Identify routes for Consistency Checks and for Unit Testing
   class TestClient < UC3Client
-    OBJLIST_QUERIES = %w[
+    CONSIS_QUERIES = %w[
       /queries/consistency/.*/
       /ops/collections/db/
       /ops/db-queue/audit/counts-by-state
@@ -319,7 +319,7 @@ module UC3
         next if query.fetch(:update, false) || query.fetch(:non_report, false) || query.fetch(:test_skip, false)
 
         name = name.to_s
-        OBJLIST_QUERIES.each do |pattern|
+        CONSIS_QUERIES.each do |pattern|
           next if name =~ %r{/objlist}
 
           @consistency_checks << name if name =~ /#{pattern}/
