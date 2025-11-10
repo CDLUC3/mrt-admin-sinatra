@@ -656,6 +656,8 @@ items:
         route: /ops/db-queue-update/audit/reset-new-ucb-content
       - title: Stats, Last 30 days
         route: /ops/db-queue/audit/30-days
+      - title: Stats, Last 90 days
+        route: /ops/db-queue/audit/90-days
       - title: Recent Activity
         route: /ops/db-queue/audit/activity
         breadcrumb: true

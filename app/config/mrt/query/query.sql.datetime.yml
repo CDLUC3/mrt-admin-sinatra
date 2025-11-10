@@ -363,6 +363,36 @@ fragments:
     select '' start, 0 size_gb where false
     order by 
       start
+  AUDITSTATS: |
+    select
+      audit_date,
+      all_files,
+      online_files,
+      online_bytes / 1000000000.0 as online_bytes_gb,
+      s3_files,
+      s3_bytes / 1000000000.0 as s3_bytes_gb,
+      glacier_files,
+      sdsc_files,
+      sdsc_bytes / 1000000000.0 as sdsc_bytes_gb,
+      wasabi_files,
+      wasabi_bytes / 1000000000.0 as wasabi_bytes_gb,
+      case
+        when (all_files > 2300000 and online_bytes > 12000000000000)
+          then 'PASS'
+        when (all_files > 1550000 and online_bytes >  8000000000000)
+          then 'INFO'
+        when (all_files < 1550000 and online_bytes <  8000000000000)
+          then 'FAIL'
+        when (audit_date < date_add(now(), INTERVAL -6 DAY))
+          then 'INFO'
+        else 'WARN'
+      end as status
+    from
+      audits_processed
+    where
+      audit_date > date_add(now(), INTERVAL -{{DAYS}} DAY)
+    order by
+      audit_date desc  
 queries:
   /queries/recent/ingests:
     description: |
@@ -563,7 +593,7 @@ queries:
       DATES: |
         {{{30TO60DAYS}}}
   /ops/db-queue/audit/30-days:
-    description: |
+    description: &auditstats | 
       Report on the number of files/bytes audited each day for the past 30-90 days.
       This report uses aggregate data from the billing database which is computed on a daily basis.
       This report will attempt to identify any significant degredation in performance from the audit service over the prior 6 day period.
@@ -589,35 +619,15 @@ queries:
     status: PASS
     status_check: true
     sql: |
-      select
-        audit_date,
-        all_files,
-        online_files,
-        online_bytes / 1000000000.0 as online_bytes_gb,
-        s3_files,
-        s3_bytes / 1000000000.0 as s3_bytes_gb,
-        glacier_files,
-        sdsc_files,
-        sdsc_bytes / 1000000000.0 as sdsc_bytes_gb,
-        wasabi_files,
-        wasabi_bytes / 1000000000.0 as wasabi_bytes_gb,
-        case
-          when (all_files > 2300000 and online_bytes > 12000000000000)
-            then 'PASS'
-          when (all_files > 1550000 and online_bytes >  8000000000000)
-            then 'INFO'
-          when (all_files < 1550000 and online_bytes <  8000000000000)
-            then 'FAIL'
-          when (audit_date < date_add(now(), INTERVAL -6 DAY))
-            then 'INFO'
-          else 'WARN'
-        end as status
-      from
-        audits_processed
-      where
-        audit_date > date_add(now(), INTERVAL -30 DAY)
-      order by
-        audit_date desc
+      {{{AUDITSTATS}}}
+    template-params:
+      DAYS: 30
+  /ops/db-queue/audit/90-days:
+    description: *auditstats
+    sql: |
+      {{{AUDITSTATS}}}
+    template-params:
+      DAYS: 90
   /queries/repository/last-month/producer-files:
     description: 
       This report shows the producer file count added each Merritt collection
