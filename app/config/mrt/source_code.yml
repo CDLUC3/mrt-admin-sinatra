@@ -37,3 +37,27 @@ repos:
     - mrt-replicationwar
     image_repos:
     - mrt-replic
+  core:
+    repo: CDLUC3/mrt-core2
+    artifacts:
+    - mrt-core
+  core-bom:
+    repo: CDLUC3/mrt-core2
+    artifacts:
+    - mrt-reflectoring-bom
+  core-parprop:
+    repo: CDLUC3/mrt-core2
+    artifacts:
+    - mrt-parent-properties
+  cloud:
+    repo: CDLUC3/mrt-cloud
+    artifacts:
+    - mrt-openstackpub
+    - mrt-cloudconf
+    - mrt-s3srcpub
+  zk:
+    repo: CDLUC3/mrt-zk
+    namespace: org.cdlib.mrt.zk
+    artifacts:
+    - MerrittZK
+

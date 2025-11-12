@@ -36,7 +36,7 @@ module UC3Code
             repository: ARTREPOSITORY,
             package: artifact,
             format: ARTFORMAT,
-            namespace: ARTNAMESPACE
+            namespace: repohash.fetch(:namespace, ARTNAMESPACE)
           )
         rescue StandardError
           # puts "Client ERR: #{e}: #{@client}"
@@ -61,7 +61,7 @@ module UC3Code
             repository: ARTREPOSITORY,
             package: artifact,
             format: ARTFORMAT,
-            namespace: ARTNAMESPACE
+            namespace: repohash.fetch(:namespace, ARTNAMESPACE)
           )
         rescue StandardError
           # puts "Client ERR: #{e}: #{@client}"
@@ -76,7 +76,7 @@ module UC3Code
             domain: ARTDOMAIN,
             repository: ARTREPOSITORY,
             format: ARTFORMAT,
-            namespace: ARTNAMESPACE,
+            namespace: repohash.fetch(:namespace, ARTNAMESPACE),
             assets: [],
             pom: nil,
             command: ''
@@ -85,7 +85,7 @@ module UC3Code
             domain: ARTDOMAIN,
             repository: ARTREPOSITORY,
             format: ARTFORMAT,
-            namespace: ARTNAMESPACE,
+            namespace: repohash.fetch(:namespace, ARTNAMESPACE),
             package: artifact,
             package_version: v.version
           ).package_version.published_time
@@ -93,7 +93,7 @@ module UC3Code
             domain: ARTDOMAIN,
             repository: ARTREPOSITORY,
             format: ARTFORMAT,
-            namespace: ARTNAMESPACE,
+            namespace: repohash.fetch(:namespace, ARTNAMESPACE),
             package: artifact,
             package_version: v.version
           }).assets.each do |asset|
@@ -102,7 +102,7 @@ module UC3Code
                 value: asset.name,
                 href: "/source/artifact/#{artifact}/#{v.version}/#{asset.name}"
               }
-            elsif asset.name.downcase.end_with?('.war')
+            elsif asset.name.downcase.end_with?('.war') || asset.name.downcase.end_with?('.jar')
               rec[:assets] << {
                 value: asset.name,
                 href: "/source/artifact_manifest/#{artifact}/#{v.version}/#{asset.name}"
@@ -135,11 +135,12 @@ module UC3Code
     end
 
     def artifact(artifact, version, asset)
+      namespace = artifact == 'MerrittZK' ? 'org.cdlib.mrt.zk' : ARTNAMESPACE
       res = @client.get_package_version_asset(
         domain: ARTDOMAIN,
         repository: ARTREPOSITORY,
         format: ARTFORMAT,
-        namespace: ARTNAMESPACE,
+        namespace: namespace,
         package: artifact,
         package_version: version,
         asset: asset
@@ -212,11 +213,12 @@ module UC3Code
     end
 
     def delete_artifact(tag, artifact)
+      namespace = artifact == 'MerrittZK' ? 'org.cdlib.mrt.zk' : ARTNAMESPACE
       @client.delete_package_versions(
         domain: ARTDOMAIN,
         repository: ARTREPOSITORY,
         format: ARTFORMAT,
-        namespace: ARTNAMESPACE,
+        namespace: namespace,
         package: artifact,
         versions: [tag]
       )

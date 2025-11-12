@@ -107,6 +107,16 @@ items:
       route: /source/artifacts/audit
     - title: Replic
       route: /source/artifacts/replic
+    - title: Core
+      route: /source/artifacts/core
+    - title: Core BOM
+      route: /source/artifacts/core-bom
+    - title: Core Parent Props
+      route: /source/artifacts/core-parprop
+    - title: Cloud
+      route: /source/artifacts/cloud
+    - title: ZK
+      route: /source/artifacts/zk
 - path: reports
   title: Reports
   classes: needs-db

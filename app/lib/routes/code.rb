@@ -53,13 +53,16 @@ module Sinatra
       end
 
       app.get '/source/artifact_command/*/*/*' do |artifact, version, asset|
+        ext = asset =~ /jar$/ ? 'jar' : 'war'
+        namespace = artifact == 'MerrittZK' ? 'org.cdlib.mrt.zk' : ARTNAMESPACE
+
         data = <<~EOF_CMD
           aws codeartifact get-package-version-asset \\
             --domain=cdlib-uc3-mrt --repository=uc3-mrt-java \\
             --package=#{artifact} --package-version=#{version} \\
-            --format=maven --namespace=org.cdlib.mrt \\
+            --format=maven --namespace=#{namespace} \\
             --asset=#{asset} \\
-            #{artifact}.war
+            #{artifact}.#{ext}
         EOF_CMD
         erb :pre,
           :layout => :page_layout,
