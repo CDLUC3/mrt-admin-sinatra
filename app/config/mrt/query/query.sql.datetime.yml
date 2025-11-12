@@ -235,9 +235,17 @@ fragments:
     select
       '{{title}}' as title,
       status,
-      count(*)
+      count(*) as count_files,
+      ifnull(sum(full_size), 0) / 1000000000.0 as bytes_gb
     from
-      inv.inv_audits
+      inv.inv_audits a
+    right join inv.inv_files f
+      on 
+        f.id = a.inv_file_id
+      and
+        f.inv_object_id = a.inv_object_id
+      and
+        f.inv_version_id = a.inv_version_id
     where
       verified > '{{start}}'
     and
