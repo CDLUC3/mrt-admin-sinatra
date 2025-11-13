@@ -229,11 +229,19 @@ fragments:
       replicated >= drange.start
     and
       replicated < drange.end
+    union all
     {{/DATES}}
+    select
+      '' title,
+      0 objs,
+      0.0 bytes_gb,
+      0 days,
+      0 bytes_gb_per_day
+    where false
   AUDITACT: |
     {{#DATES}}
     select
-      '{{title}}' as title,
+      '{{start}}' as title,
       status,
       count(*) as count_files,
       ifnull(sum(full_size), 0) / 1000000000.0 as bytes_gb
@@ -250,37 +258,92 @@ fragments:
       verified > '{{start}}'
     and
       verified < '{{end}}'
+     union all
     {{/DATES}}
-  LASTMIN: |
     select
-      'Last Minute' as title,
-      date_add(now(), interval -1 minute) as start,
-      now() as end
-  LAST5MIN: |
-    select
-      'Last 5 Minutes' as title,
-      date_add(now(), interval -5 minute) as start,
-      now() as end
-  LASTHOUR: |
-    select
-      'Last Hour' as title,
-      date_add(now(), interval -1 hour) as start,
-      now() as end
-  SINCEMIDNIGHT: |
-    select
-      'Since midnight' as title,
-      date(now()) start,
-      now() as end
-  YESTERDAY: |
-    select
-      'Yesterday' as title,
-      date_add(date(now()), INTERVAL -1 DAY) as start,
-      date(now()) as end
-  2DAYS: |
-    select
-      '2 Days Ago' as title,
-      date_add(date(now()), INTERVAL -2 DAY) as start,
-      date_add(date(now()), INTERVAL -1 DAY) as end
+      '' title,
+      '' status,
+      0 count_files,
+      0.0 bytes_gb
+    where false
+  ITERLAST10MIN: |
+    with recursive rnums as (
+      select 0 as n
+      union all
+      select n+1 as n from rnums where n < 10
+    )
+    select 
+      str_to_date(
+        date_format(
+          date_add(now(), interval -rnums.n MINUTE),
+          '%Y-%m-%d %H:%i'
+        ),
+        '%Y-%m-%d %H:%i:%s'
+      ) as start,
+      date_add(
+        str_to_date(
+          date_format(
+            date_add(now(), interval -rnums.n MINUTE),
+            '%Y-%m-%d %H:%i'
+          ),
+          '%Y-%m-%d %H:%i:%s'
+        ), 
+        interval 1 MINUTE
+      ) as end
+    from
+      rnums
+  ITERLAST6HOUR: |
+    with recursive rnums as (
+      select 0 as n
+      union all
+      select n+1 as n from rnums where n < 6
+    )
+    select 
+      str_to_date(
+        date_format(
+          date_add(now(), interval -rnums.n HOUR),
+          '%Y-%m-%d %H:%i'
+        ),
+        '%Y-%m-%d %H:%i:%s'
+      ) as start,
+      date_add(
+        str_to_date(
+          date_format(
+            date_add(now(), interval -rnums.n HOUR),
+            '%Y-%m-%d %H:%i'
+          ),
+          '%Y-%m-%d %H:%i:%s'
+        ), 
+        interval 1 HOUR
+      ) as end
+    from
+      rnums
+  ITERLAST24HOUR: |
+    with recursive rnums as (
+      select 0 as n
+      union all
+      select n+1 as n from rnums where n < 24
+    )
+    select 
+      str_to_date(
+        date_format(
+          date_add(now(), interval -rnums.n HOUR),
+          '%Y-%m-%d %H:%i'
+        ),
+        '%Y-%m-%d %H:%i:%s'
+      ) as start,
+      date_add(
+        str_to_date(
+          date_format(
+            date_add(now(), interval -rnums.n HOUR),
+            '%Y-%m-%d %H:%i'
+          ),
+          '%Y-%m-%d %H:%i:%s'
+        ), 
+        interval 1 HOUR
+      ) as end
+    from
+      rnums
   7DAYS: |
     select
       'Last 7 days' as title,
@@ -466,7 +529,7 @@ queries:
         start
       order by 
         start
-  /ops/db-queue/replication/activity/last-min:
+  /ops/db-queue/replication/activity/last-10-min:
     description: &repl_activity |
       Count the number of object replications performed over a period of time.
       The need for replication is driven by ingest actions or by the reconfiguration of storage nodes, 
@@ -475,7 +538,7 @@ queries:
       {{{REPLACT}}}
     template-sql:
       DATES: |
-        {{{LASTMIN}}}
+        {{{ITERLAST10MIN}}}
   /ops/db-queue/replication/activity/last-5min:
     description: *repl_activity
     sql: |
@@ -483,20 +546,20 @@ queries:
     template-sql:
       DATES: |
         {{{LAST5MIN}}}
-  /ops/db-queue/replication/activity/last-hour:
+  /ops/db-queue/replication/activity/last-6-hours:
     description: *repl_activity  
     sql: |
       {{{REPLACT}}}
     template-sql:
       DATES: |
-        {{{LASTHOUR}}}
-  /ops/db-queue/replication/activity/since-midnight:
-    description: *repl_activity
+        {{{ITERLAST6HOUR}}}
+  /ops/db-queue/replication/activity/last-24-hours:
+    description: *repl_activity  
     sql: |
       {{{REPLACT}}}
     template-sql:
       DATES: |
-        {{{SINCEMIDNIGHT}}}
+        {{{ITERLAST24HOUR}}}
   /ops/db-queue/replication/activity/yesterday:
     description: *repl_activity
     sql: |
@@ -532,7 +595,7 @@ queries:
     template-sql:
       DATES: |
         {{{30TO60DAYS}}}
-  /ops/db-queue/audit/activity/last-min:
+  /ops/db-queue/audit/activity/last-10-min:
     description: &auditactivity | 
       This report identifies the number of files that have been processed by the audit service in the last hour or minute.
 
@@ -541,42 +604,21 @@ queries:
       {{{AUDITACT}}}
     template-sql:
       DATES: |
-        {{{LASTMIN}}}
-  /ops/db-queue/audit/activity/last-5min:
+        {{{ITERLAST10MIN}}}
+  /ops/db-queue/audit/activity/last-6-hours:
     description: *auditactivity
     sql: |
       {{{AUDITACT}}}
     template-sql:
       DATES: |
-        {{{LAST5MIN}}}
-  /ops/db-queue/audit/activity/last-hour:
+        {{{ITERLAST6HOUR}}}
+  /ops/db-queue/audit/activity/last-24-hours:
     description: *auditactivity
     sql: |
       {{{AUDITACT}}}
     template-sql:
       DATES: |
-        {{{LASTHOUR}}}
-  /ops/db-queue/audit/activity/since-midnight:
-    description: *auditactivity
-    sql: |
-      {{{AUDITACT}}}
-    template-sql:
-      DATES: |
-        {{{SINCEMIDNIGHT}}}
-  /ops/db-queue/audit/activity/yesterday:
-    description: *auditactivity
-    sql: |
-      {{{AUDITACT}}}
-    template-sql:
-      DATES: |
-        {{{YESTERDAY}}}
-  /ops/db-queue/audit/activity/2days-ago:
-    description: *auditactivity
-    sql: |
-      {{{AUDITACT}}}
-    template-sql:
-      DATES: |
-        {{{2DAYS}}}
+        {{{ITERLAST24HOUR}}}
   /ops/db-queue/audit/activity/7days:
     description: *auditactivity
     sql: |

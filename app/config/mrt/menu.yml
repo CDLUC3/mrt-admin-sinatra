@@ -631,18 +631,12 @@ items:
         route: /ops/db-queue/replication/activity
         breadcrumb: true
         items:
-        - title: Last Minute
-          route: /ops/db-queue/replication/activity/last-min
-        - title: Last 5 Minutes
-          route: /ops/db-queue/replication/activity/last-5min
-        - title: Last Hour
-          route: /ops/db-queue/replication/activity/last-hour
-        - title: Since Midnight
-          route: /ops/db-queue/replication/activity/since-midnight
-        - title: Yesterday
-          route: /ops/db-queue/replication/activity/yesterday
-        - title: 2 Days Ago
-          route: /ops/db-queue/replication/activity/2days-ago
+        - title: Last 10 Minutes
+          route: /ops/db-queue/replication/activity/last-10-min
+        - title: Last 6 Hours
+          route: /ops/db-queue/replication/activity/last-6-hours
+        - title: Last 24 Hours
+          route: /ops/db-queue/replication/activity/last-24-hours
         - title: Last 7 Days
           route: /ops/db-queue/replication/activity/7days
         - title: Last 30 Days
@@ -680,24 +674,12 @@ items:
         route: /ops/db-queue/audit/activity
         breadcrumb: true
         items:
-        - title: Last Minute
-          route: /ops/db-queue/audit/activity/last-min
-        - title: Last 5 Minutes
-          route: /ops/db-queue/audit/activity/last-5min
-        - title: Last Hour
-          route: /ops/db-queue/audit/activity/last-hour
-        - title: Since Midnight
-          route: /ops/db-queue/audit/activity/since-midnight
-        - title: Yesterday
-          route: /ops/db-queue/audit/activity/yesterday
-        - title: 2 Days Ago
-          route: /ops/db-queue/audit/activity/2days-ago
-        - title: Last 7 Days
-          route: /ops/db-queue/audit/activity/7days
-        - title: Last 30 Days
-          route: /ops/db-queue/audit/activity/30days
-        - title: 30-60 Days Ago
-          route: /ops/db-queue/audit/activity/30-60-days-ago
+        - title: Last 10 Minutes
+          route: /ops/db-queue/audit/activity/last-10-min
+        - title: Last 6 Hours
+          route: /ops/db-queue/audit/activity/last-6-hours
+        - title: Last 24 Hours
+          route: /ops/db-queue/audit/activity/last-24-hours
   - path: collections
     title: Collections
     route: /ops/collections
