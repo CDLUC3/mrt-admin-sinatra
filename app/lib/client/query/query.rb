@@ -296,21 +296,29 @@ module UC3Query
 
     attr_accessor :queries
 
+    def retry_sql(sql)
+      retries = 0
+      while retries < 5
+        begin
+          stmt = @client.prepare(sql)
+          stmt.execute
+          return
+        rescue StandardError
+          retries += 1
+        end
+      end
+      raise "Retry failure for SQL: #{sql}; Retries = #{retries}"
+    end
+
     def update_billing
-      stmt = @client.prepare('call update_object_size()')
-      stmt.execute
-      stmt = @client.prepare('call update_node_counts()')
-      stmt.execute
-      stmt = @client.prepare('call update_billing_range()')
-      stmt.execute
-      stmt = @client.prepare('call clear_range(date(now()), date_add(date(now()), interval 1 day))')
-      stmt.execute
-      stmt = @client.prepare('call pull_range(date(now()), date_add(date(now()), interval 1 day))')
-      stmt.execute
-      stmt = @client.prepare('call update_audits_processed()')
-      stmt.execute
-      stmt = @client.prepare('call update_ingests_processed()')
-      stmt.execute
+      # These requests occasionally deadlock.  Generally they resolve with a retry.
+      retry_sql('call update_object_size()')
+      retry_sql('call update_node_counts()')
+      retry_sql('call update_billing_range()')
+      retry_sql('call clear_range(date(now()), date_add(date(now()), interval 1 day))')
+      retry_sql('call pull_range(date(now()), date_add(date(now()), interval 1 day))')
+      retry_sql('call update_audits_processed()')
+      retry_sql('call update_ingests_processed()')
     end
 
     def reset_new_ucb_content(path, urlparams)
