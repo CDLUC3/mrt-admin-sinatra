@@ -312,7 +312,7 @@ module UC3Query
 
     def update_billing
       # These requests occasionally deadlock.  Generally they resolve with a retry.
-      retry_sql('call update_object_sizex()')
+      retry_sql('call update_object_size()')
       retry_sql('call update_node_counts()')
       retry_sql('call update_billing_range()')
       retry_sql('call clear_range(date(now()), date_add(date(now()), interval 1 day))')
