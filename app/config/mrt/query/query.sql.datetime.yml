@@ -568,20 +568,6 @@ queries:
     template-sql:
       DATES: |
         {{{ITERLAST24HOUR}}}
-  /ops/db-queue/replication/activity/yesterday:
-    description: *repl_activity
-    sql: |
-      {{{REPLACT}}}
-    template-sql:
-      DATES: |
-        {{{YESTERDAY}}}
-  /ops/db-queue/replication/activity/2days-ago:
-    description: *repl_activity
-    sql: |
-      {{{REPLACT}}}
-    template-sql:
-      DATES: |
-        {{{2DAYS}}}
   /ops/db-queue/replication/activity/7days:
     description: *repl_activity
     sql: |
