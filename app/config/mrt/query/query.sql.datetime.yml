@@ -243,8 +243,17 @@ fragments:
     select
       '{{start}}' as title,
       status,
+      case
+        when n.number in (9501, 9502) then 'sdsc'
+        when n.number in (2001, 2002) then 'wasabi'
+        when n.number in (6001) then 'glacier'
+        else 's3'
+      end as provider,
       count(*) as count_files,
-      ifnull(sum(full_size), 0) / 1000000000.0 as bytes_gb
+      case
+        when n.number in (6001) then 0.0
+        else ifnull(sum(full_size), 0) / 1000000000.0
+      end as bytes_gb
     from
       inv.inv_audits a
     right join inv.inv_files f
@@ -254,6 +263,8 @@ fragments:
         f.inv_object_id = a.inv_object_id
       and
         f.inv_version_id = a.inv_version_id
+    inner join inv.inv_nodes n
+      on a.inv_node_id = n.id
     where
       verified > '{{start}}'
     and
@@ -263,6 +274,7 @@ fragments:
     select
       '' title,
       '' status,
+      '' provider,
       0 count_files,
       0.0 bytes_gb
     where false
@@ -298,11 +310,11 @@ fragments:
       union all
       select n+1 as n from rnums where n < 6
     )
-    select 
+    select
       str_to_date(
         date_format(
           date_add(now(), interval -rnums.n HOUR),
-          '%Y-%m-%d %H:%i'
+          '%Y-%m-%d %H:00:00'
         ),
         '%Y-%m-%d %H:%i:%s'
       ) as start,
@@ -310,7 +322,7 @@ fragments:
         str_to_date(
           date_format(
             date_add(now(), interval -rnums.n HOUR),
-            '%Y-%m-%d %H:%i'
+            '%Y-%m-%d %H:00:00'
           ),
           '%Y-%m-%d %H:%i:%s'
         ), 
@@ -328,7 +340,7 @@ fragments:
       str_to_date(
         date_format(
           date_add(now(), interval -rnums.n HOUR),
-          '%Y-%m-%d %H:%i'
+          '%Y-%m-%d %H:00:00'
         ),
         '%Y-%m-%d %H:%i:%s'
       ) as start,
@@ -336,7 +348,7 @@ fragments:
         str_to_date(
           date_format(
             date_add(now(), interval -rnums.n HOUR),
-            '%Y-%m-%d %H:%i'
+            '%Y-%m-%d %H:00:00'
           ),
           '%Y-%m-%d %H:%i:%s'
         ), 
@@ -530,6 +542,7 @@ queries:
       order by 
         start
   /ops/db-queue/replication/activity/last-10-min:
+    totals: true
     description: &repl_activity |
       Count the number of object replications performed over a period of time.
       The need for replication is driven by ingest actions or by the reconfiguration of storage nodes, 
@@ -539,14 +552,8 @@ queries:
     template-sql:
       DATES: |
         {{{ITERLAST10MIN}}}
-  /ops/db-queue/replication/activity/last-5min:
-    description: *repl_activity
-    sql: |
-      {{{REPLACT}}}
-    template-sql:
-      DATES: |
-        {{{LAST5MIN}}}
   /ops/db-queue/replication/activity/last-6-hours:
+    totals: true
     description: *repl_activity  
     sql: |
       {{{REPLACT}}}
@@ -554,6 +561,7 @@ queries:
       DATES: |
         {{{ITERLAST6HOUR}}}
   /ops/db-queue/replication/activity/last-24-hours:
+    totals: true
     description: *repl_activity  
     sql: |
       {{{REPLACT}}}
@@ -596,6 +604,7 @@ queries:
       DATES: |
         {{{30TO60DAYS}}}
   /ops/db-queue/audit/activity/last-10-min:
+    totals: true
     description: &auditactivity | 
       This report identifies the number of files that have been processed by the audit service in the last hour or minute.
 
@@ -606,6 +615,7 @@ queries:
       DATES: |
         {{{ITERLAST10MIN}}}
   /ops/db-queue/audit/activity/last-6-hours:
+    totals: true
     description: *auditactivity
     sql: |
       {{{AUDITACT}}}
@@ -613,6 +623,7 @@ queries:
       DATES: |
         {{{ITERLAST6HOUR}}}
   /ops/db-queue/audit/activity/last-24-hours:
+    totals: true
     description: *auditactivity
     sql: |
       {{{AUDITACT}}}

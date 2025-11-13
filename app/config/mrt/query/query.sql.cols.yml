@@ -88,6 +88,8 @@ columns:
       id: true
     profile: 
       filterable: true
+    provider:
+      filterable: true
   patterns:
     '^\d{4}-\d{2}-\d{2}$':
       cssclass: float
