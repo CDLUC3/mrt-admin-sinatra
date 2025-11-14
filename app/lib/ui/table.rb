@@ -27,13 +27,14 @@ module AdminUI
     end
 
     def initialize(columns: [], data: [], filters: [], totals: false, description: '', status: :SKIP,
-      status_message: '', pagination: { enabled: false })
+      status_message: '', details: '', pagination: { enabled: false })
       @columns = columns
       @rows = data
       @filters = filters
       @filterable = false
       @totals = totals
       @description = description
+      @details = details
       @pagination = pagination
       @columns.each do |col|
         @filterable = true if col.filterable
@@ -120,6 +121,7 @@ module AdminUI
       #{render_status}
       #{render_counts}
       #{render_description}
+      #{render_details}
       #{render_filters}
     </caption>
     <thead>
@@ -202,6 +204,12 @@ module AdminUI
         fenced_code_blocks: true,
         tables: true
       ).render(@description)}</div>)
+    end
+
+    def render_details
+      return '' if @details.empty?
+
+      %(<div class='table_details'>#{@details}</div>)
     end
 
     def to_csv

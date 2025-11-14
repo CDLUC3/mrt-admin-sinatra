@@ -222,7 +222,7 @@ form.search {
   padding: 0px;
 }
 
-table div.description {
+table div.description, table div.table_details {
   text-align: left;
   padding: 2px;
   border: thin solid gray;

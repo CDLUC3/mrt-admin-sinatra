@@ -114,9 +114,8 @@ module UC3Query
 
     def result_header(params, sql)
       <<~HTML
-        <hr/>
         <details>
-          <summary>Details</summary>
+          <summary>Query Details</summary>
           <h4>SQL</h4>
           <pre>#{@formatter.format(sql).gsub(' (', '(')}</pre>
           <h4>Params</h4>
@@ -252,12 +251,12 @@ module UC3Query
 
         description = Mustache.render(query.fetch(:description, ''), tparm)
         params = resolve_parameters(query.fetch(:parameters, []), urlparams)
-        description += result_header(params, sql)
         table = AdminUI::FilterTable.new(
           columns: cols,
           totals: query.fetch(:totals, false),
           status: query.fetch(:status, :SKIP),
           description: description,
+          details: result_header(params, sql),
           pagination: pagination
         )
 
@@ -282,11 +281,11 @@ module UC3Query
       rescue StandardError => e
         arr = [
           "#{e.class}: #{e}",
-          result_header(params, sql),
           "Connect timeout: #{@dbconf[:connect_timeout]}",
           "Read timeout: #{@dbconf[:read_timeout]}"
         ]
-        table = AdminUI::FilterTable.empty(arr.join('<hr/>'), status: :ERROR, status_message: e.to_s)
+        table = AdminUI::FilterTable.empty(arr.join('<hr/>'), status: :ERROR, status_message: e.to_s,
+          details: result_header(params, sql))
       end
       record_status(path, table.status) if query.fetch(:status_check, false)
       table
