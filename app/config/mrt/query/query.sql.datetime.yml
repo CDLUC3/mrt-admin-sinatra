@@ -252,17 +252,17 @@ fragments:
       count(*) as files,
       case
         when n.number in (6001) then 0.0
-        else ifnull(sum(full_size), 0) / 1000000000.0
+        else (
+          select 
+            ifnull(sum(full_size), 0) / 1000000000.0
+          from inv.inv_files f
+          where f.id = a.inv_file_id 
+          and f.inv_version_id=a.inv_version_id
+          and f.inv_object_id=a.inv_object_id
+        ) 
       end as bytes_gb
     from
       inv.inv_audits a
-    right join inv.inv_files f
-      on 
-        f.id = a.inv_file_id
-      and
-        f.inv_object_id = a.inv_object_id
-      and
-        f.inv_version_id = a.inv_version_id
     inner join inv.inv_nodes n
       on a.inv_node_id = n.id
     where
