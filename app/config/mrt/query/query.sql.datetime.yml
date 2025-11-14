@@ -250,17 +250,18 @@ fragments:
         else 's3'
       end as provider,
       count(*) as files,
-      case
-        when n.number in (6001) then 0.0
-        else (
-          select 
-            ifnull(sum(full_size), 0) / 1000000000.0
-          from inv.inv_files f
-          where f.id = a.inv_file_id 
-          and f.inv_version_id=a.inv_version_id
-          and f.inv_object_id=a.inv_object_id
-        ) 
-      end as bytes_gb
+      sum(
+        case
+          when n.number in (6001) then 0.0
+          else (
+            select ifnull(full_size, 0)
+            from inv.inv_files f
+            where f.id = a.inv_file_id 
+            and f.inv_version_id=a.inv_version_id
+            and f.inv_object_id=a.inv_object_id
+          ) 
+        end
+      ) / 1000000000.0 as bytes_gb
     from
       inv.inv_audits a
     inner join inv.inv_nodes n
@@ -269,7 +270,8 @@ fragments:
       verified > '{{start}}'
     and
       verified < '{{end}}'
-     union all
+    group by provider
+    union all
     {{/DATES}}
     select
       '' title,
@@ -278,6 +280,8 @@ fragments:
       0 files,
       0.0 bytes_gb
     where false
+    /*https://stackoverflow.com/questions/917640/any-way-to-select-without-causing-locking-in-mysql*/
+    LOCK IN SHARE MODE
   ITERLAST10MIN: |
     with recursive rnums as (
       select 0 as n
