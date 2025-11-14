@@ -249,7 +249,7 @@ fragments:
         when n.number in (6001) then 'glacier'
         else 's3'
       end as provider,
-      count(*) as count_files,
+      count(*) as files,
       case
         when n.number in (6001) then 0.0
         else ifnull(sum(full_size), 0) / 1000000000.0
@@ -275,7 +275,7 @@ fragments:
       '' title,
       '' status,
       '' provider,
-      0 count_files,
+      0 files,
       0.0 bytes_gb
     where false
   ITERLAST10MIN: |
