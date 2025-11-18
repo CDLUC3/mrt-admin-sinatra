@@ -101,7 +101,7 @@ fragments:
         )
       ) as maxv,
       f.source,
-      binary f.pathname,
+      binary f.pathname as pathname,
       f.full_size,
       f.created,
       ifnull(group_concat(n.number), '') as nodelist,
@@ -113,7 +113,9 @@ fragments:
           end
         ),
         ''
-      ) as unverified
+      ) as unverified,
+      f.id as inv_file_id,
+      '' as actions
     from
       inv.inv_objects o
     inner join inv.inv_versions v
@@ -790,11 +792,10 @@ queries:
     description: |
       Count objects that have been assigned to multiple Merritt collections.
       Objects residing in multiple collections is a legacy Merritt feature.
+      - [Object List](/queries/consistency/obj-comp/mult-colls/objlist)
     status: PASS
     status_check: true
     totals: true
-    description: |
-      - [Object List](/queries/consistency/obj-comp/mult-colls/objlist)
     sql: |
       {{{MULTCOLLQ}}}
   /queries/consistency/obj-comp/mult-colls/objlist:

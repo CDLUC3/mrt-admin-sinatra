@@ -99,6 +99,17 @@ module UC3Query
       row
     end
 
+    def self.file_info_resolver(row)
+      row['actions'] = []
+      row['actions'] << {
+        value: 'Fixity Benchmark',
+        href: "/ops/storage/benchmark-fixity?inv_file_id=#{row['inv_file_id']}",
+        cssclass: 'button',
+        disabled: storage_mgt_disabled?(strict: true)
+      }
+      row
+    end
+
     def self.collections_nodes_resolver(row)
       prim = UC3S3::ConfigObjectsClient.client.storage_node_for_mnemonic(row['mnemonic'])
       row['primary_node'] = prim

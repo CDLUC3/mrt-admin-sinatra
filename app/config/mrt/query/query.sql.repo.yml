@@ -679,3 +679,28 @@ queries:
         and c.mnemonic is not null
       order by
         c.mnemonic
+  /queries/benchmark-fixity:
+    non_report: true
+    sql: |
+      select 
+        a.id,
+        a.inv_node_id,
+        n.number as node_number,
+        n.description,
+        f.pathname,
+        f.full_size
+      from
+        inv.inv_audits a
+      inner join
+        inv.inv_files f
+      on
+        a.inv_file_id = f.id
+      inner join 
+        inv.inv_nodes n
+      on 
+        a.inv_node_id = n.id
+      where
+        f.id = ?
+    parameters:
+    - name: inv_file_id
+      type: id

@@ -3,6 +3,7 @@
 require 'sinatra/base'
 require 'net/http'
 require 'net/http/post/multipart'
+require 'benchmark'
 require_relative '../ui/context'
 
 # custom sinatra routes
@@ -412,6 +413,23 @@ module Sinatra
         )
       end
 
+      app.get '/ops/storage/benchmark-fixity' do
+        # Eventually this should open a page with a form to trigger the fixity check
+        table = benchmark_fixity(request.params)
+        adminui_show_table(
+          AdminUI::Context.new(request.path, request.params),
+          table
+        )
+      end
+
+      app.post '/ops/storage/benchmark-fixity' do
+        table = benchmark_fixity(request.params)
+        adminui_show_table(
+          AdminUI::Context.new(request.path, request.params),
+          table
+        )
+      end
+
       app.post '/test/load/data' do
         test_data_dir = "#{UC3::FileSystemClient::DIR}/test-data"
         `mkdir -p #{test_data_dir}`
@@ -433,6 +451,60 @@ module Sinatra
         end
         redirect '/ops/zk/ingest/jobs-by-collection'
       end
+    end
+
+    def benchmark_fixity(params)
+      desc = []
+      nodes = UC3Query::QueryClient.client.run_query('/queries/benchmark-fixity', params)
+      if nodes
+        desc << "_These script instructions are not yet working_\n"
+        desc << '```'
+        nodes.each do |node|
+          desc << "aws s3 --profile node#{node['node_number']} " \
+                  "cp s3://bucket/ark|ver|producer/#{node['pathname']} /dev/null"
+        end
+        desc << '```'
+      end
+      table = AdminUI::FilterTable.new(
+        columns: [
+          AdminUI::Column.new(:node_number, header: 'Node Number'),
+          AdminUI::Column.new(:description, header: 'Description'),
+          AdminUI::Column.new(:fixity_status, header: 'Status'),
+          AdminUI::Column.new(:time_sec, header: 'Time (sec)'),
+          AdminUI::Column.new(:benchmark_sec, header: 'Benchmark (sec)'),
+          AdminUI::Column.new(:status, header: 'Status')
+        ],
+        description: desc.join("\n\n")
+      )
+      nodes.each do |node|
+        row = {}
+        row[:status] = 'SKIP'
+        row[:node_number] = node['node_number'].to_s
+        row[:description] = node['description']
+        begin
+          timing = Benchmark.realtime do
+            json = post_url_json("#{audit_host}/update/#{node['id']}?t=json")
+            row[:fixity_status] = json.fetch('items:fixityEntriesState', {})
+              .fetch('items:entries', {})
+              .fetch('items:fixityMRTEntry', {})
+              .fetch('items:status', '')
+            row[:benchmark_sec] = 1.0
+          end
+          row[:time_sec] = timing
+          row[:status] = if row[:fixity_status] != 'verified'
+                           'FAIL'
+                         elsif row[:time_sec] > row[:benchmark_sec]
+                           'WARN'
+                         else
+                           'PASS'
+                         end
+        rescue StandardError => e
+          row[:fixity_status] = "Request did not complete: #{e}"
+          row[:status] = 'FAIL'
+        end
+        table.add_row(AdminUI::Row.make_row(table.columns, row))
+      end
+      table
     end
 
     def load_test_file_to_merritt(file, type, mnemonic)
@@ -565,6 +637,16 @@ module Sinatra
     rescue StandardError => e
       content_type :json
       { uri: uri, error: e.to_s }.to_json
+    end
+
+    def post_url_json(url)
+      uri = URI.parse(url)
+      req = Net::HTTP::Post.new(uri)
+
+      response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: uri.scheme == 'https') do |http|
+        http.request(req)
+      end
+      ::JSON.parse(response.body)
     end
 
     def post_url_message(url, body: nil, user: nil, password: nil, message: '')

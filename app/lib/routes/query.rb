@@ -54,7 +54,9 @@ module Sinatra
               UC3Query::QueryClient.client.query(
                 request.path,
                 request.params,
-                sqlsym: :files_sql
+                resolver: UC3Query::QueryResolvers.method(:file_info_resolver),
+                sqlsym: :files_sql,
+                dispcols: %w[number maxv source pathname full_size created nodelist unverified actions]
               )
             ]
           )
