@@ -483,7 +483,7 @@ module Sinatra
         row[:description] = node['description']
         begin
           timing = Benchmark.realtime do
-            json = post_url_json("#{audit_host}/update/#{node['id']}?t=json")
+            json = post_url_json("#{audit_host}/update/#{node['id']}?t=json", read_timeout: 600)
             row[:fixity_status] = json.fetch('items:fixityEntriesState', {})
               .fetch('items:entries', {})
               .fetch('items:fixityMRTEntry', {})
@@ -639,11 +639,12 @@ module Sinatra
       { uri: uri, error: e.to_s }.to_json
     end
 
-    def post_url_json(url)
+    def post_url_json(url, read_timeout: 120)
       uri = URI.parse(url)
       req = Net::HTTP::Post.new(uri)
 
       response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: uri.scheme == 'https') do |http|
+        http.read_timeout = read_timeout
         http.request(req)
       end
       ::JSON.parse(response.body)
