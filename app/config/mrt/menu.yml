@@ -1080,7 +1080,7 @@ items:
         ```
 
     - title: "Info: How To Test a List Based Storage Scan"
-      route: /test/no-action-scan
+      route: /test/no-action-scanlist
       disable: ecs-stg, ecs-prd, ecs-dbsnapshot
       description: |
         ### How to Create A Storage Scan List

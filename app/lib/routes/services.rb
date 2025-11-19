@@ -488,11 +488,11 @@ module Sinatra
         begin
           if node['access_mode'] == 'on-line'
             timing = Benchmark.realtime do
-              key = CGI.escape("#{node['object_ark']}|#{node['version_number']}|producer/#{node['pathname']}")  
+              key = CGI.escape("#{node['object_ark']}|#{node['version_number']}|#{node['pathname']}")
               url = "#{access_host}/presign-file/#{node['node_number']}/#{key}"
               get_url_with_redirect(url)
             end
-            row[:fixity_status] = "Access Request"
+            row[:fixity_status] = 'Access Request'
             row[:time_sec] = timing
           end
         rescue StandardError => e
@@ -500,9 +500,7 @@ module Sinatra
           row[:status] = 'FAIL'
         end
         table.add_row(AdminUI::Row.make_row(table.columns, row))
-      end
 
-      nodes.each do |node|
         row = {}
         row[:status] = 'SKIP'
         row[:node_number] = node['node_number'].to_s
@@ -631,13 +629,12 @@ module Sinatra
       uri = URI.parse(url)
       response = Net::HTTP.get_response(uri)
       case response
-        when Net::HTTPSuccess     then response.body
-        when Net::HTTPRedirection then get_url_with_redirect(response['location'], limit - 1)
-        else  
-          response.error!
+      when Net::HTTPSuccess     then response.body
+      when Net::HTTPRedirection then get_url_with_redirect(response['location'], limit - 1)
+      else
+        response.error!
       end
     end
-
 
     def get_url(url, ctype: :json)
       uri = URI.parse(url)
