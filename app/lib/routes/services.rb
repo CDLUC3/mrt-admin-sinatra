@@ -457,11 +457,13 @@ module Sinatra
       arr = []
       ssm = ENV.fetch('MAIN_SSM_ROOT_PATH', '')
 
-      prefix = "aws ssm get-parameter --name #{ssm}/cloud/nodes"
+      prefix = "aws ssm get-parameter --name #{ssm}cloud/nodes"
 
       case nodenum
       when 9501, 9502, 9503
         unless ssm.empty?
+          arr << %(export AWS_ACCESS_KEY_ID=)
+          arr << %(export AWS_SECRET_ACCESS_KEY=)
           arr << %(AAIK=$(#{prefix}/sdsc-accessKey --with-decryption | jq -r .Parameter.Value))
           arr << %(ASAK=$(#{prefix}/sdsc-secretKey --with-decryption | jq -r .Parameter.Value))
           arr << %(export AWS_ACCESS_KEY_ID=$AAIK)
@@ -469,6 +471,8 @@ module Sinatra
         end
       when 2001, 2002, 2003
         unless ssm.empty?
+          arr << %(export AWS_ACCESS_KEY_ID=)
+          arr << %(export AWS_SECRET_ACCESS_KEY=)
           arr << %(AAIK=$(#{prefix}/wasabi-accessKey --with-decryption | jq -r .Parameter.Value))
           arr << %(ASAK=$(#{prefix}/wasabi-secretKey --with-decryption | jq -r .Parameter.Value))
           arr << %(export AWS_ACCESS_KEY_ID=$AAIK)
@@ -476,6 +480,8 @@ module Sinatra
         end
       when 7777, 8888
         unless ENV.fetch('S3ENDPOINT', '').empty?
+          arr << %(export AWS_ACCESS_KEY_ID=)
+          arr << %(export AWS_SECRET_ACCESS_KEY=)
           arr << %(export AWS_ACCESS_KEY_ID=minioadmin)
           arr << %(export AWS_SECRET_ACCESS_KEY=minioadmin)
         end
@@ -521,7 +527,10 @@ module Sinatra
 
       return arr if path.empty?
 
-      arr = benchmark_credentials(nodenum)
+      arr << '```'
+      benchmark_credentials(nodenum).each do |line|
+        arr << line
+      end
 
       endpoint = benchmark_endpoint(nodenum)
       endpoint_param = endpoint.empty? ? '' : "--endpoint-url #{endpoint}"
@@ -529,6 +538,8 @@ module Sinatra
       region_param = " --region #{region}" unless region.empty?
 
       arr << %(time aws s3 #{region_param} #{endpoint_param} cp "#{path}" /dev/null)
+      arr << '```'
+      arr << ""
       arr
     end
 
@@ -536,8 +547,7 @@ module Sinatra
       desc = []
       nodes = UC3Query::QueryClient.client.run_query('/queries/benchmark-fixity', params)
       if nodes
-        desc << "_These script instructions are not yet working_\n"
-        desc << '```'
+        desc << "These scripts can be used to test retrival of the same object using she S3 CLI"
         nodes.each do |node|
           benchmark_script(
             node['node_number'], 
@@ -548,7 +558,6 @@ module Sinatra
             desc << line
           end
         end
-        desc << '```'
       end
       table = AdminUI::FilterTable.new(
         columns: [
