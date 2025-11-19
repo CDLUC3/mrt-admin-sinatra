@@ -1057,6 +1057,8 @@ items:
       description: |
         ### Create Scan Errors 
 
+        The following [script](https://github.com/CDLUC3/merritt-docker/blob/main/mrt-inttest-services/merritt-dev/scripts/create-scan-error.sh) will be run in the stack.
+
         #### Attach to the merritt-dev container
         
         docker-compose
@@ -1077,11 +1079,23 @@ items:
         /create-scan-error.sh
         ```
 
+    - title: "Info: How To Test a List Based Storage Scan"
+      route: /test/no-action-scan
+      disable: ecs-stg, ecs-prd, ecs-dbsnapshot
+      description: |
+        ### How to Create A Storage Scan List
+
+        The following [script](https://github.com/CDLUC3/merritt-docker/blob/main/mrt-inttest-services/merritt-dev/scripts/create-scanlist.sh) will be run in the stack.
+
+        Note that only specific buckets in specific stacks support list based storage scans.
+
     - title: "Info: How To Force Test Fixity Errors"
       route: /test/no-action-fixity
       disable: ecs-stg, ecs-prd, ecs-dbsnapshot
       description: |
         ### Create Test Fixity Errors 
+
+        The following [script](https://github.com/CDLUC3/merritt-docker/blob/main/mrt-inttest-services/merritt-dev/scripts/create-audit-error.sh) will be run in the stack.
 
         #### Attach to the merritt-dev container
 

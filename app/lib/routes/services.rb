@@ -27,7 +27,7 @@ module Sinatra
     end
 
     def access_host
-      "http://#{ENV.fetch('SVC_ACCESS', 'access:8080/store')}"
+      "http://#{ENV.fetch('SVC_ACCESS', 'store:8080/store')}"
     end
 
     def audit_host
@@ -461,7 +461,7 @@ module Sinatra
         desc << '```'
         nodes.each do |node|
           desc << "aws s3 --profile node#{node['node_number']} " \
-                  "cp s3://bucket/ark|ver|producer/#{node['pathname']} /dev/null"
+                  "cp \"s3://bucket/#{node['object_ark']}|#{node['version_number']}|producer/#{node['pathname']}\" /dev/null"
         end
         desc << '```'
       end
@@ -469,6 +469,7 @@ module Sinatra
         columns: [
           AdminUI::Column.new(:node_number, header: 'Node Number'),
           AdminUI::Column.new(:description, header: 'Description'),
+          AdminUI::Column.new(:access_mode, header: 'Access Mode'),
           AdminUI::Column.new(:fixity_status, header: 'Status'),
           AdminUI::Column.new(:time_sec, header: 'Time (sec)'),
           AdminUI::Column.new(:benchmark_sec, header: 'Benchmark (sec)'),
@@ -476,11 +477,37 @@ module Sinatra
         ],
         description: desc.join("\n\n")
       )
+
       nodes.each do |node|
         row = {}
         row[:status] = 'SKIP'
         row[:node_number] = node['node_number'].to_s
         row[:description] = node['description']
+        row[:access_mode] = node['access_mode']
+        url = ''
+        begin
+          if node['access_mode'] == 'on-line'
+            timing = Benchmark.realtime do
+              key = CGI.escape("#{node['object_ark']}|#{node['version_number']}|producer/#{node['pathname']}")  
+              url = "#{access_host}/presign-file/#{node['node_number']}/#{key}"
+              get_url_with_redirect(url)
+            end
+            row[:fixity_status] = "Access Request"
+            row[:time_sec] = timing
+          end
+        rescue StandardError => e
+          row[:fixity_status] = "Retrieve request #{url} did not complete: #{e}"
+          row[:status] = 'FAIL'
+        end
+        table.add_row(AdminUI::Row.make_row(table.columns, row))
+      end
+
+      nodes.each do |node|
+        row = {}
+        row[:status] = 'SKIP'
+        row[:node_number] = node['node_number'].to_s
+        row[:description] = node['description']
+        row[:access_mode] = node['access_mode']
         begin
           timing = Benchmark.realtime do
             json = post_url_json("#{audit_host}/update/#{node['id']}?t=json", read_timeout: 600)
@@ -499,7 +526,7 @@ module Sinatra
                            'PASS'
                          end
         rescue StandardError => e
-          row[:fixity_status] = "Request did not complete: #{e}"
+          row[:fixity_status] = "Fixity stream request did not complete: #{e}"
           row[:status] = 'FAIL'
         end
         table.add_row(AdminUI::Row.make_row(table.columns, row))
@@ -597,6 +624,20 @@ module Sinatra
       response = Net::HTTP.get_response(uri)
       response.body
     end
+
+    def get_url_with_redirect(url, limit = 3)
+      raise ArgumentError, 'HTTP redirect too deep' if limit <= 0
+
+      uri = URI.parse(url)
+      response = Net::HTTP.get_response(uri)
+      case response
+        when Net::HTTPSuccess     then response.body
+        when Net::HTTPRedirection then get_url_with_redirect(response['location'], limit - 1)
+        else  
+          response.error!
+      end
+    end
+
 
     def get_url(url, ctype: :json)
       uri = URI.parse(url)

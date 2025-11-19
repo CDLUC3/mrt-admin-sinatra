@@ -687,6 +687,9 @@ queries:
         a.inv_node_id,
         n.number as node_number,
         n.description,
+        n.access_mode,
+        o.ark as object_ark,
+        v.number as version_number,
         f.pathname,
         f.full_size
       from
@@ -695,6 +698,14 @@ queries:
         inv.inv_files f
       on
         a.inv_file_id = f.id
+      inner join
+        inv.inv_objects o
+      on
+        a.inv_object_id = o.id
+      inner join
+        inv.inv_versions v
+      on
+        a.inv_version_id = v.id
       inner join 
         inv.inv_nodes n
       on 
