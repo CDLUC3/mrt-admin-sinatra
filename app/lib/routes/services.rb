@@ -505,7 +505,7 @@ module Sinatra
         return ''
       end
 
-      "s3://#{bucket}/#{ark}|#{version}|producer/#{pathname}"
+      "s3://#{bucket}/#{ark}|#{version}|#{pathname}"
     end
 
     def benchmark_endpoint(nodenum)
