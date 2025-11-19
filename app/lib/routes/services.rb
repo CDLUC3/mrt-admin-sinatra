@@ -493,7 +493,7 @@ module Sinatra
             timing = Benchmark.realtime do
               key = CGI.escape("#{node['object_ark']}|#{node['version_number']}|#{node['pathname']}")
               url = "#{access_host}/presign-file/#{node['node_number']}/#{key}"
-              row[:size_processed] = get_url_with_redirect(url).length
+              row[:size_processed] = get_presign_url_content(url).length
             end
             row[:fixity_status] = 'Access Request'
             row[:time_sec] = timing
@@ -628,17 +628,15 @@ module Sinatra
       response.body
     end
 
-    def get_url_with_redirect(url, limit = 3)
+    def get_presign_url_content(url, limit = 3)
       raise ArgumentError, 'HTTP redirect too deep' if limit <= 0
 
       uri = URI.parse(url)
       response = Net::HTTP.get_response(uri)
-      case response
-      when Net::HTTPSuccess     then response.body
-      when Net::HTTPRedirection then get_url_with_redirect(response['location'], limit - 1)
-      else
-        response.error!
-      end
+      json = ::JSON.parse(response.body)
+      purl = json.fetch('url', '')
+      return '' if purl.empty?
+      get_url_body(purl)
     end
 
     def get_url(url, ctype: :json)
