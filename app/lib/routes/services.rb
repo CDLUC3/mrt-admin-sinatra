@@ -527,6 +527,7 @@ module Sinatra
 
       return arr if path.empty?
 
+      arr << ''
       arr << '```'
       benchmark_credentials(nodenum).each do |line|
         arr << line
@@ -571,7 +572,7 @@ module Sinatra
           AdminUI::Column.new(:benchmark_sec, header: 'Benchmark (sec)'),
           AdminUI::Column.new(:status, header: 'Status')
         ],
-        description: desc.join("\n\n")
+        description: desc.join("\n")
       )
 
       nodes.each do |node|

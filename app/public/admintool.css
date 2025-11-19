@@ -227,6 +227,7 @@ table div.description, table div.table_details {
   padding: 2px;
   border: thin solid gray;
   margin: 5px;
+  overflow-x: scroll;
 }
 
 th.blank, td.blank {
@@ -288,3 +289,4 @@ form {
 span.altformats {
   float: right;
 }
+
