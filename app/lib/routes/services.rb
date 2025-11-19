@@ -453,6 +453,63 @@ module Sinatra
       end
     end
 
+    def benchmark_credentials(arr, nodenum)
+      ssm = ENV.fetch('MAIN_SSM_ROOT_PATH', '')
+      return if ssm.empty?
+
+      prefix = "aws ssm get-parameter --name #{ssm}/cloud/nodes"
+
+      if %w[9501 9502 9503].include?(nodenum)
+        arr << %(AAIK=$(#{prefix}/sdsc-accessKey --with-decryption | jq -r .Parameter.Value))
+        arr << %(ASAK=$(#{prefix}/sdsc-secretKey --with-decryption | jq -r .Parameter.Value))
+        arr << %(export AWS_ACCESS_KEY_ID=$AAIK)
+        arr << %(export AWS_SECRET_ACCESS_KEY=$ASAK)
+      elsif %w[2001 2002 2003].include?(nodenum)
+        arr << %(AAIK=$(#{prefix}/wasabi-accessKey --with-decryption | jq -r .Parameter.Value))
+        arr << %(ASAK=$(#{prefix}/wasabi-secretKey --with-decryption | jq -r .Parameter.Value))
+        arr << %(export AWS_ACCESS_KEY_ID=$AAIK)
+        arr << %(export AWS_SECRET_ACCESS_KEY=$ASAK)
+      end
+    end
+
+    def benchmark_path(nodenum, ark, version, pathname)
+      case nodenum
+      when '9501', '9502', '9503'
+        bucket = ENV.fetch('SDSC_BUCKET', '')
+      when '2001', '2002', '2003'
+        bucket = ENV.fetch('WASABI_BUCKET', '')
+      when '5001', '5003'
+        bucket = ENV.fetch('S3_BUCKET', '')
+      else
+        return ''
+      end
+
+      "s3://#{bucket}/#{ark}|#{version}|producer/#{pathname}"
+    end
+
+    def benchmark_endpoint(nodenum)
+      case nodenum
+      when '9501', '9502', '9503'
+        ENV.fetch('SDSC_ENDPOINT', '')
+      when '2001', '2002', '2003'
+        ENV.fetch('WASABI_ENDPOINT', '')
+      else
+        ''
+      end
+    end
+
+    def benchmark_script(arr, nodenum, ark, version, pathname)
+      benchmark_credentials(arr, nodenum)
+      path = benchmark_path(nodenum, ark, version, pathname)
+
+      return if path.empty?
+
+      endpoint = benchmark_endpoint(nodenum)
+      endpoint_param = endpoint.empty? ? '' : "--endpoint-url #{endpoint}"
+
+      arr << %(time aws s3 #{endpoint_param} cp "${path}" /dev/null)
+    end
+
     def benchmark_fixity(params)
       desc = []
       nodes = UC3Query::QueryClient.client.run_query('/queries/benchmark-fixity', params)
@@ -460,8 +517,7 @@ module Sinatra
         desc << "_These script instructions are not yet working_\n"
         desc << '```'
         nodes.each do |node|
-          desc << "aws s3 --profile node#{node['node_number']} " \
-                  "cp \"s3://bucket/#{node['object_ark']}|#{node['version_number']}|producer/#{node['pathname']}\" /dev/null"
+          benchmark_script(desc, node['node_number'], node['object_ark'], node['version_number'], node['pathname'])
         end
         desc << '```'
       end
@@ -636,6 +692,7 @@ module Sinatra
       json = ::JSON.parse(response.body)
       purl = json.fetch('url', '')
       return '' if purl.empty?
+
       get_url_body(purl)
     end
 
