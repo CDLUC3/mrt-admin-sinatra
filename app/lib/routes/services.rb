@@ -470,6 +470,8 @@ module Sinatra
           AdminUI::Column.new(:node_number, header: 'Node Number'),
           AdminUI::Column.new(:description, header: 'Description'),
           AdminUI::Column.new(:access_mode, header: 'Access Mode'),
+          AdminUI::Column.new(:size, header: 'Size'),
+          AdminUI::Column.new(:size_processed, header: 'Size Processed'),
           AdminUI::Column.new(:fixity_status, header: 'Status'),
           AdminUI::Column.new(:time_sec, header: 'Time (sec)'),
           AdminUI::Column.new(:benchmark_sec, header: 'Benchmark (sec)'),
@@ -484,13 +486,14 @@ module Sinatra
         row[:node_number] = node['node_number'].to_s
         row[:description] = node['description']
         row[:access_mode] = node['access_mode']
+        row[:size] = node['full_size']
         url = ''
         begin
           if node['access_mode'] == 'on-line'
             timing = Benchmark.realtime do
               key = CGI.escape("#{node['object_ark']}|#{node['version_number']}|#{node['pathname']}")
               url = "#{access_host}/presign-file/#{node['node_number']}/#{key}"
-              get_url_with_redirect(url)
+              row[:size_processed] = get_url_with_redirect(url).length
             end
             row[:fixity_status] = 'Access Request'
             row[:time_sec] = timing
@@ -506,13 +509,15 @@ module Sinatra
         row[:node_number] = node['node_number'].to_s
         row[:description] = node['description']
         row[:access_mode] = node['access_mode']
+        row[:size] = node['full_size']
         begin
           timing = Benchmark.realtime do
             json = post_url_json("#{audit_host}/update/#{node['id']}?t=json", read_timeout: 600)
-            row[:fixity_status] = json.fetch('items:fixityEntriesState', {})
+            entry = json.fetch('items:fixityEntriesState', {})
               .fetch('items:entries', {})
               .fetch('items:fixityMRTEntry', {})
-              .fetch('items:status', '')
+            row[:fixity_status] = entry.fetch('items:status', '')
+            row[:size_processed] = entry.fetch('items:size', 0)
             row[:benchmark_sec] = 1.0
           end
           row[:time_sec] = timing
