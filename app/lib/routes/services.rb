@@ -475,7 +475,7 @@ module Sinatra
           arr << %(export AWS_SECRET_ACCESS_KEY=$ASAK)
         end
       when 7777, 8888
-        unless ENV.fetch('S3ENDPOINT').empty?
+        unless ENV.fetch('S3ENDPOINT', '').empty?
           arr << %(export AWS_ACCESS_KEY_ID=minioadmin)
           arr << %(export AWS_SECRET_ACCESS_KEY=minioadmin)
         end
