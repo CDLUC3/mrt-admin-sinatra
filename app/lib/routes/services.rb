@@ -528,8 +528,7 @@ module Sinatra
       region = ENV.fetch('S3REGION', '')
       region_param = " --region #{region}" unless region.empty?
 
-      arr << %(time aws s3 #{region_param} #{endpoint_param} \\)
-      arr << %(  cp "#{path}" /dev/null)
+      arr << %(time aws s3 #{region_param} #{endpoint_param} cp "#{path}" /dev/null)
       arr
     end
 
