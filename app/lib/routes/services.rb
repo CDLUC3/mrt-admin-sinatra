@@ -453,33 +453,48 @@ module Sinatra
       end
     end
 
-    def benchmark_credentials(arr, nodenum)
+    def benchmark_credentials(nodenum)
+      arr = []
       ssm = ENV.fetch('MAIN_SSM_ROOT_PATH', '')
-      return if ssm.empty?
 
       prefix = "aws ssm get-parameter --name #{ssm}/cloud/nodes"
 
-      if %w[9501 9502 9503].include?(nodenum)
-        arr << %(AAIK=$(#{prefix}/sdsc-accessKey --with-decryption | jq -r .Parameter.Value))
-        arr << %(ASAK=$(#{prefix}/sdsc-secretKey --with-decryption | jq -r .Parameter.Value))
-        arr << %(export AWS_ACCESS_KEY_ID=$AAIK)
-        arr << %(export AWS_SECRET_ACCESS_KEY=$ASAK)
-      elsif %w[2001 2002 2003].include?(nodenum)
-        arr << %(AAIK=$(#{prefix}/wasabi-accessKey --with-decryption | jq -r .Parameter.Value))
-        arr << %(ASAK=$(#{prefix}/wasabi-secretKey --with-decryption | jq -r .Parameter.Value))
-        arr << %(export AWS_ACCESS_KEY_ID=$AAIK)
-        arr << %(export AWS_SECRET_ACCESS_KEY=$ASAK)
+      case nodenum
+      when 9501, 9502, 9503
+        unless ssm.empty?
+          arr << %(AAIK=$(#{prefix}/sdsc-accessKey --with-decryption | jq -r .Parameter.Value))
+          arr << %(ASAK=$(#{prefix}/sdsc-secretKey --with-decryption | jq -r .Parameter.Value))
+          arr << %(export AWS_ACCESS_KEY_ID=$AAIK)
+          arr << %(export AWS_SECRET_ACCESS_KEY=$ASAK)
+        end
+      when 2001, 2002, 2003
+        unless ssm.empty?
+          arr << %(AAIK=$(#{prefix}/wasabi-accessKey --with-decryption | jq -r .Parameter.Value))
+          arr << %(ASAK=$(#{prefix}/wasabi-secretKey --with-decryption | jq -r .Parameter.Value))
+          arr << %(export AWS_ACCESS_KEY_ID=$AAIK)
+          arr << %(export AWS_SECRET_ACCESS_KEY=$ASAK)
+        end
+      when 7777, 8888
+        unless ENV.fetch('S3ENDPOINT').empty?
+          arr << %(export AWS_ACCESS_KEY_ID=minioadmin)
+          arr << %(export AWS_SECRET_ACCESS_KEY=minioadmin)
+        end
       end
+      arr
     end
 
     def benchmark_path(nodenum, ark, version, pathname)
       case nodenum
-      when '9501', '9502', '9503'
+      when 9501, 9502, 9503
         bucket = ENV.fetch('SDSC_BUCKET', '')
-      when '2001', '2002', '2003'
+      when 2001, 2002, 2003
         bucket = ENV.fetch('WASABI_BUCKET', '')
-      when '5001', '5003'
+      when 5001, 5003
         bucket = ENV.fetch('S3_BUCKET', '')
+      when 7777
+        bucket = ENV.fetch('BUCKET7777', '')
+      when 8888
+        bucket = ENV.fetch('BUCKET8888', '')
       else
         return ''
       end
@@ -489,25 +504,33 @@ module Sinatra
 
     def benchmark_endpoint(nodenum)
       case nodenum
-      when '9501', '9502', '9503'
+      when 9501, 9502, 9503
         ENV.fetch('SDSC_ENDPOINT', '')
-      when '2001', '2002', '2003'
+      when 2001, 2002, 2003
         ENV.fetch('WASABI_ENDPOINT', '')
+      when 7777, 8888
+        ENV.fetch('S3ENDPOINT', '')
       else
         ''
       end
     end
 
-    def benchmark_script(arr, nodenum, ark, version, pathname)
-      benchmark_credentials(arr, nodenum)
+    def benchmark_script(nodenum, ark, version, pathname)
+      arr = []
       path = benchmark_path(nodenum, ark, version, pathname)
 
-      return if path.empty?
+      return arr if path.empty?
+
+      arr = benchmark_credentials(nodenum)
 
       endpoint = benchmark_endpoint(nodenum)
       endpoint_param = endpoint.empty? ? '' : "--endpoint-url #{endpoint}"
+      region = ENV.fetch('S3REGION', '')
+      region_param = " --region #{region}" unless region.empty?
 
-      arr << %(time aws s3 #{endpoint_param} cp "${path}" /dev/null)
+      arr << %(time aws s3 #{region_param} #{endpoint_param} \\)
+      arr << %(  cp "#{path}" /dev/null)
+      arr
     end
 
     def benchmark_fixity(params)
@@ -517,7 +540,14 @@ module Sinatra
         desc << "_These script instructions are not yet working_\n"
         desc << '```'
         nodes.each do |node|
-          benchmark_script(desc, node['node_number'], node['object_ark'], node['version_number'], node['pathname'])
+          benchmark_script(
+            node['node_number'], 
+            node['object_ark'], 
+            node['version_number'], 
+            node['pathname']
+          ).each do |line|
+            desc << line
+          end
         end
         desc << '```'
       end
