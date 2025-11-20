@@ -619,14 +619,18 @@ module Sinatra
         row[:access_mode] = node['access_mode']
         row[:size] = node['full_size']
         begin
-          timing = Benchmark.realtime do
-            json = post_url_json("#{audit_host}/update/#{node['id']}?t=json", read_timeout: 300)
-            entry = json.fetch('items:fixityEntriesState', {})
-              .fetch('items:entries', {})
-              .fetch('items:fixityMRTEntry', {})
-            row[:fixity_status] = entry.fetch('items:status', '')
-            row[:size_processed] = entry.fetch('items:size', 0)
-            row[:benchmark_sec] = 1.0
+          if node['full_size'].to_i > 500_000_000
+            row[:fixity_status] = 'File too large to benchmark (>500MB).  Use the CLI.'
+          else
+            timing = Benchmark.realtime do
+              json = post_url_json("#{audit_host}/update/#{node['id']}?t=json", read_timeout: 300)
+              entry = json.fetch('items:fixityEntriesState', {})
+                .fetch('items:entries', {})
+                .fetch('items:fixityMRTEntry', {})
+              row[:fixity_status] = entry.fetch('items:status', '')
+              row[:size_processed] = entry.fetch('items:size', 0)
+              row[:benchmark_sec] = 1.0
+            end
           end
           row[:time_sec] = timing
           row[:status] = if row[:fixity_status] != 'verified'
