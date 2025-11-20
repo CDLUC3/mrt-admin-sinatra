@@ -549,18 +549,18 @@ module Sinatra
       accessurl = "#{access_host}/presign-file/#{nodenum}/#{key}"
       auditjq = %(jq -r '."items:fixityEntriesState" ."items:entries" ."items:fixityMRTEntry" ."items:status"')
 
-      arr << "echo Node #{nodenum} ==> S3 CLI download"
+      arr << "echo Node #{nodenum} S3 CLI download"
       arr << %(/usr/bin/time -p -o /tmp/cli_time.txt aws s3 #{region_param} #{endpoint_param} cp "#{path}" /dev/null)
-      arr << cli=%(cat /tmp/cli_time.txt | grep real | awk '{print $2}')
+      arr << %(cli=$(cat /tmp/cli_time.txt | grep real | awk '{print $2}'))
       arr << "echo $cli"
-      arr << "echo Node #{nodenum} ==> fixity check through audit service"
+      arr << "echo Node #{nodenum} S3 audit check"
       arr << %(/usr/bin/time -p -o /tmp/audit_time.txt curl -s -X POST "#{audit_host}/update/#{inv_file_id}?t=json" | #{auditjq})
-      arr << audit=%(cat /tmp/audit_time.txt | grep real | awk '{print $2}')
+      arr << %(audit=$(cat /tmp/audit_time.txt | grep real | awk '{print $2}'))
       arr << "echo $audit"
-      arr << "echo Node #{nodenum} ==> get presigned URL"
+      arr << "echo Node #{nodenum} get presigned URL"
       arr << %(/usr/bin/time -p -o /tmp/access_time.txt curl -s "#{accessurl}" | jq -r .url | xargs curl -s -o /dev/null)
-      arr << access=%(cat /tmp/access_time.txt | grep real | awk '{print $2}')
-      arr << 'printf "%10s %10s %10s %10s\n" "#{nodenum}" "$cli" "$audit" "$access" >> /tmp/bench_stats.txt'
+      arr << %(access=$(cat /tmp/access_time.txt | grep real | awk '{print $2}'))
+      arr << %(printf "%10s %10s %10s %10s\n" "#{nodenum}" "$cli" "$audit" "$access" >> /tmp/bench_stats.txt)
       arr << '```' unless script_only
       arr << ""
       arr
@@ -600,7 +600,7 @@ module Sinatra
       end
 
       desc << '```' unless script_only
-      desc << 'printf "%10s %10s %10s %10s\n" "Service" "CLI" "Audit" "Access" >> /tmp/bench_stats.txt'
+      desc << 'cat /tmp/bench_stats.txt'
       desc << '```' unless script_only
       desc      
     end
