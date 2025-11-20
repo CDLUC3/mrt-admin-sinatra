@@ -547,11 +547,12 @@ module Sinatra
 
       key = CGI.escape("#{ark}|#{version}|#{pathname}")
       accessurl = "#{access_host}/presign-file/#{nodenum}/#{key}"
+      auditjq = %(jq -r '."items:fixityEntriesState" ."items:entries" ."items:fixityMRTEntry" ."items:status"')
 
       arr << 'echo S3 CLI download'
       arr << %(time aws s3 #{region_param} #{endpoint_param} cp "#{path}" /dev/null)
       arr << 'echo fixity check through audit service'
-      arr << %(time curl -s -X POST "#{audit_host}/update/#{inv_file_id}?t=json" | jq)
+      arr << %(time curl -s -X POST "#{audit_host}/update/#{inv_file_id}?t=json" | #{auditjq})
       arr << 'echo get presigned URL'
       arr << %(time curl -s "#{accessurl}" | jq -r .url | xargs curl -s -o /dev/null)
       arr << '```' unless script_only
