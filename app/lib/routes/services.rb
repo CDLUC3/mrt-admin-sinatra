@@ -591,7 +591,7 @@ module Sinatra
 
     def benchmark_fixity(params)
       nodes = UC3Query::QueryClient.client.run_query('/queries/benchmark-fixity', params)
-      desc = benchmark_script(nodes, script_only: true)
+      desc = benchmark_script(nodes, script_only: false)
 
       table = AdminUI::FilterTable.new(
         columns: [
