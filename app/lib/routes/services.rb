@@ -430,6 +430,13 @@ module Sinatra
         )
       end
 
+      app.get '/ops/storage/benchmark-fixity-script' do
+        nodes = UC3Query::QueryClient.client.run_query('/queries/benchmark-fixity', params)
+        desc = benchmark_script(nodes, script_only: true)
+        content_type :text
+        desc.join("\n")
+      end
+
       app.post '/test/load/data' do
         test_data_dir = "#{UC3::FileSystemClient::DIR}/test-data"
         `mkdir -p #{test_data_dir}`
@@ -521,14 +528,14 @@ module Sinatra
       end
     end
 
-    def benchmark_script(nodenum, ark, version, pathname)
+    def benchmark_script_node(nodenum, ark, version, pathname, inv_file_id,script_only: false)
       arr = []
       path = benchmark_path(nodenum, ark, version, pathname)
 
       return arr if path.empty?
 
       arr << ''
-      arr << '```'
+      arr << '```' unless script_only
       benchmark_credentials(nodenum).each do |line|
         arr << line
       end
@@ -538,37 +545,54 @@ module Sinatra
       region = ENV.fetch('S3REGION', '')
       region_param = " --region #{region}" unless region.empty?
 
+      key = CGI.escape("#{ark}|#{version}|#{pathname}")
+      accessurl = "#{access_host}/presign-file/#{nodenum}/#{key}"
+
+      arr << 'echo S3 CLI download'
       arr << %(time aws s3 #{region_param} #{endpoint_param} cp "#{path}" /dev/null)
-      arr << '```'
+      arr << 'echo fixity check through audit service'
+      arr << %(time curl -s -X POST "#{audit_host}/update/#{inv_file_id}?t=json" | jq)
+      arr << 'echo get presigned URL'
+      arr << %(time curl -s "#{accessurl}" | jq -r .url | xargs curl -s -o /dev/null)
+      arr << '```' unless script_only
       arr << ""
       arr
     end
 
-    def benchmark_fixity(params)
+    def benchmark_script(nodes, script_only: false)
       desc = []
-      nodes = UC3Query::QueryClient.client.run_query('/queries/benchmark-fixity', params)
 
-      desc << "## Benchmark Fixity Check"
-      desc << "This report will perform a retrieval of the file from each ONLINE storage node using the ACCESS service." 
-      desc << ""
-      desc << "This report will perform a fixit of the file from each ONLINE storage node using the AUDIT service." 
-      desc << ""
-      desc << "Each request will be allowed up to 5 minutes to complete before timing out." 
-      desc << ""
-
+      unless script_only
+        desc << "## Benchmark Fixity Check"
+        desc << "This report will perform a retrieval of the file from each ONLINE storage node using the ACCESS service." 
+        desc << ""
+        desc << "This report will perform a fixit of the file from each ONLINE storage node using the AUDIT service." 
+        desc << ""
+        desc << "Each request will be allowed up to 5 minutes to complete before timing out." 
+        desc << ""
+      end
       if nodes
-        desc << "These scripts can be used to test retrival of the same object using the S3 CLI."
+        desc << "These scripts can be used to test retrival of the same object using the S3 CLI." unless script_only
         nodes.each do |node|
-          benchmark_script(
+          benchmark_script_node(
             node['node_number'], 
             node['object_ark'], 
             node['version_number'], 
-            node['pathname']
+            node['pathname'],
+            node['id'],
+            script_only: script_only
           ).each do |line|
             desc << line
           end
         end
       end
+      desc      
+    end
+
+    def benchmark_fixity(params)
+      nodes = UC3Query::QueryClient.client.run_query('/queries/benchmark-fixity', params)
+      desc = benchmark_script(nodes, script_only: true)
+
       table = AdminUI::FilterTable.new(
         columns: [
           AdminUI::Column.new(:node_number, header: 'Node Number'),

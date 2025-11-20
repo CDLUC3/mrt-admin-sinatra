@@ -107,6 +107,12 @@ module UC3Query
         cssclass: 'button',
         disabled: storage_mgt_disabled?(strict: true)
       }
+      row['actions'] << {
+        value: 'Benchmark Script',
+        href: "/ops/storage/benchmark-fixity-script?inv_file_id=#{row['inv_file_id']}",
+        cssclass: 'button',
+        disabled: storage_mgt_disabled?(strict: true)
+      }
       row
     end
 
