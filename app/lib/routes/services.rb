@@ -549,12 +549,18 @@ module Sinatra
       accessurl = "#{access_host}/presign-file/#{nodenum}/#{key}"
       auditjq = %(jq -r '."items:fixityEntriesState" ."items:entries" ."items:fixityMRTEntry" ."items:status"')
 
-      arr << 'echo S3 CLI download'
-      arr << %(time aws s3 #{region_param} #{endpoint_param} cp "#{path}" /dev/null)
-      arr << 'echo fixity check through audit service'
-      arr << %(time curl -s -X POST "#{audit_host}/update/#{inv_file_id}?t=json" | #{auditjq})
-      arr << 'echo get presigned URL'
-      arr << %(time curl -s "#{accessurl}" | jq -r .url | xargs curl -s -o /dev/null)
+      arr << "echo Node #{nodenum} ==> S3 CLI download"
+      arr << %(/usr/bin/time -p -o /tmp/cli_time.txt aws s3 #{region_param} #{endpoint_param} cp "#{path}" /dev/null)
+      arr << cli=%(cat /tmp/cli_time.txt | grep real | awk '{print $2}')
+      arr << "echo $cli"
+      arr << "echo Node #{nodenum} ==> fixity check through audit service"
+      arr << %(/usr/bin/time -p -o /tmp/audit_time.txt curl -s -X POST "#{audit_host}/update/#{inv_file_id}?t=json" | #{auditjq})
+      arr << audit=%(cat /tmp/audit_time.txt | grep real | awk '{print $2}')
+      arr << "echo $audit"
+      arr << "echo Node #{nodenum} ==> get presigned URL"
+      arr << %(/usr/bin/time -p -o /tmp/access_time.txt curl -s "#{accessurl}" | jq -r .url | xargs curl -s -o /dev/null)
+      arr << access=%(cat /tmp/access_time.txt | grep real | awk '{print $2}')
+      arr << 'printf "%10s %10s %10s %10s\n" "#{nodenum}" "$cli" "$audit" "$access" >> /tmp/bench_stats.txt'
       arr << '```' unless script_only
       arr << ""
       arr
@@ -572,6 +578,11 @@ module Sinatra
         desc << "Each request will be allowed up to 5 minutes to complete before timing out." 
         desc << ""
       end
+
+      desc << '```' unless script_only
+      desc << 'printf "%10s %10s %10s %10s\n" "Service" "CLI" "Audit" "Access" > /tmp/bench_stats.txt'
+      desc << '```' unless script_only
+
       if nodes
         desc << "These scripts can be used to test retrival of the same object using the S3 CLI." unless script_only
         nodes.each do |node|
@@ -587,6 +598,10 @@ module Sinatra
           end
         end
       end
+
+      desc << '```' unless script_only
+      desc << 'printf "%10s %10s %10s %10s\n" "Service" "CLI" "Audit" "Access" >> /tmp/bench_stats.txt'
+      desc << '```' unless script_only
       desc      
     end
 
