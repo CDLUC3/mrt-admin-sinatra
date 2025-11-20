@@ -547,8 +547,17 @@ module Sinatra
     def benchmark_fixity(params)
       desc = []
       nodes = UC3Query::QueryClient.client.run_query('/queries/benchmark-fixity', params)
+
+      desc << "## Benchmark Fixity Check"
+      desc << "This report will perform a retrieval of the file from each ONLINE storage node using the ACCESS service." 
+      desc << ""
+      desc << "This report will perform a fixit of the file from each ONLINE storage node using the AUDIT service." 
+      desc << ""
+      desc << "Each request will be allowed up to 5 minutes to complete before timing out." 
+      desc << ""
+
       if nodes
-        desc << "These scripts can be used to test retrival of the same object using she S3 CLI"
+        desc << "These scripts can be used to test retrival of the same object using the S3 CLI."
         nodes.each do |node|
           benchmark_script(
             node['node_number'], 
@@ -585,13 +594,17 @@ module Sinatra
         url = ''
         begin
           if node['access_mode'] == 'on-line'
-            timing = Benchmark.realtime do
-              key = CGI.escape("#{node['object_ark']}|#{node['version_number']}|#{node['pathname']}")
-              url = "#{access_host}/presign-file/#{node['node_number']}/#{key}"
-              row[:size_processed] = get_presign_url_content(url).length
+            if node['full_size'].to_i > 500_000_000
+              row[:fixity_status] = 'File too large to benchmark (>500MB).  Use the CLI.'
+            else
+              timing = Benchmark.realtime do
+                key = CGI.escape("#{node['object_ark']}|#{node['version_number']}|#{node['pathname']}")
+                url = "#{access_host}/presign-file/#{node['node_number']}/#{key}"
+                row[:size_processed] = get_presign_url_content(url).length
+              end
+              row[:fixity_status] = 'Access Request'
+              row[:time_sec] = timing
             end
-            row[:fixity_status] = 'Access Request'
-            row[:time_sec] = timing
           end
         rescue StandardError => e
           row[:fixity_status] = "Retrieve request #{url} did not complete: #{e}"
@@ -607,7 +620,7 @@ module Sinatra
         row[:size] = node['full_size']
         begin
           timing = Benchmark.realtime do
-            json = post_url_json("#{audit_host}/update/#{node['id']}?t=json", read_timeout: 600)
+            json = post_url_json("#{audit_host}/update/#{node['id']}?t=json", read_timeout: 300)
             entry = json.fetch('items:fixityEntriesState', {})
               .fetch('items:entries', {})
               .fetch('items:fixityMRTEntry', {})
