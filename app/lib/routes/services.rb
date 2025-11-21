@@ -492,6 +492,9 @@ module Sinatra
           arr << %(export AWS_ACCESS_KEY_ID=minioadmin)
           arr << %(export AWS_SECRET_ACCESS_KEY=minioadmin)
         end
+      else
+        arr << %(export AWS_ACCESS_KEY_ID=)
+        arr << %(export AWS_SECRET_ACCESS_KEY=)
       end
       arr
     end
@@ -528,7 +531,7 @@ module Sinatra
       end
     end
 
-    def benchmark_script_node(nodenum, ark, version, pathname, inv_file_id,script_only: false)
+    def benchmark_script_node(nodenum, ark, version, pathname, inv_file_id, script_only: false)
       arr = []
       path = benchmark_path(nodenum, ark, version, pathname)
 
@@ -547,22 +550,24 @@ module Sinatra
 
       key = CGI.escape("#{ark}|#{version}|#{pathname}")
       accessurl = "#{access_host}/presign-file/#{nodenum}/#{key}"
+      auditurl = "#{audit_host}/update/#{inv_file_id}?t=json"
       auditjq = %(jq -r '."items:fixityEntriesState" ."items:entries" ."items:fixityMRTEntry" ."items:status"')
 
       arr << "echo Node #{nodenum} S3 CLI download"
       arr << %(/usr/bin/time -p -o /tmp/cli_time.txt aws s3 #{region_param} #{endpoint_param} cp "#{path}" /dev/null)
       arr << %(cli=$(cat /tmp/cli_time.txt | grep real | awk '{print $2}'))
-      arr << "echo $cli"
+      arr << 'echo $cli'
       arr << "echo Node #{nodenum} S3 audit check"
-      arr << %(/usr/bin/time -p -o /tmp/audit_time.txt curl -s -X POST "#{audit_host}/update/#{inv_file_id}?t=json" | #{auditjq})
+      arr << %(/usr/bin/time -p -o /tmp/audit_time.txt curl -s -X POST "#{auditurl}" | #{auditjq})
       arr << %(audit=$(cat /tmp/audit_time.txt | grep real | awk '{print $2}'))
-      arr << "echo $audit"
+      arr << 'echo $audit'
       arr << "echo Node #{nodenum} get presigned URL"
-      arr << %(/usr/bin/time -p -o /tmp/access_time.txt curl -s "#{accessurl}" | jq -r .url | xargs curl -s -o /dev/null)
+      arr << %(purl=$(curl -s "#{accessurl}" | jq -r .url))
+      arr << %(/usr/bin/time -p -o /tmp/access_time.txt curl -s -o /dev/null "$purl")
       arr << %(access=$(cat /tmp/access_time.txt | grep real | awk '{print $2}'))
       arr << %(printf "%10s %10s %10s %10s\n" "#{nodenum}" "$cli" "$audit" "$access" >> /tmp/bench_stats.txt)
       arr << '```' unless script_only
-      arr << ""
+      arr << ''
       arr
     end
 
@@ -570,13 +575,15 @@ module Sinatra
       desc = []
 
       unless script_only
-        desc << "## Benchmark Fixity Check"
-        desc << "This report will perform a retrieval of the file from each ONLINE storage node using the ACCESS service." 
-        desc << ""
-        desc << "This report will perform a fixit of the file from each ONLINE storage node using the AUDIT service." 
-        desc << ""
-        desc << "Each request will be allowed up to 5 minutes to complete before timing out." 
-        desc << ""
+        desc << '## Benchmark Fixity Check'
+        desc << 'This report will perform a retrieval of the file from each ONLINE storage node'
+        desc << '  using the ACCESS service.'
+        desc << ''
+        desc << 'This report will perform a fixity check of the file from each ONLINE storage node'
+        desc << '  using the AUDIT service.'
+        desc << ''
+        desc << 'Each request will be allowed up to 5 minutes to complete before timing out.'
+        desc << ''
       end
 
       desc << '```' unless script_only
@@ -584,12 +591,12 @@ module Sinatra
       desc << '```' unless script_only
 
       if nodes
-        desc << "These scripts can be used to test retrival of the same object using the S3 CLI." unless script_only
+        desc << 'These scripts can be used to test retrival of the same object using the S3 CLI.' unless script_only
         nodes.each do |node|
           benchmark_script_node(
-            node['node_number'], 
-            node['object_ark'], 
-            node['version_number'], 
+            node['node_number'],
+            node['object_ark'],
+            node['version_number'],
             node['pathname'],
             node['id'],
             script_only: script_only
@@ -601,8 +608,10 @@ module Sinatra
 
       desc << '```' unless script_only
       desc << 'cat /tmp/bench_stats.txt'
+      desc << %(export AWS_ACCESS_KEY_ID=)
+      desc << %(export AWS_SECRET_ACCESS_KEY=)
       desc << '```' unless script_only
-      desc      
+      desc
     end
 
     def benchmark_fixity(params)
