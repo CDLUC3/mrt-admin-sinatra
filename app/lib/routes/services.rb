@@ -531,6 +531,23 @@ module Sinatra
       end
     end
 
+    def cloud_service(nodenum)
+      case nodenum
+      when 9501, 9502, 9503
+        'SDSC'
+      when 2001, 2002, 2003
+        'Wasabi'
+      when 5001, 5003
+        'AWS S3'
+      when 6001
+        'Glacier'
+      when 7777, 8888, 8889
+        ENV.fetch('S3ENDPOINT', '').empty? ? 'AWS' : 'MinIO Docker'
+      else
+        nodenum.to_s
+      end
+    end
+
     def benchmark_script_node(nodenum, ark, version, pathname, inv_file_id, script_only: false)
       arr = []
       path = benchmark_path(nodenum, ark, version, pathname)
@@ -553,20 +570,20 @@ module Sinatra
       auditurl = "#{audit_host}/update/#{inv_file_id}?t=json"
       auditjq = %(jq -r '."items:fixityEntriesState" ."items:entries" ."items:fixityMRTEntry" ."items:status"')
 
-      arr << "echo Node #{nodenum} S3 CLI download"
+      arr << "echo #{cloud_service(nodenum)} S3 CLI download"
       arr << %(/usr/bin/time -p -o /tmp/cli_time.txt aws s3 #{region_param} #{endpoint_param} cp "#{path}" /dev/null)
       arr << %(cli=$(cat /tmp/cli_time.txt | grep real | awk '{print $2}'))
       arr << 'echo $cli'
-      arr << "echo Node #{nodenum} S3 audit check"
+      arr << "echo #{cloud_service(nodenum)} S3 audit check"
       arr << %(/usr/bin/time -p -o /tmp/audit_time.txt curl -s -X POST "#{auditurl}" | #{auditjq})
       arr << %(audit=$(cat /tmp/audit_time.txt | grep real | awk '{print $2}'))
       arr << 'echo $audit'
-      arr << "echo Node #{nodenum} get presigned URL"
+      arr << "echo #{cloud_service(nodenum)} get presigned URL"
       arr << %(purl=$(curl -s "#{accessurl}" | jq -r .url))
       arr << %(/usr/bin/time -p -o /tmp/access_time.txt curl -s -o /dev/null "$purl")
       arr << %(access=$(cat /tmp/access_time.txt | grep real | awk '{print $2}'))
       arr << 'echo $access'
-      arr << %(printf "%10s %10s %10s %10s\n" "#{nodenum}" "$cli" "$audit" "$access" >> /tmp/bench_stats.txt)
+      arr << %(printf "%15s %10s %10s %10s\n" "#{cloud_service(nodenum)}" "$cli" "$audit" "$access" >> /tmp/bench_stats.txt)
       arr << '```' unless script_only
       arr << ''
       arr
@@ -588,7 +605,8 @@ module Sinatra
       end
 
       desc << '```' unless script_only
-      desc << 'printf "%10s %10s %10s %10s\n" "Service" "CLI" "Audit" "Access" > /tmp/bench_stats.txt'
+      desc << %(printf "Benchmark Fixity Report: File %d; Size: %d\n\n" #{nodes[0]['id']} #{nodes[0]['full_size']} > /tmp/bench_stats.txt)
+      desc << 'printf "%15s %10s %10s %10s\n" "Service" "CLI" "Audit" "Access" >> /tmp/bench_stats.txt'
       desc << '```' unless script_only
 
       if nodes
