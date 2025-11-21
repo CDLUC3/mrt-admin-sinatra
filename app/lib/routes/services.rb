@@ -565,6 +565,7 @@ module Sinatra
       arr << %(purl=$(curl -s "#{accessurl}" | jq -r .url))
       arr << %(/usr/bin/time -p -o /tmp/access_time.txt curl -s -o /dev/null "$purl")
       arr << %(access=$(cat /tmp/access_time.txt | grep real | awk '{print $2}'))
+      arr << 'echo $access'
       arr << %(printf "%10s %10s %10s %10s\n" "#{nodenum}" "$cli" "$audit" "$access" >> /tmp/bench_stats.txt)
       arr << '```' unless script_only
       arr << ''
