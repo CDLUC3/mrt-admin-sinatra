@@ -605,7 +605,7 @@ module Sinatra
       end
 
       desc << '```' unless script_only
-      desc << %(printf "Benchmark Fixity Report: File %d; Size: %d\n\n" #{nodes[0]['id']} #{nodes[0]['full_size']} > /tmp/bench_stats.txt)
+      desc << %(printf "Benchmark Fixity Report: %s;File %d; Size: %d\n\n" "$(date '+%Y-%m-%d %H:%M:%S')" #{nodes[0]['id']} #{nodes[0]['full_size']} > /tmp/bench_stats.txt)
       desc << 'printf "%15s %10s %10s %10s\n" "Service" "CLI" "Audit" "Access" >> /tmp/bench_stats.txt'
       desc << '```' unless script_only
 
