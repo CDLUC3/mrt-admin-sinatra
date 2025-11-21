@@ -534,15 +534,15 @@ module Sinatra
     def cloud_service(nodenum)
       case nodenum
       when 9501, 9502, 9503
-        'SDSC'
+        'sdsc'
       when 2001, 2002, 2003
-        'Wasabi'
+        'wasabi'
       when 5001, 5003
-        'AWS S3'
+        'aws-s3'
       when 6001
-        'Glacier'
+        'glacier'
       when 7777, 8888, 8889
-        ENV.fetch('S3ENDPOINT', '').empty? ? 'AWS' : 'MinIO Docker'
+        ENV.fetch('S3ENDPOINT', '').empty? ? 'aws' : 'minio-docker'
       else
         nodenum.to_s
       end
@@ -566,9 +566,11 @@ module Sinatra
       region_param = " --region #{region}" unless region.empty?
 
       key = CGI.escape("#{ark}|#{version}|#{pathname}")
+      bfile = File.basename(pathname)
       accessurl = "#{access_host}/presign-file/#{nodenum}/#{key}"
       auditurl = "#{audit_host}/update/#{inv_file_id}?t=json"
       auditjq = %(jq -r '."items:fixityEntriesState" ."items:entries" ."items:fixityMRTEntry" ."items:status"')
+      metdim = "benchmark_file=#{bfile},cloud_provider=#{cloud_service(nodenum)}"
 
       arr << "echo #{cloud_service(nodenum)} S3 CLI download"
       arr << %(/usr/bin/time -p -o /tmp/cli_time.txt aws s3 #{region_param} #{endpoint_param} cp "#{path}" /dev/null)
@@ -583,7 +585,19 @@ module Sinatra
       arr << %(/usr/bin/time -p -o /tmp/access_time.txt curl -s -o /dev/null "$purl")
       arr << %(access=$(cat /tmp/access_time.txt | grep real | awk '{print $2}'))
       arr << 'echo $access'
-      arr << %(printf "%15s %10s %10s %10s\n" "#{cloud_service(nodenum)}" "$cli" "$audit" "$access" >> /tmp/bench_stats.txt)
+      arr << %(printf "%15s %10s %10s %10s\n" \
+               "#{cloud_service(nodenum)}" "$cli" "$audit" "$access" >> /tmp/bench_stats.txt)
+      arr << %(export AWS_ACCESS_KEY_ID=)
+      arr << %(export AWS_SECRET_ACCESS_KEY=)
+      arr << %(aws cloudwatch put-metric-data --region us-west-2 --namespace merritt \
+               --dimensions "#{metdim},retrieval_method=cli" \
+               --unit Seconds --metric-name duration --value $cli)
+      arr << %(aws cloudwatch put-metric-data --region us-west-2 --namespace merritt \
+               --dimensions "#{metdim},retrieval_method=audit" \
+               --unit Seconds --metric-name duration --value $audit)
+      arr << %(aws cloudwatch put-metric-data --region us-west-2 --namespace merritt \
+               --dimensions "#{metdim},retrieval_method=access" \
+               --unit Seconds --metric-name duration --value $access)
       arr << '```' unless script_only
       arr << ''
       arr
@@ -605,7 +619,8 @@ module Sinatra
       end
 
       desc << '```' unless script_only
-      desc << %(printf "Benchmark Fixity Report: %s;File %d; Size: %d\n\n" "$(date '+%Y-%m-%d %H:%M:%S')" #{nodes[0]['id']} #{nodes[0]['full_size']} > /tmp/bench_stats.txt)
+      desc << %(printf "Benchmark Fixity Report: %s;File %d; Size: %d\n\n" \
+                "$(date '+%Y-%m-%d %H:%M:%S')" #{nodes[0]['id']} #{nodes[0]['full_size']} > /tmp/bench_stats.txt)
       desc << 'printf "%15s %10s %10s %10s\n" "Service" "CLI" "Audit" "Access" >> /tmp/bench_stats.txt'
       desc << '```' unless script_only
 
