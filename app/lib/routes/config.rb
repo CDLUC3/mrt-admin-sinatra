@@ -120,7 +120,7 @@ module Sinatra
 
       app.get '/merritt_manifest' do
         content_type :json
-        UC3S3::ConfigObjectsClient.client.get_ecs_release_manifest
+        UC3S3::ConfigObjectsClient.client.get_ecs_release_manifest.to_json
       end
 
       app.get '/saved-reports/list' do

@@ -282,7 +282,7 @@ module UC3S3
       YAML.safe_load(resp.body.read)
     rescue StandardError => e
       puts "Error retrieving ECS release manifest: #{e}"
-      {}
+      { manifest: 'Not Found' }
     end
   end
 end
