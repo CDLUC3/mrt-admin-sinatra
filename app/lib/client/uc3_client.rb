@@ -338,6 +338,8 @@ module UC3
         /ops/storage/manifest
         /ops/storage/manifest-yaml
         /ops/storage/ingest-checkm
+        /ops/storage/benchmark-fixity
+        /ops/storage/benchmark-fixity-script
       ]
 
       # These GET operations require specific url parameters that are not readily available for a unit test

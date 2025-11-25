@@ -73,6 +73,16 @@ items:
       route: /source/tags/audit
     - title: Replic
       route: /source/tags/replic
+    - title: Core
+      route: /source/tags/core
+    - title: Core Parent Props
+      route: /source/tags/core-parprop
+    - title: Core BOM
+      route: /source/tags/core-bom
+    - title: Cloud
+      route: /source/tags/cloud
+    - title: Core ZK
+      route: /source/tags/zk
   - title: Repostiory Images
     route: /source/images
     path: images
