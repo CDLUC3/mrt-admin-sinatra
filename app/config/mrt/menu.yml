@@ -40,6 +40,8 @@ items:
       route: /context
     - title: Admin Tool Clients
       route: /clients
+    - title: Merritt Manifest
+      route: /merritt_manifest
     - title: Help
       route: /help
   - title: Merritt Troubleshooting

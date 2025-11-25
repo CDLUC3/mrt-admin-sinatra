@@ -273,5 +273,16 @@ module UC3S3
       end
       table
     end
+
+    def get_ecs_release_manifest
+      resp = @s3_client.get_object(
+        bucket: @bucket,
+        key: "uc3/mrt/mrt-ecs-manifest/ecs-release-manifest.yaml"
+      )
+      YAML.safe_load(resp.body.read)
+    rescue StandardError => e
+      puts "Error retrieving ECS release manifest: #{e}"
+      {}
+    end
   end
 end
