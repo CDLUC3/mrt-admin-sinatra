@@ -103,9 +103,9 @@ module UC3Code
       cssclasses
     end
 
-    def actions(_repohash, tag, _commit, _release, tagartifacts, tagimages, deployed, _matching_tags)
+    def actions(_repohash, tag, _commit, _release, tagartifacts, tagimages, deployed, _matching_tags, protected_tag: false)
       actions = []
-      unless tagartifacts.empty? || deployed
+      unless tagartifacts.empty? || deployed || protected_tag
         actions << {
           value: 'Delete Artifacts',
           href: "/source/artifacts/delete/#{tag}",
@@ -186,16 +186,19 @@ module UC3Code
 
         next unless UC3::UC3Client.semantic_prefix_tag?(tag.name) || !tagartifacts.empty? || !tagimages.empty?
 
+        tdate = commit.fetch(:date, '')
+        protected_tag = Time.now - tdate < (6 * 30 * 24 * 60 * 60)
+
         @tags[tag.name] = {
           cssclass: css_classes(tag.name, commit, tagrelease, tagartifacts, tagimages).join(' '),
           tag: tag.name,
-          date: commit.fetch(:date, ''),
+          date: tdate,
           sha: make_sha(tag, commit),
           release: make_release(repo, tag, tagrelease),
           artifacts: tagartifacts,
           images: tagimages,
           matching_tags: matching_tags,
-          actions: actions(repohash, tag.name, commit, tagrelease, tagartifacts, tagimages, deployed, matching_tags)
+          actions: actions(repohash, tag.name, commit, tagrelease, tagartifacts, tagimages, deployed, matching_tags, protected_tag: protected_tag)
         }
       end
 

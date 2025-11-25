@@ -77,7 +77,7 @@ items:
       route: /source/tags/core
     - title: Cloud
       route: /source/tags/cloud
-    - title: Core ZK
+    - title: ZK
       route: /source/tags/zk
   - title: Repostiory Images
     route: /source/images
