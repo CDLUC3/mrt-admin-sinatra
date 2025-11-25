@@ -75,10 +75,6 @@ items:
       route: /source/tags/replic
     - title: Core
       route: /source/tags/core
-    - title: Core Parent Props
-      route: /source/tags/core-parprop
-    - title: Core BOM
-      route: /source/tags/core-bom
     - title: Cloud
       route: /source/tags/cloud
     - title: Core ZK

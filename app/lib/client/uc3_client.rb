@@ -375,6 +375,8 @@ module UC3
           if path.start_with?('/source/')
             UC3Code::SourceCodeClient.client.reponames.each do |repo|
               next if %w[ui admintool].include?(repo.to_s) && path.include?('artifacts')
+              next if %w[core core-bom core-parprop cloud zk].include?(repo.to_s) && path.include?('images')
+              next if %w[core-bom core-parprop].include?(repo.to_s) && path.include?('tags')
 
               rpath = path.gsub('*', repo.to_s)
               @test_paths << rpath unless AdminUI::TopMenu.instance.skip_paths.include?(rpath)
