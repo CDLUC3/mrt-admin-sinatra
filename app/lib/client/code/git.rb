@@ -59,7 +59,12 @@ module UC3Code
           AdminUI::Filter.new('Has Release', 'no-release'),
           AdminUI::Filter.new('Has Artifact', 'no-artifact'),
           AdminUI::Filter.new('Has Image', 'no-image')
-        ]
+        ],
+        description: "## Rules\n" \
+                     "- Semantic tags\n  " \
+                     "- If the tag is newer than 6 months, artifacts and images cannot be deleted\n" \
+                     "- Otherwise\n  " \
+                     '- Deletion is allowed'
       )
     end
 
@@ -103,7 +108,8 @@ module UC3Code
       cssclasses
     end
 
-    def actions(_repohash, tag, _commit, _release, tagartifacts, tagimages, deployed, _matching_tags, protected_tag: false)
+    def actions(_repohash, tag, _commit, _release, tagartifacts, tagimages, deployed, _matching_tags,
+      protected_tag: false)
       actions = []
       unless tagartifacts.empty? || deployed || protected_tag
         actions << {
@@ -116,7 +122,7 @@ module UC3Code
         }
       end
 
-      if !tagimages.empty? && !deployed
+      if !tagimages.empty? && !deployed && !protected_tag
         actions << {
           value: 'Delete Images',
           href: "/source/images/delete/#{tag}",
@@ -187,7 +193,7 @@ module UC3Code
         next unless UC3::UC3Client.semantic_prefix_tag?(tag.name) || !tagartifacts.empty? || !tagimages.empty?
 
         tdate = commit.fetch(:date, '')
-        protected_tag = Time.now - tdate < (6 * 30 * 24 * 60 * 60)
+        protected_tag = Time.now - tdate < (6 * 30 * 24 * 60 * 60) && UC3::UC3Client.semantic_tag?(tag.name)
 
         @tags[tag.name] = {
           cssclass: css_classes(tag.name, commit, tagrelease, tagartifacts, tagimages).join(' '),
@@ -198,7 +204,8 @@ module UC3Code
           artifacts: tagartifacts,
           images: tagimages,
           matching_tags: matching_tags,
-          actions: actions(repohash, tag.name, commit, tagrelease, tagartifacts, tagimages, deployed, matching_tags, protected_tag: protected_tag)
+          actions: actions(repohash, tag.name, commit, tagrelease, tagartifacts, tagimages, deployed, matching_tags,
+            protected_tag: protected_tag)
         }
       end
 
