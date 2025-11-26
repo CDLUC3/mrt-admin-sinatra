@@ -723,6 +723,9 @@ items:
           An ingest profile describes characteristics associated with a collection's configuration, 
           such as its context mnemonic, description and primary storage node. 
           These profiles are managed in a github repository and are deployed to a configuration S3 bucket.
+      - title: Collection Creation Docs
+        route: https://github.com/CDLUC3/mrt-doc-private/blob/main/docs/system-recovery/colladmin-create-collection.md
+        external: true
     - title: Storage Node Config
       route: /ops/collections/storage-node-config
     - path: db

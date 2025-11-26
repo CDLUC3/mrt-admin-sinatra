@@ -1,24 +1,39 @@
 # Merritt Admin Tool
 
-This version of the Merritt Admin Tool is designed to run in the CDL UC3 account.
+The Merritt Admin Tool supports a stack of microservices running within a Merritt Stack.
 
-How does this differ from the original Merritt Admin Tool?
+- [Merritt Stack Links and Troubleshooting Documentation](https://github.com/CDLUC3/mrt-doc-private/blob/main/docs/system-recovery/README.md)
 
-- The original admin tool was originally developed to deliver static reports.
-  - The original tool only ran as a lambda.
-- This tool has been build as a web service alongside other Merritt services.
-- This tool can be run in multiple ways
-  - Web service running in an ECS stack of Merritt services
-  - Web service running in a Docker compose stack of Merritt services
-  - As a lambda (will be deprecated in the future, features depend on VPC placement)
-  - As a standanlone ruby web service running on a desktop (AWS authentication required)
-
-What Merritt features are required to run this application?
-- For collection creation
-  - Collection profiles will be accesible to the Admin Tool via an S3 bucket
-  - Submission of Admin objects will no longer be supported.  Direct calls will be made to inventory endpoints.
+## Merritt Admin Tool Features
+- Query the Merritt Inventory and Billing Databases
+  - Generate and save "large" reports to a report bucket
+- Trigger updates to the Merritt Billing Database to generate daily statistics and to peform daily consistency checks
+- View ZooKeeper Queue Items
+- View Merritt LDAP Users and Permissions
+- Create Merritt Owners and Collections
+  - Generate Merritt Collection Profiles
+  - Merritt Collection Profiles are managed in GitHub and then published to S3 for runtime use
+  - Configure storage nodes associated with a collection
+- View Merritt resources in AWS ECR and AWS CodeArtifact (Dev Stack Only)
+  - Delete obsolete images and artifacts
+- View services running within an ECS Stack
+  - Restart services
+  - Trigger auto-scaling of services
+  - Initiate ECS Tasks to perform discrete actions (vs long-running services)
+  - View AWS resources associated with a stack (Dev Stack Only)
+- Merritt Operational Actions
+  - Make service calls to Merritt microservices
+  - Requeue Audit and Replication Tasks
+  - Re-queue and delete ZooKeeper Queue Items
+- In a Development Environment, trigger particular test cases in a Merritt Stack
+  - Create a baseline set of collections in an empty Merritt Stack
+  - Trigger the ingestion of test data into multiple Merritt collections
+  - Force ingest queue job failures
+  - Force a fixity error
+  - Force a storage scan error
 
 ## Code Base
-- [mrt-admin-sinatra](https://github.com/CDLUC3/mrt-admin-sinatra)
-- [sceptre resources](https://github.com/CDLUC3/mrt-sceptre/tree/main/mrt-admin-sinatra)
+- [Admin Tool Code Base: mrt-admin-sinatra](https://github.com/CDLUC3/mrt-admin-sinatra)
+- [Merritt Stack Sceptre Resources](https://github.com/CDLUC3/mrt-sceptre/tree/main/mrt-admin-sinatra)
+- [Merritt Dev Container](https://github.com/CDLUC3/merritt-docker/tree/main/mrt-inttest-services/merritt-dev)
 
