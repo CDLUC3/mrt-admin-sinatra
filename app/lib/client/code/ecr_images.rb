@@ -102,7 +102,10 @@ module UC3Code
           AdminUI::Column.new(:pushed, header: 'Pushed At'),
           AdminUI::Column.new(:matching_tags, header: 'Matching Image Tags'),
           AdminUI::Column.new(:actions, header: 'Actions')
-        ]
+        ],
+        description: "Tag deletion rules:\n" \
+                     "- Tags matching Merritt stack names cannot be deleted\n" \
+                     '- Tags registered in the [ECS Release Manifest](/merritt_manifest) cannot be deleted'
       )
       res.each_key do |tag|
         next if UC3::UC3Client.semantic_prefix_tag?(tag)
