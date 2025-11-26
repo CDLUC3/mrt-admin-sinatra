@@ -19,7 +19,7 @@ module UC3Code
       !@client.nil?
     end
 
-    def list_images(repohash: {})
+    def list_images(repo, repohash: {})
       res = {}
       dig = {}
       return res unless enabled
@@ -76,6 +76,7 @@ module UC3Code
           rec[:deployed] = UC3::UC3Client.deployed_tag?(tag, rec[:matching_tags])
 
           next if rec[:deployed]
+          next if UC3S3::ConfigObjectsClient.client.get_ecs_release_manifest_deploy_tags(repo).include?(tag)
 
           rec[:actions] << [
             {

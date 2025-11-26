@@ -60,11 +60,11 @@ module UC3Code
           AdminUI::Filter.new('Has Artifact', 'no-artifact'),
           AdminUI::Filter.new('Has Image', 'no-image')
         ],
-        description: "## Rules\n" \
-                     "- Semantic tags\n  " \
-                     "- If the tag is newer than 6 months, artifacts and images cannot be deleted\n" \
-                     "- Otherwise\n  " \
-                     '- Deletion is allowed'
+        description: "Artifacts and Images Deletion Rules\n" \
+                     "- If a *Semantic tag* is newer than 6 months, artifacts and images cannot be deleted\n" \
+                     '- If a tag is registered in the [ECS Release Manifest](/merritt_manifest), ' \
+                     "then artifacts and images cannot be deleted\n" \
+                     '- Otherwise, deletion is allowed'
       )
     end
 
@@ -181,7 +181,7 @@ module UC3Code
         tagartifacts = artifacts.fetch(tag.name, [])
         tagimagerecs = ecrimages.fetch(tag.name, [])
         tagimages = []
-        deployed = false
+        deployed = UC3S3::ConfigObjectsClient.client.get_ecs_release_manifest_deploy_tags(repo).include?(tag.name)
         matching_tags = []
         tagimagerecs.each do |tagrec|
           tagimages << tagrec.fetch(:image, '') unless tagrec.fetch(:image, '').empty?
