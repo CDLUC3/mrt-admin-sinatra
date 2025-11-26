@@ -287,7 +287,8 @@ module UC3S3
 
     def get_ecs_release_manifest_deploy_tags(reposhort)
       tags = []
-      tagmap = get_ecs_release_manifest.fetch('ecs-tag-map', {})
+      puts get_ecs_release_manifest
+      tagmap = get_ecs_release_manifest.fetch('ecs-tagmap', {})
       puts tagmap
       puts tagmap.fetch(reposhort, {})
       tagmap.fetch(reposhort, {}).each_value do |tag|
