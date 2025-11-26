@@ -285,9 +285,9 @@ module UC3S3
       { manifest: 'Not Found' }
     end
 
-    def get_ecs_release_manifest_deploy_tags(service)
+    def get_ecs_release_manifest_deploy_tags(reposhort)
       tags = []
-      get_ecs_release_manifest.fetch('ecs-tag-map', {}).fetch(service, {}).each_value do |tag|
+      get_ecs_release_manifest.fetch('ecs-tag-map', {}).fetch(reposhort, {}).each_value do |tag|
         tags << tag
       end
       tags.uniq
