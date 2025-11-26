@@ -165,6 +165,7 @@ module UC3Code
 
     def list_tags(repohash: {}, artifacts: {}, ecrimages: {})
       repo = repohash.fetch(:repo, '')
+      reposhort = File.basename(repo)
 
       @tags = {}
       table = make_table
@@ -181,7 +182,8 @@ module UC3Code
         tagartifacts = artifacts.fetch(tag.name, [])
         tagimagerecs = ecrimages.fetch(tag.name, [])
         tagimages = []
-        deployed = UC3S3::ConfigObjectsClient.client.get_ecs_release_manifest_deploy_tags(repo).include?(tag.name)
+        deployed_tags = UC3S3::ConfigObjectsClient.client.get_ecs_release_manifest_deploy_tags(reposhort)
+        deployed = deployed_tags.include?(tag.name)
         matching_tags = []
         tagimagerecs.each do |tagrec|
           tagimages << tagrec.fetch(:image, '') unless tagrec.fetch(:image, '').empty?

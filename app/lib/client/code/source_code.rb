@@ -44,7 +44,7 @@ module UC3Code
       @github.list_tags(
         repohash: repohash,
         artifacts: @codeartifact.list_package_versions(repohash: repohash),
-        ecrimages: @ecrimages.list_images(repo, repohash: repohash)
+        ecrimages: @ecrimages.list_images(repohash: repohash)
       )
     end
 
@@ -92,7 +92,7 @@ module UC3Code
 
     def images(repo)
       repohash = repo_config(repo)
-      @ecrimages.list_images(repo, repohash: repohash)
+      @ecrimages.list_images(repohash: repohash)
     end
 
     def images_table(repo)
