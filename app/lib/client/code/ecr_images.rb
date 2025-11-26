@@ -107,7 +107,7 @@ module UC3Code
           AdminUI::Column.new(:matching_tags, header: 'Matching Image Tags'),
           AdminUI::Column.new(:actions, header: 'Actions')
         ],
-        description: "Tag deletion rules:\n\n" \
+        description: "#### Tag deletion rules:\n\n" \
                      "- Tags matching Merritt stack names cannot be deleted\n" \
                      '- Tags registered in the [ECS Release Manifest](/merritt_manifest) cannot be deleted'
       )
