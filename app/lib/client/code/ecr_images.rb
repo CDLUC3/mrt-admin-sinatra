@@ -81,7 +81,6 @@ module UC3Code
           deployed_tags = UC3S3::ConfigObjectsClient.client.get_ecs_release_manifest_deploy_tags(reposhort)
           next if deployed_tags.include?(tag)
 
-          rec[:actions] << "Debug #{reposhort}: #{deployed_tags}"
           rec[:actions] << [
             {
               value: 'Delete',
