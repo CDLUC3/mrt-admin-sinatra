@@ -60,7 +60,7 @@ module UC3Code
           AdminUI::Filter.new('Has Artifact', 'no-artifact'),
           AdminUI::Filter.new('Has Image', 'no-image')
         ],
-        description: "Artifacts and Images Deletion Rules\n" \
+        description: "Artifacts and Images Deletion Rules\n\n" \
                      "- If a *Semantic tag* is newer than 6 months, artifacts and images cannot be deleted\n" \
                      '- If a tag is registered in the [ECS Release Manifest](/merritt_manifest), ' \
                      "then artifacts and images cannot be deleted\n" \
