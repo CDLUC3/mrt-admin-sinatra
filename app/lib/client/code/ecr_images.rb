@@ -78,6 +78,7 @@ module UC3Code
           next if rec[:deployed]
           next if UC3S3::ConfigObjectsClient.client.get_ecs_release_manifest_deploy_tags(repo).include?(tag)
 
+          rec[:actions] << "Foo #{UC3S3::ConfigObjectsClient.client.get_ecs_release_manifest_deploy_tags(repo)}"
           rec[:actions] << [
             {
               value: 'Delete',
