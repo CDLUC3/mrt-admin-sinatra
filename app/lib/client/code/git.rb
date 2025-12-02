@@ -182,7 +182,7 @@ module UC3Code
         tagartifacts = artifacts.fetch(tag.name, [])
         tagimagerecs = ecrimages.fetch(tag.name, [])
         tagimages = []
-        deployed_tags = UC3S3::ConfigObjectsClient.client.get_ecs_release_manifest_deploy_tags(reposhort)
+        deployed_tags = UC3S3::ConfigObjectsClient.client.get_release_manifest_deploy_tags(reposhort)
         deployed = deployed_tags.include?(tag.name)
         matching_tags = []
         tagimagerecs.each do |tagrec|

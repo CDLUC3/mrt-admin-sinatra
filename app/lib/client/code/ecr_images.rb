@@ -75,11 +75,17 @@ module UC3Code
 
           rec[:deployed] = UC3::UC3Client.deployed_tag?(tag, rec[:matching_tags])
 
-          next if rec[:deployed]
+          if rec[:deployed]
+            rec[:actions] << 'DEPLOYED'
+            next
+          end
 
           reposhort = File.basename(repohash.fetch(:repo, ''))
-          deployed_tags = UC3S3::ConfigObjectsClient.client.get_ecs_release_manifest_deploy_tags(reposhort)
-          next if deployed_tags.include?(tag)
+          deployed_tags = UC3S3::ConfigObjectsClient.client.get_release_manifest_deploy_tags(reposhort)
+          if deployed_tags.include?(tag)
+            rec[:actions] << 'DEPLOYED'
+            next
+          end
 
           rec[:actions] << [
             {
