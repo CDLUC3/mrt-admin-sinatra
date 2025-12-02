@@ -285,6 +285,17 @@ module UC3S3
       { manifest: 'Not Found' }
     end
 
+    def get_ec2_release_manifest
+      resp = @s3_client.get_object(
+        bucket: @bucket,
+        key: 'uc3/mrt/mrt-ecs-manifest/service-release-manifest.yaml'
+      )
+      YAML.safe_load(resp.body.read)
+    rescue StandardError => e
+      puts "Error retrieving ECS release manifest: #{e}"
+      { manifest: 'Not Found' }
+    end
+
     def get_ecs_release_manifest_deploy_tags(reposhort)
       tags = []
       tagmap = get_ecs_release_manifest.fetch('ecs-tagmap', {})

@@ -123,6 +123,11 @@ module Sinatra
         UC3S3::ConfigObjectsClient.client.get_ecs_release_manifest.to_json
       end
 
+      app.get '/merritt_ec2_manifest' do
+        content_type :json
+        UC3S3::ConfigObjectsClient.client.get_ec2_release_manifest.to_json
+      end
+
       app.get '/saved-reports/list' do
         adminui_show_table(
           AdminUI::Context.new(request.path, request.params),

@@ -125,6 +125,10 @@ items:
       route: /source/artifacts/cloud
     - title: ZK
       route: /source/artifacts/zk
+  - title: Merritt ECS Manifest
+    route: /merritt_manifest
+  - title: Merritt EC2 Manifest
+    route: /merritt_ec2_manifest
 - path: reports
   title: Reports
   classes: needs-db
