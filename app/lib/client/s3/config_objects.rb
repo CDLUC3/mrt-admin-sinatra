@@ -308,7 +308,7 @@ module UC3S3
     def get_ec2_release_manifest_deploy_tags(reposhort)
       tags = []
       %w[prd stg].each do |env|
-        tag = get_ecs_release_manifest.fetch("uc3-#{reposhort}-#{env}", '')
+        tag = get_ec2_release_manifest.fetch("uc3-#{reposhort}-#{env}", '')
         tags << tag unless tag.empty?
       end
       tags.uniq
