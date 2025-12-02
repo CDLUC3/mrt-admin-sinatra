@@ -111,7 +111,18 @@ module UC3Code
     def actions(_repohash, tag, _commit, _release, tagartifacts, tagimages, deployed, _matching_tags,
       protected_tag: false)
       actions = []
-      unless tagartifacts.empty? || deployed || protected_tag
+
+      if deployed
+        actions << 'DEPLOYED'
+        return actions
+      end
+
+      if protected_tag
+        actions << 'PROTECTED TAG'
+        return actions
+      end
+
+      unless tagartifacts.empty?
         actions << {
           value: 'Delete Artifacts',
           href: "/source/artifacts/delete/#{tag}",
@@ -122,7 +133,7 @@ module UC3Code
         }
       end
 
-      if !tagimages.empty? && !deployed && !protected_tag
+      unless tagimages.empty?
         actions << {
           value: 'Delete Images',
           href: "/source/images/delete/#{tag}",

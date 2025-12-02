@@ -76,7 +76,7 @@ module UC3Code
           rec[:deployed] = UC3::UC3Client.deployed_tag?(tag, rec[:matching_tags])
 
           if rec[:deployed]
-            rec[:actions] << 'DEPLOYED'
+            rec[:actions] << 'STACK TAG'
             next
           end
 
