@@ -54,6 +54,8 @@ module UC3Code
       res = []
       return res unless enabled
 
+      reposhort = File.basename(repohash.fetch(:repo, ''))
+
       repohash.fetch(:artifacts, []).each do |artifact|
         begin
           pv = @client.list_package_versions(
@@ -114,7 +116,11 @@ module UC3Code
                   cssclass: 'button'
                 }
               ]
-              unless UC3::UC3Client.keep_artifact_version?(v.version)
+              if UC3::UC3Client.keep_artifact_version?(v.version)
+                rec[:command] << 'KEEP SNAPSHOT'
+              elsif UC3S3::ConfigObjectsClient.client.get_release_manifest_deploy_tags(reposhort).include?(v.version)
+                rec[:command] << 'DEPLOYED'
+              else
                 rec[:command] << {
                   value: 'Delete',
                   href: "/source/artifacts/delete/#{v.version}",

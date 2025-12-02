@@ -595,6 +595,7 @@ queries:
       - [Object List: Older than 2 days](/queries/consistency/replication/objects-2/objlist?days=2)
       - [Object List: Older than 1 day](/queries/consistency/replication/objects-2/objlist?days=1)
       - [Object List: Any time](/queries/consistency/replication/objects-2/objlist?days=0)
+
     template-params:
       COPIES: 2
     status_check: true
@@ -629,6 +630,7 @@ queries:
       - [Object List: Older than 2 days](/queries/consistency/replication/objects-1/objlist?days=2)
       - [Object List: Older than 1 day](/queries/consistency/replication/objects-1/objlist?days=1)
       - [Object List: Any time](/queries/consistency/replication/objects-1/objlist?days=0)
+
     template-params:
       COPIES: 1
     status_check: true
@@ -662,6 +664,7 @@ queries:
       - [Object List: Older than 2 days](/queries/consistency/replication/objects-4/objlist?days=2)
       - [Object List: Older than 1 day](/queries/consistency/replication/objects-4/objlist?days=1)
       - [Object List: Any time](/queries/consistency/replication/objects-4/objlist?days=0)
+
     template-params:
       COPIES: 4
     status: PASS
@@ -693,9 +696,11 @@ queries:
       Files with more than 3 copies could indicate a misconfiguration of storage nodes for a collection.
 
       An error captured by this report can often be directly correlated with an error in the ConsistencyObjectsQuery report.
+      
       - [Object List: Older than 2 days](/queries/consistency/replication/files-2/objlist?days=2)
       - [Object List: Older than 1 day](/queries/consistency/replication/files-2/objlist?days=1)
       - [Object List: Any time](/queries/consistency/replication/files-2/objlist?days=0)
+
     template-params:
       COPIES: 2
     status: PASS
@@ -731,6 +736,7 @@ queries:
       - [Object List: Older than 2 days](/queries/consistency/replication/files-1/objlist?days=2)
       - [Object List: Older than 1 day](/queries/consistency/replication/files-1/objlist?days=1)
       - [Object List: Any time](/queries/consistency/replication/files-1/objlist?days=0)
+
     template-params:
       COPIES: 1
     status: PASS
@@ -766,6 +772,7 @@ queries:
       - [Object List: Older than 2 days](/queries/consistency/replication/files-4/objlist?days=2)
       - [Object List: Older than 1 day](/queries/consistency/replication/files-4/objlist?days=1)
       - [Object List: Any time](/queries/consistency/replication/files-4/objlist?days=0)
+
     template-params:
       COPIES: 4
     status: PASS
@@ -966,6 +973,7 @@ queries:
       - [Object List: Older than 2 days](/ops/db-queue/replication/required/objlist?days=2)
       - [Object List: Older than 1 day](/ops/db-queue/replication/required/objlist?days=1)
       - [Object List: Any time](/ops/db-queue/replication/required/objlist?days=0)
+
     status: PASS
     status_check: true
     sql: |
