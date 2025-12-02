@@ -76,14 +76,27 @@ module UC3Code
           rec[:deployed] = UC3::UC3Client.deployed_tag?(tag, rec[:matching_tags])
 
           if rec[:deployed]
-            rec[:actions] << 'STACK TAG'
+            rec[:actions] << {
+              value: 'STACK TAG',
+              cssclass: 'button',
+              disabled: true,
+              href: '#',
+              title: 'This image tag is a special tag that corresponds to a Merritt stack name.  ' \
+                     'This should not be deleted.'
+            }
             next
           end
 
           reposhort = File.basename(repohash.fetch(:repo, ''))
           deployed_tags = UC3S3::ConfigObjectsClient.client.get_release_manifest_deploy_tags(reposhort)
           if deployed_tags.include?(tag)
-            rec[:actions] << 'DEPLOYED'
+            rec[:actions] << {
+              value: 'DEPLOYED',
+              cssclass: 'button',
+              disabled: true,
+              href: '#',
+              title: 'This image tag is deployed in a release manifest'
+            }
             next
           end
 

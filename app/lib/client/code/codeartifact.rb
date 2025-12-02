@@ -120,11 +120,29 @@ module UC3Code
               protected_ver = Time.now - rec[:published] < (6 * 30 * 24 * 60 * 60) && UC3::UC3Client.semantic_tag?(v.version)
 
               if UC3::UC3Client.keep_artifact_version?(v.version)
-                rec[:command] << 'KEEP SNAPSHOT'
+                rec[:command] << {
+                  value: 'KEEP SNAPSHOT',
+                  cssclass: 'button',
+                  disabled: true,
+                  href: '#',
+                  title: 'SNAPSHOT versions of artifacts are overwritten regularly'
+                }
               elsif UC3S3::ConfigObjectsClient.client.get_release_manifest_deploy_tags(reposhort).include?(v.version)
-                rec[:command] << 'DEPLOYED'
+                rec[:command] << {
+                  value: 'DEPLOYED',
+                  cssclass: 'button',
+                  disabled: true,
+                  href: '#',
+                  title: 'This artifact version is deployed in a release manifest'
+                }
               elsif protected_ver
-                rec[:command] << 'PROTECTED'
+                rec[:command] << {
+                  value: 'PROTECTED',
+                  cssclass: 'button',
+                  disabled: true,
+                  href: '#',
+                  title: 'This artifact has a semantic tag and is less than 6 months old'
+                }
               else
                 rec[:command] << {
                   value: 'Delete',
