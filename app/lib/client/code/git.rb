@@ -114,22 +114,22 @@ module UC3Code
 
       if deployed
         actions << {
-          value: 'PROTECTED',
+          value: 'DEPLOYED',
           cssclass: 'button',
           disabled: true,
           href: '#',
-          title: 'This tag is a semantic tag and is less than 6 months old'
+          title: 'This tag is deployed in a release manifest'
         }
         return actions
       end
 
       if protected_tag
         actions << {
-          value: 'DEPLOYED',
+          value: 'PROTECTED',
           cssclass: 'button',
           disabled: true,
           href: '#',
-          title: 'This tag is deployed in a release manifest'
+          title: 'This tag is a semantic tag and is less than 6 months old'
         }
         return actions
       end
