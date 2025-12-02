@@ -116,10 +116,15 @@ module UC3Code
                   cssclass: 'button'
                 }
               ]
+
+              protected_ver = Time.now - rec[:published] < (6 * 30 * 24 * 60 * 60) && UC3::UC3Client.semantic_tag?(v.version)
+
               if UC3::UC3Client.keep_artifact_version?(v.version)
                 rec[:command] << 'KEEP SNAPSHOT'
               elsif UC3S3::ConfigObjectsClient.client.get_release_manifest_deploy_tags(reposhort).include?(v.version)
                 rec[:command] << 'DEPLOYED'
+              elsif protected_ver
+                rec[:command] << 'PROTECTED'
               else
                 rec[:command] << {
                   value: 'Delete',
