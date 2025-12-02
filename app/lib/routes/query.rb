@@ -152,7 +152,7 @@ module Sinatra
           UC3Query::QueryClient.client.query(request.path, request.params),
           erb: :audit_batches_table,
           locals: {
-            hours: [24, 2, 1]
+            hours: [24, 48]
           }
         )
       end
