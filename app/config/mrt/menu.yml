@@ -1058,15 +1058,15 @@ items:
       disable: ecs-ephemeral, ecs-dbsnapshot, ecs-stg, ecs-dev, docker, default
       items:
       - title: Audit_benchmark_1mb
-        route: queries/repository/objects-localid?localid=Audit_benchmark_1mb
+        route: /queries/repository/objects-localid?localid=Audit_benchmark_1mb
       - title: Audit_benchmark_10mb
-        route: queries/repository/objects-localid?localid=Audit_benchmark_10mb
+        route: /queries/repository/objects-localid?localid=Audit_benchmark_10mb
       - title: Audit_benchmark_20mb
-        route: queries/repository/objects-localid?localid=Audit_benchmark_20mb
+        route: /queries/repository/objects-localid?localid=Audit_benchmark_20mb
       - title: Audit_benchmark_100mb
-        route: queries/repository/objects-localid?localid=Audit_benchmark_100mb
+        route: /queries/repository/objects-localid?localid=Audit_benchmark_100mb
       - title: Audit_benchmark_1gb
-        route: queries/repository/objects-localid?localid=Audit_benchmark_1gb
+        route: /queries/repository/objects-localid?localid=Audit_benchmark_1gb
   - title: Testing
     path: test 
     route: /test
