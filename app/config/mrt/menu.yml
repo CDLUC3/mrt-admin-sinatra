@@ -1055,7 +1055,7 @@ items:
       route: /queries/misc/admin-types
     - title: Benchmark Data
       path: benchmark
-      disable: ecs-ephemeral, ecs-dbsnapshot, ecs-stg, ecs-dev, docker, default
+      disable: ecs-ephemeral, ecs-dbsnapshot, ecs-dev, docker, default
       items:
       - title: Audit_benchmark_1mb
         route: /queries/repository/objects-localid?localid=Audit_benchmark_1mb
