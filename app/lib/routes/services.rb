@@ -414,18 +414,48 @@ module Sinatra
       end
 
       app.get '/ops/storage/benchmark-fixity' do
-        nodes = UC3Query::QueryClient.client.run_query('/queries/benchmark-fixity', params)
-        benchmark_nodes(nodes)
+        data = benchmark_fixity_data(request, '/queries/benchmark-fixity', path: '/ops/storage/benchmark-fixity-fileid')
+        filename = data.fetch(:filename, '')
+        size = data.fetch(:file_size, '')
+        table = AdminUI::FilterTable.new(
+          columns: [
+            AdminUI::Column.new(:node_number, header: 'Node Number'),
+            AdminUI::Column.new(:cloud_service, header: 'Cloud Service'),
+            AdminUI::Column.new(:admin_audit_url, header: 'Audit Test'),
+            AdminUI::Column.new(:admin_access_url, header: 'Access Test'),
+            AdminUI::Column.new(:cli_command, header: 'CLI command')
+          ],
+          description: "Check Fixity for File #{filename}; Size=#{size}"
+        )
+        data.fetch(:nodes, {}).each_value do |node_data|
+          node_data[:admin_audit_url] = { href: node_data[:admin_audit_url], value: 'Audit Benchmark' }
+          node_data[:admin_access_url] = { href: node_data[:admin_access_url], value: 'Access Benchmark' }
+          table.add_row(
+            AdminUI::Row.make_row(
+              table.columns,
+              node_data
+            )
+          )
+        end
+        adminui_show_table(
+          AdminUI::Context.new(request.path, request.params),
+          table
+        )
       end
 
-      app.get '/ops/storage/benchmark-fixity-nodes' do
-        nodes = UC3Query::QueryClient.client.run_query('/ops/storage/benchmark-fixity-nodes', params)
-        benchmark_nodes(nodes)
+      app.get '/ops/storage/benchmark-fixity-fileid' do
+        content_type :json
+        benchmark_fixity_data(request, '/queries/benchmark-fixity').to_json
+      end
+
+      app.get '/ops/storage/benchmark-fixity-localid' do
+        content_type :json
+        benchmark_fixity_data(request, '/queries/benchmark-fixity-nodes').to_json
       end
 
       app.get '/ops/storage/benchmark-fixity-script' do
         nodes = UC3Query::QueryClient.client.run_query('/queries/benchmark-fixity', params)
-        desc = benchmark_script(nodes, script_only: true)
+        desc = benchmark_script(nodes)
         content_type :text
         desc.join("\n")
       end
@@ -451,6 +481,61 @@ module Sinatra
         end
         redirect '/ops/zk/ingest/jobs-by-collection'
       end
+    end
+
+    def benchmark_fixity_data(request, query_name, path: '')
+      path = request.path if path.empty?
+      uri = "#{path}?#{request.query_string}"
+      nodes = UC3Query::QueryClient.client.run_query(query_name, request.params)
+      benchmark_data = benchmark_nodes(uri, nodes)
+
+      node_number = request.params.fetch('node_number', '0').to_i
+      retrieval_method = request.params.fetch('retrieval_method', '')
+
+      return benchmark_data if node_number.zero?
+
+      node_data = benchmark_data.fetch(:nodes, {}).fetch(node_number, {})
+
+      return node_data if retrieval_method.empty?
+
+      case retrieval_method
+      when 'access'
+        begin
+          chksize = 0
+          timing = Benchmark.realtime do
+            node_data[:presigned_url] = get_presign_url(URI.parse(node_data[:access_url]))
+            chksize = get_url_body(node_data[:presigned_url]).length unless node_data[:presigned_url].empty?
+          end
+          node_data[:status] = 'INFO'
+          node_data[:status] = 'ERROR' unless chksize == node_data[:file_size]
+          node_data[:retrieval_time_ms] = timing * 1000
+        rescue StandardError => e
+          node_data[:status] = 'ERROR'
+          node_data[:error_message] = e.message
+        end
+      when 'audit'
+        begin
+          chksize = 0
+          timing = Benchmark.realtime do
+            json = post_url_json(node_data[:audit_url], read_timeout: 300)
+            entry = json.fetch('items:fixityEntriesState', {})
+              .fetch('items:entries', {})
+              .fetch('items:fixityMRTEntry', {})
+            node_data[:fixity_status] = entry.fetch('items:status', '')
+            chksize = entry.fetch('items:size', 0)
+          end
+          node_data[:status] = 'INFO'
+          node_data[:status] = 'ERROR' unless chksize == node_data[:file_size]
+          node_data[:status] = 'ERROR' unless node_data[:fixity_status] == 'verified'
+          node_data[:retrieval_time_ms] = timing * 1000
+        rescue StandardError => e
+          node_data[:status] = 'ERROR'
+          node_data[:error_message] = e.message
+        end
+      else
+        return {}
+      end
+      node_data
     end
 
     def benchmark_credentials(nodenum)
@@ -546,14 +631,13 @@ module Sinatra
       end
     end
 
-    def benchmark_script_node(nodenum, ark, version, pathname, inv_file_id, script_only: false)
+    def benchmark_script_node(nodenum, ark, version, pathname, inv_file_id)
       arr = []
       path = benchmark_path(nodenum, ark, version, pathname)
 
       return arr if path.empty?
 
       arr << ''
-      arr << '```' unless script_only
       benchmark_credentials(nodenum).each do |line|
         arr << line
       end
@@ -596,57 +680,36 @@ module Sinatra
       arr << %(aws cloudwatch put-metric-data --region us-west-2 --namespace merritt \
                --dimensions "#{metdim},retrieval_method=access" \
                --unit Seconds --metric-name duration --value $access)
-      arr << '```' unless script_only
       arr << ''
       arr
     end
 
-    def benchmark_script(nodes, script_only: false)
+    def benchmark_script(nodes)
       desc = []
 
-      unless script_only
-        desc << '## Benchmark Fixity Check'
-        desc << 'This report will perform a retrieval of the file from each ONLINE storage node'
-        desc << '  using the ACCESS service.'
-        desc << ''
-        desc << 'This report will perform a fixity check of the file from each ONLINE storage node'
-        desc << '  using the AUDIT service.'
-        desc << ''
-        desc << 'Each request will be allowed up to 5 minutes to complete before timing out.'
-        desc << ''
-      end
-
-      desc << '```' unless script_only
       desc << %(printf "Benchmark Fixity Report: %s;File %d; Size: %d\n\n" \
                 "$(date '+%Y-%m-%d %H:%M:%S')" #{nodes[0]['id']} #{nodes[0]['full_size']} > /tmp/bench_stats.txt)
       desc << 'printf "%15s %10s %10s %10s\n" "Service" "CLI" "Audit" "Access" >> /tmp/bench_stats.txt'
-      desc << '```' unless script_only
 
-      if nodes
-        desc << 'These scripts can be used to test retrival of the same object using the S3 CLI.' unless script_only
-        nodes.each do |node|
-          benchmark_script_node(
-            node['node_number'],
-            node['object_ark'],
-            node['version_number'],
-            node['pathname'],
-            node['id'],
-            script_only: script_only
-          ).each do |line|
-            desc << line
-          end
+      nodes&.each do |node|
+        benchmark_script_node(
+          node['node_number'],
+          node['object_ark'],
+          node['version_number'],
+          node['pathname'],
+          node['id']
+        ).each do |line|
+          desc << line
         end
       end
 
-      desc << '```' unless script_only
       desc << 'cat /tmp/bench_stats.txt'
       desc << %(export AWS_ACCESS_KEY_ID=)
       desc << %(export AWS_SECRET_ACCESS_KEY=)
-      desc << '```' unless script_only
       desc
     end
 
-    def benchmark_nodes(nodes)
+    def benchmark_nodes(uri, nodes)
       resp = {}
       nodes.each_with_index do |node, index|
         if index.zero?
@@ -665,103 +728,23 @@ module Sinatra
         endpoint_str = endpoint.empty? ? '' : "--endpoint-url #{endpoint}"
 
         resp[:nodes][node['node_number']] = {
+          node_number: node['node_number'].to_s,
+          filename: resp[:filename],
           pathname: bucket.empty? ? '' : "s3://#{bucket}/#{resp[:pathname]}",
+          file_size: node['full_size'],
           cloud_service: cloud_service(node['node_number']),
           profile: cloud_service(node['node_number']),
           endpoint: endpoint,
           access_url: "#{access_host}/presign-file/#{node['node_number']}/#{CGI.escape(resp[:pathname])}",
+          admin_access_url: "#{uri}&node_number=#{node['node_number']}&retrieval_method=access",
           access_expected_retrieval_time_ms: 0,
           audit_url: "#{audit_host}/update/#{node['id']}?t=json",
+          admin_audit_url: "#{uri}&node_number=#{node['node_number']}&retrieval_method=audit",
           audit_expected_retrieval_time_ms: 0,
           cli_command: "aws s3 #{profile_str} #{endpoint_str} cp s3://#{bucket}/#{resp[:pathname]} /dev/null"
         }
       end
-      content_type :json
-      resp.to_json
-    end
-
-    def benchmark_fixity(params)
-      nodes = UC3Query::QueryClient.client.run_query('/queries/benchmark-fixity', params)
-      desc = benchmark_script(nodes, script_only: false)
-
-      table = AdminUI::FilterTable.new(
-        columns: [
-          AdminUI::Column.new(:node_number, header: 'Node Number'),
-          AdminUI::Column.new(:description, header: 'Description'),
-          AdminUI::Column.new(:access_mode, header: 'Access Mode'),
-          AdminUI::Column.new(:size, header: 'Size'),
-          AdminUI::Column.new(:size_processed, header: 'Size Processed'),
-          AdminUI::Column.new(:fixity_status, header: 'Status'),
-          AdminUI::Column.new(:time_sec, header: 'Time (sec)'),
-          AdminUI::Column.new(:benchmark_sec, header: 'Benchmark (sec)'),
-          AdminUI::Column.new(:status, header: 'Status')
-        ],
-        description: desc.join("\n")
-      )
-
-      nodes.each do |node|
-        row = {}
-        row[:status] = 'SKIP'
-        row[:node_number] = node['node_number'].to_s
-        row[:description] = node['description']
-        row[:access_mode] = node['access_mode']
-        row[:size] = node['full_size']
-        url = ''
-        begin
-          if node['access_mode'] == 'on-line'
-            if node['full_size'].to_i > 500_000_000
-              row[:fixity_status] = 'File too large to benchmark (>500MB).  Use the CLI.'
-            else
-              timing = Benchmark.realtime do
-                key = CGI.escape("#{node['object_ark']}|#{node['version_number']}|#{node['pathname']}")
-                url = "#{access_host}/presign-file/#{node['node_number']}/#{key}"
-                row[:size_processed] = get_presign_url_content(url).length
-              end
-              row[:fixity_status] = 'Access Request'
-              row[:time_sec] = timing
-            end
-          end
-        rescue StandardError => e
-          row[:fixity_status] = "Retrieve request #{url} did not complete: #{e}"
-          row[:status] = 'FAIL'
-        end
-        table.add_row(AdminUI::Row.make_row(table.columns, row))
-
-        row = {}
-        row[:status] = 'SKIP'
-        row[:node_number] = node['node_number'].to_s
-        row[:description] = node['description']
-        row[:access_mode] = node['access_mode']
-        row[:size] = node['full_size']
-        begin
-          if node['full_size'].to_i > 500_000_000
-            row[:fixity_status] = 'File too large to benchmark (>500MB).  Use the CLI.'
-          else
-            timing = Benchmark.realtime do
-              json = post_url_json("#{audit_host}/update/#{node['id']}?t=json", read_timeout: 300)
-              entry = json.fetch('items:fixityEntriesState', {})
-                .fetch('items:entries', {})
-                .fetch('items:fixityMRTEntry', {})
-              row[:fixity_status] = entry.fetch('items:status', '')
-              row[:size_processed] = entry.fetch('items:size', 0)
-              row[:benchmark_sec] = 1.0
-            end
-          end
-          row[:time_sec] = timing
-          row[:status] = if row[:fixity_status] != 'verified'
-                           'FAIL'
-                         elsif row[:time_sec] > row[:benchmark_sec]
-                           'WARN'
-                         else
-                           'PASS'
-                         end
-        rescue StandardError => e
-          row[:fixity_status] = "Fixity stream request did not complete: #{e}"
-          row[:status] = 'FAIL'
-        end
-        table.add_row(AdminUI::Row.make_row(table.columns, row))
-      end
-      table
+      resp
     end
 
     def load_test_file_to_merritt(file, type, mnemonic)
@@ -855,16 +838,11 @@ module Sinatra
       response.body
     end
 
-    def get_presign_url_content(url, limit = 3)
-      raise ArgumentError, 'HTTP redirect too deep' if limit <= 0
-
+    def get_presign_url(url)
       uri = URI.parse(url)
       response = Net::HTTP.get_response(uri)
       json = ::JSON.parse(response.body)
-      purl = json.fetch('url', '')
-      return '' if purl.empty?
-
-      get_url_body(purl)
+      json.fetch('url', '')
     end
 
     def get_url(url, ctype: :json)
