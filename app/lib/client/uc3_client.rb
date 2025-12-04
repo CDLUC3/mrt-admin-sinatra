@@ -339,6 +339,9 @@ module UC3
         /ops/storage/manifest-yaml
         /ops/storage/ingest-checkm
         /ops/storage/benchmark-fixity
+        /ops/storage/benchmark-fixity-nodes
+        /ops/storage/benchmark-fixity-audit
+        /ops/storage/benchmark-fixity-access
         /ops/storage/benchmark-fixity-script
       ]
 

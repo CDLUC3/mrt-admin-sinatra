@@ -414,20 +414,13 @@ module Sinatra
       end
 
       app.get '/ops/storage/benchmark-fixity' do
-        # Eventually this should open a page with a form to trigger the fixity check
-        table = benchmark_fixity(request.params)
-        adminui_show_table(
-          AdminUI::Context.new(request.path, request.params),
-          table
-        )
+        nodes = UC3Query::QueryClient.client.run_query('/queries/benchmark-fixity', params)
+        benchmark_nodes(nodes)
       end
 
-      app.post '/ops/storage/benchmark-fixity' do
-        table = benchmark_fixity(request.params)
-        adminui_show_table(
-          AdminUI::Context.new(request.path, request.params),
-          table
-        )
+      app.get '/ops/storage/benchmark-fixity-nodes' do
+        nodes = UC3Query::QueryClient.client.run_query('/ops/storage/benchmark-fixity-nodes', params)
+        benchmark_nodes(nodes)
       end
 
       app.get '/ops/storage/benchmark-fixity-script' do
@@ -499,21 +492,26 @@ module Sinatra
       arr
     end
 
-    def benchmark_path(nodenum, ark, version, pathname)
+    def benchmark_bucket(nodenum)
       case nodenum
       when 9501, 9502, 9503
-        bucket = ENV.fetch('SDSC_BUCKET', '')
+        ENV.fetch('SDSC_BUCKET', '')
       when 2001, 2002, 2003
-        bucket = ENV.fetch('WASABI_BUCKET', '')
+        ENV.fetch('WASABI_BUCKET', '')
       when 5001, 5003
-        bucket = ENV.fetch('S3_BUCKET', '')
+        ENV.fetch('S3_BUCKET', '')
       when 7777
-        bucket = ENV.fetch('BUCKET7777', '')
+        ENV.fetch('BUCKET7777', '')
       when 8888
-        bucket = ENV.fetch('BUCKET8888', '')
+        ENV.fetch('BUCKET8888', '')
       else
-        return ''
+        ''
       end
+    end
+
+    def benchmark_path(nodenum, ark, version, pathname)
+      bucket = benchmark_bucket(nodenum)
+      return '' if bucket.empty?
 
       "s3://#{bucket}/#{ark}|#{version}|#{pathname}"
     end
@@ -646,6 +644,40 @@ module Sinatra
       desc << %(export AWS_SECRET_ACCESS_KEY=)
       desc << '```' unless script_only
       desc
+    end
+
+    def benchmark_nodes(nodes)
+      resp = {}
+      nodes.each_with_index do |node, index|
+        if index.zero?
+          resp[:filename] = File.basename(node['pathname'])
+          resp[:pathname] = "#{node['object_ark']}|#{node['version_number']}|#{node['pathname']}"
+          resp[:file_size] = node['full_size']
+          resp[:nodes] = {}
+        end
+        next unless node['access_mode'] == 'on-line'
+
+        bucket = benchmark_bucket(node['node_number'])
+        profile = cloud_service(node['node_number'])
+        profile = '' if profile == 'aws-s3'
+        profile_str = profile.empty? ? '' : "--profile #{profile} "
+        endpoint = benchmark_endpoint(node['node_number'])
+        endpoint_str = endpoint.empty? ? '' : "--endpoint-url #{endpoint}"
+
+        resp[:nodes][node['node_number']] = {
+          pathname: bucket.empty? ? '' : "s3://#{bucket}/#{resp[:pathname]}",
+          cloud_service: cloud_service(node['node_number']),
+          profile: cloud_service(node['node_number']),
+          endpoint: endpoint,
+          access_url: "#{access_host}/presign-file/#{node['node_number']}/#{CGI.escape(resp[:pathname])}",
+          access_expected_retrieval_time_ms: 0,
+          audit_url: "#{audit_host}/update/#{node['id']}?t=json",
+          audit_expected_retrieval_time_ms: 0,
+          cli_command: "aws s3 #{profile_str} #{endpoint_str} cp s3://#{bucket}/#{resp[:pathname]} /dev/null"
+        }
+      end
+      content_type :json
+      resp.to_json
     end
 
     def benchmark_fixity(params)
