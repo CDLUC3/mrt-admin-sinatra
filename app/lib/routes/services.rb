@@ -540,7 +540,7 @@ module Sinatra
       when 6001
         'glacier'
       when 7777, 8888, 8889
-        ENV.fetch('S3ENDPOINT', '').empty? ? 'aws' : 'minio-docker'
+        ENV.fetch('S3ENDPOINT', '').empty? ? 'aws-s3' : 'minio-docker'
       else
         nodenum.to_s
       end
