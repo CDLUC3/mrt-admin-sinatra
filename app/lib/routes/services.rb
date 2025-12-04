@@ -450,7 +450,7 @@ module Sinatra
 
       app.get '/ops/storage/benchmark-fixity-localid' do
         content_type :json
-        benchmark_fixity_data(request, '/queries/benchmark-fixity-nodes').to_json
+        benchmark_fixity_data(request, '/ops/storage/benchmark-fixity-nodes').to_json
       end
 
       app.get '/ops/storage/benchmark-fixity-script' do
