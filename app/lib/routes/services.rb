@@ -511,7 +511,7 @@ module Sinatra
           end
           results_data[:status] = 'INFO'
           unless chksize == node_data[:file_size]
-            results_data[:status] = 'ERROR' 
+            results_data[:status] = 'ERROR'
             results_data[:error_message] = "File size mismatch: expected #{node_data[:file_size]}, got #{chksize}"
           end
           results_data[:retrieval_time_sec] = timing
@@ -537,7 +537,8 @@ module Sinatra
           end
           unless results_data[:fixity_status] == 'verified'
             results_data[:status] = 'ERROR'
-            results_data[:error_message] = "Fixity status mismatch: expected 'verified', got #{results_data[:fixity_status]}"
+            results_data[:error_message] =
+              "Fixity status mismatch: expected 'verified', got #{results_data[:fixity_status]}"
           end
           results_data[:retrieval_time_sec] = timing
         rescue StandardError => e
