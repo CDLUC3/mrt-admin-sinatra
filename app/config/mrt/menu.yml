@@ -980,6 +980,12 @@ items:
         disable: default, docker
         confmsg: This will run a job in the merrittdev container
         method: post
+      - title: Run File Retrieval Benchmarks
+        route: /infra/ecs/run/merrittdev/runFileRetrievalBenchmarks
+        # test data currently only exists in prod
+        disable: default, docker, ecs-stg, ecs-dev, ecs-ephemeral, ecs-dbsnapshot
+        confmsg: This will run a job in the merrittdev container
+        method: post
       - title: Start Stack
         route: /infra/ecs/run/merrittdev/startStack
         disable: default, docker
