@@ -771,9 +771,9 @@ items:
       - title: 100MB
         disable: ecs-dev, docker, ecs-ephemeral
         route: /ops/metrics/benchmark-retrieval/100_mb_random.dat
-      - title: 1MB
+      - title: 20MB
         disable: ecs-dev, docker, ecs-ephemeral
-        route: /ops/metrics/benchmark-retrieval/1_mb_random.dat
+        route: /ops/metrics/benchmark-retrieval/20_mb_random.dat
   - title: Storage Scans
     route: /ops/storage/scans
     disable: ecs-dbsnapshot

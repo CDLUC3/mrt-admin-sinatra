@@ -58,7 +58,7 @@ module UC3CloudWatch
                   { name: 'retrieval_method', value: method }
                 ]
               },
-              period: 60,
+              period: 15 *60,
               stat: 'Average'
             },
             return_data: true
@@ -75,7 +75,7 @@ module UC3CloudWatch
       results = {}
       @cw_client.get_metric_data(
         metric_data_queries: metric_query(fname),
-        start_time: Time.now - (24 * 3600),
+        start_time: Time.now - (7 * 24 * 3600),
         end_time: Time.now
       ).metric_data_results.each do |result|
         col = result.id
