@@ -12,6 +12,7 @@ require_relative 'lib/routes/query'
 require_relative 'lib/routes/ldap'
 require_relative 'lib/routes/mrtzk'
 require_relative 'lib/routes/config'
+require_relative 'lib/routes/metrics'
 
 set :bind, '0.0.0.0'
 
