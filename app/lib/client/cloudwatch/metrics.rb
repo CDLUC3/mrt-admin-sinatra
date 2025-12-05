@@ -69,12 +69,12 @@ module UC3CloudWatch
       query
     end
 
-    def retrieval_duration_sec_metrics
+    def retrieval_duration_sec_metrics(fname)
       return { message: 'CloudWatch client not configured' } unless enabled
 
       results = {}
       @cw_client.get_metric_data(
-        metric_data_queries: metric_query('README.md'),
+        metric_data_queries: metric_query(fname),
         start_time: Time.now - (24 * 3600),
         end_time: Time.now
       ).metric_data_results.each do |result|

@@ -757,11 +757,23 @@ items:
   - path: metrics
     route: /ops/metrics
     breadcrumb: true
-    disable: ecs-dbsnapshot
+    disable: ecs-dbsnapshot, ecs-stg
     title: Metrics
     items:
-    - title: Benchmark Retrieval
+    - path: benchmark-retrieval
       route: /ops/metrics/benchmark-retrieval
+      breadcrumb: true
+      title: Benchmark Retrieval
+      items:
+      - title: README
+        disable: ecs-prd
+        route: /ops/metrics/benchmark-retrieval/README.md
+      - title: 100MB
+        disable: ecs-dev, docker, ecs-ephemeral
+        route: /ops/metrics/benchmark-retrieval/100_mb_random.dat
+      - title: 1MB
+        disable: ecs-dev, docker, ecs-ephemeral
+        route: /ops/metrics/benchmark-retrieval/1_mb_random.dat
   - title: Storage Scans
     route: /ops/storage/scans
     disable: ecs-dbsnapshot
