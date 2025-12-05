@@ -508,7 +508,7 @@ module Sinatra
           end
           node_data[:status] = 'INFO'
           node_data[:status] = 'ERROR' unless chksize == node_data[:file_size]
-          node_data[:retrieval_time_ms] = timing * 1000
+          node_data[:retrieval_time_sec] = timing
         rescue StandardError => e
           node_data[:status] = 'ERROR'
           node_data[:error_message] = e.message
@@ -527,7 +527,7 @@ module Sinatra
           node_data[:status] = 'INFO'
           node_data[:status] = 'ERROR' unless chksize == node_data[:file_size]
           node_data[:status] = 'ERROR' unless node_data[:fixity_status] == 'verified'
-          node_data[:retrieval_time_ms] = timing * 1000
+          node_data[:retrieval_time_sec] = timing
         rescue StandardError => e
           node_data[:status] = 'ERROR'
           node_data[:error_message] = e.message
