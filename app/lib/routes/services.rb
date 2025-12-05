@@ -416,7 +416,7 @@ module Sinatra
       app.get '/ops/storage/benchmark-fixity' do
         data = benchmark_fixity_data(request, '/queries/benchmark-fixity', path: '/ops/storage/benchmark-fixity-fileid')
         filename = data.fetch(:filename, '')
-        size = data.fetch(:file_size, '')
+        size = AdminUI::Row.format_int(data.fetch(:file_size, ''))
         table = AdminUI::FilterTable.new(
           columns: [
             AdminUI::Column.new(:node_number, header: 'Node Number'),
@@ -425,7 +425,7 @@ module Sinatra
             AdminUI::Column.new(:admin_access_url, header: 'Access Test'),
             AdminUI::Column.new(:cli_command, header: 'CLI command')
           ],
-          description: "Check Fixity for File #{filename}; Size=#{size}"
+          description: "Check Fixity for File `#{filename}`; Size=`#{size}`"
         )
         data.fetch(:nodes, {}).each_value do |node_data|
           node_data[:admin_audit_url] = { href: node_data[:admin_audit_url], value: 'Audit Benchmark' }
@@ -737,10 +737,10 @@ module Sinatra
           endpoint: endpoint,
           access_url: "#{access_host}/presign-file/#{node['node_number']}/#{CGI.escape(resp[:pathname])}",
           admin_access_url: "#{uri}&node_number=#{node['node_number']}&retrieval_method=access",
-          access_expected_retrieval_time_ms: 0,
+          access_expected_retrieval_time_sec: 0,
           audit_url: "#{audit_host}/update/#{node['id']}?t=json",
           admin_audit_url: "#{uri}&node_number=#{node['node_number']}&retrieval_method=audit",
-          audit_expected_retrieval_time_ms: 0,
+          audit_expected_retrieval_time_sec: 0,
           cli_command: "aws s3 #{profile_str} #{endpoint_str} cp s3://#{bucket}/#{resp[:pathname]} /dev/null"
         }
       end
