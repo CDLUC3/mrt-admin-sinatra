@@ -498,20 +498,26 @@ module Sinatra
 
       return node_data if retrieval_method.empty?
 
+      node_data[:results] = {}
+      results_data = node_data[:results]
+
       case retrieval_method
       when 'access'
         begin
           chksize = 0
           timing = Benchmark.realtime do
-            node_data[:presigned_url] = get_presign_url(URI.parse(node_data[:access_url]))
-            chksize = get_url_body(node_data[:presigned_url]).length unless node_data[:presigned_url].empty?
+            results_data[:presigned_url] = get_presign_url(URI.parse(node_data[:access_url]))
+            chksize = get_url_body(results_data[:presigned_url]).length unless results_data[:presigned_url].empty?
           end
-          node_data[:status] = 'INFO'
-          node_data[:status] = 'ERROR' unless chksize == node_data[:file_size]
-          node_data[:retrieval_time_sec] = timing
+          results_data[:status] = 'INFO'
+          unless chksize == node_data[:file_size]
+            results_data[:status] = 'ERROR' 
+            results_data[:error_message] = "File size mismatch: expected #{node_data[:file_size]}, got #{chksize}"
+          end
+          results_data[:retrieval_time_sec] = timing
         rescue StandardError => e
-          node_data[:status] = 'ERROR'
-          node_data[:error_message] = e.message
+          results_data[:status] = 'ERROR'
+          results_data[:error_message] = e.message
         end
       when 'audit'
         begin
@@ -521,16 +527,22 @@ module Sinatra
             entry = json.fetch('items:fixityEntriesState', {})
               .fetch('items:entries', {})
               .fetch('items:fixityMRTEntry', {})
-            node_data[:fixity_status] = entry.fetch('items:status', '')
+            results_data[:fixity_status] = entry.fetch('items:status', '')
             chksize = entry.fetch('items:size', 0)
           end
-          node_data[:status] = 'INFO'
-          node_data[:status] = 'ERROR' unless chksize == node_data[:file_size]
-          node_data[:status] = 'ERROR' unless node_data[:fixity_status] == 'verified'
-          node_data[:retrieval_time_sec] = timing
+          results_data[:status] = 'INFO'
+          unless chksize == node_data[:file_size]
+            results_data[:status] = 'ERROR'
+            results_data[:error_message] = "File size mismatch: expected #{node_data[:file_size]}, got #{chksize}"
+          end
+          unless results_data[:fixity_status] == 'verified'
+            results_data[:status] = 'ERROR'
+            results_data[:error_message] = "Fixity status mismatch: expected 'verified', got #{results_data[:fixity_status]}"
+          end
+          results_data[:retrieval_time_sec] = timing
         rescue StandardError => e
-          node_data[:status] = 'ERROR'
-          node_data[:error_message] = e.message
+          results_data[:status] = 'ERROR'
+          results_data[:error_message] = e.message
         end
       else
         return {}
