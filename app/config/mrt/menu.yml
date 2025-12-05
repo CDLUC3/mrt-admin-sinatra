@@ -754,6 +754,14 @@ items:
       disable: ecs-dbsnapshot
     - title: Storage Nodes
       route: /ops/storage/db/nodes
+  - path: metrics
+    route: /ops/metrics
+    breadcrumb: true
+    disable: ecs-dbsnapshot
+    title: Metrics
+    items:
+    - title: Benchmark Retrieval
+      route: /ops/metrics/benchmark-retrieval
   - title: Storage Scans
     route: /ops/storage/scans
     disable: ecs-dbsnapshot

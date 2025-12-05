@@ -8,7 +8,7 @@ module Sinatra
   # client specific routes
   module UC3MetricsRoutes
     def self.registered(app)
-      app.get '/ops/metrics' do
+      app.get '/ops/metrics/benchmark-retrieval' do
         adminui_show_table(
           AdminUI::Context.new(request.path, request.params),
           UC3CloudWatch::MetricsClient.client.metric_table(
