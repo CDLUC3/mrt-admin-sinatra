@@ -144,6 +144,7 @@ module UC3Queue
           AdminUI::Column.new(:profile, header: 'Profile'),
           AdminUI::Column.new(:jobstatus, header: 'Job Status'),
           AdminUI::Column.new(:jobCount, header: 'Job Count', cssclass: 'int'),
+          AdminUI::Column.new(:space_needed, header: 'Space Needed GB', cssclass: 'float'),
           AdminUI::Column.new(:status, header: 'Status')
         ],
         status: status
@@ -151,6 +152,10 @@ module UC3Queue
       @colls.keys.sort.each do |profile|
         @colls[profile].keys.sort.each do |jobstatus|
           job_count = @colls[profile][jobstatus].size
+          space_needed = 0.0
+          @colls[profile][jobstatus].each do |job|
+            space_needed += job[:space_needed].to_f / 1_000_000_000
+          end
           table.add_row(
             AdminUI::Row.make_row(
               table.columns,
@@ -164,6 +169,7 @@ module UC3Queue
                   value: jobstatus
                 },
                 jobCount: job_count,
+                space_needed: space_needed,
                 status: jobstatus == 'Failed' ? 'FAIL' : 'PASS'
               }
             )
@@ -202,6 +208,7 @@ module UC3Queue
           AdminUI::Column.new(:bid, header: 'Batch ID'),
           AdminUI::Column.new(:jobstatus, header: 'Job Status'),
           AdminUI::Column.new(:jobCount, header: 'Job Count', cssclass: 'int'),
+          AdminUI::Column.new(:space_needed, header: 'Space Needed GB', cssclass: 'float'),
           AdminUI::Column.new(:status, header: 'Status')
         ],
         status: status
@@ -210,6 +217,10 @@ module UC3Queue
         profile, bid = key.split(':', 2)
         @colls[key].keys.sort.each do |jobstatus|
           job_count = @colls[key][jobstatus].size
+          space_needed = 0.0
+          @colls[key][jobstatus].each do |job|
+            space_needed += job[:space_needed].to_f / 1_000_000_000
+          end
           jcb = '/ops/zk/ingest/jobs-by-collection-and-batch/filtered'
           table.add_row(
             AdminUI::Row.make_row(
@@ -225,6 +236,7 @@ module UC3Queue
                   value: jobstatus
                 },
                 jobCount: job_count,
+                space_needed: space_needed,
                 status: jobstatus == 'Failed' ? 'FAIL' : 'PASS'
               }
             )

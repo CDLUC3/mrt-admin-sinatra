@@ -58,7 +58,7 @@ module UC3CloudWatch
                   { name: 'retrieval_method', value: method }
                 ]
               },
-              period: 15 *60,
+              period: 15 * 60,
               stat: 'Average'
             },
             return_data: true
