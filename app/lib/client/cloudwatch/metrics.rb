@@ -42,7 +42,7 @@ module UC3CloudWatch
       table
     end
 
-    def metric_query(fname, period: 15 * 60)
+    def metric_query(fname, period_min: 15)
       query = []
       %w[aws-s3 sdsc wasabi].each do |cloud|
         %w[access audit].each do |method|
@@ -58,7 +58,7 @@ module UC3CloudWatch
                   { name: 'retrieval_method', value: method }
                 ]
               },
-              period: period,
+              period: period_min * 60,
               stat: 'Average'
             },
             return_data: true
@@ -69,17 +69,20 @@ module UC3CloudWatch
       query
     end
 
-    def retrieval_duration_sec_metrics(fname, period: 15 * 60, offset_start: 7 * 24 * 3600)
+    def retrieval_duration_sec_metrics(fname, period_min: 15, offset_days: 7)
       return { message: 'CloudWatch client not configured' } unless enabled
 
       results = {}
       next_token = nil
 
+      starttime = Time.now - (offset_days * 24 * 3600)
+      endtime = Time.now
+
       loop do
         metresults = @cw_client.get_metric_data(
-          metric_data_queries: metric_query(fname, period: period),
-          start_time: Time.now - offset_start,
-          end_time: Time.now,
+          metric_data_queries: metric_query(fname, period_min: period_min),
+          start_time: starttime,
+          end_time: endtime,
           next_token: next_token
         )
 
@@ -99,10 +102,13 @@ module UC3CloudWatch
 
         break unless next_token
       end
+
+      rows = []
       results.keys.sort.map do |tstamp|
-        results[tstamp].merge({ timestamp: tstamp })
+        results[tstamp][:timestamp] = tstamp
+        rows << results[tstamp]
       end
-      results
+      rows
     end
   end
 end
