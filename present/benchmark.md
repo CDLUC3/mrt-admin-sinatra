@@ -133,5 +133,23 @@ aws cloudwatch put-metric-data --region us-west-2 --namespace merritt \
 
 ## Viewing the Data in CloudWatch in the AWS Console
 
-<img width="1152" height="289" alt="image" src="https://github.com/user-attachments/assets/64ebf5cc-8618-46d0-99cf-b26e8089aac4" />
+<img width="825" height="320" alt="image" src="https://github.com/user-attachments/assets/e8dc6c76-b2f2-4674-b18b-b93b0169d7de" />
 
+## Notes About CloudWatch Metrics
+
+- Data is meant to be numeric
+- There are a pre-defined set of "Units" that can be applied to a metric
+- Metrics can be isolated and differentiated
+  - With a namespace
+  - With a custom name
+  - With custom dimensions
+- CloudWatch expects metrics to be posted at regular intervals
+  - ad-hoc entries require a custom solution like my code above
+  - CloudWatch graphs assume that you will assign a duration that applies to your entries (6 hours in my example)
+ 
+## CloudWatch metrics retention
+
+- You cannot force the deletion of metrics
+- Metrics that are not posted for 2 weeks will be purged by AWS
+- Historical metrics are expired after 15 months
+- https://repost.aws/knowledge-center/cloudwatch-delete-metric
