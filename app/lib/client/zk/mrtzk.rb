@@ -147,6 +147,7 @@ module UC3Queue
           AdminUI::Column.new(:space_needed, header: 'Space Needed GB', cssclass: 'float'),
           AdminUI::Column.new(:status, header: 'Status')
         ],
+        totals: true,
         status: status
       )
       @colls.keys.sort.each do |profile|
@@ -211,6 +212,7 @@ module UC3Queue
           AdminUI::Column.new(:space_needed, header: 'Space Needed GB', cssclass: 'float'),
           AdminUI::Column.new(:status, header: 'Status')
         ],
+        totals: true,
         status: status
       )
       @colls.keys.sort.each do |key|
