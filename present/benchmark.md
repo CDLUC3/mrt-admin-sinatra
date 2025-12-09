@@ -13,7 +13,8 @@
   - From Wasabi using java streaming + fixity computation
 - This matrix of retrieval allowed us to isolate performance issues
   - At a provider level
-  - Within our Code vs within a default retrieval mechanism  
+  - Within our Code vs within a default retrieval mechanism
+- The Merritt Team downloaded relevant benchmark data to each of our vendors and was able to initiate a problem ticket
 
 ## Demo
 
@@ -129,3 +130,8 @@ aws cloudwatch put-metric-data --region us-west-2 --namespace merritt \
       end
     end
 ```
+
+## Viewing the Data in CloudWatch in the AWS Console
+
+<img width="1152" height="289" alt="image" src="https://github.com/user-attachments/assets/64ebf5cc-8618-46d0-99cf-b26e8089aac4" />
+
