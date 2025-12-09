@@ -42,7 +42,7 @@ module UC3CloudWatch
       table
     end
 
-    def metric_query(fname)
+    def metric_query(fname, period: 15 * 60)
       query = []
       %w[aws-s3 sdsc wasabi].each do |cloud|
         %w[access audit].each do |method|
@@ -58,7 +58,7 @@ module UC3CloudWatch
                   { name: 'retrieval_method', value: method }
                 ]
               },
-              period: 15 * 60,
+              period: period,
               stat: 'Average'
             },
             return_data: true
@@ -69,29 +69,40 @@ module UC3CloudWatch
       query
     end
 
-    def retrieval_duration_sec_metrics(fname)
+    def retrieval_duration_sec_metrics(fname, period: 15 * 60, offset_start: 7 * 24 * 3600)
       return { message: 'CloudWatch client not configured' } unless enabled
 
       results = {}
-      @cw_client.get_metric_data(
-        metric_data_queries: metric_query(fname),
-        start_time: Time.now - (7 * 24 * 3600),
-        end_time: Time.now
-      ).metric_data_results.each do |result|
-        col = result.id
-        result.timestamps.each_with_index do |tstamp, index|
-          value = result.values[index]
-          next unless value
+      next_token = nil
 
-          loctstamp = DateTime.parse(tstamp.to_s).to_time.localtime.strftime('%Y-%m-%d %H:%M:%S')
+      loop do
+        metresults = @cw_client.get_metric_data(
+          metric_data_queries: metric_query(fname, period: period),
+          start_time: Time.now - offset_start,
+          end_time: Time.now,
+          next_token: next_token
+        )
 
-          results[loctstamp] ||= {}
-          results[loctstamp][col] = value
+        next_token = metresults.next_token
+        metresults.metric_data_results.each do |result|
+          col = result.id
+          result.timestamps.each_with_index do |tstamp, index|
+            value = result.values[index]
+            next unless value
+
+            loctstamp = DateTime.parse(tstamp.to_s).to_time.localtime.strftime('%Y-%m-%d %H:%M:%S')
+
+            results[loctstamp] ||= {}
+            results[loctstamp][col] = value
+          end
         end
+
+        break unless next_token
       end
       results.keys.sort.map do |tstamp|
         results[tstamp].merge({ timestamp: tstamp })
       end
+      results
     end
   end
 end

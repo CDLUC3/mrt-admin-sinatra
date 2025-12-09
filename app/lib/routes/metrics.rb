@@ -9,10 +9,14 @@ module Sinatra
   module UC3MetricsRoutes
     def self.registered(app)
       app.get '/ops/metrics/benchmark-retrieval/*' do |fname|
+        period = params['period'] ? params['period'].to_i : 15 * 60
+        offset_start = params['offset_start'] ? params['offset_start'].to_i : 7 * 24 * 3600
+
         adminui_show_table(
           AdminUI::Context.new(request.path, request.params),
           UC3CloudWatch::MetricsClient.client.metric_table(
-            UC3CloudWatch::MetricsClient.client.retrieval_duration_sec_metrics(fname)
+            UC3CloudWatch::MetricsClient.client.retrieval_duration_sec_metrics(fname, period: period,
+              offset_start: offset_start)
           )
         )
       end
