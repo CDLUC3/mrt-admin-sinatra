@@ -1055,7 +1055,7 @@ items:
       method: post
 - path: resources
   title: AWS
-  disable: ecs-ephemeral, ecs-dbsnapshot, ecs-stg, ecs-prd, docker, default
+  disable: ecs-ephemeral, ecs-dbsnapshot, docker, default
   items:
   - title: Infrastructure Reports
     route: /infra
