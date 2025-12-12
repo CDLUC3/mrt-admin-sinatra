@@ -41,7 +41,7 @@ results: {
 
 ## Benchmark Script
 
-- https://github.com/CDLUC3/merritt-docker/blob/main/mrt-inttest-services/merritt-dev/scripts/run-file-benchmarks.sh
+- https://github.com/CDLUC3/merritt-docker/blob/main/mrt-inttest-services/merritt-ops/scripts/run-file-benchmarks.sh
 
 ### Result Data Extraction
 ```bash

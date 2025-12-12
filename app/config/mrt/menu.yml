@@ -996,52 +996,52 @@ items:
         disable: default, docker
         confmsg: This will re-deploy the Admin Tool service in ECS.
         method: post
-    - title: Merritt Dev
-      path: merrittdev
-      route: /json/merrittdev
+    - title: Merritt Ops
+      path: merritt-ops
+      route: /json/merritt-ops
       disable: default, docker
       breadcrumb: true
       items:
-      - title: Redeploy Merritt Dev
-        route: /infra/ecs/redeploy/merrittdev
+      - title: Redeploy Merritt Ops
+        route: /infra/ecs/redeploy/merritt-ops
         disable: default, docker
-        confmsg: This will re-deploy the Merritt Dev service in ECS.
+        confmsg: This will re-deploy the Merritt Ops service in ECS.
         method: post
       - title: Run Consistency Checks
-        route: /infra/ecs/run/merrittdev/runConsistencyEndpoints
+        route: /infra/ecs/run/merritt-ops/runConsistencyEndpoints
         disable: default, docker
-        confmsg: This will run a job in the merrittdev container
+        confmsg: This will run a job in the merritt-ops container
         method: post
       - title: Run Unit Tests
-        route: /infra/ecs/run/merrittdev/runUnitTestEndpoints
+        route: /infra/ecs/run/merritt-ops/runUnitTestEndpoints
         disable: default, docker
-        confmsg: This will run a job in the merrittdev container
+        confmsg: This will run a job in the merritt-ops container
         method: post
       - title: Run File Retrieval Benchmarks
-        route: /infra/ecs/run/merrittdev/runFileRetrievalBenchmarks
+        route: /infra/ecs/run/merritt-ops/runFileRetrievalBenchmarks
         # test data currently only exists in prod
         disable: default, docker, ecs-stg, ecs-dev, ecs-ephemeral, ecs-dbsnapshot
-        confmsg: This will run a job in the merrittdev container
+        confmsg: This will run a job in the merritt-ops container
         method: post
       - title: Start Stack
-        route: /infra/ecs/run/merrittdev/startStack
+        route: /infra/ecs/run/merritt-ops/startStack
         disable: default, docker
-        confmsg: This will run a job in the merrittdev container
+        confmsg: This will run a job in the merritt-ops container
         method: post
       - title: Stop Stack
-        route: /infra/ecs/run/merrittdev/stopStack
+        route: /infra/ecs/run/merritt-ops/stopStack
         disable: default, docker
-        confmsg: This will run a job in the merrittdev container
+        confmsg: This will run a job in the merritt-ops container
         method: post
       - title: Redeploy Stack
-        route: /infra/ecs/run/merrittdev/redeployStack
+        route: /infra/ecs/run/merritt-ops/redeployStack
         disable: default, docker
-        confmsg: This will run a job in the merrittdev container
+        confmsg: This will run a job in the merritt-ops container
         method: post
       - title: Redeploy ZooKeeper
-        route: /infra/ecs/run/merrittdev/redeployZk
+        route: /infra/ecs/run/merritt-ops/redeployZk
         disable: default, docker, ecs-stg, ecs-prd, ecs-dbsnapshot
-        confmsg: This will run a job in the merrittdev container
+        confmsg: This will run a job in the merritt-ops container
         method: post
     - title: Stack Init 
       route: /stack-init
@@ -1129,20 +1129,20 @@ items:
       description: |
         ### Create Scan Errors 
 
-        The following [script](https://github.com/CDLUC3/merritt-docker/blob/main/mrt-inttest-services/merritt-dev/scripts/create-scan-error.sh) will be run in the stack.
+        The following [script](https://github.com/CDLUC3/merritt-docker/blob/main/mrt-inttest-services/merritt-ops/scripts/create-scan-error.sh) will be run in the stack.
 
-        #### Attach to the merritt-dev container
+        #### Attach to the merritt-ops container
         
         docker-compose
 
         ```
-        docker compose run --rm merrittdev /bin/bash
+        docker compose run --rm merritt-ops /bin/bash
         ```
 
         ecs
 
         ```
-        session mrt-{{{MERRITT_ECS}}}-stack/merrittdev
+        session mrt-{{{MERRITT_ECS}}}-stack/merritt-ops
         ```
 
         #### From the session, run the following script 
@@ -1157,7 +1157,7 @@ items:
       description: |
         ### How to Create A Storage Scan List
 
-        The following [script](https://github.com/CDLUC3/merritt-docker/blob/main/mrt-inttest-services/merritt-dev/scripts/create-scanlist.sh) will be run in the stack.
+        The following [script](https://github.com/CDLUC3/merritt-docker/blob/main/mrt-inttest-services/merritt-ops/scripts/create-scanlist.sh) will be run in the stack.
 
         Note that only specific buckets in specific stacks support list based storage scans.
 
@@ -1167,19 +1167,19 @@ items:
       description: |
         ### Create Test Fixity Errors 
 
-        The following [script](https://github.com/CDLUC3/merritt-docker/blob/main/mrt-inttest-services/merritt-dev/scripts/create-audit-error.sh) will be run in the stack.
+        The following [script](https://github.com/CDLUC3/merritt-docker/blob/main/mrt-inttest-services/merritt-ops/scripts/create-audit-error.sh) will be run in the stack.
 
-        #### Attach to the merritt-dev container
+        #### Attach to the merritt-ops container
 
         docker-compose
 
         ```
-        docker compose run --rm merrittdev /bin/bash
+        docker compose run --rm merritt-ops /bin/bash
         ```
         ecs
 
         ```
-        session mrt-ecs-dev-stack/merrittdev
+        session mrt-ecs-dev-stack/merritt-ops
         ```
 
         #### From the session, run the following script 

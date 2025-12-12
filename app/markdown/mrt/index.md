@@ -35,7 +35,7 @@ The Merritt Admin Tool supports a stack of microservices running within a Merrit
 ## Code Base
 - [Admin Tool Code Base: mrt-admin-sinatra](https://github.com/CDLUC3/mrt-admin-sinatra)
 - [Merritt Stack Sceptre Resources](https://github.com/CDLUC3/mrt-sceptre/tree/main/mrt-admin-sinatra)
-- [Merritt Dev Container](https://github.com/CDLUC3/merritt-docker/tree/main/mrt-inttest-services/merritt-dev)
+- [Merritt Ops Container](https://github.com/CDLUC3/merritt-docker/tree/main/mrt-inttest-services/merritt-ops)
 
 
 
