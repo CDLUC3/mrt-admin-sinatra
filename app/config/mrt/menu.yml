@@ -1072,10 +1072,10 @@ items:
     route: /infra/instances
   - title: UC3 SSM Parameters
     route: /infra/parameters
-  - title: UC3 Buckets
-    route: /infra/buckets
-  - title: UC3 Lambda Functions
-    route: /infra/functions
+  # - title: UC3 Buckets
+  #   route: /infra/buckets
+  # - title: UC3 Lambda Functions
+  #  route: /infra/functions
   - title: UC3 Load Balancers
     route: /infra/elbs
 - path: debug

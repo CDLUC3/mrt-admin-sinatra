@@ -73,7 +73,7 @@ module UC3Resources
             value[:listener] << action.type
           end
         end
-        table.add_row(AdminUI::Row.make_row(table.columns, value))
+        table.add_row(AdminUI::Row.make_row(table.columns, value)) if value[:service] == 'mrt'
       end
       table
     end
