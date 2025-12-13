@@ -342,7 +342,6 @@ module UC3
         /ops/storage/benchmark-fixity-nodes
         /ops/storage/benchmark-fixity-audit
         /ops/storage/benchmark-fixity-access
-        /ops/storage/benchmark-fixity-script
       ]
 
       # These GET operations require specific url parameters that are not readily available for a unit test

@@ -359,6 +359,7 @@ module Sinatra
             description: node.fetch('description', ''),
             profile: defprofile
           }
+          row[:profile] = 'sdsc-s3' if %w[7501 7502].include?(row[:node_number].to_i)
           row[:profile] = 'sdsc' if row[:bucket] =~ /sdsc/
           row[:profile] = 'wasabi' if row[:bucket] =~ /wasabi/
           rows << row
@@ -453,13 +454,6 @@ module Sinatra
         benchmark_fixity_data(request, '/ops/storage/benchmark-fixity-nodes').to_json
       end
 
-      app.get '/ops/storage/benchmark-fixity-script' do
-        nodes = UC3Query::QueryClient.client.run_query('/queries/benchmark-fixity', params)
-        desc = benchmark_script(nodes)
-        content_type :text
-        desc.join("\n")
-      end
-
       app.post '/test/load/data' do
         test_data_dir = "#{UC3::FileSystemClient::DIR}/test-data"
         `mkdir -p #{test_data_dir}`
@@ -551,45 +545,6 @@ module Sinatra
       node_data
     end
 
-    def benchmark_credentials(nodenum)
-      arr = []
-      ssm = ENV.fetch('MAIN_SSM_ROOT_PATH', '')
-
-      prefix = "aws ssm get-parameter --name #{ssm}cloud/nodes"
-
-      case nodenum
-      when 9501, 9502, 9503
-        unless ssm.empty?
-          arr << %(export AWS_ACCESS_KEY_ID=)
-          arr << %(export AWS_SECRET_ACCESS_KEY=)
-          arr << %(AAIK=$(#{prefix}/sdsc-accessKey --with-decryption | jq -r .Parameter.Value))
-          arr << %(ASAK=$(#{prefix}/sdsc-secretKey --with-decryption | jq -r .Parameter.Value))
-          arr << %(export AWS_ACCESS_KEY_ID=$AAIK)
-          arr << %(export AWS_SECRET_ACCESS_KEY=$ASAK)
-        end
-      when 2001, 2002, 2003
-        unless ssm.empty?
-          arr << %(export AWS_ACCESS_KEY_ID=)
-          arr << %(export AWS_SECRET_ACCESS_KEY=)
-          arr << %(AAIK=$(#{prefix}/wasabi-accessKey --with-decryption | jq -r .Parameter.Value))
-          arr << %(ASAK=$(#{prefix}/wasabi-secretKey --with-decryption | jq -r .Parameter.Value))
-          arr << %(export AWS_ACCESS_KEY_ID=$AAIK)
-          arr << %(export AWS_SECRET_ACCESS_KEY=$ASAK)
-        end
-      when 7777, 8888
-        unless ENV.fetch('S3ENDPOINT', '').empty?
-          arr << %(export AWS_ACCESS_KEY_ID=)
-          arr << %(export AWS_SECRET_ACCESS_KEY=)
-          arr << %(export AWS_ACCESS_KEY_ID=minioadmin)
-          arr << %(export AWS_SECRET_ACCESS_KEY=minioadmin)
-        end
-      else
-        arr << %(export AWS_ACCESS_KEY_ID=)
-        arr << %(export AWS_SECRET_ACCESS_KEY=)
-      end
-      arr
-    end
-
     def benchmark_bucket(nodenum)
       case nodenum
       when 9501, 9502, 9503
@@ -618,6 +573,8 @@ module Sinatra
       case nodenum
       when 9501, 9502, 9503
         ENV.fetch('SDSC_ENDPOINT', '')
+      when 7501, 7502
+        ENV.fetch('SDSC_S3_ENDPOINT', '')
       when 2001, 2002, 2003
         ENV.fetch('WASABI_ENDPOINT', '')
       when 7777, 8888
@@ -631,6 +588,8 @@ module Sinatra
       case nodenum
       when 9501, 9502, 9503
         'sdsc'
+      when 7501, 7502
+        'sdsc-s3'
       when 2001, 2002, 2003
         'wasabi'
       when 5001, 5003
@@ -642,84 +601,6 @@ module Sinatra
       else
         nodenum.to_s
       end
-    end
-
-    def benchmark_script_node(nodenum, ark, version, pathname, inv_file_id)
-      arr = []
-      path = benchmark_path(nodenum, ark, version, pathname)
-
-      return arr if path.empty?
-
-      arr << ''
-      benchmark_credentials(nodenum).each do |line|
-        arr << line
-      end
-
-      endpoint = benchmark_endpoint(nodenum)
-      endpoint_param = endpoint.empty? ? '' : "--endpoint-url #{endpoint}"
-      region = ENV.fetch('S3REGION', '')
-      region_param = " --region #{region}" unless region.empty?
-
-      key = CGI.escape("#{ark}|#{version}|#{pathname}")
-      bfile = File.basename(pathname)
-      accessurl = "#{access_host}/presign-file/#{nodenum}/#{key}"
-      auditurl = "#{audit_host}/update/#{inv_file_id}?t=json"
-      auditjq = %(jq -r '."items:fixityEntriesState" ."items:entries" ."items:fixityMRTEntry" ."items:status"')
-      metdim = "benchmark_file=#{bfile},cloud_provider=#{cloud_service(nodenum)}"
-
-      arr << "echo #{cloud_service(nodenum)} S3 CLI download"
-      arr << %(/usr/bin/time -p -o /tmp/cli_time.txt aws s3 #{region_param} #{endpoint_param} cp "#{path}" /dev/null)
-      arr << %(cli=$(cat /tmp/cli_time.txt | grep real | awk '{print $2}'))
-      arr << 'echo $cli'
-      arr << "echo #{cloud_service(nodenum)} S3 audit check"
-      arr << %(/usr/bin/time -p -o /tmp/audit_time.txt curl -s -X POST "#{auditurl}" | #{auditjq})
-      arr << %(audit=$(cat /tmp/audit_time.txt | grep real | awk '{print $2}'))
-      arr << 'echo $audit'
-      arr << "echo #{cloud_service(nodenum)} get presigned URL"
-      arr << %(purl=$(curl -s "#{accessurl}" | jq -r .url))
-      arr << %(/usr/bin/time -p -o /tmp/access_time.txt curl -s -o /dev/null "$purl")
-      arr << %(access=$(cat /tmp/access_time.txt | grep real | awk '{print $2}'))
-      arr << 'echo $access'
-      arr << %(printf "%15s %10s %10s %10s\n" \
-               "#{cloud_service(nodenum)}" "$cli" "$audit" "$access" >> /tmp/bench_stats.txt)
-      arr << %(export AWS_ACCESS_KEY_ID=)
-      arr << %(export AWS_SECRET_ACCESS_KEY=)
-      arr << %(aws cloudwatch put-metric-data --region us-west-2 --namespace merritt \
-               --dimensions "#{metdim},retrieval_method=cli" \
-               --unit Seconds --metric-name duration --value $cli)
-      arr << %(aws cloudwatch put-metric-data --region us-west-2 --namespace merritt \
-               --dimensions "#{metdim},retrieval_method=audit" \
-               --unit Seconds --metric-name duration --value $audit)
-      arr << %(aws cloudwatch put-metric-data --region us-west-2 --namespace merritt \
-               --dimensions "#{metdim},retrieval_method=access" \
-               --unit Seconds --metric-name duration --value $access)
-      arr << ''
-      arr
-    end
-
-    def benchmark_script(nodes)
-      desc = []
-
-      desc << %(printf "Benchmark Fixity Report: %s;File %d; Size: %d\n\n" \
-                "$(date '+%Y-%m-%d %H:%M:%S')" #{nodes[0]['id']} #{nodes[0]['full_size']} > /tmp/bench_stats.txt)
-      desc << 'printf "%15s %10s %10s %10s\n" "Service" "CLI" "Audit" "Access" >> /tmp/bench_stats.txt'
-
-      nodes&.each do |node|
-        benchmark_script_node(
-          node['node_number'],
-          node['object_ark'],
-          node['version_number'],
-          node['pathname'],
-          node['id']
-        ).each do |line|
-          desc << line
-        end
-      end
-
-      desc << 'cat /tmp/bench_stats.txt'
-      desc << %(export AWS_ACCESS_KEY_ID=)
-      desc << %(export AWS_SECRET_ACCESS_KEY=)
-      desc
     end
 
     def benchmark_nodes(uri, nodes)
