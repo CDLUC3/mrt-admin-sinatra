@@ -359,7 +359,7 @@ module Sinatra
             description: node.fetch('description', ''),
             profile: defprofile
           }
-          row[:profile] = 'sdsc-s3' if %w[7501 7502].include?(row[:node_number].to_i)
+          row[:profile] = 'sdsc-s3' if %w[7501 7502].include?(row[:node_number])
           row[:profile] = 'sdsc' if row[:bucket] =~ /sdsc/
           row[:profile] = 'wasabi' if row[:bucket] =~ /wasabi/
           rows << row
