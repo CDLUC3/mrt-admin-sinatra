@@ -503,7 +503,16 @@ module Sinatra
             results_data[:presigned_url] = get_presign_url(URI.parse(node_data[:access_url]))
             chksize = get_url_body(results_data[:presigned_url]).length unless results_data[:presigned_url].empty?
           end
-          results_data[:status] = 'INFO'
+
+          results_data[:retrieval_time_sec] = timing
+          if timing > 2 * node_data[:access_expected_retrieval_time_sec]
+            results_data[:status] = 'FAIL'
+          elsif timing 2 * node_data[:audit_expected_retrieval_time_sec]
+            results_data[:status] = 'WARN'
+          else
+            results_data[:status] = 'PASS'
+          end
+
           unless chksize == node_data[:file_size]
             results_data[:status] = 'ERROR'
             results_data[:error_message] = "File size mismatch: expected #{node_data[:file_size]}, got #{chksize}"
@@ -524,7 +533,16 @@ module Sinatra
             results_data[:fixity_status] = entry.fetch('items:status', '')
             chksize = entry.fetch('items:size', 0)
           end
-          results_data[:status] = 'INFO'
+
+          results_data[:retrieval_time_sec] = timing
+          if timing > 2 * node_data[:audit_expected_retrieval_time_sec]
+            results_data[:status] = 'FAIL'
+          elsif timing 2 * node_data[:audit_expected_retrieval_time_sec]
+            results_data[:status] = 'WARN'
+          else
+            results_data[:status] = 'PASS'
+          end
+
           unless chksize == node_data[:file_size]
             results_data[:status] = 'ERROR'
             results_data[:error_message] = "File size mismatch: expected #{node_data[:file_size]}, got #{chksize}"
@@ -534,7 +552,6 @@ module Sinatra
             results_data[:error_message] =
               "Fixity status mismatch: expected 'verified', got #{results_data[:fixity_status]}"
           end
-          results_data[:retrieval_time_sec] = timing
         rescue StandardError => e
           results_data[:status] = 'ERROR'
           results_data[:error_message] = e.message
@@ -603,6 +620,26 @@ module Sinatra
       end
     end
 
+    def benchmark_expected_retrieval_time_sec(file_size, cloud_service, method)
+      base = case cloud_service
+             when 'sdsc', 'sdsc-s3'
+               0.6
+             when 'wasabi'
+               1.5
+             else
+               0.2
+             end
+      multiplier = case cloud_service
+             when 'sdsc', 'sdsc-s3'
+               0.000000024
+             when 'wasabi'
+               0.000000055
+             else
+               0.000000028
+             end
+      base + (file_size * multiplier)
+    end
+
     def benchmark_nodes(uri, nodes)
       resp = {}
       nodes.each_with_index do |node, index|
@@ -621,20 +658,23 @@ module Sinatra
         endpoint = benchmark_endpoint(node['node_number'])
         endpoint_str = endpoint.empty? ? '' : "--endpoint-url #{endpoint}"
 
+        filesize = node['full_size']
+        cloud_service = cloud_service(node['node_number'])
+
         resp[:nodes][node['node_number']] = {
           node_number: node['node_number'].to_s,
           filename: resp[:filename],
           pathname: bucket.empty? ? '' : "s3://#{bucket}/#{resp[:pathname]}",
-          file_size: node['full_size'],
+          file_size: filesize,
           cloud_service: cloud_service(node['node_number']),
           profile: cloud_service(node['node_number']),
           endpoint: endpoint,
           access_url: "#{access_host}/presign-file/#{node['node_number']}/#{CGI.escape(resp[:pathname])}",
           admin_access_url: "#{uri}&node_number=#{node['node_number']}&retrieval_method=access",
-          access_expected_retrieval_time_sec: 0,
+          access_expected_retrieval_time_sec: benchmark_expected_retrieval_time_sec(filesize, cloud_service, 'audit'),
           audit_url: "#{audit_host}/update/#{node['id']}?t=json",
           admin_audit_url: "#{uri}&node_number=#{node['node_number']}&retrieval_method=audit",
-          audit_expected_retrieval_time_sec: 0,
+          audit_expected_retrieval_time_sec: benchmark_expected_retrieval_time_sec(filesize, cloud_service, 'audit'),
           cli_command: "aws s3 #{profile_str} #{endpoint_str} cp s3://#{bucket}/#{resp[:pathname]} /dev/null"
         }
       end
