@@ -505,13 +505,13 @@ module Sinatra
           end
 
           results_data[:retrieval_time_sec] = timing
-          if timing > 2 * node_data[:access_expected_retrieval_time_sec]
-            results_data[:status] = 'FAIL'
-          elsif timing 2 * node_data[:audit_expected_retrieval_time_sec]
-            results_data[:status] = 'WARN'
-          else
-            results_data[:status] = 'PASS'
-          end
+          results_data[:status] = if timing > 2 * node_data[:access_expected_retrieval_time_sec]
+                                    'FAIL'
+                                  elsif timing > node_data[:audit_expected_retrieval_time_sec]
+                                    'WARN'
+                                  else
+                                    'PASS'
+                                  end
 
           unless chksize == node_data[:file_size]
             results_data[:status] = 'ERROR'
@@ -535,13 +535,13 @@ module Sinatra
           end
 
           results_data[:retrieval_time_sec] = timing
-          if timing > 2 * node_data[:audit_expected_retrieval_time_sec]
-            results_data[:status] = 'FAIL'
-          elsif timing 2 * node_data[:audit_expected_retrieval_time_sec]
-            results_data[:status] = 'WARN'
-          else
-            results_data[:status] = 'PASS'
-          end
+          results_data[:status] = if timing > 2 * node_data[:audit_expected_retrieval_time_sec]
+                                    'FAIL'
+                                  elsif timing > node_data[:audit_expected_retrieval_time_sec]
+                                    'WARN'
+                                  else
+                                    'PASS'
+                                  end
 
           unless chksize == node_data[:file_size]
             results_data[:status] = 'ERROR'
@@ -620,7 +620,7 @@ module Sinatra
       end
     end
 
-    def benchmark_expected_retrieval_time_sec(file_size, cloud_service, method)
+    def benchmark_expected_retrieval_time_sec(file_size, cloud_service, _method)
       base = case cloud_service
              when 'sdsc', 'sdsc-s3'
                0.6
@@ -630,13 +630,13 @@ module Sinatra
                0.2
              end
       multiplier = case cloud_service
-             when 'sdsc', 'sdsc-s3'
-               0.000000024
-             when 'wasabi'
-               0.000000055
-             else
-               0.000000028
-             end
+                   when 'sdsc', 'sdsc-s3'
+                     0.000000024
+                   when 'wasabi'
+                     0.000000055
+                   else
+                     0.000000028
+                   end
       base + (file_size * multiplier)
     end
 
