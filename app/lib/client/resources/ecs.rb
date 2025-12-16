@@ -115,7 +115,7 @@ module UC3Resources
       deployment[0].network_configuration
     end
 
-    def run_service_task(service, label)
+    def run_service_task(_service, label)
       return unless enabled
 
       prefix = "mrt-task-#{ENV.fetch('MERRITT_ECS', '')}-#{label}"
