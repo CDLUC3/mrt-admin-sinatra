@@ -386,6 +386,10 @@ module Sinatra
           profile: defprofile
         }
 
+        desc = UC3::UC3Client.stack_name == 'docker' ? 'docker compose exec -it merritt-ops /bin/bash' : "session #{UC3::UC3Client.cluster_name}/merritt-ops"
+        desc += "\n"
+        desc += "\n/set-credentials.sh"
+
         table = AdminUI::FilterTable.new(
           columns: [
             AdminUI::Column.new(:description, header: 'Description'),
@@ -393,13 +397,11 @@ module Sinatra
             AdminUI::Column.new(:bucket, header: 'Bucket'),
             AdminUI::Column.new(:profile, header: 'Profile'),
             AdminUI::Column.new(:command, header: 'Command')
-          ]
+          ],
+          description: desc
         )
         rows.each do |row|
-          cmd = UC3::UC3Client.stack_name == 'docker' ? 'docker compose exec -it merritt-ops /bin/bash' : "session #{UC3::UC3Client.cluster_name}/merritt-ops"
-          cmd += "\n"
-          cmd += "\n/set-credentials.sh" if %w[sdsc wasabi].include?(row[:profile])
-          cmd += "\naws s3#{" --profile #{row[:profile]}" unless row[:profile].empty?} ls s3://#{row[:bucket]}/"
+          cmd = "aws s3#{" --profile #{row[:profile]}" unless row[:profile].empty?} ls s3://#{row[:bucket]}/"
           row[:command] = cmd unless row[:bucket].empty?
           table.add_row(
             AdminUI::Row.make_row(
