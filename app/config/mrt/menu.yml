@@ -1043,6 +1043,11 @@ items:
         disable: default, docker, ecs-stg, ecs-prd, ecs-dbsnapshot
         confmsg: This will run a job in the merritt-ops container
         method: post
+    - title: Merritt Integ Tests
+      route: /infra/ecs/run/mrt-integ-tests/runEndToEndTests
+      disable: default, docker
+      confmsg: This will initiate a task that runs End to End tests
+      method: post
     - title: Stack Init 
       route: /stack-init
       disable: ecs-stg, ecs-prd
