@@ -1044,10 +1044,25 @@ items:
         confmsg: This will run a job in the merritt-ops container
         method: post
     - title: Merritt Integ Tests
-      route: /infra/ecs/run/mrt-integ-tests/runEndToEndTests
+      route: /infra/ecs/run/mrt-integ-tests
       disable: default, docker
-      confmsg: This will initiate a task that runs End to End tests
-      method: post
+      breadcrumb: true
+      items:
+      - title: With Ingest
+        route: /infra/ecs/run/mrt-integ-tests/runEndToEndTests
+        disable: default, docker, ecs-ephmeral, ecs-dbsnapshot
+        confmsg: This will initiate a task that runs End to End tests
+        method: post
+      - title: Without Ingest
+        route: /infra/ecs/run/mrt-integ-tests/runEndToEndTestsNoIngest
+        disable: default, docker, ecs-ephmeral, ecs-dbsnapshot
+        confmsg: This will initiate a task that runs End to End tests
+        method: post
+      - title: Load Test
+        route: /infra/ecs/run/mrt-integ-tests/runEndToEndTestsLoad
+        disable: default, docker, ecs-ephmeral, ecs-dbsnapshot, ecs-dev, ecs-prd
+        confmsg: This will initiate a task that runs End to End tests
+        method: post
     - title: Stack Init 
       route: /stack-init
       disable: ecs-stg, ecs-prd
