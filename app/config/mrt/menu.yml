@@ -1046,6 +1046,7 @@ items:
     - title: Merritt Integ Tests
       route: /infra/ecs/run/mrt-integ-tests
       disable: default, docker
+      path: mrt-integ-tests
       breadcrumb: true
       items:
       - title: With Ingest
