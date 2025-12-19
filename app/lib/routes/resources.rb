@@ -56,6 +56,13 @@ module Sinatra
         )
       end
 
+      app.get '/infra/ecs/tasks' do
+        adminui_show_table(
+          AdminUI::Context.new(request.path, request.params),
+          UC3Resources::ServicesClient.new.list_tasks
+        )
+      end
+
       app.post '/infra/ecs/redeploy/*' do |service|
         UC3Resources::ServicesClient.new.redeploy_service(service)
         redirect '/infra/ecs'
@@ -67,7 +74,7 @@ module Sinatra
       end
 
       app.post '/infra/ecs/stop/*' do |service|
-        UC3Resources::ServicesClient.new.deploy_service(service)
+        UC3Resources::ServicesClient.new.stop_service(service)
         redirect '/infra/ecs'
       end
 

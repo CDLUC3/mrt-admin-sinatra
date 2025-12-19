@@ -18,6 +18,7 @@ module UC3Resources
       )
       @ecr_client = UC3Code::ECRImagesClient.new
       @services = {}
+      @tasks = {}
       # An ECS Service has a ServiceDeployment which has a TargetServiceRevision.
       # A ServiceRevision has ContainerImage which has an ImageDigest.
       # The ImageDigest is the identity key for an image inside of an ECR Repository.
@@ -64,6 +65,19 @@ module UC3Resources
           }
         end
       end
+      @client.list_tasks(cluster: UC3::UC3Client.cluster_name, max_results: 100).task_arns.each do |task_arn|
+        @client.describe_tasks(
+          cluster: UC3::UC3Client.cluster_name,
+          tasks: [task_arn]
+        ).tasks.each do |task|
+          @tasks[task.id] = {
+            arn: task.task_arn,
+            name: task.group,
+            started: date_format(task.started_at, convert_timezone: true),
+            stopped: date_format(task.stopped_at, convert_timezone: true),
+            last_status: task.last_status
+          }
+        end
       super(enabled: enabled)
     rescue StandardError => e
       super(enabled: false, message: e.to_s)
@@ -90,6 +104,24 @@ module UC3Resources
       return table unless enabled
 
       @services.sort.each do |_key, value|
+        table.add_row(AdminUI::Row.make_row(table.columns, value))
+      end
+      table
+    end
+
+    def list_tasks
+      table = AdminUI::FilterTable.new(
+        columns: [
+          AdminUI::Column.new(:name, header: 'Name'),
+          AdminUI::Column.new(:arn, header: 'Arn'),
+          AdminUI::Column.new(:last_status, header: 'Status'),
+          AdminUI::Column.new(:started, header: 'Started'),
+          AdminUI::Column.new(:stopped, header: 'Stopped'),
+        ]
+      )
+      return table unless enabled
+
+      @tasks.sort.each do |_key, value|
         table.add_row(AdminUI::Row.make_row(table.columns, value))
       end
       table

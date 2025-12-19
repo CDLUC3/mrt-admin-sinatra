@@ -823,6 +823,9 @@ items:
   - title: Deployment State
     route: /infra/ecs
     disable: default, docker
+  - title: ECS Tasks
+    route: /infra/ecs/tasks
+    disable: default, docker
   - title: Services
     path: services
     route: /json
