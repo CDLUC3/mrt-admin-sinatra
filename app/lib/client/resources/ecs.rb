@@ -78,6 +78,7 @@ module UC3Resources
             last_status: task.last_status
           }
         end
+      end
       super(enabled: enabled)
     rescue StandardError => e
       super(enabled: false, message: e.to_s)
@@ -116,7 +117,7 @@ module UC3Resources
           AdminUI::Column.new(:arn, header: 'Arn'),
           AdminUI::Column.new(:last_status, header: 'Status'),
           AdminUI::Column.new(:started, header: 'Started'),
-          AdminUI::Column.new(:stopped, header: 'Stopped'),
+          AdminUI::Column.new(:stopped, header: 'Stopped')
         ]
       )
       return table unless enabled
