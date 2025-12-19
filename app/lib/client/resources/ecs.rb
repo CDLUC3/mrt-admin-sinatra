@@ -105,6 +105,27 @@ module UC3Resources
       ).to_json
     end
 
+    def deploy_service(service)
+      return unless enabled
+
+      @client.update_service(
+        cluster: UC3::UC3Client.cluster_name,
+        service: service,
+        desired_count: 1,
+        force_new_deployment: true
+      ).to_json
+    end
+
+    def stop_service(service)
+      return unless enabled
+
+      @client.update_service(
+        cluster: UC3::UC3Client.cluster_name,
+        service: service,
+        desired_count: 0
+      ).to_json
+    end
+
     def network_configuration(service_arn)
       service = @client.describe_services(cluster: UC3::UC3Client.cluster_name, services: [service_arn]).services
       return {} if service.nil? || service.empty?

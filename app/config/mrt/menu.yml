@@ -1056,9 +1056,14 @@ items:
       breadcrumb: true
       items:
       - title: Deploy Merritt Ops Write
-        route: /infra/ecs/redeploy/merritt-opswrite
+        route: /infra/ecs/deploy/merritt-opswrite
         disable: default, docker
-        confmsg: This will re-deploy the Merritt Ops Write service in ECS.
+        confmsg: This will deploy the Merritt Ops Write service in ECS.
+        method: post
+      - title: Stop Merritt Ops Write
+        route: /infra/ecs/stop/merritt-opswrite
+        disable: default, docker
+        confmsg: This will stop the Merritt Ops Write service in ECS.
         method: post
     - title: Merritt Integ Tests
       route: /infra/ecs/run/mrt-integ-tests
