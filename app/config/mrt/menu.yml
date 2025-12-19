@@ -1023,6 +1023,12 @@ items:
         disable: default, docker, ecs-stg, ecs-dev, ecs-ephemeral, ecs-dbsnapshot
         confmsg: This will run a job in the merritt-ops container
         method: post
+      - title: Run Locust Benchmarks for UI
+        route: /infra/ecs/run/merritt-ops/runLocustBenchmarksUI
+        # test data currently only exists in prod
+        disable: default, docker, ecs-stg, ecs-dev, ecs-ephemeral, ecs-dbsnapshot
+        confmsg: This will run a job in the merritt-ops container
+        method: post
       - title: Start Stack
         route: /infra/ecs/run/merritt-ops/startStack
         disable: default, docker
@@ -1042,6 +1048,17 @@ items:
         route: /infra/ecs/run/merritt-ops/redeployZk
         disable: default, docker, ecs-stg, ecs-prd, ecs-dbsnapshot
         confmsg: This will run a job in the merritt-ops container
+        method: post
+    - title: Merritt Ops Write
+      path: merritt-opswrite
+      route: /json/merritt-opswrite
+      disable: default, docker
+      breadcrumb: true
+      items:
+      - title: Deploy Merritt Ops Write
+        route: /infra/ecs/redeploy/merritt-opswrite
+        disable: default, docker
+        confmsg: This will re-deploy the Merritt Ops Write service in ECS.
         method: post
     - title: Merritt Integ Tests
       route: /infra/ecs/run/mrt-integ-tests
