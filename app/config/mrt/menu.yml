@@ -1026,7 +1026,7 @@ items:
       - title: Run Locust Benchmarks for UI
         route: /infra/ecs/run/merritt-ops/runLocustBenchmarksUI
         # test data currently only exists in prod
-        disable: default, docker, ecs-stg, ecs-dev, ecs-ephemeral, ecs-dbsnapshot
+        disable: default, docker
         confmsg: This will run a job in the merritt-ops container
         method: post
       - title: Start Stack
