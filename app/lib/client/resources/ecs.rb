@@ -73,7 +73,7 @@ module UC3Resources
           cluster: UC3::UC3Client.cluster_name,
           tasks: [id]
         ).tasks.each do |task|
-          task = {
+          @tasks[id] = {
             id: id,
             name: task.group,
             started: date_format(task.started_at, convert_timezone: true),
