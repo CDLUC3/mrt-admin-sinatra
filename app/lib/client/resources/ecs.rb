@@ -68,7 +68,7 @@ module UC3Resources
       @client.list_tasks(cluster: UC3::UC3Client.cluster_name, max_results: 100).task_arns.each do |task_arn|
         @client.describe_tasks(
           cluster: UC3::UC3Client.cluster_name,
-          tasks: [task_arn]
+          tasks: [task_arn.split]
         ).tasks.each do |task|
           @tasks[task.id] = {
             arn: task.task_arn,
