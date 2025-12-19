@@ -66,12 +66,15 @@ module UC3Resources
         end
       end
       @client.list_tasks(cluster: UC3::UC3Client.cluster_name, max_results: 100).task_arns.each do |task_arn|
+        id = task_arn.split('/').last
+        task = {id: id}
+        @tasks[id] = task
         @client.describe_tasks(
           cluster: UC3::UC3Client.cluster_name,
-          tasks: [task_arn.split]
+          tasks: [id]
         ).tasks.each do |task|
-          @tasks[task.id] = {
-            arn: task.task_arn,
+          task = {
+            id: id,
             name: task.group,
             started: date_format(task.started_at, convert_timezone: true),
             stopped: date_format(task.stopped_at, convert_timezone: true),
@@ -114,7 +117,7 @@ module UC3Resources
       table = AdminUI::FilterTable.new(
         columns: [
           AdminUI::Column.new(:name, header: 'Name'),
-          AdminUI::Column.new(:arn, header: 'Arn'),
+          AdminUI::Column.new(:id, header: 'Id'),
           AdminUI::Column.new(:last_status, header: 'Status'),
           AdminUI::Column.new(:started, header: 'Started'),
           AdminUI::Column.new(:stopped, header: 'Stopped')
