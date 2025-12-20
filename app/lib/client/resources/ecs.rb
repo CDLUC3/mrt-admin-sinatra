@@ -67,32 +67,28 @@ module UC3Resources
       end
       arns = []
       begin
-        puts "calling list tasks for cluster #{UC3::UC3Client.cluster_name}"
         arns = @client.list_tasks(cluster: UC3::UC3Client.cluster_name)
-        puts "after list tasks"
+        arns.task_arns.each do |task_arn|
+          id = task_arn.split('/').last
+          task = { id: id }
+          @tasks[id] = task
+          @client.describe_tasks(
+            cluster: UC3::UC3Client.cluster_name,
+            tasks: [id]
+          ).tasks.each do |task|
+            @tasks[id] = {
+              id: id,
+              name: task.group,
+              started: date_format(task.started_at, convert_timezone: true),
+              stopped: date_format(task.stopped_at, convert_timezone: true),
+              last_status: task.last_status
+            }
+          end
+        end
       rescue StandardError => e
         puts "Error listing tasks: #{e.message}"
       end
       puts arns.inspect
-      arns.task_arns.each do |task_arn|
-        id = task_arn.split('/').last
-        puts "Task id: #{id}"
-        task = { id: id }
-        @tasks[id] = task
-        @client.describe_tasks(
-          cluster: UC3::UC3Client.cluster_name,
-          tasks: [id]
-        ).tasks.each do |task|
-          puts task.inspect
-          @tasks[id] = {
-            id: id,
-            name: task.group,
-            started: date_format(task.started_at, convert_timezone: true),
-            stopped: date_format(task.stopped_at, convert_timezone: true),
-            last_status: task.last_status
-          }
-        end
-      end
       super(enabled: enabled)
     rescue StandardError => e
       super(enabled: false, message: e.to_s)
