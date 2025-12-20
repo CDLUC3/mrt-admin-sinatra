@@ -65,9 +65,14 @@ module UC3Resources
           }
         end
       end
-      puts "calling list tasks for cluster #{UC3::UC3Client.cluster_name}"
-      arns = @client.list_tasks(cluster: UC3::UC3Client.cluster_name)
-      puts "after list tasks"
+      arns = []
+      begin
+        puts "calling list tasks for cluster #{UC3::UC3Client.cluster_name}"
+        arns = @client.list_tasks(cluster: UC3::UC3Client.cluster_name)
+        puts "after list tasks"
+      rescue StandardError => e
+        puts "Error listing tasks: #{e.message}"
+      end
       puts arns.inspect
       arns.task_arns.each do |task_arn|
         id = task_arn.split('/').last
