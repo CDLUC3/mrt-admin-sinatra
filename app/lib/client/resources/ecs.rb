@@ -65,9 +65,9 @@ module UC3Resources
           }
         end
       end
-      arns = @client.list_tasks(cluster: UC3::UC3Client.cluster_name).task_arns
+      arns = @client.list_tasks(cluster: UC3::UC3Client.cluster_name)
       puts arns.inspect
-      arns.each do |task_arn|
+      arns.task_arns.each do |task_arn|
         id = task_arn.split('/').last
         puts "Task id: #{id}"
         task = { id: id }
