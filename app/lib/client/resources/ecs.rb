@@ -67,15 +67,13 @@ module UC3Resources
       end
       arns = []
       begin
-        arns = @client.list_tasks(cluster: UC3::UC3Client.cluster_name)
-        arns.task_arns.each do |task_arn|
+        @client.list_tasks(cluster: UC3::UC3Client.cluster_name).task_arns.each do |task_arn|
           id = task_arn.split('/').last
-          task = { id: id }
-          @tasks[id] = task
           @client.describe_tasks(
             cluster: UC3::UC3Client.cluster_name,
             tasks: [id]
           ).tasks.each do |task|
+            next if task.group =~ /service:/ # skip service tasks
             @tasks[id] = {
               id: id,
               name: task.group,
@@ -88,7 +86,6 @@ module UC3Resources
       rescue StandardError => e
         puts "Error listing tasks: #{e.message}"
       end
-      puts arns.inspect
       super(enabled: enabled)
     rescue StandardError => e
       super(enabled: false, message: e.to_s)

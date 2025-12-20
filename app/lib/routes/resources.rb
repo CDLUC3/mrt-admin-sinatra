@@ -79,8 +79,8 @@ module Sinatra
       end
 
       app.post '/infra/ecs/run/*/*' do |service, label|
-        content_type :json
         UC3Resources::ServicesClient.new.run_service_task(service, label)
+        redirect '/infra/ecs/tasks'
       end
 
       app.post '/infra/ecs/scale-up/*' do |service|
