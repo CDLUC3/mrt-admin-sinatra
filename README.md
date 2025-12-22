@@ -83,6 +83,11 @@ will not be able to connect to other Merritt microservices.
 MERRITT_ECS=desktop bundle exec puma app/config_mrt.ru
 ```
 
+### Merritt app testing of AWS calls
+```
+MERRITT_ECS=ecs-dev configkey=ecs-dev bundle exec puma app/config_mrt.ru
+```
+
 ### UC3-focuesed app
 ```
 MERRITT_ECS=desktop bundle exec puma app/config_uc3.ru

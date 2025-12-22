@@ -5,6 +5,7 @@ ruby '~> 3.2'
 
 gem 'anbt-sql-formatter'
 gem 'aws-sdk-cloudwatch'
+gem 'aws-sdk-cloudwatchevents'
 gem 'aws-sdk-codeartifact'
 gem 'aws-sdk-ec2'
 gem 'aws-sdk-ecr'

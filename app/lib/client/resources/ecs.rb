@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'aws-sdk-ecs'
+require 'aws-sdk-cloudwatchevents'
 require_relative '../uc3_client'
 require_relative '../code/ecr_images'
 
@@ -16,76 +17,10 @@ module UC3Resources
       @client = Aws::ECS::Client.new(
         region: UC3::UC3Client.region
       )
+      @cwclient = Aws::CloudWatchEvents::Client.new(
+        region: UC3::UC3Client.region
+      )
       @ecr_client = UC3Code::ECRImagesClient.new
-      @services = {}
-      @tasks = {}
-      # An ECS Service has a ServiceDeployment which has a TargetServiceRevision.
-      # A ServiceRevision has ContainerImage which has an ImageDigest.
-      # The ImageDigest is the identity key for an image inside of an ECR Repository.
-      @client.list_services(cluster: UC3::UC3Client.cluster_name, max_results: 20).service_arns.each do |arn|
-        @client.describe_services(cluster: UC3::UC3Client.cluster_name, services: [arn]).services.each do |svc|
-          digest = nil
-          image = nil
-          pendcount = @client.list_service_deployments(
-            cluster: UC3::UC3Client.cluster_name,
-            service: arn,
-            status: %w[PENDING IN_PROGRESS]
-          ).service_deployments.length
-          @client.list_service_deployments(
-            cluster: UC3::UC3Client.cluster_name,
-            service: arn,
-            status: ['SUCCESSFUL']
-          ).service_deployments.each do |sd|
-            @client.describe_service_revisions(
-              service_revision_arns: [sd.target_service_revision_arn]
-            ).service_revisions.each do |sr|
-              sr.container_images.each do |ci|
-                next if ci.image.to_s =~ /fluent-bit/ # skip sidecar images
-
-                digest = ci.image_digest
-                image = ci.image.to_s.gsub(%r{^.*amazonaws.com/}, '')
-              end
-            end
-            break unless image.nil?
-          end
-
-          dep = svc.deployments ? svc.deployments[0] : {}
-          image_name = image.split(':')[0]
-          image_tag = image.split(':')[1]
-          @services[svc.service_name] = {
-            name: svc.service_name,
-            deploying: pendcount.positive?,
-            desired_count: svc.desired_count,
-            running_count: svc.running_count,
-            pending_count: svc.pending_count,
-            created: date_format(dep.created_at, convert_timezone: true),
-            updated: date_format(dep.updated_at, convert_timezone: true),
-            image: [image, digest],
-            tags: @ecr_client.get_image_tags_by_digest(image_name, image_tag, digest)
-          }
-        end
-      end
-      arns = []
-      begin
-        @client.list_tasks(cluster: UC3::UC3Client.cluster_name).task_arns.each do |task_arn|
-          id = task_arn.split('/').last
-          @client.describe_tasks(
-            cluster: UC3::UC3Client.cluster_name,
-            tasks: [id]
-          ).tasks.each do |task|
-            next if task.group =~ /service:/ # skip service tasks
-            @tasks[id] = {
-              id: id,
-              name: task.group,
-              started: date_format(task.started_at, convert_timezone: true),
-              stopped: date_format(task.stopped_at, convert_timezone: true),
-              last_status: task.last_status
-            }
-          end
-        end
-      rescue StandardError => e
-        puts "Error listing tasks: #{e.message}"
-      end
       super(enabled: enabled)
     rescue StandardError => e
       super(enabled: false, message: e.to_s)
@@ -93,6 +28,63 @@ module UC3Resources
 
     def enabled
       !@client.nil?
+    end
+
+    def list_services_data
+      services = {}
+      return services unless enabled
+
+      begin
+        # An ECS Service has a ServiceDeployment which has a TargetServiceRevision.
+        # A ServiceRevision has ContainerImage which has an ImageDigest.
+        # The ImageDigest is the identity key for an image inside of an ECR Repository.
+        @client.list_services(cluster: UC3::UC3Client.cluster_name, max_results: 20).service_arns.each do |arn|
+          @client.describe_services(cluster: UC3::UC3Client.cluster_name, services: [arn]).services.each do |svc|
+            digest = nil
+            image = nil
+            pendcount = @client.list_service_deployments(
+              cluster: UC3::UC3Client.cluster_name,
+              service: arn,
+              status: %w[PENDING IN_PROGRESS]
+            ).service_deployments.length
+            @client.list_service_deployments(
+              cluster: UC3::UC3Client.cluster_name,
+              service: arn,
+              status: ['SUCCESSFUL']
+            ).service_deployments.each do |sd|
+              @client.describe_service_revisions(
+                service_revision_arns: [sd.target_service_revision_arn]
+              ).service_revisions.each do |sr|
+                sr.container_images.each do |ci|
+                  next if ci.image.to_s =~ /fluent-bit/ # skip sidecar images
+
+                  digest = ci.image_digest
+                  image = ci.image.to_s.gsub(%r{^.*amazonaws.com/}, '')
+                end
+              end
+              break unless image.nil?
+            end
+
+            dep = svc.deployments ? svc.deployments[0] : {}
+            image_name = image.split(':')[0]
+            image_tag = image.split(':')[1]
+            services[svc.service_name] = {
+              name: svc.service_name,
+              deploying: pendcount.positive?,
+              desired_count: svc.desired_count,
+              running_count: svc.running_count,
+              pending_count: svc.pending_count,
+              created: date_format(dep.created_at, convert_timezone: true),
+              updated: date_format(dep.updated_at, convert_timezone: true),
+              image: [image, digest],
+              tags: @ecr_client.get_image_tags_by_digest(image_name, image_tag, digest)
+            }
+          end
+        end
+      rescue StandardError => e
+        puts "Error listing services: #{e.message}"
+      end
+      services
     end
 
     def list_services
@@ -111,10 +103,38 @@ module UC3Resources
       )
       return table unless enabled
 
-      @services.sort.each do |_key, value|
+      list_services_data.sort.each do |_key, value|
         table.add_row(AdminUI::Row.make_row(table.columns, value))
       end
       table
+    end
+
+    def list_tasks_data
+      tasks = {}
+      return tasks unless enabled
+
+      begin
+        @client.list_tasks(cluster: UC3::UC3Client.cluster_name).task_arns.each do |task_arn|
+          id = task_arn.split('/').last
+          @client.describe_tasks(
+            cluster: UC3::UC3Client.cluster_name,
+            tasks: [id]
+          ).tasks.each do |task|
+            next if task.group =~ /service:/ # skip service tasks
+
+            @tasks[id] = {
+              id: id,
+              name: task.group,
+              started: date_format(task.started_at, convert_timezone: true),
+              stopped: date_format(task.stopped_at, convert_timezone: true),
+              last_status: task.last_status
+            }
+          end
+        end
+      rescue StandardError => e
+        puts "Error listing tasks: #{e.message}"
+      end
+      tasks
     end
 
     def list_tasks
@@ -129,7 +149,57 @@ module UC3Resources
       )
       return table unless enabled
 
-      @tasks.sort.each do |_key, value|
+      list_tasks_data.sort.each do |_key, value|
+        table.add_row(AdminUI::Row.make_row(table.columns, value))
+      end
+      table
+    end
+
+    def list_scheduled_tasks_data
+      tasks = {}
+      return tasks unless enabled
+
+      begin
+        @cwclient.list_rules.rules.each do |rule|
+          task = {
+            rule: rule.name,
+            keep: false
+          }
+          @cwclient.list_targets_by_rule(rule: rule.name).targets.each do |target|
+            next unless target.ecs_parameters
+
+            task[:arn] = target.ecs_parameters.task_definition_arn
+            task[:tarn] = target.arn
+            task[:keep] = true if target.arn =~ %r{/#{UC3::UC3Client.cluster_name}$}
+          end
+
+          next unless task[:keep]
+
+          @client.describe_task_definition(task_definition: task[:arn]).task_definition
+
+          @cwclient.describe_rule(name: rule.name).tap do |rdesc|
+            task[:schedule] = rdesc.schedule_expression
+          end
+
+          tasks[rule.name] = task
+        end
+      rescue StandardError => e
+        puts "Error listing task schedules: #{e.message}"
+      end
+      tasks
+    end
+
+    def list_scheduled_tasks
+      table = AdminUI::FilterTable.new(
+        columns: [
+          AdminUI::Column.new(:rule, header: 'Rule'),
+          AdminUI::Column.new(:schedule, header: 'Schedule (UTC)'),
+          AdminUI::Column.new(:arn, header: 'Task Def Arn')
+        ]
+      )
+      return table unless enabled
+
+      list_scheduled_tasks_data.sort.each do |_key, value|
         table.add_row(AdminUI::Row.make_row(table.columns, value))
       end
       table

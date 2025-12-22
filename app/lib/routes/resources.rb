@@ -49,48 +49,55 @@ module Sinatra
         )
       end
 
-      app.get '/infra/ecs' do
+      app.get '/infra/ecs/services/state' do
         adminui_show_table(
           AdminUI::Context.new(request.path, request.params),
           UC3Resources::ServicesClient.new.list_services
         )
       end
 
-      app.get '/infra/ecs/tasks' do
+      app.get '/infra/ecs/tasks/running' do
         adminui_show_table(
           AdminUI::Context.new(request.path, request.params),
           UC3Resources::ServicesClient.new.list_tasks
         )
       end
 
+      app.get '/infra/ecs/tasks/scheduled' do
+        adminui_show_table(
+          AdminUI::Context.new(request.path, request.params),
+          UC3Resources::ServicesClient.new.list_scheduled_tasks
+        )
+      end
+
       app.post '/infra/ecs/redeploy/*' do |service|
         UC3Resources::ServicesClient.new.redeploy_service(service)
-        redirect '/infra/ecs'
+        redirect '/infra/ecs/services/state'
       end
 
       app.post '/infra/ecs/deploy/*' do |service|
         UC3Resources::ServicesClient.new.deploy_service(service)
-        redirect '/infra/ecs'
+        redirect '/infra/ecs/services/state'
       end
 
       app.post '/infra/ecs/stop/*' do |service|
         UC3Resources::ServicesClient.new.stop_service(service)
-        redirect '/infra/ecs'
+        redirect '/infra/ecs/services/state'
       end
 
-      app.post '/infra/ecs/run/*/*' do |service, label|
+      app.post '/infra/ecs/tasks/launch/*/*' do |service, label|
         UC3Resources::ServicesClient.new.run_service_task(service, label)
-        redirect '/infra/ecs/tasks'
+        redirect '/infra/ecs/tasks/running'
       end
 
       app.post '/infra/ecs/scale-up/*' do |service|
         UC3Resources::ServicesClient.new.scale_up_service(service)
-        redirect '/infra/ecs'
+        redirect '/infra/ecs/services/state'
       end
 
       app.post '/infra/ecs/scale-down/*' do |service|
         UC3Resources::ServicesClient.new.scale_down_service(service)
-        redirect '/infra/ecs'
+        redirect '/infra/ecs/services/state'
       end
     end
   end

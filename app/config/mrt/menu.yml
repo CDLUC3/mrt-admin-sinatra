@@ -585,6 +585,23 @@ items:
     - title: ZooKeeper Stat
       disable: ecs-stg, ecs-prd
       route: /ops/zk/stat
+  - path: ldap
+    title: LDAP
+    route: /ldap
+    classes: needs-ldap
+    breadcrumb: true
+    items:
+    - title: Users
+      route: /ldap/users
+    - title: Collections
+      route: /ldap/collections
+    - title: Missing LDAP Collections
+      route: /ldap/collections-missing
+      description: |
+        Generate a report that maps entities in the Merritt LDAP database to entries in the Merritt inventory database.
+        
+        For any items that do not match, an error will be reported in the report.  
+        This indicates that maintenance needs to be performed on the LDAP entries for Merritt.
   - path: ingest-folders
     title: Ingest Folders
     route: /ops/ingest-folders
@@ -800,40 +817,22 @@ items:
   - title: Opensearch Logs
     route: /ops/opensearch
     disable: default, docker
-- path: Internals
-  title: Internals
+- path: cluster
+  title: Cluster
+  route: /infra/ecs
+  breadcrumb: true
   items: 
-  - path: ldap
-    title: LDAP
-    route: /ldap
-    classes: needs-ldap
-    breadcrumb: true
-    items:
-    - title: Users
-      route: /ldap/users
-    - title: Collections
-      route: /ldap/collections
-    - title: Missing LDAP Collections
-      route: /ldap/collections-missing
-      description: |
-        Generate a report that maps entities in the Merritt LDAP database to entries in the Merritt inventory database.
-        
-        For any items that do not match, an error will be reported in the report.  
-        This indicates that maintenance needs to be performed on the LDAP entries for Merritt.
-  - title: Deployment State
-    route: /infra/ecs
-    disable: default, docker
-  - title: ECS Tasks
-    route: /infra/ecs/tasks
-    disable: default, docker
   - title: Services
     path: services
-    route: /json
+    route: /infra/ecs/services
     breadcrumb: true
     items:
+    - title: Deployment State
+      route: /infra/ecs/services/state
+      disable: default, docker
     - title: UI
       path: ui
-      route: /json/ui
+      route: /infra/ecs/services/ui
       breadcrumb: true
       items:
       - title: UI State
@@ -847,7 +846,7 @@ items:
         method: post
     - title: Ingest
       path: ingest
-      route: /json/ingest
+      route: /infra/ecs/services/ingest
       disable: ecs-dbsnapshot
       breadcrumb: true
       items:
@@ -872,7 +871,7 @@ items:
     - title: Store
       path: store
       disable: ecs-dbsnapshot
-      route: /json/store
+      route: /infra/ecs/services/store
       breadcrumb: true
       items:
       - title: Store State
@@ -900,7 +899,7 @@ items:
         method: post
     - title: Inventory
       path: inventory
-      route: /json/inventory
+      route: /infra/ecs/services/inventory
       disable: ecs-dbsnapshot
       breadcrumb: true
       items:
@@ -928,7 +927,7 @@ items:
         method: post
     - title: Audit
       path: audit
-      route: /json/audit
+      route: /infra/ecs/services/audit
       disable: ecs-dbsnapshot
       breadcrumb: true
       items:
@@ -953,7 +952,7 @@ items:
         method: post
     - title: Replic
       path: replic
-      route: /json/replic
+      route: /infra/ecs/services/replic
       disable: ecs-dbsnapshot
       breadcrumb: true
       items:
@@ -978,7 +977,7 @@ items:
         method: post
     - title: Access
       path: access
-      route: /json/access
+      route: /infra/ecs/services/access
       breadcrumb: true
       disable: ecs-dbsnapshot
       items:
@@ -990,7 +989,7 @@ items:
         route: /json/access/nodes
     - title: Admin Tool
       path: admintool
-      route: /json/admintool
+      route: /infra/ecs/services/admintool
       disable: default, docker
       breadcrumb: true
       items:
@@ -1001,7 +1000,7 @@ items:
         method: post
     - title: Merritt Ops
       path: merritt-ops
-      route: /json/merritt-ops
+      route: /infra/ecs/services/merritt-ops
       disable: default, docker
       breadcrumb: true
       items:
@@ -1010,51 +1009,9 @@ items:
         disable: default, docker
         confmsg: This will re-deploy the Merritt Ops service in ECS.
         method: post
-      - title: Run Consistency Checks
-        route: /infra/ecs/run/merritt-ops/runConsistencyEndpoints
-        disable: default, docker
-        confmsg: This will run a job in the merritt-ops container
-        method: post
-      - title: Run Unit Tests
-        route: /infra/ecs/run/merritt-ops/runUnitTestEndpoints
-        disable: default, docker
-        confmsg: This will run a job in the merritt-ops container
-        method: post
-      - title: Run File Retrieval Benchmarks
-        route: /infra/ecs/run/merritt-ops/runFileRetrievalBenchmarks
-        # test data currently only exists in prod
-        disable: default, docker, ecs-stg, ecs-dev, ecs-ephemeral, ecs-dbsnapshot
-        confmsg: This will run a job in the merritt-ops container
-        method: post
-      - title: Run Locust Benchmarks for UI
-        route: /infra/ecs/run/merritt-ops/runLocustBenchmarksUI
-        # test data currently only exists in prod
-        disable: default, docker
-        confmsg: This will run a job in the merritt-ops container
-        method: post
-      - title: Start Stack
-        route: /infra/ecs/run/merritt-ops/startStack
-        disable: default, docker
-        confmsg: This will run a job in the merritt-ops container
-        method: post
-      - title: Stop Stack
-        route: /infra/ecs/run/merritt-ops/stopStack
-        disable: default, docker
-        confmsg: This will run a job in the merritt-ops container
-        method: post
-      - title: Redeploy Stack
-        route: /infra/ecs/run/merritt-ops/redeployStack
-        disable: default, docker
-        confmsg: This will run a job in the merritt-ops container
-        method: post
-      - title: Redeploy ZooKeeper
-        route: /infra/ecs/run/merritt-ops/redeployZk
-        disable: default, docker, ecs-stg, ecs-prd, ecs-dbsnapshot
-        confmsg: This will run a job in the merritt-ops container
-        method: post
     - title: Merritt Ops Write
       path: merritt-opswrite
-      route: /json/merritt-opswrite
+      route: /infra/ecs/services/merritt-opswrite
       disable: default, docker
       breadcrumb: true
       items:
@@ -1068,27 +1025,6 @@ items:
         disable: default, docker
         confmsg: This will stop the Merritt Ops Write service in ECS.
         method: post
-    - title: Merritt Integ Tests
-      route: /infra/ecs/run/mrt-integ-tests
-      disable: default, docker
-      path: mrt-integ-tests
-      breadcrumb: true
-      items:
-      - title: With Ingest
-        route: /infra/ecs/run/mrt-integ-tests/runEndToEndTests
-        disable: default, docker, ecs-ephmeral, ecs-dbsnapshot
-        confmsg: This will initiate a task that runs End to End tests
-        method: post
-      - title: Without Ingest
-        route: /infra/ecs/run/mrt-integ-tests/runEndToEndTestsNoIngest
-        disable: default, docker, ecs-ephmeral, ecs-dbsnapshot
-        confmsg: This will initiate a task that runs End to End tests
-        method: post
-      - title: Load Test
-        route: /infra/ecs/run/mrt-integ-tests/runEndToEndTestsLoad
-        disable: default, docker, ecs-ephmeral, ecs-dbsnapshot, ecs-dev, ecs-prd
-        confmsg: This will initiate a task that runs End to End tests
-        method: post
     - title: Stack Init 
       route: /stack-init
       disable: ecs-stg, ecs-prd
@@ -1099,6 +1035,96 @@ items:
       disable: ecs-stg, ecs-prd
       confmsg: This will initialize collections used for testing Merritt.
       method: post
+  - title: Tasks
+    path: tasks
+    route: /infra/ecs/tasks
+    breadcrumb: true
+    disable: default, docker
+    items:
+    - title: Running Tasks
+      route: /infra/ecs/tasks/running
+    - title: Task Completion Status
+      route: /infra/ecs/tasks/status
+      description: |
+        This will eventually query OpenSearch to pull recent task completion status information.
+    - title: Scheduled Tasks
+      route: /infra/ecs/tasks/scheduled
+    - title: Configured Tasks
+      route: /infra/ecs/tasks/configured
+    - title: Launch Task
+      route: /infra/ecs/tasks/launch
+      path: launch
+      disable: default, docker
+      items:
+      - title: Stack Management
+        path: merritt-ops
+        route: /infra/ecs/tasks/launch/merritt-ops
+        items:
+        - title: Start Stack
+          route: /infra/ecs/tasks/launch/merritt-ops/startStack
+          disable: default, docker
+          confmsg: This will run a job in the merritt-ops container
+          method: post
+        - title: Stop Stack
+          route: /infra/ecs/tasks/launch/merritt-ops/stopStack
+          disable: default, docker
+          confmsg: This will run a job in the merritt-ops container
+          method: post
+        - title: Redeploy Stack
+          route: /infra/ecs/tasks/launch/merritt-ops/redeployStack
+          disable: default, docker
+          confmsg: This will run a job in the merritt-ops container
+          method: post
+        - title: Redeploy ZooKeeper
+          route: /infra/ecs/tasks/launch/merritt-ops/redeployZk
+          disable: default, docker, ecs-stg, ecs-prd, ecs-dbsnapshot
+          confmsg: This will run a job in the merritt-ops container
+          method: post
+      - title: Service Testing
+        path: merritt-ops-testing
+        route: /infra/ecs/tasks/launch/merritt-ops
+        items:
+        - title: Run Consistency Checks
+          route: /infra/ecs/tasks/launch/merritt-ops/runConsistencyEndpoints
+          disable: default, docker
+          confmsg: This will run a job in the merritt-ops container
+          method: post
+        - title: Run Unit Tests
+          route: /infra/ecs/tasks/launch/merritt-ops/runUnitTestEndpoints
+          disable: default, docker
+          confmsg: This will run a job in the merritt-ops container
+          method: post
+        - title: Run File Retrieval Benchmarks
+          route: /infra/ecs/tasks/launch/merritt-ops/runFileRetrievalBenchmarks
+          # test data currently only exists in prod
+          disable: default, docker, ecs-stg, ecs-dev, ecs-ephemeral, ecs-dbsnapshot
+          confmsg: This will run a job in the merritt-ops container
+          method: post
+        - title: Run Locust Benchmarks for UI
+          route: /infra/ecs/tasks/launch/merritt-ops/runLocustBenchmarksUI
+          # test data currently only exists in prod
+          disable: default, docker
+          confmsg: This will run a job in the merritt-ops container
+          method: post
+      - title: End to End Tests
+        route: /infra/ecs/tasks/launch/mrt-integ-tests
+        path: mrt-integ-tests
+        items:
+        - title: With Ingest
+          route: /infra/ecs/tasks/launch/mrt-integ-tests/runEndToEndTests
+          disable: default, docker, ecs-ephmeral, ecs-dbsnapshot
+          confmsg: This will initiate a task that runs End to End tests
+          method: post
+        - title: Without Ingest
+          route: /infra/ecs/tasks/launch/mrt-integ-tests/runEndToEndTestsNoIngest
+          disable: default, docker, ecs-ephmeral, ecs-dbsnapshot
+          confmsg: This will initiate a task that runs End to End tests
+          method: post
+        - title: Load Test
+          route: /infra/ecs/tasks/launch/mrt-integ-tests/runEndToEndTestsLoad
+          disable: default, docker, ecs-ephmeral, ecs-dbsnapshot, ecs-dev, ecs-prd
+          confmsg: This will initiate a task that runs End to End tests
+          method: post
 - path: resources
   title: AWS
   disable: ecs-ephemeral, ecs-dbsnapshot, docker, default
