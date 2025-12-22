@@ -70,6 +70,13 @@ module Sinatra
         )
       end
 
+      app.get '/infra/ecs/tasks/configured' do
+        adminui_show_table(
+          AdminUI::Context.new(request.path, request.params),
+          UC3Resources::ServicesClient.new.list_task_definitions
+        )
+      end
+
       app.post '/infra/ecs/redeploy/*' do |service|
         UC3Resources::ServicesClient.new.redeploy_service(service)
         redirect '/infra/ecs/services/state'

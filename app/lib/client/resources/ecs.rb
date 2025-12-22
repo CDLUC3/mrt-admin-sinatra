@@ -155,6 +155,54 @@ module UC3Resources
       table
     end
 
+    def list_task_definitions_data
+      taskdefs = {}
+      return taskdefs unless enabled
+
+      begin
+        prefix = "mrt-task-#{ENV.fetch('MERRITT_ECS', '')}"
+        @client.list_task_definition_families(family_prefix: prefix).families.each do |family|
+          @client.list_task_definitions(family_prefix: family).task_definition_arns.each do |tdarn|
+            tdesc = @client.describe_task_definition(task_definition: tdarn).task_definition
+            next if tdesc.nil?
+
+            next unless tdesc.container_definitions
+
+            tdesc.container_definitions.each do |td|
+              next if td.name =~ /chrome/ # skip sidecar images
+
+              taskdefs[family] = {
+                family: family,
+                name: td.name,
+                image: td.image,
+                entrypoint: td.entry_point ? td.entry_point[0] : ''
+              }
+            end
+          end
+        end
+      rescue StandardError => e
+        puts "Error listing tasks: #{e.message}"
+      end
+      taskdefs
+    end
+
+    def list_task_definitions
+      table = AdminUI::FilterTable.new(
+        columns: [
+          AdminUI::Column.new(:family, header: 'Family'),
+          AdminUI::Column.new(:name, header: 'Name'),
+          AdminUI::Column.new(:image, header: 'Image'),
+          AdminUI::Column.new(:entrypoint, header: 'Entrypoint')
+        ]
+      )
+      return table unless enabled
+
+      list_task_definitions_data.sort.each do |_key, value|
+        table.add_row(AdminUI::Row.make_row(table.columns, value))
+      end
+      table
+    end
+
     def list_scheduled_tasks_data
       tasks = {}
       return tasks unless enabled
@@ -175,7 +223,13 @@ module UC3Resources
 
           next unless task[:keep]
 
-          @client.describe_task_definition(task_definition: task[:arn]).task_definition
+          tdesc = @client.describe_task_definition(task_definition: task[:arn]).task_definition
+          if tdesc.container_definitions
+            td = tdesc.container_definitions[0]
+            task[:name] = td.name
+            task[:image] = td.image
+            task[:entrypoint] = td.entry_point.join(' ') if td.entry_point
+          end
 
           @cwclient.describe_rule(name: rule.name).tap do |rdesc|
             task[:schedule] = rdesc.schedule_expression
@@ -194,7 +248,9 @@ module UC3Resources
         columns: [
           AdminUI::Column.new(:rule, header: 'Rule'),
           AdminUI::Column.new(:schedule, header: 'Schedule (UTC)'),
-          AdminUI::Column.new(:arn, header: 'Task Def Arn')
+          AdminUI::Column.new(:name, header: 'Name'),
+          AdminUI::Column.new(:image, header: 'Image'),
+          AdminUI::Column.new(:entrypoint, header: 'Entrypoint')
         ]
       )
       return table unless enabled
