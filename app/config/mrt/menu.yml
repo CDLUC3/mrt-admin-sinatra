@@ -1104,7 +1104,7 @@ items:
           route: /infra/ecs/tasks/launch/merritt-ops/runLocustBenchmarksUI
           # test data currently only exists in prod
           disable: default, docker, ecs-ephemral, ecs-dbsnapshot
-          confmsg: This will run a job in the merritt-ops container
+          confmsg: This will run a job in the merritt-ops container 
           method: post
       - title: End to End Tests
         route: /infra/ecs/tasks/launch/mrt-integ-tests
