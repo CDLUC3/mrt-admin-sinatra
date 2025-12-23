@@ -116,6 +116,8 @@ module UC3Resources
       begin
         @client.list_tasks(cluster: UC3::UC3Client.cluster_name).task_arns.each do |task_arn|
           id = task_arn.split('/').last
+          next if id.nil?
+          
           @client.describe_tasks(
             cluster: UC3::UC3Client.cluster_name,
             tasks: [id]
