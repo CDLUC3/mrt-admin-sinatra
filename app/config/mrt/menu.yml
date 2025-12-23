@@ -1113,17 +1113,14 @@ items:
         items:
         - title: With Ingest
           route: /infra/ecs/tasks/launch/mrt-integ-tests/runEndToEndTests
-          disable: default, docker, ecs-ephmeral, ecs-dbsnapshot
           confmsg: This will initiate a task that runs End to End tests
           method: post
         - title: Without Ingest
           route: /infra/ecs/tasks/launch/mrt-integ-tests/runEndToEndTestsNoIngest
-          disable: default, docker, ecs-ephmeral, ecs-dbsnapshot
           confmsg: This will initiate a task that runs End to End tests
           method: post
         - title: Load Test
           route: /infra/ecs/tasks/launch/mrt-integ-tests/runEndToEndTestsLoad
-          disable: default, docker, ecs-ephmeral, ecs-dbsnapshot, ecs-dev, ecs-prd
           confmsg: This will initiate a task that runs End to End tests
           method: post
 - path: resources
