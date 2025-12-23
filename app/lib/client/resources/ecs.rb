@@ -226,11 +226,16 @@ module UC3Resources
           next unless task[:keep]
 
           tdesc = @client.describe_task_definition(task_definition: task[:arn]).task_definition
-          if tdesc.container_definitions
-            td = tdesc.container_definitions[0]
+
+          next unless tdesc.container_definitions
+
+          tdesc.container_definitions.each do |td|
+            next if td.name =~ /chrome/ # skip sidecar images
+
+            task[:family] = tdesc.family
             task[:name] = td.name
             task[:image] = td.image
-            task[:entrypoint] = td.entry_point.join(' ') if td.entry_point
+            task[:entrypoint] = td.entry_point ? td.entry_point[0] : ''
           end
 
           @cwclient.describe_rule(name: rule.name).tap do |rdesc|
