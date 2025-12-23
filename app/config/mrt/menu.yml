@@ -1103,12 +1103,13 @@ items:
         - title: Run Locust Benchmarks for UI
           route: /infra/ecs/tasks/launch/merritt-ops/runLocustBenchmarksUI
           # test data currently only exists in prod
-          disable: default, docker
+          disable: default, docker, ecs-ephemral, ecs-dbsnapshot
           confmsg: This will run a job in the merritt-ops container
           method: post
       - title: End to End Tests
         route: /infra/ecs/tasks/launch/mrt-integ-tests
         path: mrt-integ-tests
+        disable: default, docker, ecs-ephemral, ecs-dbsnapshot
         items:
         - title: With Ingest
           route: /infra/ecs/tasks/launch/mrt-integ-tests/runEndToEndTests
