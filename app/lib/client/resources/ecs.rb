@@ -117,14 +117,14 @@ module UC3Resources
         @client.list_tasks(cluster: UC3::UC3Client.cluster_name).task_arns.each do |task_arn|
           id = task_arn.split('/').last
           next if id.nil?
-          
+
           @client.describe_tasks(
             cluster: UC3::UC3Client.cluster_name,
             tasks: [id]
           ).tasks.each do |task|
             next if task.group =~ /service:/ # skip service tasks
 
-            @tasks[id] = {
+            tasks[id] = {
               id: id,
               name: task.group,
               started: date_format(task.started_at, convert_timezone: true),
