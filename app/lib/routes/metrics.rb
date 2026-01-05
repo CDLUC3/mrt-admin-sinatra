@@ -12,11 +12,19 @@ module Sinatra
         period_min = params.fetch('period_min', '15').to_i
         offset_days = params.fetch('offset_days', '7').to_i
 
+        desc = []
+        desc << 'WARN at the following timings.  FAIL at 2X.'
+        desc << ''
+        UC3CloudWatch::MetricsClient.client.expected_retrieval_time_sec(fname).each do |label, val|
+          desc << "- #{label}: #{val}s"
+        end
+
         adminui_show_table(
           AdminUI::Context.new(request.path, request.params),
           UC3CloudWatch::MetricsClient.client.metric_table(
             UC3CloudWatch::MetricsClient.client.retrieval_duration_sec_metrics(fname, period_min: period_min,
-              offset_days: offset_days)
+              offset_days: offset_days),
+            description: desc.join("\n")
           )
         )
       end

@@ -24,7 +24,7 @@ module UC3CloudWatch
       super(enabled: false, message: e.to_s)
     end
 
-    def metric_table(rows)
+    def metric_table(rows, description: '')
       cols = [
         AdminUI::Column.new(:timestamp, header: 'Timestamp')
       ]
@@ -33,8 +33,11 @@ module UC3CloudWatch
           cols << AdminUI::Column.new("#{cloud.gsub('-', '_')}_#{method}", header: "#{cloud} #{method}")
         end
       end
+      cols << AdminUI::Column.new(:status, header: 'Status')
+
       table = AdminUI::FilterTable.new(
-        columns: cols
+        columns: cols,
+        description: description
       )
       rows.each do |row|
         table.add_row(AdminUI::Row.make_row(table.columns, row))
@@ -69,6 +72,20 @@ module UC3CloudWatch
       query
     end
 
+    def expected_retrieval_time_sec(fname)
+      fsize = 0
+      fsize = 100_000_000 if fname =~ /100_mb/
+      fsize = 20_000_000 if fname =~ /20_mb/
+
+      expected = {}
+      %w[aws-s3 sdsc wasabi].each do |cloud|
+        %w[access audit].each do |method|
+          expected["#{cloud}_#{method}"] = benchmark_expected_retrieval_time_sec(fsize, cloud, method)
+        end
+      end
+      expected
+    end
+
     def retrieval_duration_sec_metrics(fname, period_min: 15, offset_days: 7)
       return { message: 'CloudWatch client not configured' } unless enabled
 
@@ -77,6 +94,8 @@ module UC3CloudWatch
 
       starttime = Time.now - (offset_days * 24 * 3600)
       endtime = Time.now
+
+      expected = expected_retrieval_time_sec(fname)
 
       loop do
         metresults = @cw_client.get_metric_data(
@@ -95,8 +114,17 @@ module UC3CloudWatch
 
             loctstamp = DateTime.parse(tstamp.to_s).to_time.localtime.strftime('%Y-%m-%d %H:%M:%S')
 
-            results[loctstamp] ||= {}
+            results[loctstamp] ||= { status: 'PASS' }
             results[loctstamp][col] = value
+
+            evalue = expected.fetch(col, 0)
+            next if evalue.zero?
+
+            results[loctstamp][:status] = 'FAIL' if value > 2 * evalue
+
+            next if results[loctstamp][:status] == 'FAIL'
+
+            results[loctstamp][:status] = 'WARN' if value > evalue
           end
         end
 
