@@ -1169,18 +1169,25 @@ items:
       route: /queries/misc/admin-types
     - title: Benchmark Data
       path: benchmark
-      disable: ecs-ephemeral, ecs-dbsnapshot, ecs-dev, docker, default
+      disable: ecs-ephemeral, ecs-dbsnapshot, docker, default
       items:
       - title: Audit_benchmark_1mb
         route: /queries/repository/objects-localid?localid=Audit_benchmark_1mb
+        disable: ecs-dev
       - title: Audit_benchmark_10mb
         route: /queries/repository/objects-localid?localid=Audit_benchmark_10mb
+        disable: ecs-dev
       - title: Audit_benchmark_20mb
         route: /queries/repository/objects-localid?localid=Audit_benchmark_20mb
+        disable: ecs-dev
       - title: Audit_benchmark_100mb
         route: /queries/repository/objects-localid?localid=Audit_benchmark_100mb
+        disable: ecs-dev
       - title: Audit_benchmark_1gb
         route: /queries/repository/objects-localid?localid=Audit_benchmark_1gb
+        disable: ecs-dev
+      - title: /ops/metrics/benchmark-retrieval/README.md 
+        route: /queries/repository/objects-localid?localid=README.md
   - title: Testing
     path: test 
     route: /test
