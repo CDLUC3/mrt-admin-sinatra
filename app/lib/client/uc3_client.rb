@@ -69,14 +69,14 @@ module UC3
       end
     end
 
-    def date_format(date, convert_timezone: false)
+    def date_format(date, convert_timezone: false, format: '%Y-%m-%d %H:%M:%S')
       return '' if date.nil? || date.to_s.empty?
 
       d = DateTime.parse(date.to_s).to_time
       return '' if d.nil?
 
       d = d.localtime if convert_timezone
-      d.strftime('%Y-%m-%d %H:%M:%S')
+      d.strftime(format)
     end
 
     def self.region

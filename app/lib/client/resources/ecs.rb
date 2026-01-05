@@ -240,6 +240,13 @@ module UC3Resources
 
           @cwclient.describe_rule(name: rule.name).tap do |rdesc|
             task[:schedule] = rdesc.schedule_expression
+            sched = rdesc.schedule_expression.gsub('cron(', '').gsub(')', '')
+            hour = sched.split(' ')[1]
+            min = sched.split(' ')[0]
+            if hour =~ /^\d+$/ && min =~ /^\d+$/
+              time = Time.utc(Time.now.year, Time.now.month, Time.now.day, hour.to_i, min.to_i, 0)
+              task[:time] = date_format(time, convert_timezone: true, format: '%H:%M')
+            end
           end
 
           tasks[rule.name] = task
@@ -255,6 +262,7 @@ module UC3Resources
         columns: [
           AdminUI::Column.new(:rule, header: 'Rule'),
           AdminUI::Column.new(:schedule, header: 'Schedule (UTC)'),
+          AdminUI::Column.new(:time, header: 'Time (Local)'),
           AdminUI::Column.new(:name, header: 'Name'),
           AdminUI::Column.new(:image, header: 'Image'),
           AdminUI::Column.new(:entrypoint, header: 'Entrypoint')

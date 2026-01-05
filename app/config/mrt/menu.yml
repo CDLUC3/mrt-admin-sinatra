@@ -1089,7 +1089,7 @@ items:
           disable: default, docker
           confmsg: This will run a job in the merritt-ops container
           method: post
-        - title: Run Unit Tests
+        - title: Run Admin Tool Unit Tests
           route: /infra/ecs/tasks/launch/merritt-ops/runUnitTestEndpoints
           disable: default, docker
           confmsg: This will run a job in the merritt-ops container
