@@ -1120,6 +1120,7 @@ items:
           confmsg: This will initiate a task that runs End to End tests
           method: post
         - title: Load Test
+          disable: default, docker, ecs-ephemral, ecs-dbsnapshot, ecs-dev, ecs-prd
           route: /infra/ecs/tasks/launch/mrt-integ-tests/runEndToEndTestsLoad
           confmsg: This will initiate a task that runs End to End tests
           method: post
