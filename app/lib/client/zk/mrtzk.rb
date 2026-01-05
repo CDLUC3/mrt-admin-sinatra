@@ -305,21 +305,21 @@ module UC3Queue
           value: 'Requeue',
           href: "/ops/zk/ingest/job/requeue/#{id}",
           post: true,
-          cssclass: 'button',
+          cssclass: 'button requeue_button',
           disabled: !%w[Failed].include?(status)
         }
         job[:actions] << {
           value: 'Queue Del',
           href: "/ops/zk/ingest/job/delete/#{id}",
           post: true,
-          cssclass: 'button',
+          cssclass: 'button delete_button',
           disabled: !%w[Failed Completed].include?(status)
         }
         job[:actions] << {
           value: 'Hold',
           href: "/ops/zk/ingest/job/hold/#{id}",
           post: true,
-          cssclass: 'button',
+          cssclass: 'button hold_button',
           disabled: !%w[Pending].include?(status)
         }
         job[:actions] << {

@@ -4,6 +4,8 @@
 <fieldset>
   <legend>Page Actions</legend>
   <button id="release-all" type="button">Release All Held Jobs</button>
+  <button id="requeue-all" type="button">Requeue All Failed Jobs</button>
+  <button id="delete-all" type="button">Delete All Failed Jobs</button>
 </fieldset>
 </div>
 <div class='tablewrap'>
@@ -22,10 +24,44 @@
     });
   }
 
+  function delete_job() {
+    $("a.delete_button").each(function(){
+      if (!$(this).attr("disabled")) {
+        $(this).click();
+        setTimeout(function(){
+          delete_job();
+        }, 800);     
+        return false;
+      }
+    });
+  }
+
+  function requeue_job() {
+    $("a.requeue_button").each(function(){
+      if (!$(this).attr("disabled")) {
+        $(this).click();
+        setTimeout(function(){
+          requeue_job();
+        }, 800);     
+        return false;
+      }
+    });
+  }
+
   $(document).ready(function() {
     $("#release-all").on("click", function(){
       $("#release-all").attr("disabled", true);
       release_job();
+    });
+    
+    $("#delete-all").on("click", function(){
+      $("#delete-all").attr("disabled", true);
+      delete_job();
+    });
+ 
+    $("#requeue-all").on("click", function(){
+      $("#requeue-all").attr("disabled", true);
+      requeue_job();
     });
 
     var count = 0;
@@ -37,6 +73,28 @@
     
     if (count == 0) {
       $("#release-all").attr("disabled", true);
+    }
+
+    count = 0;
+    $("a.requeue_button").each(function(){
+      if (!$(this).attr("disabled")) {
+        count++;
+      }
+    });
+    
+    if (count == 0) {
+      $("#requeue-all").attr("disabled", true);
+    }
+
+    count = 0;
+    $("a.delete_button").each(function(){
+      if (!$(this).attr("disabled")) {
+        count++;
+      }
+    });
+    
+    if (count == 0) {
+      $("#delete-all").attr("disabled", true);
     }
   });
 </script>
