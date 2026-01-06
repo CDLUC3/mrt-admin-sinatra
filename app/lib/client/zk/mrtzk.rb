@@ -301,42 +301,54 @@ module UC3Queue
         job[:jobdata] << job[:title]
         job[:jobdata] << job[:filename]
         job[:actions] = []
-        job[:actions] << {
-          value: 'Requeue',
-          href: "/ops/zk/ingest/job/requeue/#{id}",
-          post: true,
-          cssclass: 'button requeue_button',
-          disabled: !%w[Failed].include?(status)
-        }
-        job[:actions] << {
-          value: 'Queue Del',
-          href: "/ops/zk/ingest/job/delete/#{id}",
-          post: true,
-          cssclass: 'button delete_button',
-          disabled: !%w[Failed Completed].include?(status)
-        }
-        job[:actions] << {
-          value: 'Hold',
-          href: "/ops/zk/ingest/job/hold/#{id}",
-          post: true,
-          cssclass: 'button hold_button',
-          disabled: !%w[Pending].include?(status)
-        }
-        job[:actions] << {
-          value: 'Release',
-          href: "/ops/zk/ingest/job/release/#{id}",
-          post: true,
-          cssclass: 'button release_button',
-          disabled: !%w[Held].include?(status)
-        }
-        job[:actions] << {
-          value: 'Force Failure',
-          href: "/ops/zk/ingest/job/fail/#{id}",
-          post: true,
-          cssclass: 'button fail_button',
-          confmsg: 'Be very careful when forcing a failure on a job.  Do you want to proceed?',
-          disabled: %w[Held Deleted Completed Failed].include?(status)
-        }
+
+        if %w[Failed].include?(status)
+          job[:actions] << {
+            value: 'Requeue',
+            href: "/ops/zk/ingest/job/requeue/#{id}",
+            post: true,
+            cssclass: 'button requeue_button'
+          }
+        end
+
+        if %w[Failed Completed].include?(status)
+          job[:actions] << {
+            value: 'Queue Del',
+            href: "/ops/zk/ingest/job/delete/#{id}",
+            post: true,
+            cssclass: 'button delete_button'
+          }
+        end
+
+        if %w[Pending].include?(status)
+          job[:actions] << {
+            value: 'Hold',
+            href: "/ops/zk/ingest/job/hold/#{id}",
+            post: true,
+            cssclass: 'button hold_button'
+          }
+        end
+
+        if %w[Held].include?(status)
+          job[:actions] << {
+            value: 'Release',
+            href: "/ops/zk/ingest/job/release/#{id}",
+            post: true,
+            cssclass: 'button release_button'
+          }
+        end
+
+        unless %w[Held Deleted Completed Failed].include?(status)
+          job[:actions] << {
+            value: 'Fail',
+            title: 'Force job into Failed State',
+            href: "/ops/zk/ingest/job/fail/#{id}",
+            post: true,
+            cssclass: 'button button_red fail_button',
+            confmsg: 'Be very careful when forcing a failure on a job.  Do you want to proceed?'
+          }
+        end
+
         table.add_row(
           AdminUI::Row.make_row(
             table.columns,
@@ -666,6 +678,8 @@ module UC3Queue
         when 'Downloading'
           job.set_status(zk, MerrittZK::JobState::Processing, job_retry: true)
         when 'Processing'
+          job.set_status(zk, MerrittZK::JobState::Storing, job_retry: true)
+        when 'Storing'
           job.set_status(zk, MerrittZK::JobState::Recording, job_retry: true)
         when 'Recording'
           job.set_status(zk, MerrittZK::JobState::Notify, job_retry: true)

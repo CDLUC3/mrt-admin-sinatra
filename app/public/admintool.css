@@ -115,6 +115,7 @@ a.button_red,
 input.button_red {
   border: thin solid red;
 }
+
 a.button_red::after {
   content: " ⚠️";
 }
