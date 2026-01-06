@@ -329,6 +329,14 @@ module UC3Queue
           cssclass: 'button release_button',
           disabled: !%w[Held].include?(status)
         }
+        job[:actions] << {
+          value: 'Force Failure',
+          href: "/ops/zk/ingest/job/fail/#{id}",
+          post: true,
+          cssclass: 'button fail_button',
+          confmsg: 'Be very careful when forcing a failure on a job.  Do you want to proceed?',
+          disabled: %w[Held Deleted Completed Failed].include?(status)
+        }
         table.add_row(
           AdminUI::Row.make_row(
             table.columns,
@@ -672,6 +680,14 @@ module UC3Queue
         j = MerrittZK::Job.new(queueid)
         j.load(zk)
         j.set_status(zk, MerrittZK::JobState::Held)
+      end
+    end
+
+    def fail_ingest_job(queueid)
+      ZK.open(@zkconn, timeout: 2) do |zk|
+        j = MerrittZK::Job.new(queueid)
+        j.load(zk)
+        j.set_status(zk, MerrittZK::JobState::Failed)
       end
     end
 

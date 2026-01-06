@@ -209,6 +209,18 @@ module Sinatra
         end
       end
 
+      app.post '/ops/zk/ingest/job/fail/*' do
+        id = params[:splat][0]
+        begin
+          UC3Queue::ZKClient.client.fail_ingest_job(id)
+          content_type :json
+          { message: "#{id} fail" }.to_json
+        rescue StandardError => e
+          content_type :json
+          { job: id, message: "ERROR: #{e.class}: #{e.message}" }.to_json
+        end
+      end
+
       app.post '/ops/zk/ingest/job/release/*' do
         id = params[:splat][0]
         begin
