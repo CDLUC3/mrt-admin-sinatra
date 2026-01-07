@@ -8,12 +8,14 @@ module UC3Query
       row
     end
 
-    def self.storage_mgt_disabled?(strict: false)
+    def self.storage_mgt_disabled?
       stack_name = UC3::UC3Client.stack_name
-      return [UC3::UC3Client::ECS_DBSNAPSHOT].include?(stack_name) if strict
-
-      # use this to disable buttons in prd/stg if needed
       [UC3::UC3Client::ECS_DBSNAPSHOT].include?(stack_name)
+    end
+
+    def self.object_delete_disabled?
+      stack_name = UC3::UC3Client.stack_name
+      [UC3::UC3Client::ECS_DBSNAPSHOT, UC3::UC3Client::ECS_PRD].include?(stack_name)
     end
 
     def self.obj_info_resolver(row)
@@ -29,7 +31,7 @@ module UC3Query
         href: "/queries-update/replic/trigger?inv_object_id=#{row['inv_object_id']}",
         cssclass: 'button',
         post: true,
-        disabled: storage_mgt_disabled?(strict: true)
+        disabled: storage_mgt_disabled?
       }
       row
     end
@@ -43,14 +45,14 @@ module UC3Query
         href: "/queries-update/audit/reset#{pstr}",
         cssclass: 'button',
         post: true,
-        disabled: storage_mgt_disabled?(strict: true)
+        disabled: storage_mgt_disabled?
       }
       row['actions'] << {
         value: 'Re-audit Unverified',
         href: "/queries-update/audit/reset-unverified#{pstr}",
         cssclass: 'button',
         post: true,
-        disabled: storage_mgt_disabled?(strict: true)
+        disabled: storage_mgt_disabled?
       }
       if row['role'] == 'primary'
         row['actions'] << {
@@ -59,7 +61,7 @@ module UC3Query
           cssclass: 'button',
           title: 'Download the XML *storage manifest* representation of a object on a specific storage node.' \
                  'This request will be forwarded to the storage service.',
-          disabled: storage_mgt_disabled?(strict: true)
+          disabled: storage_mgt_disabled?
         }
         row['actions'] << {
           value: "Get Ingest Checkm (v#{row['version_number']})",
@@ -68,7 +70,7 @@ module UC3Query
           cssclass: 'button',
           title: 'Download an *ingest manifest checkm* representation of an object on a specific storage node. ' \
                  'This file could be utilized to re-ingest an object under a new ark.',
-          disabled: storage_mgt_disabled?(strict: true)
+          disabled: storage_mgt_disabled?
         }
         row['actions'] << {
           value: 'Get Storage Manifest Yaml',
@@ -77,7 +79,7 @@ module UC3Query
           title: 'Download the XML *storage manifest* representation of a object on a specific storage node.  ' \
                  'This request will be forwarded to the storage service.  ' \
                  'The manifest xml file will be converted to a user-friendly yaml format.',
-          disabled: storage_mgt_disabled?(strict: true)
+          disabled: storage_mgt_disabled?
         }
         row['actions'] << {
           value: 'Rebuild Inventory',
@@ -86,14 +88,22 @@ module UC3Query
           confmsg: %(Are you sure you want to rebuild the INV entry for this ark?
             A new inv_object_id will be assigned.),
           post: true,
-          disabled: storage_mgt_disabled?(strict: true)
+          disabled: storage_mgt_disabled?
         }
         row['actions'] << {
           value: 'Clear Scan Entries for Ark',
           href: "/queries-update/storage-maints/clear-entries-for-ark?ark=#{row['ark']}",
           cssclass: 'button',
           post: true,
-          disabled: storage_mgt_disabled?(strict: true)
+          disabled: storage_mgt_disabled?
+        }
+        row['actions'] << {
+          value: 'Delete Object',
+          href: "/ops/inventory/delete?node_number=#{row['node_number']}&ark=#{row['ark']}",
+          cssclass: 'button button_red',
+          confmsg: 'Have you consulted the Merritt Product Manager and received approval to perform the deletion?',
+          post: true,
+          disabled: object_delete_disabled?
         }
       end
       row
@@ -105,7 +115,7 @@ module UC3Query
         value: 'Fixity Benchmark',
         href: "/ops/storage/benchmark-fixity?inv_file_id=#{row['inv_file_id']}",
         cssclass: 'button',
-        disabled: storage_mgt_disabled?(strict: true)
+        disabled: storage_mgt_disabled?
       }
       row
     end
@@ -120,7 +130,7 @@ module UC3Query
         href: "/ops/collections/storage-node-config/#{row['mnemonic']}_Storage_Nodes" \
               "?inv_collection_id=#{row['id']}&primary=#{prim}&mnemonic=#{row['mnemonic']}",
         cssclass: 'button',
-        disabled: storage_mgt_disabled?(strict: true) || prim.empty?
+        disabled: storage_mgt_disabled? || prim.empty?
       }
       row['status'] = 'FAIL' if prim.empty?
       row
@@ -198,7 +208,7 @@ module UC3Query
             href: "/ops/storage/scans/start?node_number=#{node}",
             cssclass: 'button',
             post: true,
-            disabled: storage_mgt_disabled?(strict: true)
+            disabled: storage_mgt_disabled?
           }
         end
 
@@ -214,7 +224,7 @@ module UC3Query
             title: "Start a scan using the scanlist file in cloud storage #{keylist}",
             cssclass: 'button',
             post: true,
-            disabled: storage_mgt_disabled?(strict: true)
+            disabled: storage_mgt_disabled?
           }
         end
         row['percent_complete'] = ''
@@ -225,7 +235,7 @@ module UC3Query
           href: "/ops/storage/scans/resume?inv_scan_id=#{row['inv_scan_id']}",
           cssclass: 'button',
           post: true,
-          disabled: storage_mgt_disabled?(strict: true)
+          disabled: storage_mgt_disabled?
         }
       end
       if %w[pending started].include?(status)
@@ -234,7 +244,7 @@ module UC3Query
           href: "/ops/storage/scans/cancel?inv_scan_id=#{row['inv_scan_id']}",
           cssclass: 'button',
           post: true,
-          disabled: storage_mgt_disabled?(strict: true)
+          disabled: storage_mgt_disabled?
         }
       end
       if row.fetch('num_review', 0).positive?
@@ -289,7 +299,7 @@ module UC3Query
           href: "/queries-update/storage-maints/update-status?maint_id=#{row['maint_id']}&status=delete",
           post: true,
           cssclass: 'button',
-          disabled: storage_mgt_disabled?(strict: true)
+          disabled: storage_mgt_disabled?
         }
       end
       if row['maint_status'] != 'review'
@@ -298,7 +308,7 @@ module UC3Query
           href: "/queries-update/storage-maints/update-status?maint_id=#{row['maint_id']}&status=review",
           post: true,
           cssclass: 'button',
-          disabled: storage_mgt_disabled?(strict: true)
+          disabled: storage_mgt_disabled?
         }
       end
       if row['maint_status'] != 'hold'
@@ -307,7 +317,7 @@ module UC3Query
           href: "/queries-update/storage-maints/update-status?maint_id=#{row['maint_id']}&status=hold",
           post: true,
           cssclass: 'button',
-          disabled: storage_mgt_disabled?(strict: true)
+          disabled: storage_mgt_disabled?
         }
       end
       if row['maint_status'] == 'delete'

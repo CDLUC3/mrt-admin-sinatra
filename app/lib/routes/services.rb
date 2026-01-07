@@ -169,11 +169,7 @@ module Sinatra
         nodenum = request.params.fetch('node_number', '')
         ark = request.params.fetch('ark', '')
 
-        if nodenum.empty? || ark.empty?
-          return adminui_show_none(
-            AdminUI::Context.new(request.path, request.params, show_formats: false)
-          )
-        end
+        { message: 'nodenum and ark are required' }.to_json if nodenum.empty? || ark.empty?
 
         data = {
           url: manifest_url(nodenum, ark),
@@ -203,6 +199,66 @@ module Sinatra
       rescue StandardError => e
         content_type :json
         { uri: deleteurl, message: "Exception while rebuilding inventory: #{e}" }.to_json
+      end
+
+      app.post '/ops/inventory/delete' do
+        raise 'Delete Not allowed' if UC3Query::QueryResolvers.object_delete_disabled?
+
+        steps = []
+        fail = false
+
+        nodenum = request.params.fetch('node_number', '')
+        ark = request.params.fetch('ark', '')
+
+        { message: 'nodenum and ark are required' }.to_json if nodenum.empty? || ark.empty?
+
+        arkenc = CGI.escape(ark)
+
+        delete_url = "#{replic_host}/deletesecondary/#{arkenc}?t=json"
+
+        if delete_url_resp(delete_url).code.to_i == 200
+          steps << 'Delete of replicated copies'
+        else
+          steps << 'FAIL: Delete of replicated copies'
+          fail = true
+        end
+
+        delete_url = "#{store_host}/content/#{nodenum}/#{arkenc}?t=json"
+
+        if delete_url_resp(delete_url).code.to_i == 200
+          steps << 'Delete of primary copy'
+        else
+          steps << 'FAIL: Delete of primary copy'
+          fail = true
+        end
+
+        delete_url = "#{inventory_host}/object/#{arkenc}?t=json"
+
+        if delete_url_resp(delete_url).code.to_i == 200
+          steps << 'Delete of inventory'
+        else
+          steps << 'FAIL: Delete of inventory'
+          fail = true
+        end
+
+        delete_url = "#{inventory_host}/primary/#{arkenc}?t=json"
+
+        if delete_url_resp(delete_url).code.to_i == 200
+          steps << 'Delete of local id'
+        else
+          steps << 'FAIL: Delete of localid'
+          fail = true
+        end
+
+        if fail
+          { message: "FAIL: (#{steps.join('; ')})" }.to_json
+        else
+          { message: "SUCCESS: (#{steps.join('; ')})" }.to_json
+        end
+      rescue StandardError => e
+        steps << e.to_s
+        content_type :json
+        { message: "FAIL: (#{steps.join("\n")})" }.to_json
       end
 
       app.post '/ops/storage-nodes/remove-obsolete' do
