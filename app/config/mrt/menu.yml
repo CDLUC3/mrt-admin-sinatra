@@ -1201,6 +1201,21 @@ items:
       route: /test/load/data
       disable: ecs-stg, ecs-prd, ecs-dbsnapshot
       method: post
+    - title: Purge Test Collections
+      path: purge
+      route: /test/purge
+      disable: ecs-prd, ecs-dbsnapshot
+      breadcrumb: true
+      items:
+      - title: merritt_benchmark
+        route: /test/purge/merritt_benchmark
+        description: This will purge N items from a test collection.  To iteratively run the purge, launch a Purge task.
+      - title: cdl_wasabi
+        route: /test/purge/cdl_wasabi
+        description: This will purge N items from a test collection.  To iteratively run the purge, launch a Purge task.
+      - title: merritt_demo
+        route: /test/purge/merritt_demo
+        description: This will purge N items from a test collection.  To iteratively run the purge, launch a Purge task. 
     - title: "Info: How To Force Scan Errors"
       route: /test/no-action-scan
       disable: ecs-stg, ecs-prd, ecs-dbsnapshot

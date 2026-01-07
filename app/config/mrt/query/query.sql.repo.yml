@@ -208,7 +208,7 @@ queries:
   /queries/repository/object:
     limit:
       enabled: true
-      default: 2000
+      default: 250
     sql: |
       {{{OBJQ}}}
     template-params:
@@ -225,7 +225,7 @@ queries:
   /queries/repository/object-ark:
     limit:
       enabled: true
-      default: 2000
+      default: 250
     sql: |
       {{{OBJQ}}}
     template-params:
