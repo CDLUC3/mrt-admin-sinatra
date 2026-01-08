@@ -1210,12 +1210,28 @@ items:
       - title: merritt_benchmark
         route: /test/purge/merritt_benchmark
         description: This will purge N items from a test collection.  To iteratively run the purge, launch a Purge task.
+        method: post
+        confmsg: 'Warning: This will purge items from a collection.'
       - title: cdl_wasabi
         route: /test/purge/cdl_wasabi
         description: This will purge N items from a test collection.  To iteratively run the purge, launch a Purge task.
+        method: post
+        confmsg: 'Warning: This will purge items from a collection.'
       - title: merritt_demo
         route: /test/purge/merritt_demo
         description: This will purge N items from a test collection.  To iteratively run the purge, launch a Purge task. 
+        method: post
+        confmsg: 'Warning: This will purge items from a collection.'
+      - title: terry_test
+        route: /test/purge/terry_test
+        description: This will purge N items from a test collection.  To iteratively run the purge, launch a Purge task. 
+        method: post
+        confmsg: 'Warning: This will purge items from a collection.'
+      - title: cdl_dryaddev
+        route: /test/purge/cdl_dryaddev
+        description: This will purge N items from a test collection.  To iteratively run the purge, launch a Purge task. 
+        method: post
+        confmsg: 'Warning: This will purge items from a collection.'
     - title: "Info: How To Force Scan Errors"
       route: /test/no-action-scan
       disable: ecs-stg, ecs-prd, ecs-dbsnapshot

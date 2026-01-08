@@ -204,61 +204,24 @@ module Sinatra
       app.post '/ops/inventory/delete' do
         raise 'Delete Not allowed' if UC3Query::QueryResolvers.object_delete_disabled?
 
-        steps = []
-        fail = false
-
         nodenum = request.params.fetch('node_number', '')
         ark = request.params.fetch('ark', '')
 
-        { message: 'nodenum and ark are required' }.to_json if nodenum.empty? || ark.empty?
-
-        arkenc = CGI.escape(ark)
-
-        delete_url = "#{replic_host}/deletesecondary/#{arkenc}?t=json"
-
-        if delete_url_resp(delete_url).code.to_i == 200
-          steps << 'Delete of replicated copies'
-        else
-          steps << 'FAIL: Delete of replicated copies'
-          fail = true
-        end
-
-        delete_url = "#{store_host}/content/#{nodenum}/#{arkenc}?t=json"
-
-        if delete_url_resp(delete_url).code.to_i == 200
-          steps << 'Delete of primary copy'
-        else
-          steps << 'FAIL: Delete of primary copy'
-          fail = true
-        end
-
-        delete_url = "#{inventory_host}/object/#{arkenc}?t=json"
-
-        if delete_url_resp(delete_url).code.to_i == 200
-          steps << 'Delete of inventory'
-        else
-          steps << 'FAIL: Delete of inventory'
-          fail = true
-        end
-
-        delete_url = "#{inventory_host}/primary/#{arkenc}?t=json"
-
-        if delete_url_resp(delete_url).code.to_i == 200
-          steps << 'Delete of local id'
-        else
-          steps << 'FAIL: Delete of localid'
-          fail = true
-        end
-
-        if fail
-          { message: "FAIL: (#{steps.join('; ')})" }.to_json
-        else
-          { message: "SUCCESS: (#{steps.join('; ')})" }.to_json
-        end
-      rescue StandardError => e
-        steps << e.to_s
         content_type :json
-        { message: "FAIL: (#{steps.join("\n")})" }.to_json
+        delete_object(ark, nodenum).to_json
+      rescue StandardError => e
+        { message: "FAIL: (#{e})" }.to_json
+      end
+
+      app.post '/test/purge/*' do |mnemonic|
+        urlparams = {}
+        urlparams['count'] = [50, request.params.fetch('count', '20').to_i].min
+        urlparams['mnemonic'] = mnemonic
+        resp = UC3Query::QueryClient.client.run_query('/queries/misc/purgable_arks', urlparams).map do |row|
+          delete_object(row['ark'], row['nodenum'].to_s)
+        end
+        puts resp
+        resp.to_json
       end
 
       app.post '/ops/storage-nodes/remove-obsolete' do
@@ -922,6 +885,59 @@ module Sinatra
       req = Net::HTTP::Post::Multipart.new(uri, params)
       Net::HTTP.start(uri.hostname, uri.port) do |http|
         http.request(req)
+      end
+    end
+
+    def delete_object(ark, nodenum)
+      raise 'Delete Not allowed' if UC3Query::QueryResolvers.object_delete_disabled?
+
+      steps = []
+      fail = false
+
+      return { message: 'nodenum and ark are required' } if nodenum.empty? || ark.empty?
+
+      arkenc = CGI.escape(ark)
+
+      delete_url = "#{replic_host}/deletesecondary/#{arkenc}?t=json"
+
+      if delete_url_resp(delete_url).code.to_i == 200
+        steps << 'Delete of replicated copies'
+      else
+        steps << 'FAIL: Delete of replicated copies'
+        fail = true
+      end
+
+      delete_url = "#{store_host}/content/#{nodenum}/#{arkenc}?t=json"
+
+      if delete_url_resp(delete_url).code.to_i == 200
+        steps << 'Delete of primary copy'
+      else
+        steps << 'FAIL: Delete of primary copy'
+        fail = true
+      end
+
+      delete_url = "#{inventory_host}/object/#{arkenc}?t=json"
+
+      if delete_url_resp(delete_url).code.to_i == 200
+        steps << 'Delete of inventory'
+      else
+        steps << 'FAIL: Delete of inventory'
+        fail = true
+      end
+
+      delete_url = "#{inventory_host}/primary/#{arkenc}?t=json"
+
+      if delete_url_resp(delete_url).code.to_i == 200
+        steps << 'Delete of local id'
+      else
+        steps << 'FAIL: Delete of localid'
+        fail = true
+      end
+
+      if fail
+        { message: "#{ark}: FAIL: (#{steps.join('; ')})" }
+      else
+        { message: "#{ark}: SUCCESS: (#{steps.join('; ')})" }
       end
     end
   end

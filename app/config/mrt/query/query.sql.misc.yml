@@ -81,3 +81,36 @@ queries:
       where aggregate_role = 'MRT-none'
       order by id
       limit 1000
+  /queries/misc/purgable_arks:
+    sql: |
+      SELECT 
+        o.ark,
+        n.number as nodenum
+      FROM 
+        inv.inv_collections c
+      INNER JOIN 
+        inv.inv_collections_inv_objects co
+      ON
+        c.id=co.inv_collection_id
+      INNER JOIN 
+        inv.inv_objects o
+      ON
+        o.id=co.inv_object_id
+      INNER JOIN
+        inv.inv_nodes_inv_objects inio 
+      ON
+        inio.inv_object_id = o.id and inio.role = 'primary'
+      INNER JOIN
+        inv.inv_nodes n
+      ON
+        n.id = inio.inv_node_id
+      WHERE 
+        o.modified <  date_add(NOW(), INTERVAL -3 DAY)
+      AND 
+        c.mnemonic = ?
+      LIMIT ?
+    parameters:
+    - name: mnemonic
+      type: string
+    - name: count
+      type: integer
