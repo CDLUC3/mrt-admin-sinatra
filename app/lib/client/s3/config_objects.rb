@@ -232,7 +232,7 @@ module UC3S3
     end
 
     def get_doc_page(doc)
-      key = "#{File.dirname(@prefix)}/mrt-admin-sinatra/docs/#{UC3::UC3Client.stack_name}/#{doc}"
+      key = "uc3/mrt/mrt-admin-sinatra/docs/#{UC3::UC3Client.stack_name}/#{doc}"
       @s3_client.get_object(
         bucket: @report_bucket,
         key: key
