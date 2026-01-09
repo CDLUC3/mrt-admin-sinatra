@@ -678,7 +678,11 @@ module UC3Queue
         when 'Downloading'
           job.set_status(zk, MerrittZK::JobState::Processing, job_retry: true)
         when 'Processing'
-          job.set_status(zk, MerrittZK::JobState::Storing, job_retry: true)
+          if UC3::UC3Client.prod_stack?
+            job.set_status(zk, MerrittZK::JobState::Recording, job_retry: true)
+          else
+            job.set_status(zk, MerrittZK::JobState::Storing, job_retry: true)
+          end
         when 'Storing'
           job.set_status(zk, MerrittZK::JobState::Recording, job_retry: true)
         when 'Recording'

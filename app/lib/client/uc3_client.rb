@@ -95,6 +95,10 @@ module UC3
       stack_name == ECS_DBSNAPSHOT
     end
 
+    def self.prod_stack?
+      stack_name == ECS_PRD
+    end
+
     def context
       table = AdminUI::FilterTable.new(
         columns: [

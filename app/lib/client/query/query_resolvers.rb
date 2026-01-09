@@ -9,13 +9,11 @@ module UC3Query
     end
 
     def self.storage_mgt_disabled?
-      stack_name = UC3::UC3Client.stack_name
-      [UC3::UC3Client::ECS_DBSNAPSHOT].include?(stack_name)
+      UC3::UC3Client.dbsnapshot_stack?
     end
 
     def self.object_delete_disabled?
-      stack_name = UC3::UC3Client.stack_name
-      [UC3::UC3Client::ECS_DBSNAPSHOT, UC3::UC3Client::ECS_PRD].include?(stack_name)
+      UC3::UC3Client.dbsnapshot_stack? || UC3::UC3Client.prod_stack?
     end
 
     def self.obj_info_resolver(row)
