@@ -894,7 +894,17 @@ module Sinatra
       steps = []
       fail = false
 
-      return { message: 'nodenum and ark are required' } if nodenum.empty? || ark.empty?
+      return { message: 'An ark is required for delete_object' } if ark.empty?
+
+      if nodenum.empty?
+        urlparams = {}
+        urlparams['ark'] = ark
+        UC3Query::QueryClient.client.run_query('/queries/misc/primary_node', urlparams).map do |row|
+          nodenum = row['nodenum'].to_s
+        end
+      end
+
+      return { message: 'A primary node number is required for delete_object' } if nodenum.empty?
 
       arkenc = CGI.escape(ark)
 

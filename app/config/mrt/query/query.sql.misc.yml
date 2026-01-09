@@ -114,3 +114,22 @@ queries:
       type: string
     - name: count
       type: integer
+  /queries/misc/primary_node:
+    sql: |
+      SELECT 
+        n.number as nodenum
+      FROM 
+        inv.inv_objects o
+      INNER JOIN
+        inv.inv_nodes_inv_objects inio 
+      ON
+        inio.inv_object_id = o.id and inio.role = 'primary'
+      INNER JOIN
+        inv.inv_nodes n
+      ON
+        n.id = inio.inv_node_id
+      WHERE 
+        o.ark = ?
+    parameters:
+    - name: ark
+      type: string
