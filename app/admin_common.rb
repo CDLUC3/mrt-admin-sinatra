@@ -79,6 +79,26 @@ def adminui_show_markdown(context, md_file)
   end
 end
 
+def adminui_show_markdown_text(context, md_text)
+  respond_to do |format|
+    format.html do
+      erb :markdown_text,
+        :layout => :page_layout,
+        :locals => {
+          md_text: md_text,
+          context: context
+        }
+    end
+    format.json do
+      content_type :json
+      {
+        context: context.to_h,
+        markdown: md_text
+      }.to_json
+    end
+  end
+end
+
 def adminui_show_none(context)
   respond_to do |format|
     format.html do

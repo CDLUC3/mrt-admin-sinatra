@@ -31,10 +31,19 @@ AdminUI::Context.index_md = 'app/markdown/mrt/index.md'
 register Sinatra::Contrib
 
 get '/' do
-  adminui_show_markdown(
-    AdminUI::Context.new(request.path, request.params, show_formats: false),
-    AdminUI::Context.index_md
-  )
+  supp = UC3S3::ConfigObjectsClient.client.get_doc_page('support.md')
+
+  if supp.empty?
+    adminui_show_markdown(
+      AdminUI::Context.new(request.path, request.params, show_formats: false),
+      AdminUI::Context.index_md
+    )
+  else
+    adminui_show_markdown_text(
+      AdminUI::Context.new(request.path, request.params, show_formats: false),
+      supp
+    )
+  end
 end
 
 get '/context' do

@@ -231,6 +231,16 @@ module UC3S3
       url
     end
 
+    def get_doc_page(doc)
+      key = "#{File.dirname(@prefix)}/mrt-admin-sinatra/docs/#{UC3::UC3Client.stack_name}/#{doc}"
+      @s3_client.get_object(
+        bucket: @report_bucket,
+        key: key
+      ).body.read
+    rescue StandardError
+      key
+    end
+
     def get_report_url(path)
       table = AdminUI::FilterTable.new(
         columns: [
