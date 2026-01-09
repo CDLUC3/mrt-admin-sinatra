@@ -234,7 +234,7 @@ module UC3S3
     def get_doc_page(doc)
       key = "uc3/mrt/mrt-admin-sinatra/docs/#{UC3::UC3Client.stack_name}/#{doc}"
       @s3_client.get_object(
-        bucket: @report_bucket,
+        bucket: @bucket,
         key: key
       ).body.read
     rescue StandardError
