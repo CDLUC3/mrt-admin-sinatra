@@ -293,7 +293,8 @@ module AdminUI
       description = Redcarpet::Markdown.new(
         Redcarpet::Render::HTML.new,
         fenced_code_blocks: true,
-        tables: true
+        tables: true,
+        autolink: true
       ).render(@description)
       Mustache.render(description, ENV)
     end

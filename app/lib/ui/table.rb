@@ -202,7 +202,8 @@ module AdminUI
       %(<div class='description'>#{Redcarpet::Markdown.new(
         Redcarpet::Render::HTML.new,
         fenced_code_blocks: true,
-        tables: true
+        tables: true,
+        autolink: true
       ).render(@description)}</div>)
     end
 
