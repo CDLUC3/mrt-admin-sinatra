@@ -238,7 +238,7 @@ module UC3S3
         key: key
       ).body.read
     rescue StandardError
-      key
+      ''
     end
 
     def get_report_url(path)

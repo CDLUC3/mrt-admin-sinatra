@@ -4,6 +4,8 @@ The Merritt Admin Tool supports a stack of microservices running within a Merrit
 
 - [Merritt Stack Links and Troubleshooting Documentation](https://github.com/CDLUC3/mrt-doc-private/blob/main/docs/system-recovery/README.md)
 
+## NOTE: For live stacks, this will be replaced with a support page
+
 ## Merritt Admin Tool Features
 - Query the Merritt Inventory and Billing Databases
   - Generate and save "large" reports to a report bucket
