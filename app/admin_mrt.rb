@@ -41,7 +41,6 @@ get '/' do
         fname
       )
     else
-      fname = AdminUI::Context.index_md
       adminui_show_markdown(
         AdminUI::Context.new(request.path, request.params, show_formats: false),
         AdminUI::Context.index_md
