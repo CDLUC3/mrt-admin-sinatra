@@ -34,10 +34,19 @@ get '/' do
   supp = UC3S3::ConfigObjectsClient.client.get_doc_page('support.md')
 
   if supp.empty?
-    adminui_show_markdown(
-      AdminUI::Context.new(request.path, request.params, show_formats: false),
-      AdminUI::Context.index_md
-    )
+    fname = "app/markdown/mrt/#{UC3::UC3Client.stack_name}.md"
+    if File.exist?(fname)
+      adminui_show_markdown(
+        AdminUI::Context.new(request.path, request.params, show_formats: false),
+        fname
+      )
+    else
+      fname = AdminUI::Context.index_md
+      adminui_show_markdown(
+        AdminUI::Context.new(request.path, request.params, show_formats: false),
+        AdminUI::Context.index_md
+      )
+    end
   else
     adminui_show_markdown_text(
       AdminUI::Context.new(request.path, request.params, show_formats: false),
