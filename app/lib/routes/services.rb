@@ -405,9 +405,7 @@ module Sinatra
           profile: defprofile
         }
 
-        desc = UC3::UC3Client.stack_name == 'docker' ? 'docker compose exec -it merritt-ops /bin/bash' : "session #{UC3::UC3Client.cluster_name}/merritt-ops"
-        desc += "\n"
-        desc += "\n/set-credentials.sh"
+        desc = "[Creating a merritt-ops session for this stack](/#create-ops)"
 
         table = AdminUI::FilterTable.new(
           columns: [
