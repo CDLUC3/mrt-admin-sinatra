@@ -1245,19 +1245,7 @@ items:
 
         The following [script](https://github.com/CDLUC3/merritt-docker/blob/main/mrt-inttest-services/merritt-ops/scripts/create-scan-error.sh) will be run in the stack.
 
-        #### Attach to the merritt-ops container
-        
-        docker-compose
-
-        ```
-        docker compose run --rm merritt-ops /bin/bash
-        ```
-
-        ecs
-
-        ```
-        session mrt-{{{MERRITT_ECS}}}-stack/merritt-ops
-        ```
+        ### [Creating a merritt-ops session for this stack](/#create-ops)
 
         #### From the session, run the following script 
         
@@ -1283,18 +1271,7 @@ items:
 
         The following [script](https://github.com/CDLUC3/merritt-docker/blob/main/mrt-inttest-services/merritt-ops/scripts/create-audit-error.sh) will be run in the stack.
 
-        #### Attach to the merritt-ops container
-
-        docker-compose
-
-        ```
-        docker compose run --rm merritt-ops /bin/bash
-        ```
-        ecs
-
-        ```
-        session mrt-ecs-dev-stack/merritt-ops
-        ```
+        ### [Creating a merritt-ops session for this stack](/#create-ops)
 
         #### From the session, run the following script 
         
