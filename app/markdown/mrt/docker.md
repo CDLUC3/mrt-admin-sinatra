@@ -42,3 +42,9 @@ docker compose exec -it merritt-ops /bin/bash
 - [Merritt Stack Sceptre Resources](https://github.com/CDLUC3/mrt-sceptre/tree/main/mrt-ecs)
 - [Merritt Ops Container](https://github.com/CDLUC3/merritt-docker/tree/main/mrt-inttest-services/merritt-ops)
 - [Admin Tool Features](/markdown/features.md)
+
+## Run Merritt Admin Tool
+
+```
+MERRITT_ECS=desktop bundle exec puma app/config_mrt.ru
+```
