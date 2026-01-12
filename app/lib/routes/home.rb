@@ -120,9 +120,16 @@ module Sinatra
       end
 
       app.get '/private/markdown/*' do |md|
+        page = ''
+        begin
+          page = UC3::PrivateDocsClient.client.get_doc_page(md)
+        rescue StandardError => e
+          logger.error "Error retrieving private doc page #{md}: #{e.message}"
+        end
+
         adminui_show_markdown(
           AdminUI::Context.new(request.path, request.params, show_formats: false),
-          UC3S3::ConfigObjectsClient.client.get_doc_page(md)
+          page
         )
       end
 
