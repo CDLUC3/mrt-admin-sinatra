@@ -119,6 +119,13 @@ module Sinatra
         )
       end
 
+      app.get '/private/markdown/*' do |md|
+        adminui_show_markdown(
+          AdminUI::Context.new(request.path, request.params, show_formats: false),
+          UC3S3::ConfigObjectsClient.client.get_doc_page(md)
+        )
+      end
+
       app.get '/index.html' do
         redirect '/'
       end
