@@ -127,7 +127,7 @@ module Sinatra
           logger.error "Error retrieving private doc page #{md}: #{e.message}"
         end
 
-        adminui_show_markdown(
+        adminui_show_markdown_text(
           AdminUI::Context.new(request.path, request.params, show_formats: false),
           page
         )
