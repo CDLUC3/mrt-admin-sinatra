@@ -122,7 +122,7 @@ module Sinatra
       app.get '/private/markdown/*' do |md|
         page = ''
         begin
-          page = UC3::ConfigObjectsClient.client.get_doc_page(md)
+          page = UC3S3::ConfigObjectsClient.client.get_doc_page(md)
         rescue StandardError => e
           logger.error "Error retrieving private doc page #{md}: #{e.message}"
         end
