@@ -291,3 +291,8 @@ span.altformats {
   float: right;
 }
 
+div.main pre {
+  margin-inline: 20px;
+  background-color: beige;
+  padding: 10px;
+}
