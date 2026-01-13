@@ -916,7 +916,7 @@ module Sinatra
       end
     end
 
-    def delete_object(ark, nodenum)
+    def delete_object(ark, nodenum = '')
       raise 'Delete Not allowed' if UC3Query::QueryResolvers.object_delete_disabled?
 
       steps = []

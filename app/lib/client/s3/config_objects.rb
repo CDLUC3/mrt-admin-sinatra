@@ -348,7 +348,7 @@ module UC3S3
         next if doc.fetch(:completed, true)
 
         next unless doc.fetch(:stack, '') == UC3::UC3Client.stack_name
-        
+
         data << {
           path: path,
           reason: doc.fetch(:reason, 'N/A'),
@@ -362,11 +362,9 @@ module UC3S3
     end
 
     def list_delete_lists
-      paths = []
-      get_delete_lists.each do |row|
-        paths << row[:path]
+      get_delete_lists.map do |row|
+        row[:path]
       end
-      paths
     end
 
     def review_delete_lists
@@ -398,7 +396,6 @@ module UC3S3
     end
 
     def get_delete_list(list_name)
-      arks = []
       body = @s3_client.get_object({
         bucket: @bucket,
         key: "uc3/mrt/mrt-object-delete-files/#{UC3::UC3Client.stack_name_brief}/#{list_name}"
@@ -411,10 +408,9 @@ module UC3S3
         return { message: "Delete list is for stack #{doc.fetch(:stack, '')}" }
       end
 
-      doc.fetch(:objects, []).each do |ark|
-        arks << ark
+      doc.fetch(:objects, []).map do |ark|
+        ark
       end
-      arks
     end
 
     def review_delete_list(list_name)
