@@ -13,7 +13,7 @@ module Sinatra
         offset_days = params.fetch('offset_days', '7').to_i
 
         desc = []
-        desc << 'WARN at the following timings.  FAIL at 2X.'
+        desc << 'INFO at the following timings.  WARN at 2X. FAIL at 3X.'
         desc << ''
         UC3CloudWatch::MetricsClient.client.expected_retrieval_time_sec(fname).each do |label, val|
           desc << "- #{label}: #{val}s"

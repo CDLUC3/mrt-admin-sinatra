@@ -119,20 +119,19 @@ module UC3CloudWatch
 
             evalue = expected.fetch(col, 0)
 
-            puts "DEBUG: #{loctstamp} #{col} value=#{value} expected=#{evalue}"
             next if evalue.zero?
 
-            results[loctstamp][:status] = 'FAIL' if value > 2 * evalue
+            results[loctstamp][:status] = 'FAIL' if value > 3 * evalue
 
             next if results[loctstamp][:status] == 'FAIL'
 
-            results[loctstamp][:status] = 'WARN' if value > evalue
+            results[loctstamp][:status] = 'WARN' if value > 2 * evalue
 
             next if results[loctstamp][:status] == 'WARN'
 
-            # results[loctstamp][:status] = 'INFO' if value > evalue
+            results[loctstamp][:status] = 'INFO' if value > evalue
 
-            # next if results[loctstamp][:status] == 'INFO'
+            next if results[loctstamp][:status] == 'INFO'
 
             results[loctstamp][:status] = 'PASS'
           end
