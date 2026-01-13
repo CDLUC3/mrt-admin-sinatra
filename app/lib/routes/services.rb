@@ -540,10 +540,12 @@ module Sinatra
           end
 
           results_data[:retrieval_time_sec] = timing
-          results_data[:status] = if timing > 2 * node_data[:access_expected_retrieval_time_sec]
+          results_data[:status] = if timing > 3 * node_data[:access_expected_retrieval_time_sec]
                                     'FAIL'
-                                  elsif timing > node_data[:audit_expected_retrieval_time_sec]
+                                  elsif timing > 2 * node_data[:access_expected_retrieval_time_sec]
                                     'WARN'
+                                  elsif timing > node_data[:access_expected_retrieval_time_sec]
+                                    'INFO'
                                   else
                                     'PASS'
                                   end
@@ -570,10 +572,12 @@ module Sinatra
           end
 
           results_data[:retrieval_time_sec] = timing
-          results_data[:status] = if timing > 2 * node_data[:audit_expected_retrieval_time_sec]
+          results_data[:status] = if timing > 3 * node_data[:audit_expected_retrieval_time_sec]
                                     'FAIL'
-                                  elsif timing > node_data[:audit_expected_retrieval_time_sec]
+                                  elsif timing > 2 * node_data[:audit_expected_retrieval_time_sec]
                                     'WARN'
+                                  elsif timing > node_data[:audit_expected_retrieval_time_sec]
+                                    'INFO'
                                   else
                                     'PASS'
                                   end

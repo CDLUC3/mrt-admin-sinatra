@@ -341,7 +341,9 @@ module UC3S3
           AdminUI::Column.new(:review, header: 'Review')
         ],
         description:
-          'This page lists the [delete lists](https://github.com/CDLUC3/mrt-doc-private/tree/main/object-delete-files) that have been generated for this stack.' \
+          'This page lists the ' \
+          '[delete lists](https://github.com/CDLUC3/mrt-doc-private/tree/main/object-delete-files) ' \
+          'that have been generated for this stack.' \
           "\n\nThese lists are published to an S3 bucket for processing." \
           "\n\nTo process a delete list, use the following command in a merritt-ops session for this stack:" \
           "\n\n[Create a merritt-ops session for this stack](/#create-ops)" \

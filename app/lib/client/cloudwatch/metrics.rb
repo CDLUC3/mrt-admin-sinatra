@@ -114,7 +114,7 @@ module UC3CloudWatch
 
             loctstamp = DateTime.parse(tstamp.to_s).to_time.localtime.strftime('%Y-%m-%d %H:%M:%S')
 
-            results[loctstamp] ||= { status: 'SKIP'}
+            results[loctstamp] ||= { status: 'SKIP' }
             results[loctstamp][col] = value
 
             evalue = expected.fetch(col, 0)
