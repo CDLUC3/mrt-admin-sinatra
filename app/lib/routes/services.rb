@@ -924,10 +924,13 @@ module Sinatra
 
       return { message: 'An ark is required for delete_object' } if ark.empty?
 
+      puts "Ark #{ark} [#{nodenum}]"
+
       if nodenum.empty?
         urlparams = {}
         urlparams['ark'] = ark
-        UC3Query::QueryClient.client.run_query('/queries/misc/primary_node', urlparams).map do |row|
+        UC3Query::QueryClient.client.run_query('/queries/misc/primary_node', urlparams).each do |row|
+          puts row
           nodenum = row['nodenum'].to_s
         end
       end
