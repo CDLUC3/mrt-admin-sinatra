@@ -118,6 +118,8 @@ module UC3CloudWatch
             results[loctstamp][col] = value
 
             evalue = expected.fetch(col, 0)
+
+            puts "DEBUG: #{loctstamp} #{col} value=#{value} expected=#{evalue}"
             next if evalue.zero?
 
             results[loctstamp][:status] = 'FAIL' if value > 2 * evalue
