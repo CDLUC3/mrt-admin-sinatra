@@ -386,7 +386,7 @@ module UC3S3
       cols = []
       cols << AdminUI::Column.new(:ark, header: 'Ark')
       if arks.size <= MAX_DELETE_DETAILS
-        cols << AdminUI::Column.new(:mnemonic, header: 'Mnemonic')
+        cols << AdminUI::Column.new(:mnemonics, header: 'Mnemonics')
         cols << AdminUI::Column.new(:created, header: 'Created')
         cols << AdminUI::Column.new(:erc_what, header: 'ERC What')
         cols << AdminUI::Column.new(:billable_size, header: 'Billable Size')
@@ -418,7 +418,7 @@ module UC3S3
           urlparams['ark'] = ark
           UC3Query::QueryClient.client.run_query('/queries/repository/object-ark',
             urlparams).each do |result|
-            row[:mnemonic] = result.fetch('mnemonic', '')
+            row[:mnemonics] = result.fetch('mnemonics', '')
             row[:created] = result.fetch('created', '')
             row[:erc_what] = result.fetch('erc_what', '')
             row[:billable_size] = result.fetch('billable_size', '0').to_i
