@@ -214,11 +214,16 @@ module Sinatra
       end
 
       app.get '/ops/inventory/delete-lists' do
-        table = UC3S3::ConfigObjectsClient.client.get_delete_lists
+        table = UC3S3::ConfigObjectsClient.client.review_delete_lists
         adminui_show_table(
           AdminUI::Context.new(request.path, request.params),
           table
         )
+      end
+
+      app.get '/ops/inventory/list-delete-lists' do
+        content_type :json
+        UC3S3::ConfigObjectsClient.client.list_delete_lists.to_json
       end
 
       app.get '/ops/inventory/delete-lists/*' do |list_name|

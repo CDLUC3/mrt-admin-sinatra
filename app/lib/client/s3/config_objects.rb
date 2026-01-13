@@ -332,6 +332,44 @@ module UC3S3
     end
 
     def get_delete_lists
+      prefix = "uc3/mrt/mrt-object-delete-files/#{UC3::UC3Client.stack_name_brief}/"
+      resp = @s3_client.list_objects_v2({
+        bucket: @bucket,
+        prefix: prefix
+      })
+      data = []
+      resp.contents.each do |s3obj|
+        body = @s3_client.get_object({
+          bucket: @bucket,
+          key: s3obj.key
+        }).body.read
+        doc = YAML.safe_load(body, symbolize_names: true, permitted_classes: [Date])
+        path = s3obj.key.gsub(/^#{prefix}/, '')
+        next if doc.fetch(:completed, true)
+
+        next unless doc.fetch(:stack, '') == UC3::UC3Client.stack_name
+        
+        data << {
+          path: path,
+          reason: doc.fetch(:reason, 'N/A'),
+          date: doc.fetch(:date, 'N/A'),
+          count: doc.fetch(:objects, []).size,
+          review: { href: "delete-lists/#{URI.encode_www_form_component(path)}", value: 'Review' },
+          json: { href: "delete-list/#{URI.encode_www_form_component(path)}", value: 'JSON' }
+        }
+      end
+      data
+    end
+
+    def list_delete_lists
+      paths = []
+      get_delete_lists.each do |row|
+        paths << row[:path]
+      end
+      paths
+    end
+
+    def review_delete_lists
       table = AdminUI::FilterTable.new(
         columns: [
           AdminUI::Column.new(:path, header: 'File Path'),
@@ -344,7 +382,7 @@ module UC3S3
         description:
           'This page lists the ' \
           '[delete lists](https://github.com/CDLUC3/mrt-doc-private/tree/main/object-delete-files) ' \
-          'that have been generated for this stack.' \
+          'that have been generated for this stack ([Simple List](/ops/inventory/list-delete-lists)).' \
           "\n\nThese lists are published to an S3 bucket for processing." \
           "\n\nTo process a delete list, use the following command in a merritt-ops session for this stack:" \
           "\n\n[Create a merritt-ops session for this stack](/#create-ops)" \
@@ -353,26 +391,7 @@ module UC3S3
           "\n```"
       )
 
-      prefix = "uc3/mrt/mrt-object-delete-files/#{UC3::UC3Client.stack_name_brief}/"
-      resp = @s3_client.list_objects_v2({
-        bucket: @bucket,
-        prefix: prefix
-      })
-      resp.contents.each do |s3obj|
-        body = @s3_client.get_object({
-          bucket: @bucket,
-          key: s3obj.key
-        }).body.read
-        doc = YAML.safe_load(body, symbolize_names: true, permitted_classes: [Date])
-        path = s3obj.key.gsub(/^#{prefix}/, '')
-        row = {
-          path: path,
-          reason: doc.fetch(:reason, 'N/A'),
-          date: doc.fetch(:date, 'N/A'),
-          count: doc.fetch(:objects, []).size,
-          review: { href: "delete-lists/#{URI.encode_www_form_component(path)}", value: 'Review' },
-          json: { href: "delete-list/#{URI.encode_www_form_component(path)}", value: 'JSON' }
-        }
+      get_delete_lists.each do |row|
         table.add_row(AdminUI::Row.make_row(table.columns, row))
       end
       table
