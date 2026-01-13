@@ -80,7 +80,7 @@ module UC3CloudWatch
       expected = {}
       %w[aws-s3 sdsc wasabi].each do |cloud|
         %w[access audit].each do |method|
-          expected["#{cloud}_#{method}"] = benchmark_expected_retrieval_time_sec(fsize, cloud, method)
+          expected["#{cloud.gsub('-', '_')}_#{method}"] = benchmark_expected_retrieval_time_sec(fsize, cloud, method)
         end
       end
       expected
