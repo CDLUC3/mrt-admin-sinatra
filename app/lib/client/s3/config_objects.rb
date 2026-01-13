@@ -7,6 +7,8 @@ require_relative '../uc3_client'
 module UC3S3
   # Query for repository images by tag
   class ConfigObjectsClient < UC3::UC3Client
+    MAX_DELETE_DETAILS = 25
+
     def self.client
       UC3::UC3Client.clients.fetch(self.class.to_s, ConfigObjectsClient.new)
     end
@@ -373,12 +375,30 @@ module UC3S3
     end
 
     def get_delete_list(list_name)
+      arks = []
+     body = @s3_client.get_object({
+        bucket: @bucket,
+        key: "uc3/mrt/mrt-object-delete-files/#{UC3::UC3Client.stack_name_brief}/#{list_name}"
+      }).body.read
+      YAML.safe_load(body, symbolize_names: true, permitted_classes: [Date]).fetch(:objects, []).each do |ark|
+        arks << ark
+      end
+
+      cols = []
+      cols << AdminUI::Column.new(:ark, header: 'Ark')
+      if arks.size <= MAX_DELETE_DETAILS
+        cols << AdminUI::Column.new(:mnemonic, header: 'Mnemonic')
+        cols << AdminUI::Column.new(:created, header: 'Created')
+        cols << AdminUI::Column.new(:erc_what, header: 'ERC What')
+        cols << AdminUI::Column.new(:billable_size, header: 'Billable Size')
+        cols << AdminUI::Column.new(:file_count, header: 'File Count')
+      end
+
       table = AdminUI::FilterTable.new(
-        columns: [
-          AdminUI::Column.new(:ark, header: 'Ark')
-        ],
+        columns: cols,
         description: 
           "This page lists the objects in the delete list: `#{list_name}`" \
+          "\n\nIf the delete list has more than #{MAX_DELETE_DETAILS} objects, only the ark will be returned." \
           "\n\nTo process this delete list, use the following command in a merritt-ops session for this stack:" \
           "\n\n[Create a merritt-ops session for this stack](/#create-ops)" \
           "\n\n```" \
@@ -386,17 +406,22 @@ module UC3S3
           "\n```"
       )
 
-      body = @s3_client.get_object({
-        bucket: @bucket,
-        key: "uc3/mrt/mrt-object-delete-files/#{UC3::UC3Client.stack_name_brief}/#{list_name}"
-      }).body.read
-      YAML.safe_load(body, symbolize_names: true, permitted_classes: [Date]).fetch(:objects, []).each do |obj|
+      arks.each do |ark|
         row = {
           ark: {
-            href: "/queries/repository/object-ark?ark=#{CGI.escape(obj)}",
-            value: obj
+            href: "/queries/repository/object-ark?ark=#{CGI.escape(ark)}",
+            value: ark
           }
         }
+        if arks.size <= MAX_DELETE_DETAILS
+          UC3Query::QueryClient.client.run_query('/queries/repository/object-ark', { 'ark' => ark }) do |result|
+            row[:mnemonic] = result[:mnemonic]
+            row[:created] = result[:created]
+            row[:erc_what] = result[:erc_what]
+            row[:billable_size] = result[:billable_size]
+            row[:file_count] = result[:file_count]
+          end
+        end
         table.add_row(AdminUI::Row.make_row(table.columns, row))
       end
       table
