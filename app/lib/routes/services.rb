@@ -213,6 +213,22 @@ module Sinatra
         { message: "FAIL: (#{e})" }.to_json
       end
 
+      app.get '/ops/inventory/delete-lists' do
+        table = UC3S3::ConfigObjectsClient.client.get_delete_lists
+        adminui_show_table(
+          AdminUI::Context.new(request.path, request.params),
+          table
+        )
+      end
+
+      app.get '/ops/inventory/delete-list/*' do |list_name|
+        table = UC3S3::ConfigObjectsClient.client.get_delete_list(list_name)
+        adminui_show_table(
+          AdminUI::Context.new(request.path, request.params),
+          table
+        )
+      end
+
       app.post '/test/purge/*' do |mnemonic|
         urlparams = {}
         urlparams['count'] = [50, request.params.fetch('count', '20').to_i].min
@@ -405,7 +421,7 @@ module Sinatra
           profile: defprofile
         }
 
-        desc = "[Creating a merritt-ops session for this stack](/#create-ops)"
+        desc = '[Creating a merritt-ops session for this stack](/#create-ops)'
 
         table = AdminUI::FilterTable.new(
           columns: [

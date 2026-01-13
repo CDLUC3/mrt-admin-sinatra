@@ -91,6 +91,10 @@ module UC3
       ENV.fetch('MERRITT_ECS', 'ecs-dev')
     end
 
+    def self.stack_name_brief
+      ENV.fetch('MERRITT_ECS', 'ecs-dev').gsub('ecs-', '')
+    end
+
     def self.dbsnapshot_stack?
       stack_name == ECS_DBSNAPSHOT
     end

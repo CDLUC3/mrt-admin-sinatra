@@ -328,5 +328,63 @@ module UC3S3
       tags = get_ecs_release_manifest_deploy_tags(reposhort) + get_ec2_release_manifest_deploy_tags(reposhort)
       tags.uniq
     end
+
+    def get_delete_lists
+      table = AdminUI::FilterTable.new(
+        columns: [
+          AdminUI::Column.new(:path, header: 'File Path'),
+          AdminUI::Column.new(:reason, header: 'Reason'),
+          AdminUI::Column.new(:date, header: 'Date'),
+          AdminUI::Column.new(:count, header: 'Count'),
+          AdminUI::Column.new(:review, header: 'Review')
+        ]
+      )
+
+      prefix = "uc3/mrt/mrt-object-delete-files/#{UC3::UC3Client.stack_name_brief}/"
+      resp = @s3_client.list_objects_v2({
+        bucket: @bucket,
+        prefix: prefix
+      })
+      resp.contents.each do |s3obj|
+        body = @s3_client.get_object({
+          bucket: @bucket,
+          key: s3obj.key
+        }).body.read
+        doc = YAML.safe_load(body, symbolize_names: true, permitted_classes: [Date])
+        path = s3obj.key.gsub(/^#{prefix}/, '')
+        row = {
+          path: path,
+          reason: doc.fetch(:reason, 'N/A'),
+          date: doc.fetch(:date, 'N/A'),
+          count: doc.fetch(:objects, []).size,
+          review: { href: "delete-list/#{URI.encode_www_form_component(path)}", value: 'Review' }
+        }
+        table.add_row(AdminUI::Row.make_row(table.columns, row))
+      end
+      table
+    end
+
+    def get_delete_list(list_name)
+      table = AdminUI::FilterTable.new(
+        columns: [
+          AdminUI::Column.new(:ark, header: 'Ark')
+        ]
+      )
+
+      body = @s3_client.get_object({
+        bucket: @bucket,
+        key: "uc3/mrt/mrt-object-delete-files/#{UC3::UC3Client.stack_name_brief}/#{list_name}"
+      }).body.read
+      YAML.safe_load(body, symbolize_names: true, permitted_classes: [Date]).fetch(:objects, []).each do |obj|
+        row = {
+          ark: {
+            href: "/queries/repository/object-ark?ark=#{CGI.escape(obj)}",
+            value: obj
+          }
+        }
+        table.add_row(AdminUI::Row.make_row(table.columns, row))
+      end
+      table
+    end
   end
 end
