@@ -415,7 +415,7 @@ module UC3S3
         puts ark
         if arks.size <= MAX_DELETE_DETAILS
           urlparams = {}
-          urlparams['ark'] = ark
+          urlparams['ark'] = CGI.escape(ark)
           UC3Query::QueryClient.client.run_query('/queries/repository/object-ark',
             urlparams) do |result|
             row[:mnemonic] = result[:mnemonic]
