@@ -337,7 +337,15 @@ module UC3S3
           AdminUI::Column.new(:date, header: 'Date'),
           AdminUI::Column.new(:count, header: 'Count'),
           AdminUI::Column.new(:review, header: 'Review')
-        ]
+        ],
+        description: 
+          "This page lists the [delete lists](https://github.com/CDLUC3/mrt-doc-private/tree/main/object-delete-files) that have been generated for this stack." \
+          "\n\nThese lists are published to an S3 bucket for processing." \
+          "\n\nTo process a delete list, use the following command in a merritt-ops session for this stack:" \
+          "\n\n[Create a merritt-ops session for this stack](/#create-ops)" \
+          "\n\n```" \
+          "\n/run-delete-list.sh <<file path>>" \
+          "\n```"
       )
 
       prefix = "uc3/mrt/mrt-object-delete-files/#{UC3::UC3Client.stack_name_brief}/"
@@ -368,7 +376,14 @@ module UC3S3
       table = AdminUI::FilterTable.new(
         columns: [
           AdminUI::Column.new(:ark, header: 'Ark')
-        ]
+        ],
+        description: 
+          "This page lists the objects in the delete list: `#{list_name}`" \
+          "\n\nTo process this delete list, use the following command in a merritt-ops session for this stack:" \
+          "\n\n[Create a merritt-ops session for this stack](/#create-ops)" \
+          "\n\n```" \
+          "\n/run-delete-list.sh #{list_name}" \
+          "\n```"
       )
 
       body = @s3_client.get_object({

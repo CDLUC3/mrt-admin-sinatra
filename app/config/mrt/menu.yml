@@ -808,7 +808,7 @@ items:
         - title: 20MB (30 days)
           disable: ecs-dev, docker, ecs-ephemeral
           route: /ops/metrics/benchmark-retrieval/20_mb_random.dat?offset_days=30&period_min=360
-  - title: Delete Lists
+  - title: Delete List Review
     route: /ops/inventory/delete-lists
     disable: ecs-dbsnapshot
   - title: Storage Scans
