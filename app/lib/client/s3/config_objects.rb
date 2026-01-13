@@ -340,8 +340,8 @@ module UC3S3
           AdminUI::Column.new(:count, header: 'Count'),
           AdminUI::Column.new(:review, header: 'Review')
         ],
-        description: 
-          "This page lists the [delete lists](https://github.com/CDLUC3/mrt-doc-private/tree/main/object-delete-files) that have been generated for this stack." \
+        description:
+          'This page lists the [delete lists](https://github.com/CDLUC3/mrt-doc-private/tree/main/object-delete-files) that have been generated for this stack.' \
           "\n\nThese lists are published to an S3 bucket for processing." \
           "\n\nTo process a delete list, use the following command in a merritt-ops session for this stack:" \
           "\n\n[Create a merritt-ops session for this stack](/#create-ops)" \
@@ -375,13 +375,12 @@ module UC3S3
     end
 
     def get_delete_list(list_name)
-      arks = []
-     body = @s3_client.get_object({
+      body = @s3_client.get_object({
         bucket: @bucket,
         key: "uc3/mrt/mrt-object-delete-files/#{UC3::UC3Client.stack_name_brief}/#{list_name}"
       }).body.read
-      YAML.safe_load(body, symbolize_names: true, permitted_classes: [Date]).fetch(:objects, []).each do |ark|
-        arks << ark
+      arks = YAML.safe_load(body, symbolize_names: true, permitted_classes: [Date]).fetch(:objects, []).map do |ark|
+        ark
       end
 
       cols = []
@@ -396,7 +395,7 @@ module UC3S3
 
       table = AdminUI::FilterTable.new(
         columns: cols,
-        description: 
+        description:
           "This page lists the objects in the delete list: `#{list_name}`" \
           "\n\nIf the delete list has more than #{MAX_DELETE_DETAILS} objects, only the ark will be returned." \
           "\n\nTo process this delete list, use the following command in a merritt-ops session for this stack:" \
@@ -415,7 +414,8 @@ module UC3S3
         }
         puts ark
         if arks.size <= MAX_DELETE_DETAILS
-          UC3Query::QueryClient.client.run_query('/queries/repository/object-ark', { 'ark' => CGI.escape(ark) }) do |result|
+          UC3Query::QueryClient.client.run_query('/queries/repository/object-ark',
+            { 'ark' => CGI.escape(ark) }) do |result|
             row[:mnemonic] = result[:mnemonic]
             row[:created] = result[:created]
             row[:erc_what] = result[:erc_what]

@@ -114,7 +114,6 @@ module UC3CloudWatch
 
             loctstamp = DateTime.parse(tstamp.to_s).to_time.localtime.strftime('%Y-%m-%d %H:%M:%S')
 
-            results[loctstamp] ||= { status: 'PASS' }
             results[loctstamp][col] = value
 
             evalue = expected.fetch(col, 0)
@@ -125,6 +124,10 @@ module UC3CloudWatch
             next if results[loctstamp][:status] == 'FAIL'
 
             results[loctstamp][:status] = 'WARN' if value > evalue
+
+            next if results[loctstamp][:status] == 'WARN'
+
+            results[loctstamp][:status] = 'PASS'
           end
         end
 
