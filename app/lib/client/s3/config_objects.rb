@@ -338,7 +338,8 @@ module UC3S3
           AdminUI::Column.new(:reason, header: 'Reason'),
           AdminUI::Column.new(:date, header: 'Date'),
           AdminUI::Column.new(:count, header: 'Count'),
-          AdminUI::Column.new(:review, header: 'Review')
+          AdminUI::Column.new(:review, header: 'Review'),
+          AdminUI::Column.new(:json, header: 'JSON')
         ],
         description:
           'This page lists the ' \
@@ -369,7 +370,8 @@ module UC3S3
           reason: doc.fetch(:reason, 'N/A'),
           date: doc.fetch(:date, 'N/A'),
           count: doc.fetch(:objects, []).size,
-          review: { href: "delete-lists/#{URI.encode_www_form_component(path)}", value: 'Review' }
+          review: { href: "delete-lists/#{URI.encode_www_form_component(path)}", value: 'Review' },
+          json: { href: "delete-list/#{URI.encode_www_form_component(path)}", value: 'JSON' }
         }
         table.add_row(AdminUI::Row.make_row(table.columns, row))
       end
@@ -377,13 +379,27 @@ module UC3S3
     end
 
     def get_delete_list(list_name)
+      arks = []
       body = @s3_client.get_object({
         bucket: @bucket,
         key: "uc3/mrt/mrt-object-delete-files/#{UC3::UC3Client.stack_name_brief}/#{list_name}"
       }).body.read
-      arks = YAML.safe_load(body, symbolize_names: true, permitted_classes: [Date]).fetch(:objects, []).map do |ark|
-        ark
+      doc = YAML.safe_load(body, symbolize_names: true, permitted_classes: [Date])
+
+      return { message: 'Delete list iscompleted' } if doc.fetch(:completed, true)
+
+      unless doc.fetch(:stack, '') == UC3::UC3Client.stack_name
+        return { message: "Delete list is for stack #{doc.fetch(:stack, '')}" }
       end
+
+      doc.fetch(:objects, []).each do |ark|
+        arks << ark
+      end
+      arks
+    end
+
+    def review_delete_list(list_name)
+      arks = get_delete_list(list_name)
 
       cols = []
       cols << AdminUI::Column.new(:ark, header: 'Ark')
@@ -407,6 +423,8 @@ module UC3S3
           "\n```"
       )
 
+      return table unless arks.is_a?(Array)
+
       arks.each do |ark|
         row = {
           ark: {
@@ -414,7 +432,6 @@ module UC3S3
             value: ark
           }
         }
-        puts ark
         if arks.size <= MAX_DELETE_DETAILS
           urlparams = {}
           urlparams['ark'] = ark
@@ -427,7 +444,6 @@ module UC3S3
             row[:file_count] = result.fetch('file_count', '0').to_i
           end
         end
-        puts row
         table.add_row(AdminUI::Row.make_row(table.columns, row))
       end
       table
