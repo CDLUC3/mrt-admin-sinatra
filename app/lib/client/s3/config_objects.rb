@@ -418,11 +418,11 @@ module UC3S3
           urlparams['ark'] = CGI.escape(ark)
           UC3Query::QueryClient.client.run_query('/queries/repository/object-ark',
             urlparams) do |result|
-            row[:mnemonic] = result[:mnemonic]
-            row[:created] = result[:created]
-            row[:erc_what] = result[:erc_what]
-            row[:billable_size] = result[:billable_size]
-            row[:file_count] = result[:file_count]
+            row[:mnemonic] = result.fetch('mnemonic', '')
+            row[:created] = result.fetch('created', '')
+            row[:erc_what] = result.fetch('erc_what', '')
+            row[:billable_size] = result.fetch('billable_size', '0').to_i
+            row[:file_count] = result.fetch('file_count', '0').to_i
           end
         end
         puts row
