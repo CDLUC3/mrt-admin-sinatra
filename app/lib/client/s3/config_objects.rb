@@ -413,8 +413,9 @@ module UC3S3
             value: ark
           }
         }
+        puts ark
         if arks.size <= MAX_DELETE_DETAILS
-          UC3Query::QueryClient.client.run_query('/queries/repository/object-ark', { 'ark' => ark }) do |result|
+          UC3Query::QueryClient.client.run_query('/queries/repository/object-ark', { 'ark' => CGI.escape(ark) }) do |result|
             row[:mnemonic] = result[:mnemonic]
             row[:created] = result[:created]
             row[:erc_what] = result[:erc_what]
@@ -422,6 +423,7 @@ module UC3S3
             row[:file_count] = result[:file_count]
           end
         end
+        puts row
         table.add_row(AdminUI::Row.make_row(table.columns, row))
       end
       table
