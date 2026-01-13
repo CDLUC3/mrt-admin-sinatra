@@ -417,7 +417,7 @@ module UC3S3
           urlparams = {}
           urlparams['ark'] = ark
           UC3Query::QueryClient.client.run_query('/queries/repository/object-ark',
-            urlparams) do |result|
+            urlparams).each do |result|
             row[:mnemonic] = result.fetch('mnemonic', '')
             row[:created] = result.fetch('created', '')
             row[:erc_what] = result.fetch('erc_what', '')
