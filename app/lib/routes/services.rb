@@ -221,7 +221,7 @@ module Sinatra
         )
       end
 
-      app.get '/ops/inventory/delete-list/*' do |list_name|
+      app.get '/ops/inventory/delete-lists/*' do |list_name|
         table = UC3S3::ConfigObjectsClient.client.get_delete_list(list_name)
         adminui_show_table(
           AdminUI::Context.new(request.path, request.params),

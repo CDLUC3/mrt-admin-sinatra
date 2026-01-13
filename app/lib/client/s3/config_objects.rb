@@ -365,7 +365,7 @@ module UC3S3
           reason: doc.fetch(:reason, 'N/A'),
           date: doc.fetch(:date, 'N/A'),
           count: doc.fetch(:objects, []).size,
-          review: { href: "delete-list/#{URI.encode_www_form_component(path)}", value: 'Review' }
+          review: { href: "delete-lists/#{URI.encode_www_form_component(path)}", value: 'Review' }
         }
         table.add_row(AdminUI::Row.make_row(table.columns, row))
       end
