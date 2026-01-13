@@ -924,18 +924,15 @@ module Sinatra
 
       return { message: 'An ark is required for delete_object' } if ark.empty?
 
-      puts "Ark #{ark} [#{nodenum}]"
-
       if nodenum.empty?
         urlparams = {}
         urlparams['ark'] = ark
         UC3Query::QueryClient.client.run_query('/queries/misc/primary_node', urlparams).each do |row|
-          puts row
           nodenum = row['nodenum'].to_s
         end
       end
 
-      return { message: 'A primary node number is required for delete_object' } if nodenum.empty?
+      return { message: "A primary node number was not found for #{ark}" } if nodenum.empty?
 
       arkenc = CGI.escape(ark)
 
