@@ -49,7 +49,7 @@ module UC3OpenSearch
     end
 
     def query
-      @osclient.search(index: 'mrt-ecs', body: { query: { match_all: {} } }).to_json
+      @osclient.search(index: 'mrt-ecs-dev-logs', body: { query: { match_all: {} } }).to_json
     rescue StandardError => e
       { error: e.to_s }.to_json
     end
