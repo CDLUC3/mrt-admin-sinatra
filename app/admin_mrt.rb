@@ -13,6 +13,7 @@ require_relative 'lib/routes/ldap'
 require_relative 'lib/routes/mrtzk'
 require_relative 'lib/routes/config'
 require_relative 'lib/routes/metrics'
+require_relative 'lib/routes/opensearch'
 
 set :bind, '0.0.0.0'
 
@@ -89,6 +90,8 @@ get '/clients' do
     UC3Ldap::LDAPClient.client
     puts "Init ConfigObjectsClient #{Time.now}"
     UC3S3::ConfigObjectsClient.client
+    puts "Init OSClient #{Time.now}"
+    UC3OpenSearch::OSClient.client
     puts "Init TestClient #{Time.now}"
     UC3::TestClient.client
   rescue StandardError => e
