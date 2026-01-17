@@ -30,10 +30,7 @@ module UC3OpenSearch
           {
             host: host,
             transport_options: {
-              request:  { timeout: 30 },
-              # Increase pool size
-              pool_size: 32,  # Default is usually 5-10
-              pool_max_per_route: 16
+              request:  { timeout: 30 }
             }
           }, 
           signer
