@@ -108,10 +108,7 @@ module UC3
     def self.cloudwatch_subservice(service)
       return cloudwatch_home("/mrt/ecs/#{stack_name}/#{service}") if service == 'tasks'
 
-      puts service
       log = "/mrt/ecs/#{stack_name}/#{service}"
-      puts log
-      puts "#{cloudwatch_url}#logsV2:log-groups/log-group/#{log.gsub('/', '$252F')}"
       "#{cloudwatch_url}#logsV2:log-groups/log-group/#{log.gsub('/', '$252F')}"
     end
 
