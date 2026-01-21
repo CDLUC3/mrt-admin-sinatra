@@ -9,8 +9,12 @@ module Sinatra
   module UC3OOpenSearchRoutes
     def self.registered(app)
       app.get '/opensearch/tasks' do
-        content_type :json
-        UC3OpenSearch::OSClient.client.query
+        cli = UC3OpenSearch::OSClient.client
+
+        adminui_show_table(
+          AdminUI::Context.new(request.path, request.params),
+          cli.task_listing(cli.task_query)
+        )
       end
     end
   end

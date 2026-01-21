@@ -1047,9 +1047,7 @@ items:
     - title: Running Tasks
       route: /infra/ecs/tasks/running
     - title: Task Completion Status
-      route: /infra/ecs/tasks/status
-      description: |
-        This will eventually query OpenSearch to pull recent task completion status information.
+      route: /opensearch/tasks
     - title: Scheduled Tasks
       route: /infra/ecs/tasks/scheduled
     - title: Configured Tasks

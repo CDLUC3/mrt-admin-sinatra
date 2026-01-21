@@ -15,7 +15,7 @@ module UC3OpenSearch
 
     def initialize
       begin
-        puts "creating signer"
+        puts 'creating signer'
         signer = Aws::Sigv4::Signer.new(
           service: 'aoss', # Use 'aoss' for OpenSearch Serverless
           credentials_provider: Aws::CredentialProviderChain.new.resolve,
@@ -30,14 +30,14 @@ module UC3OpenSearch
           {
             host: host,
             transport_options: {
-              request:  { timeout: 30 }
+              request: { timeout: 30 }
             }
-          }, 
+          },
           signer
         )
         puts "OS client created for endpoint #{host}"
-        @osclient.ping  # Test the connection
-        puts "Ping succeeded"
+        @osclient.ping # Test the connection
+        puts 'Ping succeeded'
       rescue StandardError => e
         # puts e
         raise "Unable to load configuration for OpenSearch: #{e}"
@@ -48,10 +48,50 @@ module UC3OpenSearch
       super(enabled: false, message: e.to_s)
     end
 
-    def query
-      @osclient.search(index: 'mrt-ecs-dev-logs', body: { query: { match_all: {} } }).to_json
+    def task_query
+      @osclient.search(
+        index: 'mrt-ecs-dev-logs',
+        body: {
+          query: {
+            exists: {
+              field: 'event.json.task_status'
+            }
+          },
+          sort: [
+            { '@timestamp': { order: 'asc' } }
+          ],
+          size: 1000
+        }
+      )
     rescue StandardError => e
-      { error: e.to_s }.to_json
+      { error: e.to_s }
+    end
+
+    def task_listing(osres)
+      res = {}
+      osres.fetch('hits', {}).fetch('hits', []).each do |hit|
+        json = hit.fetch('_source', {}).fetch('event', {}).fetch('json', {})
+        res[json.fetch('task_label', '')] = json
+      end
+
+      table = AdminUI::FilterTable.new(
+        columns: [
+          AdminUI::Column.new('task_label', header: 'Task Label'),
+          AdminUI::Column.new('task_datetime', header: 'Task Datetime'),
+          AdminUI::Column.new('task_status', header: 'Task Status'),
+          AdminUI::Column.new('task_duration', header: 'Task Duration'),
+          AdminUI::Column.new('task_environment', header: 'Task Environment')
+        ]
+      )
+      res.values.sort_by { |task| task.fetch('task_datetime', '') }.reverse.each do |task|
+        table.add_row(
+          AdminUI::Row.make_row(
+            table.columns,
+            task
+          )
+        )
+      end
+      table
     end
   end
 end
