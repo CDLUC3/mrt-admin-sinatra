@@ -105,7 +105,11 @@ module Sinatra
       end
 
       app.get '/ops/cloudwatch' do
-        redirect ENV.fetch('CLOUDWATCH_URL', '/')
+        redirect UC3::UC3Client.cloudwatch_home
+      end
+
+      app.get '/ops/cloudwatch/logs/*' do |service|
+        redirect UC3::UC3Client.cloudwatch_subservice(service)
       end
 
       app.get '/ops/opensearch' do

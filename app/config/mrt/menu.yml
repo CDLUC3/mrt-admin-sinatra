@@ -847,6 +847,8 @@ items:
         disable: default, docker
         confmsg: This will re-deploy the UI service in ECS.
         method: post
+      - title: UI Logs
+        route: /ops/cloudwatch/logs/ui
     - title: Ingest
       path: ingest
       route: /infra/ecs/services/ingest
@@ -871,6 +873,8 @@ items:
         disable: default, docker
         confmsg: This will scale down the number of Ingest tasks running in ECS unless the minimum configured number has been reached.
         method: post
+      - title: Ingest Logs
+        route: /ops/cloudwatch/logs/ingest
     - title: Store
       path: store
       disable: ecs-dbsnapshot
@@ -900,6 +904,8 @@ items:
         confmsg: This will scale down the number of Store tasks running in ECS unless the minimum configured number has been reached.
         disable: default, docker
         method: post
+      - title: Store Logs
+        route: /ops/cloudwatch/logs/store
     - title: Inventory
       path: inventory
       route: /infra/ecs/services/inventory
@@ -928,6 +934,8 @@ items:
         disable: default, docker
         confmsg: This will re-deploy the Inventory service in ECS.
         method: post
+      - title: Inventory Logs
+        route: /ops/cloudwatch/logs/inventory
     - title: Audit
       path: audit
       route: /infra/ecs/services/audit
@@ -953,6 +961,8 @@ items:
         disable: default, docker
         confmsg: This will re-deploy the Audit service in ECS.
         method: post
+      - title: Audit Logs
+        route: /ops/cloudwatch/logs/audit
     - title: Replic
       path: replic
       route: /infra/ecs/services/replic
@@ -978,6 +988,8 @@ items:
         disable: default, docker
         confmsg: This will re-deploy the Recplic service in ECS.
         method: post
+      - title: Replic Logs
+        route: /ops/cloudwatch/logs/replic
     - title: Access
       path: access
       route: /infra/ecs/services/access
@@ -990,6 +1002,8 @@ items:
         route: /json/access/tag
       - title: Access Nodes
         route: /json/access/nodes
+      - title: Access Logs
+        route: /ops/cloudwatch/logs/access
     - title: Admin Tool
       path: admintool
       route: /infra/ecs/services/admintool
@@ -1001,6 +1015,8 @@ items:
         disable: default, docker
         confmsg: This will re-deploy the Admin Tool service in ECS.
         method: post
+      - title: Admintool Logs
+        route: /ops/cloudwatch/logs/admintool
     - title: Merritt Ops
       path: merritt-ops
       route: /infra/ecs/services/merritt-ops
@@ -1130,6 +1146,8 @@ items:
           route: /infra/ecs/tasks/launch/mrt-integ-tests/runEndToEndTestsLoad
           confmsg: This will initiate a task that runs End to End tests
           method: post
+    - title: Task Logs
+      route: /ops/cloudwatch/logs/tasks
 - path: resources
   title: AWS
   disable: ecs-ephemeral, ecs-dbsnapshot, docker, default

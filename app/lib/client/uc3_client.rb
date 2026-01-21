@@ -95,6 +95,28 @@ module UC3
       ENV.fetch('MERRITT_ECS', 'ecs-dev').gsub('ecs-', '')
     end
 
+    def self.cloudwatch_url
+      ENV.fetch('CLOUDWATCH_URL', '/')
+    end
+
+    def self.cloudwatch_home(path = "/mrt/ecs/#{stack_name}")
+      return cloudwatch_url if path.empty?
+
+      "#{cloudwatch_url}#logsV2:log-groups$3FlogGroupNameFilter=#{path.gsub('/', '$252F')}"
+    end
+
+    def self.cloudwatch_subservice(service)
+      return cloudwatch_home("/mrt/ecs/#{stack_name}/#{service}").to_s if service == 'tasks'
+
+      log = "/mrt/ecs/#{stack_name}/#{service}"
+      "#{cloudwatch_url}#logsV2:log-groups/log-group/#{log.gsub('/', '$252F')}"
+    end
+
+    def self.cloudwatch_stream(log, stream)
+      "#{cloudwatch_url}#logsV2:log-groups/log-group/#{log.gsub('/',
+        '$252F')}/log-events/#{stream.gsub('/', '$252F')}"
+    end
+
     def self.dbsnapshot_stack?
       stack_name == ECS_DBSNAPSHOT
     end

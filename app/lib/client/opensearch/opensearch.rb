@@ -87,13 +87,13 @@ module UC3OpenSearch
       res[:label] = res.fetch('task_label', '')
       res['log'] = {
         value: 'logs',
-        href: "#{ENV.fetch('CLOUDWATCH_URL', '/')}#logsV2:#{cwlogs.fetch('logGroup','')}/log-events/#{cwlogs.fetch('logStream', '')}"
+        href: UC3::UC3Client.cloudwatch_stream(cwlogs.fetch('logGroup', ''), cwlogs.fetch('logStream', ''))
       }
       if link_label
         res['task_label'] = {
           value: res[:label],
           href: "/opensearch/tasks/history?label=#{CGI.escape(res[:label])}"
-        }        
+        }
       end
       res
     end
@@ -123,7 +123,7 @@ module UC3OpenSearch
         body: {
           query: {
             match_phrase: {
-              "event.json.task_label": "#{label}"
+              'event.json.task_label': label.to_s
             }
           },
           sort: [
@@ -137,9 +137,8 @@ module UC3OpenSearch
     end
 
     def task_history_listing(osres)
-      results = []
-      osres.fetch('hits', {}).fetch('hits', []).each do |hit|
-        results << make_result(hit) 
+      results = osres.fetch('hits', {}).fetch('hits', []).map do |hit|
+        make_result(hit)
       end
 
       table = task_table
