@@ -74,25 +74,39 @@ module UC3OpenSearch
           AdminUI::Column.new('task_datetime', header: 'Task Datetime'),
           AdminUI::Column.new('task_status', header: 'Task Status'),
           AdminUI::Column.new('task_duration', header: 'Task Duration'),
-          AdminUI::Column.new('task_environment', header: 'Task Environment')
+          AdminUI::Column.new('task_environment', header: 'Task Environment'),
+          AdminUI::Column.new('log', header: 'Logs')
         ]
       )
     end
 
+    def make_result(hit, link_label: false)
+      source = hit.fetch('_source', {})
+      cwlogs = source.fetch('cwlogs', {})
+      res = hit.fetch('_source', {}).fetch('event', {}).fetch('json', {})
+      res[:label] = res.fetch('task_label', '')
+      res['log'] = {
+        value: 'logs',
+        href: "#{ENV.fetch('CLOUDWATCH_URL', '/')}#logsV2:#{cwlogs.fetch('logGroup','')}/log-events/#{cwlogs.fetch('logStream', '')}"
+      }
+      if link_label
+        res['task_label'] = {
+          value: res[:label],
+          href: "/opensearch/tasks/history?label=#{CGI.escape(res[:label])}"
+        }        
+      end
+      res
+    end
+
     def task_listing(osres)
-      res = {}
+      results = {}
       osres.fetch('hits', {}).fetch('hits', []).each do |hit|
-        json = hit.fetch('_source', {}).fetch('event', {}).fetch('json', {})
-        label = json.fetch('task_label', '') 
-        res[label] = json
-        res[label]['task_label'] = {
-          value: label,
-          href: "/opensearch/tasks/history?label=#{CGI.escape(label)}"
-        }
+        res = make_result(hit, link_label: true)
+        results[res[:label]] = res
       end
 
       table = task_table
-      res.values.sort_by { |task| task.fetch('task_datetime', '') }.reverse.each do |task|
+      results.values.sort_by { |task| task.fetch('task_datetime', '') }.reverse.each do |task|
         table.add_row(
           AdminUI::Row.make_row(
             table.columns,
@@ -108,8 +122,8 @@ module UC3OpenSearch
         index: 'mrt-ecs-dev-logs',
         body: {
           query: {
-            match: {
-              "event.json.task_label": label
+            match_phrase: {
+              "event.json.task_label": "#{label}"
             }
           },
           sort: [
@@ -123,13 +137,13 @@ module UC3OpenSearch
     end
 
     def task_history_listing(osres)
-      res = []
+      results = []
       osres.fetch('hits', {}).fetch('hits', []).each do |hit|
-        res << hit.fetch('_source', {}).fetch('event', {}).fetch('json', {})
+        results << make_result(hit) 
       end
 
       table = task_table
-      res.each do |task|
+      results.each do |task|
         table.add_row(
           AdminUI::Row.make_row(
             table.columns,
