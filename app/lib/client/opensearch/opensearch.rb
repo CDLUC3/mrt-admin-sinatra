@@ -67,14 +67,8 @@ module UC3OpenSearch
       { error: e.to_s }
     end
 
-    def task_listing(osres)
-      res = {}
-      osres.fetch('hits', {}).fetch('hits', []).each do |hit|
-        json = hit.fetch('_source', {}).fetch('event', {}).fetch('json', {})
-        res[json.fetch('task_label', '')] = json
-      end
-
-      table = AdminUI::FilterTable.new(
+    def task_table
+      AdminUI::FilterTable.new(
         columns: [
           AdminUI::Column.new('task_label', header: 'Task Label'),
           AdminUI::Column.new('task_datetime', header: 'Task Datetime'),
@@ -83,7 +77,59 @@ module UC3OpenSearch
           AdminUI::Column.new('task_environment', header: 'Task Environment')
         ]
       )
+    end
+
+    def task_listing(osres)
+      res = {}
+      osres.fetch('hits', {}).fetch('hits', []).each do |hit|
+        json = hit.fetch('_source', {}).fetch('event', {}).fetch('json', {})
+        label = json.fetch('task_label', '') 
+        res[label] = json
+        res[label]['task_label'] = {
+          value: label,
+          href: "/opensearch/tasks/history?label=#{CGI.escape(label)}"
+        }
+      end
+
+      table = task_table
       res.values.sort_by { |task| task.fetch('task_datetime', '') }.reverse.each do |task|
+        table.add_row(
+          AdminUI::Row.make_row(
+            table.columns,
+            task
+          )
+        )
+      end
+      table
+    end
+
+    def task_history_query(label)
+      @osclient.search(
+        index: 'mrt-ecs-dev-logs',
+        body: {
+          query: {
+            match: {
+              "event.json.task_label": label
+            }
+          },
+          sort: [
+            { '@timestamp': { order: 'desc' } }
+          ],
+          size: 20
+        }
+      )
+    rescue StandardError => e
+      { error: e.to_s }
+    end
+
+    def task_history_listing(osres)
+      res = []
+      osres.fetch('hits', {}).fetch('hits', []).each do |hit|
+        res << hit.fetch('_source', {}).fetch('event', {}).fetch('json', {})
+      end
+
+      table = task_table
+      res.each do |task|
         table.add_row(
           AdminUI::Row.make_row(
             table.columns,

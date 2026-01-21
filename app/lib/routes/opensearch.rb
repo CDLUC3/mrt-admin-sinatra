@@ -16,6 +16,16 @@ module Sinatra
           cli.task_listing(cli.task_query)
         )
       end
+
+      app.get '/opensearch/tasks/history' do
+        cli = UC3OpenSearch::OSClient.client
+        label = request.params.fetch('label', '')
+
+        adminui_show_table(
+          AdminUI::Context.new(request.path, request.params),
+          cli.task_history_listing(cli.task_history_query(label))
+        )
+      end
     end
   end
   register UC3OOpenSearchRoutes
