@@ -109,6 +109,7 @@ module UC3
       return cloudwatch_home("/mrt/ecs/#{stack_name}/#{service}").to_s if service == 'tasks'
 
       log = "/mrt/ecs/#{stack_name}/#{service}"
+      puts "#{cloudwatch_url}#logsV2:log-groups/log-group/#{log.gsub('/', '$252F')}"
       "#{cloudwatch_url}#logsV2:log-groups/log-group/#{log.gsub('/', '$252F')}"
     end
 
