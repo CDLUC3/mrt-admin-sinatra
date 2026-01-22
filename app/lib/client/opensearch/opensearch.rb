@@ -48,9 +48,13 @@ module UC3OpenSearch
       super(enabled: false, message: e.to_s)
     end
 
+    def index_name
+      "mrt-#{UC3::UC3Client.stack_name}-logs"
+    end
+
     def task_query
       @osclient.search(
-        index: 'mrt-ecs-dev-logs',
+        index: index_name,
         body: {
           query: {
             exists: {
@@ -119,7 +123,7 @@ module UC3OpenSearch
 
     def task_history_query(label)
       @osclient.search(
-        index: 'mrt-ecs-dev-logs',
+        index: index_name,
         body: {
           query: {
             match_phrase: {
