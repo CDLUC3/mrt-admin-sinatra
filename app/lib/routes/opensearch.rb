@@ -11,6 +11,7 @@ module Sinatra
       app.get '/opensearch/tasks' do
         cli = UC3OpenSearch::OSClient.client
         res = cli.task_query
+        puts res.to_json if res.key?(:error)
 
         adminui_show_table(
           AdminUI::Context.new(request.path, request.params),

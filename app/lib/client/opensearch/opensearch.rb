@@ -17,18 +17,14 @@ module UC3OpenSearch
     def initialize
       begin
         puts Aws::STS::Client.new.get_caller_identity
-        puts 'creating signer'
         signer = Aws::Sigv4::Signer.new(
           service: 'aoss', # Use 'aoss' for OpenSearch Serverless
           credentials_provider: Aws::CredentialProviderChain.new.resolve,
           region: ENV.fetch('AWS_REGION', 'us-west-2')
         )
 
-        puts signer.inspect
-        puts Aws::CredentialProviderChain.new.providers.inspect
-
         host = ENV.fetch('OPENSEARCH_ENDPOINT', '')
-        puts host
+        puts "Host: #{host}"
         puts index_name
         # Initialize the OpenSearch client with the custom SigV4 signer
 
@@ -43,7 +39,7 @@ module UC3OpenSearch
         )
         @osclient.ping # Test the connection
       rescue StandardError => e
-        # puts e
+        puts e
         raise "Unable to load configuration for OpenSearch: #{e}"
       end
       super(enabled: true)
