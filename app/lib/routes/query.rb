@@ -176,11 +176,9 @@ module Sinatra
 
       app.post '/queries-update/storage-nodes/add' do
         res = UC3Query::QueryClient.client.query_update(request.path, request.params)
-        puts res.to_json
         if res.fetch(:status, 'FAIL') == 'OK'
           res = UC3Query::QueryClient.client.query_update('/queries-update/storage-nodes/trigger-replication',
             request.params)
-          puts res.to_json
         end
         redirect request.referrer
       end
