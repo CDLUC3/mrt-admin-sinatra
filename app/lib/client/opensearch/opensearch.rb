@@ -16,7 +16,6 @@ module UC3OpenSearch
 
     def initialize
       begin
-        puts Aws::STS::Client.new.get_caller_identity
         signer = Aws::Sigv4::Signer.new(
           service: 'aoss', # Use 'aoss' for OpenSearch Serverless
           credentials_provider: Aws::CredentialProviderChain.new.resolve,
@@ -24,8 +23,7 @@ module UC3OpenSearch
         )
 
         host = ENV.fetch('OPENSEARCH_ENDPOINT', '')
-        puts "Host: #{host}"
-        puts index_name
+
         # Initialize the OpenSearch client with the custom SigV4 signer
 
         @osclient = OpenSearch::Aws::Sigv4Client.new(
