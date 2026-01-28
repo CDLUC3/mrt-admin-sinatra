@@ -154,5 +154,72 @@ module UC3OpenSearch
       end
       table
     end
+
+    def log_query(subservice, code: 400)
+      @osclient.search(
+        index: index_name,
+        body: {
+          query: {
+            bool: {
+              must: [
+                { match_phrase: { 'merritt.subservice': subservice } },
+                { range: { 'http.response.status_code': { gte: code } } }
+              ]
+            }
+          },
+          sort: [
+            { '@timestamp': { order: 'desc' } }
+          ],
+          size: 1000
+        }
+      )
+    rescue StandardError => e
+      { error: e.to_s }
+    end
+
+    def log_table
+      AdminUI::FilterTable.new(
+        columns: [
+          AdminUI::Column.new('timestamp', header: 'Timestamp'),
+          AdminUI::Column.new('record_type', header: 'Record Type', filterable: true),
+          AdminUI::Column.new('path', header: 'Path'),
+          AdminUI::Column.new('status_code', header: 'Status Code', filterable: true),
+          AdminUI::Column.new('log', header: 'Logs')
+        ]
+      )
+    end
+
+    def make_log_result(hit)
+      res = {}
+      source = hit.fetch('_source', {})
+      cwlogs = source.fetch('cwlogs', {})
+      merritt = source.fetch('merritt', {})
+      res['timestamp'] = source.fetch('@timestamp', '')
+      res['record_type'] = merritt.fetch('record_type', '')
+      res['path'] = source.fetch('url', {}).fetch('original', '')
+      res['status_code'] = source.fetch('http', {}).fetch('response', {}).fetch('status_code', 0)
+      res['log'] = {
+        value: 'logs',
+        href: UC3::UC3Client.cloudwatch_stream(cwlogs.fetch('logGroup', ''), cwlogs.fetch('logStream', ''))
+      }
+      res
+    end
+
+    def log_query_listing(osres)
+      results = osres.fetch('hits', {}).fetch('hits', []).map do |hit|
+        make_log_result(hit)
+      end
+
+      table = log_table
+      results.each do |rec|
+        table.add_row(
+          AdminUI::Row.make_row(
+            table.columns,
+            rec
+          )
+        )
+      end
+      table
+    end
   end
 end

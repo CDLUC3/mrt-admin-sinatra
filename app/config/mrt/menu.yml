@@ -849,6 +849,12 @@ items:
         method: post
       - title: UI Logs
         route: /ops/cloudwatch/logs/ui
+      - title: UI Reqs 400+
+        disable: default, docker
+        route: /opensearch/logs/status_code/ui
+      - title: UI Reqs 500+
+        disable: default, docker
+        route: /opensearch/logs/status_code/ui?status_code=500
     - title: Ingest
       path: ingest
       route: /infra/ecs/services/ingest
@@ -875,6 +881,12 @@ items:
         method: post
       - title: Ingest Logs
         route: /ops/cloudwatch/logs/ingest
+      - title: Ingest Reqs 400+
+        disable: default, docker
+        route: /opensearch/logs/status_code/ingest
+      - title: Ingest Reqs 500+
+        disable: default, docker
+        route: /opensearch/logs/status_code/ingest?status_code=500
     - title: Store
       path: store
       disable: ecs-dbsnapshot
@@ -906,6 +918,12 @@ items:
         method: post
       - title: Store Logs
         route: /ops/cloudwatch/logs/store
+      - title: Store Reqs 400+
+        disable: default, docker
+        route: /opensearch/logs/status_code/store
+      - title: Store Reqs 500+
+        disable: default, docker
+        route: /opensearch/logs/status_code/store?status_code=500
     - title: Inventory
       path: inventory
       route: /infra/ecs/services/inventory
@@ -936,6 +954,12 @@ items:
         method: post
       - title: Inventory Logs
         route: /ops/cloudwatch/logs/inventory
+      - title: Inventory Reqs 400+
+        disable: default, docker
+        route: /opensearch/logs/status_code/inventory
+      - title: Inventory Reqs 500+
+        disable: default, docker
+        route: /opensearch/logs/status_code/inventory?status_code=500
     - title: Audit
       path: audit
       route: /infra/ecs/services/audit
@@ -963,6 +987,12 @@ items:
         method: post
       - title: Audit Logs
         route: /ops/cloudwatch/logs/audit
+      - title: Audit Reqs 400+
+        disable: default, docker
+        route: /opensearch/logs/status_code/audit
+      - title: Audit Reqs 500+
+        disable: default, docker
+        route: /opensearch/logs/status_code/audit?status_code=500
     - title: Replic
       path: replic
       route: /infra/ecs/services/replic
@@ -990,6 +1020,12 @@ items:
         method: post
       - title: Replic Logs
         route: /ops/cloudwatch/logs/replic
+      - title: Replic Reqs 400+
+        disable: default, docker
+        route: /opensearch/logs/status_code/replic
+      - title: Replic Reqs 500+
+        disable: default, docker
+        route: /opensearch/logs/status_code/replic?status_code=500
     - title: Access
       path: access
       route: /infra/ecs/services/access
@@ -1004,6 +1040,12 @@ items:
         route: /json/access/nodes
       - title: Access Logs
         route: /ops/cloudwatch/logs/access
+      - title: Access Reqs 400+
+        disable: default, docker
+        route: /opensearch/logs/status_code/access
+      - title: Access Reqs 500+
+        disable: default, docker
+        route: /opensearch/logs/status_code/access?status_code=500
     - title: Admin Tool
       path: admintool
       route: /infra/ecs/services/admintool
@@ -1017,6 +1059,12 @@ items:
         method: post
       - title: Admintool Logs
         route: /ops/cloudwatch/logs/admintool
+      - title: Admintool Reqs 400+
+        disable: default, docker
+        route: /opensearch/logs/status_code/admintool
+      - title: Admintool Reqs 500+
+        disable: default, docker
+        route: /opensearch/logs/status_code/admintool?status_code=500
     - title: Merritt Ops
       path: merritt-ops
       route: /infra/ecs/services/merritt-ops
