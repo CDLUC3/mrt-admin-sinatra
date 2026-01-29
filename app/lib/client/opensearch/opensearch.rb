@@ -69,7 +69,7 @@ module UC3OpenSearch
       { error: e.to_s }
     end
 
-    def task_table
+    def self.task_table
       AdminUI::FilterTable.new(
         columns: [
           AdminUI::Column.new('task_label', header: 'Task Label'),
@@ -162,7 +162,7 @@ module UC3OpenSearch
           query: {
             bool: {
               must: [
-                { match_phrase: { 'merritt.subservice': subservice } },
+                { match: { 'merritt.subservice': subservice } },
                 { range: { 'http.response.status_code': { gte: code } } }
               ]
             }
@@ -177,13 +177,55 @@ module UC3OpenSearch
       { error: e.to_s }
     end
 
-    def log_table
+    def log_level_query(subservice)
+      @osclient.search(
+        index: index_name,
+        body: {
+          query: {
+            bool: {
+              must: [
+                { match: { 'merritt.subservice': subservice } }
+              ],
+              should: [
+                { match: { 'merritt.log_level': 'WARN' } },
+                { match: { 'merritt.log_level': 'WARNING' } },
+                { match: { 'merritt.log_level': 'ERROR' } },
+                { match: { 'merritt.log_level': 'SEVERE' } },
+                { match: { 'event.json.log.level': 'ERROR' } },
+                { match: { 'event.json.log.level': 'WARN' } }
+              ],
+              minimum_should_match: 1
+            },
+          },
+          sort: [
+            { '@timestamp': { order: 'desc' } }
+          ],
+          size: 250
+        }
+      )
+    rescue StandardError => e
+      { error: e.to_s }
+    end
+
+    def self.log_table
       AdminUI::FilterTable.new(
         columns: [
           AdminUI::Column.new('timestamp', header: 'Timestamp'),
           AdminUI::Column.new('record_type', header: 'Record Type', filterable: true),
           AdminUI::Column.new('path', header: 'Path'),
           AdminUI::Column.new('status_code', header: 'Status Code', filterable: true),
+          AdminUI::Column.new('log', header: 'Logs')
+        ]
+      )
+    end
+
+    def self.log_level_table
+      AdminUI::FilterTable.new(
+        columns: [
+          AdminUI::Column.new('timestamp', header: 'Timestamp'),
+          AdminUI::Column.new('record_type', header: 'Record Type', filterable: true),
+          AdminUI::Column.new('level', header: 'Level', filterable: true),
+          AdminUI::Column.new('message', header: 'Message'),
           AdminUI::Column.new('log', header: 'Logs')
         ]
       )
@@ -196,7 +238,16 @@ module UC3OpenSearch
       merritt = source.fetch('merritt', {})
       res['timestamp'] = source.fetch('@timestamp', '')
       res['record_type'] = merritt.fetch('record_type', '')
-      res['path'] = source.fetch('url', {}).fetch('original', '')
+      res['level'] = merritt.fetch('log_level', '')
+      res['level'] = source.fetch('event', {}).fetch('json', {}).fetch('log.level', '') if res['level'].empty?
+      res['path'] = source.fetch('url', {}).fetch('original', '').to_s
+      message = source.fetch('message', '')
+      evmessage = source.fetch('event', {}).fetch('json', {}).fetch('message', '')
+      errmessage = source.fetch('event', {}).fetch('json', {}).fetch('error', {}).fetch('message', '').to_s
+      res['message'] = errmessage
+      res['message'] = evmessage if res['message'].empty?
+      res['message'] = message if res['message'].empty?
+      res['message'] = res['path'] if res['message'].empty?
       res['status_code'] = source.fetch('http', {}).fetch('response', {}).fetch('status_code', 0)
       res['log'] = {
         value: 'logs',
@@ -205,12 +256,11 @@ module UC3OpenSearch
       res
     end
 
-    def log_query_listing(osres)
+    def log_query_listing(osres, table: log_table)
       results = osres.fetch('hits', {}).fetch('hits', []).map do |hit|
         make_log_result(hit)
       end
 
-      table = log_table
       results.each do |rec|
         table.add_row(
           AdminUI::Row.make_row(

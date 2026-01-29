@@ -40,6 +40,17 @@ module Sinatra
           cli.log_query_listing(res)
         )
       end
+
+      app.get '/opensearch/logs/level/*' do |subservice|
+        cli = UC3OpenSearch::OSClient.client
+        res = cli.log_level_query(subservice)
+        puts res.to_json if res.key?(:error)
+
+        adminui_show_table(
+          AdminUI::Context.new(request.path, request.params),
+          cli.log_query_listing(res, table: UC3OpenSearch::OSClient.log_level_table)
+        )
+      end
     end
   end
   register UC3OOpenSearchRoutes

@@ -849,6 +849,9 @@ items:
         method: post
       - title: UI Logs
         route: /ops/cloudwatch/logs/ui
+      - title: UI Errors
+        disable: default, docker
+        route: /opensearch/logs/level/ui
       - title: UI Reqs 400+
         disable: default, docker
         route: /opensearch/logs/status_code/ui
@@ -881,6 +884,9 @@ items:
         method: post
       - title: Ingest Logs
         route: /ops/cloudwatch/logs/ingest
+      - title: Ingest Errors
+        disable: default, docker
+        route: /opensearch/logs/level/ingest
       - title: Ingest Reqs 400+
         disable: default, docker
         route: /opensearch/logs/status_code/ingest
@@ -918,6 +924,9 @@ items:
         method: post
       - title: Store Logs
         route: /ops/cloudwatch/logs/store
+      - title: Store Errors
+        disable: default, docker
+        route: /opensearch/logs/level/store
       - title: Store Reqs 400+
         disable: default, docker
         route: /opensearch/logs/status_code/store
@@ -954,6 +963,9 @@ items:
         method: post
       - title: Inventory Logs
         route: /ops/cloudwatch/logs/inventory
+      - title: Inventory Errors
+        disable: default, docker
+        route: /opensearch/logs/level/inventory
       - title: Inventory Reqs 400+
         disable: default, docker
         route: /opensearch/logs/status_code/inventory
@@ -987,6 +999,9 @@ items:
         method: post
       - title: Audit Logs
         route: /ops/cloudwatch/logs/audit
+      - title: Audit Errors
+        disable: default, docker
+        route: /opensearch/logs/level/audit
       - title: Audit Reqs 400+
         disable: default, docker
         route: /opensearch/logs/status_code/audit
@@ -1020,6 +1035,9 @@ items:
         method: post
       - title: Replic Logs
         route: /ops/cloudwatch/logs/replic
+      - title: Replic Errors
+        disable: default, docker
+        route: /opensearch/logs/level/replic
       - title: Replic Reqs 400+
         disable: default, docker
         route: /opensearch/logs/status_code/replic
@@ -1040,6 +1058,9 @@ items:
         route: /json/access/nodes
       - title: Access Logs
         route: /ops/cloudwatch/logs/access
+      - title: Access Errors
+        disable: default, docker
+        route: /opensearch/logs/level/access
       - title: Access Reqs 400+
         disable: default, docker
         route: /opensearch/logs/status_code/access
@@ -1059,6 +1080,9 @@ items:
         method: post
       - title: Admintool Logs
         route: /ops/cloudwatch/logs/admintool
+      - title: Admintool Errors
+        disable: default, docker
+        route: /opensearch/logs/level/admintool
       - title: Admintool Reqs 400+
         disable: default, docker
         route: /opensearch/logs/status_code/admintool
@@ -1196,6 +1220,26 @@ items:
           method: post
     - title: Task Logs
       route: /ops/cloudwatch/logs/tasks
+  - title: OpenSearch Queries
+    breadcrumb: true
+    route: /opensearch
+    description: |
+      The Merritt Admin Tool can perform a limited set of queries against the OpenSearch log service for the cluster.
+
+      - [Task Completion Status](/opensearch/tasks)
+      - Service Status Codes
+        - [UI](/opensearch/logs/status_code/ui)
+        - [Ingest](/opensearch/logs/status_code/ingest)
+        - [Inventory](/opensearch/logs/status_code/inventory)
+        - [Store](/opensearch/logs/status_code/store)
+        - [Admin Tool](/opensearch/logs/status_code/admintool)
+      - Service Log Levels
+        - [UI](/opensearch/logs/level/ui)
+        - [Ingest](/opensearch/logs/level/ingest)
+        - [Inventory](/opensearch/logs/level/inventory)
+        - [Store](/opensearch/logs/level/store)
+        - [Admin Tool](/opensearch/logs/level/admintool)
+        - [ZooKeeper](/opensearch/logs/level/zoo)
 - path: resources
   title: AWS
   disable: ecs-ephemeral, ecs-dbsnapshot, docker, default
