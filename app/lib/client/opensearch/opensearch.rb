@@ -195,7 +195,7 @@ module UC3OpenSearch
                 { match: { 'event.json.log.level': 'WARN' } }
               ],
               minimum_should_match: 1
-            },
+            }
           },
           sort: [
             { '@timestamp': { order: 'desc' } }
@@ -236,7 +236,7 @@ module UC3OpenSearch
       source = hit.fetch('_source', {})
       cwlogs = source.fetch('cwlogs', {})
       merritt = source.fetch('merritt', {})
-      res['timestamp'] = date_format(source.fetch('@timestamp', ''))
+      res['timestamp'] = DateTime.parse(source.fetch('@timestamp', '')).to_time.localtime.strftime('%Y-%m-%d %H:%M:%S')
       res['record_type'] = merritt.fetch('record_type', '')
       res['level'] = merritt.fetch('log_level', '')
       res['level'] = source.fetch('event', {}).fetch('json', {}).fetch('log.level', '') if res['level'].empty?
