@@ -236,7 +236,7 @@ module UC3OpenSearch
       source = hit.fetch('_source', {})
       cwlogs = source.fetch('cwlogs', {})
       merritt = source.fetch('merritt', {})
-      res['timestamp'] = source.fetch('@timestamp', '')
+      res['timestamp'] = date_format(source.fetch('@timestamp', ''))
       res['record_type'] = merritt.fetch('record_type', '')
       res['level'] = merritt.fetch('log_level', '')
       res['level'] = source.fetch('event', {}).fetch('json', {}).fetch('log.level', '') if res['level'].empty?
@@ -256,7 +256,7 @@ module UC3OpenSearch
       res
     end
 
-    def log_query_listing(osres, table: log_table)
+    def log_query_listing(osres, table: UC3OpenSearch::OSClient.log_table)
       results = osres.fetch('hits', {}).fetch('hits', []).map do |hit|
         make_log_result(hit)
       end
