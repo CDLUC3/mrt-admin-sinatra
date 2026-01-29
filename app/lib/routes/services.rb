@@ -520,6 +520,59 @@ module Sinatra
         end
         redirect '/ops/zk/ingest/jobs-by-collection'
       end
+
+      app.get '/ops/monitoring/service-status' do
+        states = []
+        states << monitor_service_status(:ui, "#{ui_host}/state.json")
+        states << monitor_service_status(:ingest, "#{ingest_host}/state?t=json")
+        states << monitor_service_status(:store, "#{store_host}/state?t=json")
+        states << monitor_service_status(:audit, "#{audit_host}/state?t=json")
+        states << monitor_service_status(:replic, "#{replic_host}/state?t=json")
+        states << monitor_service_status(:inventory, "#{inventory_host}/state?t=json")
+
+        adminui_show_table(
+          AdminUI::Context.new(request.path, request.params),
+          monitor_service_table(states)
+        )
+      end
+    end
+
+    def monitor_service_status(service, url, timeout: 10)
+      resp = get_url_timing(url, read_timeout: timeout)
+      state = 'SKIP'
+      state = 'PASS' if resp[:code] == 200
+      state = 'FAIL' unless resp[:error].empty?
+      {
+        service: service,
+        url: url,
+        code: resp[:code],
+        timing: resp[:timing],
+        error: resp[:error],
+        status: state
+      }
+    end
+
+    def monitor_service_table(states)
+      table = AdminUI::FilterTable.new(
+        columns: [
+          AdminUI::Column.new(:service, header: 'Service'),
+          AdminUI::Column.new(:url, header: 'URL'),
+          AdminUI::Column.new(:code, header: 'HTTP Code'),
+          AdminUI::Column.new(:timing, header: 'Response Time (sec)'),
+          AdminUI::Column.new(:error, header: 'Message'),
+          AdminUI::Column.new(:status, header: 'Status')
+        ],
+        description: 'Service Status Monitor'
+      )
+      states.each do |state|
+        table.add_row(
+          AdminUI::Row.make_row(
+            table.columns,
+            state
+          )
+        )
+      end
+      table
     end
 
     def benchmark_fixity_data(request, query_name, path: '')
@@ -867,6 +920,32 @@ module Sinatra
     rescue StandardError => e
       content_type :json
       { uri: uri, error: e.to_s }.to_json
+    end
+
+    def get_url_timing(url, read_timeout: 10)
+      status = {
+        error: ''
+      }
+      timing = Benchmark.realtime do
+        uri = URI.parse(url)
+        req = Net::HTTP::Get.new(uri)
+
+        response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: uri.scheme == 'https') do |http|
+          http.read_timeout = read_timeout
+          http.request(req)
+        end
+        status[:code] = response.code.to_i
+        status[:message] = response.message
+        begin
+          status[:body] = ::JSON.parse(response.body)
+        rescue StandardError => e
+          status[:error] = e.to_s
+        end
+      rescue StandardError => e
+        status[:error] = e.to_s
+      end
+      status[:timing] = timing
+      status
     end
 
     def post_url_json(url, read_timeout: 120)

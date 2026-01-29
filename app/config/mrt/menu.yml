@@ -1240,6 +1240,8 @@ items:
         - [Store](/opensearch/logs/level/store)
         - [Admin Tool](/opensearch/logs/level/admintool)
         - [ZooKeeper](/opensearch/logs/level/zoo)
+  - title: Monitor Cluster
+    route: /ops/monitoring/service-status
 - path: resources
   title: AWS
   disable: ecs-ephemeral, ecs-dbsnapshot, docker, default
