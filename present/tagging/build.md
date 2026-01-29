@@ -259,3 +259,17 @@ Each of the service branch/tags that are registered in the [ecs manifest](https:
 
 - Docker Image Patched After Code Deployment of tag `tag`
   - `subservice:archive-archive-${stack}-${TAG_OR_BRANCH}-${BUILDDATE}`
+
+----
+
+### Interesting Build Specs
+- [Merritt UI](https://github.com/CDLUC3/mrt-dashboard/blob/main/buildspec.yml)
+  - Ruby service running in 3 DEV stacks, auto-deployed to DEV
+- [Merritt Admin Tool](https://github.com/CDLUC3/mrt-admin-sinatra/blob/main/present/tagging/build.md)
+  - Ruby code running in all 5 stacks plus as 3 lambdas in the main account.  Auto-deployed to DEV and lambda.
+- [Merritt Storage](https://github.com/CDLUC3/mrt-store/blob/main/buildspec.yml)
+  - Java service running in 2 DEV stacks.  WAR files are static.  Docker images are rebuilt.
+- [Merritt Cloud Library](https://github.com/CDLUC3/mrt-cloud/blob/main/buildspec.yml)
+  - Java libary code.  No docker images.
+- [Merritt Utility Docker Images](https://github.com/CDLUC3/merritt-docker/blob/main/buildspec.yml)
+  - Docker images rebuilt daily.  Used primarily for development. No semantic tagging for these resources.
