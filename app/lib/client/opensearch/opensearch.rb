@@ -107,7 +107,7 @@ module UC3OpenSearch
         results[res[:label]] = res
       end
 
-      table = UC3OpenSearch.OSClient.task_table
+      table = UC3OpenSearch::OSClient.task_table
       results.values.sort_by { |task| task.fetch('task_datetime', '') }.reverse.each do |task|
         table.add_row(
           AdminUI::Row.make_row(
@@ -143,7 +143,7 @@ module UC3OpenSearch
         make_result(hit)
       end
 
-      table = UC3OpenSearch.OSClient.task_table
+      table = UC3OpenSearch::OSClient.task_table
       results.each do |task|
         table.add_row(
           AdminUI::Row.make_row(
