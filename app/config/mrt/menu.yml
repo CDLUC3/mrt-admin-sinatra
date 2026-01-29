@@ -1221,12 +1221,12 @@ items:
     - title: Task Logs
       route: /ops/cloudwatch/logs/tasks
   - title: OpenSearch Queries
-    breadcrumb: true
     route: /opensearch
     description: |
       The Merritt Admin Tool can perform a limited set of queries against the OpenSearch log service for the cluster.
 
       - [Task Completion Status](/opensearch/tasks)
+      - [Ark Search](/opensearch/logs/ark)
       - Service Status Codes
         - [UI](/opensearch/logs/status_code/ui)
         - [Ingest](/opensearch/logs/status_code/ingest)

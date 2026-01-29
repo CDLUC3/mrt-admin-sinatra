@@ -51,6 +51,25 @@ module Sinatra
           cli.log_query_listing(res, table: UC3OpenSearch::OSClient.log_level_table)
         )
       end
+
+      app.get '/opensearch/logs/ark' do
+        ark = request.params.fetch('ark', '')
+
+        if ark.empty?
+          return erb :ark_query, layout: :page_layout, locals: {
+            context: AdminUI::Context.new(request.path, request.params)
+          }
+        end
+
+        cli = UC3OpenSearch::OSClient.client
+        res = cli.log_ark_query(ark)
+        puts res.to_json if res.key?(:error)
+
+        adminui_show_table(
+          AdminUI::Context.new(request.path, request.params),
+          cli.log_query_listing(res, table: UC3OpenSearch::OSClient.log_query_table)
+        )
+      end
     end
   end
   register UC3OOpenSearchRoutes

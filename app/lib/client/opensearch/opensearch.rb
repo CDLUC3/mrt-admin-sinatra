@@ -170,7 +170,7 @@ module UC3OpenSearch
           sort: [
             { '@timestamp': { order: 'desc' } }
           ],
-          size: 1000
+          size: 250
         }
       )
     rescue StandardError => e
@@ -193,6 +193,25 @@ module UC3OpenSearch
                 { match: { 'merritt.log_level': 'SEVERE' } }
               ],
               minimum_should_match: 1
+            }
+          },
+          sort: [
+            { '@timestamp': { order: 'desc' } }
+          ],
+          size: 250
+        }
+      )
+    rescue StandardError => e
+      { error: e.to_s }
+    end
+
+    def log_ark_query(ark)
+      @osclient.search(
+        index: index_name,
+        body: {
+          query: {
+            match_phrase: {
+              'merritt.ark': ark
             }
           },
           sort: [
@@ -229,13 +248,28 @@ module UC3OpenSearch
       )
     end
 
+    def self.log_query_table
+      AdminUI::FilterTable.new(
+        columns: [
+          AdminUI::Column.new('timestamp', header: 'Timestamp'),
+          AdminUI::Column.new('subservice', header: 'Subservice', filterable: true),
+          AdminUI::Column.new('record_type', header: 'Record Type', filterable: true),
+          AdminUI::Column.new('level', header: 'Level', filterable: true),
+          AdminUI::Column.new('message', header: 'Message'),
+          AdminUI::Column.new('log', header: 'Logs')
+        ]
+      )
+    end
+
     def make_log_result(hit)
       res = {}
       source = hit.fetch('_source', {})
       cwlogs = source.fetch('cwlogs', {})
       merritt = source.fetch('merritt', {})
       res['timestamp'] = DateTime.parse(source.fetch('@timestamp', '')).to_time.localtime.strftime('%Y-%m-%d %H:%M:%S')
+      res['subservice'] = merritt.fetch('subservice', '')
       res['record_type'] = merritt.fetch('record_type', '')
+      res['ark'] = merritt.fetch('ark', '')
       res['level'] = merritt.fetch('log_level', '')
       # res['level'] = source.fetch('event', {}).fetch('json', {}).fetch('log.level', '') if res['level'].empty?
       res['path'] = source.fetch('url', {}).fetch('original', '').to_s
@@ -246,6 +280,7 @@ module UC3OpenSearch
       res['message'] = evmessage if res['message'].empty?
       res['message'] = message if res['message'].empty?
       res['message'] = res['path'] if res['message'].empty?
+      res['message'] = res['ark'] if res['message'].empty?
       res['status_code'] = source.fetch('http', {}).fetch('response', {}).fetch('status_code', 0)
       res['log'] = {
         value: 'logs',
