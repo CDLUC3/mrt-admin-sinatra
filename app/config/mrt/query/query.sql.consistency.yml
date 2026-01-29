@@ -1536,7 +1536,7 @@ queries:
     template-params:
       days: 7
       wait_hours: 24
-      limit: 50
+      limit: 500
   /ops/collections/db/node-cleanup-needed:
     status: PASS
     sql: |
