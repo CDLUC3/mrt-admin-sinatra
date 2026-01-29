@@ -190,9 +190,7 @@ module UC3OpenSearch
                 { match: { 'merritt.log_level': 'WARN' } },
                 { match: { 'merritt.log_level': 'WARNING' } },
                 { match: { 'merritt.log_level': 'ERROR' } },
-                { match: { 'merritt.log_level': 'SEVERE' } },
-                { match: { 'event.json.log.level': 'ERROR' } },
-                { match: { 'event.json.log.level': 'WARN' } }
+                { match: { 'merritt.log_level': 'SEVERE' } }
               ],
               minimum_should_match: 1
             }
@@ -239,7 +237,7 @@ module UC3OpenSearch
       res['timestamp'] = DateTime.parse(source.fetch('@timestamp', '')).to_time.localtime.strftime('%Y-%m-%d %H:%M:%S')
       res['record_type'] = merritt.fetch('record_type', '')
       res['level'] = merritt.fetch('log_level', '')
-      res['level'] = source.fetch('event', {}).fetch('json', {}).fetch('log.level', '') if res['level'].empty?
+      # res['level'] = source.fetch('event', {}).fetch('json', {}).fetch('log.level', '') if res['level'].empty?
       res['path'] = source.fetch('url', {}).fetch('original', '').to_s
       message = source.fetch('message', '')
       evmessage = source.fetch('event', {}).fetch('json', {}).fetch('message', '')
