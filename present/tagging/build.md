@@ -265,7 +265,7 @@ Each of the service branch/tags that are registered in the [ecs manifest](https:
 ### Interesting Build Specs
 - [Merritt UI](https://github.com/CDLUC3/mrt-dashboard/blob/main/buildspec.yml)
   - Ruby service running in 3 DEV stacks, auto-deployed to DEV
-- [Merritt Admin Tool](https://github.com/CDLUC3/mrt-admin-sinatra/blob/main/present/tagging/build.md)
+- [Merritt Admin Tool](https://github.com/CDLUC3/mrt-admin-sinatra/blob/main/buildspec.yml)
   - Ruby code running in all 5 stacks plus as 3 lambdas in the main account.  Auto-deployed to DEV and lambda.
 - [Merritt Storage](https://github.com/CDLUC3/mrt-store/blob/main/buildspec.yml)
   - Java service running in 2 DEV stacks.  WAR files are static.  Docker images are rebuilt.
