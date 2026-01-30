@@ -529,7 +529,7 @@ module Sinatra
         states << monitor_service_status(:ingest, "#{ingest_host}/state?t=json")
         states << monitor_service_status(:store, "#{store_host}/state?t=json")
         states << monitor_service_status(:audit, "#{audit_host}/state?t=json")
-        states << monitor_service_status(:replic, "#{replic_host}/state?t=json")
+        states << monitor_service_status(:replic, "#{replic_host}/state?t=json", read_timeout: 10, open_timeout: 5)
         states << monitor_service_status(:inventory, "#{inventory_host}/state?t=json")
 
         adminui_show_table(
