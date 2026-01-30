@@ -559,32 +559,32 @@ module Sinatra
       end
 
       if service == :ingest
-        svcstate = resp[:body].fetch('ing:ingestServiceState', '').fetch('ing:submissionState', '')
+        svcstate = resp[:body].fetch('ing:ingestServiceState', {}).fetch('ing:submissionState', '')
         resp[:message] = "Ingest State: #{svcstate}"
         state = 'FAIL' if svcstate != 'thawed'
       end
 
       if service == :store
-        svcstate = resp[:body].fetch('sto:storageServiceState', '').fetch('sto:failNodesCnt', 'Not Found').to_s
+        svcstate = resp[:body].fetch('sto:storageServiceState', {}).fetch('sto:failNodesCnt', 'Not Found').to_s
         resp[:message] = "Storage Failed Node Count: #{svcstate}"
         state = 'FAIL' if svcstate != '0'
       end
 
       if service == :inventory
-        svcstate = resp[:body].fetch('invsv:invServiceState', '').fetch('invsv:systemStatus', 'Not Found').to_s
-        svcstate2 = resp[:body].fetch('invsv:invServiceState', '').fetch('invsv:zookeeperStatus', 'Not Found').to_s
+        svcstate = resp[:body].fetch('invsv:invServiceState', {}).fetch('invsv:systemStatus', 'Not Found').to_s
+        svcstate2 = resp[:body].fetch('invsv:invServiceState', {}).fetch('invsv:zookeeperStatus', 'Not Found').to_s
         resp[:message] = "Inventory States: DB: #{svcstate}, Zoo: #{svcstate2}"
         state = 'FAIL' if svcstate != 'running' || svcstate2 != 'running'
       end
 
       if service == :audit
-        svcstate = resp[:body].fetch('fix:fixityServiceState', '').fetch('fix:status', 'Not Found').to_s
+        svcstate = resp[:body].fetch('fix:fixityServiceState', {}).fetch('fix:status', 'Not Found').to_s
         resp[:message] = "Audit State: #{svcstate}"
         state = 'FAIL' if svcstate != 'running'
       end
 
       if service == :replic
-        svcstate = resp[:body].fetch('repsvc:replicationServiceState', '').fetch('repsvc:status', 'Not Found').to_s
+        svcstate = resp[:body].fetch('repsvc:replicationServiceState', {}).fetch('repsvc:status', 'Not Found').to_s
         resp[:message] = "Replic State: #{svcstate}"
         state = 'FAIL' if svcstate != 'running'
       end
