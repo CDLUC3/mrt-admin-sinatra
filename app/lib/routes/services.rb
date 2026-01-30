@@ -12,6 +12,8 @@ module Sinatra
   module UC3ServicesRoutes
     MERRITT_ADMIN_OWNER = 'ark:/13030/j2rn30xp'
     TEST_SLA = 'ark:/13030/77777777'
+    MONITOR_OPEN_TIMEOUT = 2
+    MONITOR_READ_TIMEOUT = 5
 
     def ui_host
       host = ENV.fetch('SVC_UI', 'ui:8086')
@@ -537,32 +539,79 @@ module Sinatra
       end
     end
 
-    def monitor_service_status(service, url, timeout: 10)
-      resp = get_url_timing(url, read_timeout: timeout)
+    def monitor_service_status(service, url, read_timeout: MONITOR_READ_TIMEOUT, open_timeout: MONITOR_OPEN_TIMEOUT)
+      resp = get_url_timing(url, read_timeout: read_timeout, open_timeout: open_timeout)
       state = 'SKIP'
+      unless resp[:error].empty?
+        resp[:message] = resp[:error]
+        state = 'FAIL'
+      end
       state = 'PASS' if resp[:code] == 200
-      state = 'FAIL' unless resp[:error].empty?
+
+      if service == :ui
+        version = resp[:body].fetch('version', '')
+        if version.empty?
+          resp[:message] = 'UI version not found'
+          state = 'FAIL'
+        else
+          resp[:message] = version
+        end
+      end
+
+      if service == :ingest
+        svcstate = resp[:body].fetch('ing:ingestServiceState', '').fetch('ing:submissionState', '')
+        resp[:message] = "Ingest State: #{svcstate}"
+        state = 'FAIL' if svcstate != 'thawed'
+      end
+
+      if service == :store
+        svcstate = resp[:body].fetch('sto:storageServiceState', '').fetch('sto:failNodesCnt', 'Not Found').to_s
+        resp[:message] = "Storage Failed Node Count: #{svcstate}"
+        state = 'FAIL' if svcstate != '0'
+      end
+
+      if service == :inventory
+        svcstate = resp[:body].fetch('invsv:invServiceState', '').fetch('invsv:systemStatus', 'Not Found').to_s
+        svcstate2 = resp[:body].fetch('invsv:invServiceState', '').fetch('invsv:zookeeperStatus', 'Not Found').to_s
+        resp[:message] = "Inventory States: DB: #{svcstate}, Zoo: #{svcstate2}"
+        state = 'FAIL' if svcstate != 'running' || svcstate2 != 'running'
+      end
+
+      if service == :audit
+        svcstate = resp[:body].fetch('fix:fixityServiceState', '').fetch('fix:status', 'Not Found').to_s
+        resp[:message] = "Audit State: #{svcstate}"
+        state = 'FAIL' if svcstate != 'running'
+      end
+
+      if service == :replic
+        svcstate = resp[:body].fetch('repsvc:replicationServiceState', '').fetch('repsvc:status', 'Not Found').to_s
+        resp[:message] = "Replic State: #{svcstate}"
+        state = 'FAIL' if svcstate != 'running'
+      end
+
       {
         service: service,
         url: url,
         code: resp[:code],
         timing: resp[:timing],
-        error: resp[:error],
+        message: resp[:message],
         status: state
       }
     end
 
     def monitor_service_table(states)
+      desc = 'Service Status Monitor.  Open Timeout: ' \
+             "#{MONITOR_OPEN_TIMEOUT} sec; Read Timeout: #{MONITOR_READ_TIMEOUT} sec"
       table = AdminUI::FilterTable.new(
         columns: [
           AdminUI::Column.new(:service, header: 'Service'),
           AdminUI::Column.new(:url, header: 'URL'),
           AdminUI::Column.new(:code, header: 'HTTP Code'),
           AdminUI::Column.new(:timing, header: 'Response Time (sec)'),
-          AdminUI::Column.new(:error, header: 'Message'),
+          AdminUI::Column.new(:message, header: 'Message'),
           AdminUI::Column.new(:status, header: 'Status')
         ],
-        description: 'Service Status Monitor'
+        description: desc
       )
       states.each do |state|
         table.add_row(
@@ -922,9 +971,11 @@ module Sinatra
       { uri: uri, error: e.to_s }.to_json
     end
 
-    def get_url_timing(url, read_timeout: 10)
+    def get_url_timing(url, read_timeout: MONITOR_READ_TIMEOUT, open_timeout: MONITOR_OPEN_TIMEOUT)
       status = {
-        error: ''
+        message: '',
+        error: '',
+        body: {}
       }
       timing = Benchmark.realtime do
         uri = URI.parse(url)
@@ -932,6 +983,7 @@ module Sinatra
 
         response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: uri.scheme == 'https') do |http|
           http.read_timeout = read_timeout
+          http.open_timeout = open_timeout
           http.request(req)
         end
         status[:code] = response.code.to_i
