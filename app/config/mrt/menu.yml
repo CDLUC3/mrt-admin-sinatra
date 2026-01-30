@@ -1281,6 +1281,8 @@ items:
       route: /queries/misc/objects
     - title: DB time
       route: /queries/misc/now
+    - title: Last Billing Update
+      route: /queries/misc/last-update
     - title: Admin Objects
       route: /queries/misc/admin
     - title: Admin Object Types

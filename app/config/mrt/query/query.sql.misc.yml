@@ -133,3 +133,11 @@ queries:
     parameters:
     - name: ark
       type: string
+  /queries/misc/last-update:
+    sql: |
+      select
+        (select max(billing_totals_date) from billing.daily_billing) as billing_totals_date,
+        (select max(date_added) from billing.daily_mime_use_details) as mime_details_date_added,
+        (select max(audit_date) from billing.audits_processed) as audits_processed_date,
+        (select max(ingest_date) from billing.ingests_completed) as ingests_completed_date,
+        (select max(as_of_date) from billing.daily_node_counts) as daily_node_counts_date
