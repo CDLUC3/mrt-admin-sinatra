@@ -999,7 +999,7 @@ module Sinatra
       rescue StandardError => e
         status[:error] = e.to_s
       end
-      status[:error] = 'Timeout' if status[:code] == 0
+      status[:error] = 'Timeout' if status[:code].zero?
       status[:timing] = timing
       status
     end
