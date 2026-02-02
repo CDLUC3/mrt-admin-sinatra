@@ -140,6 +140,13 @@ module Sinatra
       app.get '/index.html' do
         redirect '/'
       end
+
+      app.get '/version' do
+        content_type :json
+        `git log -1 --pretty=format:'{%n  "commit": "%H",%n  "abbreviated_commit": "%h",\
+           %n  "committer": {%n    "name": "%cn",%n    "email": "%ce",%n    "date": "%cd"%n  },\
+           %n  "message": "%s",%n  "body": "%b",%n  "tags": "%d"%n}' --date=iso --decorate=full`
+      end
     end
   end
   register UC3HomeRoutes

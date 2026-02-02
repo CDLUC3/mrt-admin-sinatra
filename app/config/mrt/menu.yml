@@ -36,6 +36,8 @@ items:
   - path: about
     title: About
     items:
+    - title: Admin Tool Version
+      route: /version
     - title: Admin Tool Context
       route: /context
     - title: Admin Tool Clients
