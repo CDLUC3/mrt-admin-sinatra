@@ -503,6 +503,7 @@ queries:
         batch_id
       order by
         max(submitted) desc
+    totals: true
     parameters:
     - name: date
       type: date

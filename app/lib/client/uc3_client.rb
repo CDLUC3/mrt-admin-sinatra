@@ -372,6 +372,7 @@ module UC3
         /ops/storage/benchmark-fixity-nodes
         /ops/storage/benchmark-fixity-audit
         /ops/storage/benchmark-fixity-access
+        /queries/misc/purgable_arks
       ]
 
       # These GET operations require specific url parameters that are not readily available for a unit test
