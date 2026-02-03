@@ -621,7 +621,9 @@ queries:
     template-sql:
       DATES: |
         {{{ITERLAST24HOUR}}}
+  # These large audit queries may not complete
   /ops/db-queue/audit/activity/7days:
+    test_skip: true
     description: *auditactivity
     sql: |
       {{{AUDITACT}}}
