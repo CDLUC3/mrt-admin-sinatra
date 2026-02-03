@@ -530,6 +530,7 @@ module Sinatra
         states << monitor_service_status(:store, :state, "#{store_host}/state?t=json")
         states << monitor_service_status(:store, :jsonstatus, "#{store_host}/jsonstatus?t=json")
         states << monitor_service_status(:store, :hostname, "#{store_host}/hostname?t=json")
+        states << monitor_service_status(:store, :build, "#{store_host}/static/build.content.txt")
         states << monitor_service_status(:access, :state, "#{access_host}/state?t=json")
         states << monitor_service_status(:access, :jsonstatus, "#{access_host}/jsonstatus?t=json")
         states << monitor_service_status(:access, :ping, "#{access_host}/ping?t=json")
@@ -584,6 +585,10 @@ module Sinatra
             svcstate = resp[:body].fetch('sto:storageServiceState', {}).fetch('sto:failNodesCnt', 'Not Found').to_s
             resp[:message] = "Storage Failed Node Count: #{svcstate}"
             state = 'FAIL' if svcstate != '0'
+          elsif checkname == :jsonstatus
+            fail = resp[:body].fetch('failCnt', '0').to_s
+            resp[:message] = "Fail Count: #{fail}"
+            state = 'FAIL' if fail != '0'
           else
             resp[:message] = "JSON returned for #{checkname}"
           end
@@ -601,7 +606,7 @@ module Sinatra
         end
 
         if service == :audit
-          if checkname == :state
+          if [:state, :status].include?(checkname)
             svcstate = resp[:body].fetch('fix:fixityServiceState', {}).fetch('fix:status', 'Not Found').to_s
             resp[:message] = "Audit State: #{svcstate}"
             state = 'FAIL' if svcstate != 'running'
@@ -611,10 +616,14 @@ module Sinatra
         end
 
         if service == :replic
-          if checkname == :state
+          if [:state, :status].include?(checkname)
             svcstate = resp[:body].fetch('repsvc:replicationServiceState', {}).fetch('repsvc:status', 'Not Found').to_s
             resp[:message] = "Replic State: #{svcstate}"
             state = 'FAIL' if svcstate != 'running'
+          elsif checkname == :jsonstatus
+            fail = resp[:body].fetch('failCnt', '0').to_s
+            resp[:message] = "Fail Count: #{fail}"
+            state = 'FAIL' if fail != '0'
           else
             resp[:message] = "JSON returned for #{checkname}"
           end
