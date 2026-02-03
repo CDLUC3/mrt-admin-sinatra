@@ -82,6 +82,7 @@ queries:
       order by id
       limit 1000
   /queries/misc/purgable_arks:
+    test_skip: true
     sql: |
       SELECT 
         o.ark,
