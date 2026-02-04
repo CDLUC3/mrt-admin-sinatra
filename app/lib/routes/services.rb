@@ -526,33 +526,34 @@ module Sinatra
 
       app.get '/ops/monitoring/service-status' do
         states = []
-        
+
         states << monitor_service_status(:ui, :state, "#{ui_host}/state.json")
-        
+
         states << monitor_service_status(:ingest, :state, "#{ingest_host}/state?t=json")
-        
+
         # Per David, state is faster than jsonstatus; hostname would be even faster
         states << monitor_service_status(:store, :state, "#{store_host}/state?t=json")
         # states << monitor_service_status(:store, :jsonstatus, "#{store_host}/jsonstatus?t=json")
         # states << monitor_service_status(:store, :hostname, "#{store_host}/hostname?t=json")
         # states << monitor_service_status(:store, :ping, "#{store_host}/hostname?t=json")
         # states << monitor_service_status(:store, :build, "#{store_host}/static/build.content.txt")
-        
+
         states << monitor_service_status(:access, :state, "#{access_host}/state?t=json")
         # states << monitor_service_status(:access, :jsonstatus, "#{access_host}/jsonstatus?t=json")
         # states << monitor_service_status(:access, :ping, "#{access_host}/ping?t=json")
         # states << monitor_service_status(:access, :hostname, "#{access_host}/hostname?t=json")
-        
+
         # Per David, state and status are equivalent
         states << monitor_service_status(:audit, :state, "#{audit_host}/state?t=json")
-        states << monitor_service_status(:audit, :status, "#{audit_host}/status?t=json")
+        # states << monitor_service_status(:audit, :status, "#{audit_host}/status?t=json")
 
         # Per David, status is faster than state
-        # states << monitor_service_status(:replic, :state, "#{replic_host}/state?t=json", read_timeout: 10, open_timeout: 5)
+        # states << monitor_service_status(:replic, :state, "#{replic_host}/state?t=json", 
+        #   read_timeout: 10, open_timeout: 5)
         states << monitor_service_status(:replic, :status, "#{replic_host}/status?t=json")
         # states << monitor_service_status(:replic, :jsonstatus, "#{replic_host}/jsonstatus?t=json")
         # states << monitor_service_status(:replic, :jsonstate, "#{replic_host}/jsonstate?t=json")
-        
+
         states << monitor_service_status(:inventory, :state, "#{inventory_host}/state?t=json")
 
         adminui_show_table(
@@ -562,7 +563,8 @@ module Sinatra
       end
     end
 
-    def monitor_service_status(service, checkname, url, read_timeout: MONITOR_READ_TIMEOUT, open_timeout: MONITOR_OPEN_TIMEOUT)
+    def monitor_service_status(service, checkname, url, read_timeout: MONITOR_READ_TIMEOUT,
+      open_timeout: MONITOR_OPEN_TIMEOUT)
       resp = get_url_timing(url, read_timeout: read_timeout, open_timeout: open_timeout)
       state = 'SKIP'
       unless resp[:error].empty?
@@ -592,7 +594,7 @@ module Sinatra
           end
         end
 
-        if [:store, :access].include?(service)
+        if %i[store access].include?(service)
           if checkname == :state
             svcstate = resp[:body].fetch('sto:storageServiceState', {}).fetch('sto:failNodesCnt', 'Not Found').to_s
             resp[:message] = "Storage Failed Node Count: #{svcstate}"
@@ -618,7 +620,7 @@ module Sinatra
         end
 
         if service == :audit
-          if [:state, :status].include?(checkname)
+          if %i[state status].include?(checkname)
             svcstate = resp[:body].fetch('fix:fixityServiceState', {}).fetch('fix:status', 'Not Found').to_s
             resp[:message] = "Audit State: #{svcstate}"
             state = 'FAIL' if svcstate != 'running'
@@ -628,7 +630,7 @@ module Sinatra
         end
 
         if service == :replic
-          if [:state, :status].include?(checkname)
+          if %i[state status].include?(checkname)
             svcstate = resp[:body].fetch('repsvc:replicationServiceState', {}).fetch('repsvc:status', 'Not Found').to_s
             resp[:message] = "Replic State: #{svcstate}"
             state = 'FAIL' if svcstate != 'running'
