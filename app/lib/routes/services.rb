@@ -555,34 +555,40 @@ module Sinatra
     end
 
     def admin_state
-      { 
+      {
         stack: UC3::UC3Client.stack_name,
         msyql: check_mysql.fetch(:state, ''),
         zk: check_zk.fetch(:state, ''),
         ldap: check_ldap.fetch(:state, '')
       }
-      
     end
 
     def check_ldap
-      UC3Ldap::LdapClient.client.load_users
-      { service: 'LDAP', status: 'PASS', message: '', state: 'running' }
+      timing = Benchmark.realtime do
+        UC3Ldap::LDAPClient.client.load_users
+      end
+      { service: 'LDAP', status: 'PASS', message: 'Connection verified', state: 'running', timing: timing }
     rescue StandardError => e
-      { service: 'LDAP', status: 'FAIL', message: "Load Error: #{e.message}", state: 'not-running' }
+      { service: 'LDAP', status: 'FAIL', message: "Load Error: #{e.message}", state: 'not-running', timing: timing }
     end
 
     def check_mysql
-      UC3Query::QueryClient.client.run_query('/queries/misc/ping', {})
-      { service: 'MySQL', status: 'PASS', message: '', state: 'running' }
+      timing = Benchmark.realtime do
+        UC3Query::QueryClient.client.run_query('/queries/misc/now', {})
+      end
+      { service: 'MySQL', status: 'PASS', message: 'Connection verified', state: 'running', timing: timing }
     rescue StandardError => e
-      { service: 'MySQL', status: 'FAIL', message: "Load Error: #{e.message}", state: 'not-running' }
+      { service: 'MySQL', status: 'FAIL', message: "Load Error: #{e.message}", state: 'not-running', timing: timing }
     end
 
     def check_zk
-      UC3Queue::ZKClient.client.children('/locks')
-      { service: 'ZK', status: 'PASS', message: '', state: 'running' }
+      # this should return a fairly small payload
+      timing = Benchmark.realtime do
+        UC3Queue::ZKClient.client.locked_collections
+      end
+      { service: 'ZK', status: 'PASS', message: 'Connection verified', state: 'running', timing: timing }
     rescue StandardError => e
-      { service: 'ZK', status: 'FAIL', message: "Load Error: #{e.message}", state: 'not-running' }
+      { service: 'ZK', status: 'FAIL', message: "Load Error: #{e.message}", state: 'not-running', timing: timing }
     end
 
     def monitor_service_status(service, checkname, url, read_timeout: MONITOR_READ_TIMEOUT,
