@@ -141,8 +141,10 @@ module UC3Ldap
     end
 
     def load_collections
-      @ldap.search(base: group_base, filter: Net::LDAP::Filter.eq('arkId', '*')) do |entry|
-        puts entry.inspect
+      @ldap.search(
+        base: group_base, 
+        filter: Net::LDAP::Filter.eq('arkId', '*') & Net::LDAP::Filter.ne('userpassword', '*')
+      ) do |entry|
         coll = LdapCollection.new(entry)
         @collections[coll.mnemonic] = coll
         @collection_arks[coll.ark] = coll
