@@ -557,7 +557,7 @@ module Sinatra
     def admin_state
       {
         stack: UC3::UC3Client.stack_name,
-        msyql: check_mysql.fetch(:state, ''),
+        mysql: check_mysql.fetch(:state, ''),
         zk: check_zk.fetch(:state, ''),
         ldap: check_ldap.fetch(:state, '')
       }
