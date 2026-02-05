@@ -150,6 +150,7 @@ module UC3Ldap
 
     def load_roles
       @ldap.search(base: group_base, filter: Net::LDAP::Filter.eq('uniquemember', '*')) do |entry|
+        puts entry.inspect
         role = LdapRole.new(entry)
         coll = nil
         if @collections.key?(role.coll)
