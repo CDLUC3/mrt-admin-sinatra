@@ -1194,23 +1194,23 @@ items:
         - title: Run Locust Benchmarks for UI
           route: /infra/ecs/tasks/launch/merritt-ops/runLocustBenchmarksUI
           # test data currently only exists in prod
-          disable: default, docker, ecs-ephemral, ecs-dbsnapshot
+          disable: default, docker, ecs-ephemeral, ecs-dbsnapshot
           confmsg: This will run a job in the merritt-ops container 
           method: post
         - title: Purge Test Collections
           route: /infra/ecs/tasks/launch/merritt-ops/runPurgeCollections
-          disable: default, docker, ecs-ephemral, ecs-dbsnapshot, ecs-prd
+          disable: default, docker, ecs-ephemeral, ecs-dbsnapshot, ecs-prd
           confmsg: This will run a job in the merritt-ops container 
           method: post
         - title: Run Monitoring Script
           route: /infra/ecs/tasks/launch/merritt-ops/runMonitoringScript
-          disable: default, docker, ecs-ephemral, ecs-dbsnapshot
+          disable: default, docker, ecs-ephemeral, ecs-dbsnapshot
           confmsg: This will run a job in the merritt-ops container 
           method: post
       - title: End to End Tests
         route: /infra/ecs/tasks/launch/mrt-integ-tests
         path: mrt-integ-tests
-        disable: default, docker, ecs-ephemral, ecs-dbsnapshot
+        disable: default, docker, ecs-ephemeral, ecs-dbsnapshot
         items:
         - title: With Ingest
           route: /infra/ecs/tasks/launch/mrt-integ-tests/runEndToEndTests
@@ -1221,7 +1221,7 @@ items:
           confmsg: This will initiate a task that runs End to End tests
           method: post
         - title: Load Test
-          disable: default, docker, ecs-ephemral, ecs-dbsnapshot, ecs-dev, ecs-prd
+          disable: default, docker, ecs-ephemeral, ecs-dbsnapshot, ecs-dev, ecs-prd
           route: /infra/ecs/tasks/launch/mrt-integ-tests/runEndToEndTestsLoad
           confmsg: This will initiate a task that runs End to End tests
           method: post
