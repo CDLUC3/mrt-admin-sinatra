@@ -142,7 +142,7 @@ module UC3Ldap
 
     def load_collections
       @ldap.search(
-        base: group_base, 
+        base: group_base,
         filter: Net::LDAP::Filter.eq('arkId', '*') & Net::LDAP::Filter.ne('userpassword', '*')
       ) do |entry|
         coll = LdapCollection.new(entry)
