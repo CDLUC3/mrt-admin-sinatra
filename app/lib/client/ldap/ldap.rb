@@ -142,6 +142,7 @@ module UC3Ldap
 
     def load_collections
       @ldap.search(base: group_base, filter: Net::LDAP::Filter.eq('arkId', '*')) do |entry|
+        puts entry.inspect
         coll = LdapCollection.new(entry)
         @collections[coll.mnemonic] = coll
         @collection_arks[coll.ark] = coll
@@ -150,7 +151,6 @@ module UC3Ldap
 
     def load_roles
       @ldap.search(base: group_base, filter: Net::LDAP::Filter.eq('uniquemember', '*')) do |entry|
-        puts entry.inspect
         role = LdapRole.new(entry)
         coll = nil
         if @collections.key?(role.coll)
