@@ -1204,7 +1204,7 @@ items:
           method: post
         - title: Run Monitoring Script
           route: /infra/ecs/tasks/launch/merritt-ops/runMonitoringScript
-          disable: default, docker, ecs-stg, ecs-ephemral, ecs-dbsnapshot, ecs-prd
+          disable: default, docker, ecs-ephemral, ecs-dbsnapshot
           confmsg: This will run a job in the merritt-ops container 
           method: post
       - title: End to End Tests
