@@ -65,6 +65,10 @@ module Sinatra
         get_url("#{store_host}/state?t=json")
       end
 
+      app.get '/json/store/jsonstatus' do
+        get_url("#{store_host}/jsonstatus")
+      end
+
       app.get '/json/store/tag' do
         get_url("#{store_host}/static/build.content.txt")
       end

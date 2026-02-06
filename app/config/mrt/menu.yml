@@ -903,6 +903,8 @@ items:
       items:
       - title: Store State
         route: /json/store/state
+      - title: Store State by Node
+        route: /json/store/jsonstatus
       - title: Store Build Tag
         route: /json/store/tag
       - title: Store Nodes
