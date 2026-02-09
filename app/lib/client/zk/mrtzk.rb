@@ -39,7 +39,7 @@ module UC3Queue
       @admin_port = map.fetch('admin_port', 8080)
       @admin_user = map.fetch('admin_user', 'root')
       @admin_passwd = map.fetch('admin_passwd', 'root_passwd')
-      @snapshot_path = map.fetch('snapshot_path', '/tdr/ingest/queue/zk-snapshots')
+      @snapshot_path = map.fetch('snapshot_path', '/merritt-filesys/zk-snapshots')
       @cache = {}
       super(enabled: true)
     rescue StandardError => e

@@ -240,7 +240,16 @@ module UC3
 
   # browse ingest folder file system
   class FileSystemClient < UC3Client
-    DIR = '/tdr/ingest/queue'
+    ROOTDIR = '/merritt-filesys'
+    DIR = "#{ROOTDIR}/ingest/queue"
+    
+    def initialize
+      `mkdir -p ${ROOTDIR}/ingest/queue`
+      `mkdir -p ${ROOTDIR}/uploads`
+      `mkdir -p ${ROOTDIR}/assemblies`
+      `mkdir -p ${ROOTDIR}/zk-snapshots`
+    end
+
     def ingest_folders(route, params)
       path = params.fetch('path', '')
       path = '' if path =~ /^\.\./
@@ -318,7 +327,7 @@ module UC3
       `find #{DIR}/FAILED -maxdepth 1  -name "bid-*" -mtime +30 | xargs rm -rf`
       `find #{DIR}/RecycleBin -maxdepth 1  -name "jid-*" -mtime +3 | xargs rm -rf`
       name = '-name "latest_snapshot.#{UC3::UC3Client.stack_name}.20*"'
-      `find #{DIR}/zk-snapshots -maxdepth 1 #{name} -mtime +3 | xargs rm -rf`
+      `find #{ROOTDIR}/zk-snapshots -maxdepth 1 #{name} -mtime +3 | xargs rm -rf`
     end
   end
 

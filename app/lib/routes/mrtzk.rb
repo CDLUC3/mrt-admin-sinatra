@@ -304,27 +304,27 @@ module Sinatra
       end
 
       app.post '/ops/ingest-folders/force-failure/estimating' do
-        File.new('/tdr/ingest/queue/Estimate_FAIL', 'w')
+        File.new('/merritt-filesys/ingest/queue/Estimate_FAIL', 'w')
         redirect '/ops/ingest-folders/list'
       end
 
       app.post '/ops/ingest-folders/force-failure/provisioning' do
-        File.new('/tdr/ingest/queue/Provision_FAIL', 'w')
+        File.new('/merritt-filesys/ingest/queue/Provision_FAIL', 'w')
         redirect '/ops/ingest-folders/list'
       end
 
       app.post '/ops/ingest-folders/force-failure/download' do
-        File.new('/tdr/ingest/queue/Download_FAIL', 'w')
+        File.new('/merritt-filesys/ingest/queue/Download_FAIL', 'w')
         redirect '/ops/ingest-folders/list'
       end
 
       app.post '/ops/ingest-folders/force-failure/processing' do
-        File.new('/tdr/ingest/queue/Process_FAIL', 'w')
+        File.new('/merritt-filesys/ingest/queue/Process_FAIL', 'w')
         redirect '/ops/ingest-folders/list'
       end
 
       app.post '/ops/ingest-folders/force-failure/notify' do
-        File.new('/tdr/ingest/queue/Notify_FAIL', 'w')
+        File.new('/merritt-filesys/ingest/queue/Notify_FAIL', 'w')
         redirect '/ops/ingest-folders/list'
       end
 

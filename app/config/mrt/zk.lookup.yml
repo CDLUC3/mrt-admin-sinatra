@@ -13,7 +13,7 @@ docker: &docker
     default: root_passwd
   snapshot_dir:
     env: ZK_SNAPSHOT_DIR
-    default: /tdr/ingest/queue/zk-snapshots
+    default: /merritt-filesys/zk-snapshots
 dockerlocal:
   <<: *docker
 ecs-dev:
