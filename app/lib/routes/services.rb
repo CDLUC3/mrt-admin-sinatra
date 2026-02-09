@@ -507,7 +507,7 @@ module Sinatra
       end
 
       app.post '/test/load/data' do
-        test_data_dir = "#{UC3::FileSystemClient::DIR}/test-data"
+        test_data_dir = "#{UC3::FileSystemClient::ROOTDIR}/ingest/test-data"
         `mkdir -p #{test_data_dir}`
         sample_data = 'https://raw.githubusercontent.com/CDLUC3/mrt-doc/refs/heads/main/sampleFiles/'
         %w[merritt_demo cdl_dryaddev escholarship terry_test].each do |mnemonic|
