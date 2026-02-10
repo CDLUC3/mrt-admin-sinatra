@@ -245,10 +245,10 @@ module UC3
 
     def initialize
       super
-      `mkdir -p ${ROOTDIR}/ingest/queue`
-      `mkdir -p ${ROOTDIR}/uploads`
-      `mkdir -p ${ROOTDIR}/assemblies`
-      `mkdir -p ${ROOTDIR}/zk-snapshots`
+      `mkdir -p #{ROOTDIR}/ingest/queue`
+      `mkdir -p #{ROOTDIR}/uploads`
+      `mkdir -p #{ROOTDIR}/assemblies`
+      `mkdir -p #{ROOTDIR}/zk-snapshots`
     end
 
     def show_folders(root, route, params)
