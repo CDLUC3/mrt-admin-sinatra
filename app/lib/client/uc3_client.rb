@@ -295,7 +295,7 @@ module UC3
                    size: File.size("#{dir}/#{folder}"),
                    actions: {
                      value: 'Delete',
-                     href: '/ops/ingest-folders/delete',
+                     href: '/ops/show-folders/delete',
                      data: folder,
                      cssclass: 'button',
                      post: true,
@@ -433,7 +433,6 @@ module UC3
             /ops/zk/ingest/jobs-by-collection
             /ops/zk/ingest/batches
             /ops/zk/nodes/orphan
-            /ops/ingest-folders/list
             /ops/show-folders/list
           ].each do |pattern|
             @consistency_checks << path if path =~ /#{pattern}/

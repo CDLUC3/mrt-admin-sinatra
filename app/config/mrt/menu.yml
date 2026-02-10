@@ -604,44 +604,44 @@ items:
         
         For any items that do not match, an error will be reported in the report.  
         This indicates that maintenance needs to be performed on the LDAP entries for Merritt.
-  - path: ingest-folders
-    title: Ingest Folders
-    route: /ops/ingest-folders
+  - path: show-folders
+    title: File System
+    route: /ops/show-folders
     disable: ecs-stg, ecs-prd
     breadcrumb: true
     items:
     - title: Ingest Folders
-      route: /ops/ingest-folders/list
+      route: /ops/show-folders/list?path=/merritt-filesys/ingest/queue
     - title: Show All Folders
       route: /ops/show-folders/list
     - title: Cleanup Ingest Folders
-      route: /ops/ingest-folders/cleanup
+      route: /ops/show-folders/cleanup
       confmsg: This will cleanup ingest batches older than 30 days, RecycleBin items older than 3 days and ZK snapshots older than 3 days.
       description: Choose "Operations -> Ingest Folders -> Cleanup Ingest Folders" from the menu
       method: post
     - path: force-failure
       title: Force Failure
-      route: /ops/ingest-folders/force-failure
+      route: /ops/show-folders/force-failure
       items:
       - title: Estimating
-        route: /ops/ingest-folders/force-failure/estimating
+        route: /ops/show-folders/force-failure/estimating
         confmsg: This will cause all Estimating jobs to fail until the failure file is removed from the ingest folder.
         method: post
       - title: Download
-        route: /ops/ingest-folders/force-failure/download
+        route: /ops/show-folders/force-failure/download
         confmsg: This will cause all Downloading jobs to fail until the failure file is removed from the ingest folder.
         method: post
       - title: Notify
-        route: /ops/ingest-folders/force-failure/notify
+        route: /ops/show-folders/force-failure/notify
         confmsg: This will cause all Notify jobs to fail until the failure file is removed from the ingest folder.
         method: post
       - title: Provisioning
         confmsg: This will cause all Provisioning jobs to fail until the failure file is removed from the ingest folder.
-        route: /ops/ingest-folders/force-failure/provisioning
+        route: /ops/show-folders/force-failure/provisioning
         method: post
       - title: Processing
         confmsg: This will cause all Processing jobs to fail until the failure file is removed from the ingest folder.
-        route: /ops/ingest-folders/force-failure/processing
+        route: /ops/show-folders/force-failure/processing
         method: post
   - path: db-queue
     title: Database Queues

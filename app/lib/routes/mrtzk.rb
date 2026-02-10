@@ -283,19 +283,12 @@ module Sinatra
         )
       end
 
-      app.get '/ops/ingest-folders/list' do
-        adminui_show_table(
-          AdminUI::Context.new(request.path, request.params),
-          UC3::FileSystemClient.client.show_folders(UC3::FileSystemClient::DIR, request.path, request.params)
-        )
-      end
-
-      app.post '/ops/ingest-folders/cleanup' do
+      app.post '/ops/show-folders/cleanup' do
         UC3::FileSystemClient.client.cleanup_ingest_folders
-        redirect '/ops/ingest-folders/list'
+        redirect '/ops/show-folders/list?path=/merritt-filesys/ingest/queue'
       end
 
-      app.post '/ops/ingest-folders/delete' do
+      app.post '/ops/show-folders/delete' do
         f = request.body.read
         if f.empty?
           content_type :json
@@ -310,34 +303,34 @@ module Sinatra
         { message: "ERROR: #{e.class}: #{e.message}" }.to_json
       end
 
-      app.post '/ops/ingest-folders/force-failure/estimating' do
+      app.post '/ops/show-folders/force-failure/estimating' do
         File.new('/merritt-filesys/ingest/queue/Estimate_FAIL', 'w')
-        redirect '/ops/ingest-folders/list'
+        redirect '/ops/show-folders/list?path=/merritt-filesys/ingest/queue'
       end
 
-      app.post '/ops/ingest-folders/force-failure/provisioning' do
+      app.post '/ops/show-folders/force-failure/provisioning' do
         File.new('/merritt-filesys/ingest/queue/Provision_FAIL', 'w')
-        redirect '/ops/ingest-folders/list'
+        redirect '/ops/show-folders/list?path=/merritt-filesys/ingest/queue'
       end
 
-      app.post '/ops/ingest-folders/force-failure/download' do
+      app.post '/ops/show-folders/force-failure/download' do
         File.new('/merritt-filesys/ingest/queue/Download_FAIL', 'w')
-        redirect '/ops/ingest-folders/list'
+        redirect '/ops/show-folders/list?path=/merritt-filesys/ingest/queue'
       end
 
-      app.post '/ops/ingest-folders/force-failure/processing' do
+      app.post '/ops/show-folders/force-failure/processing' do
         File.new('/merritt-filesys/ingest/queue/Process_FAIL', 'w')
-        redirect '/ops/ingest-folders/list'
+        redirect '/ops/show-folders/list?path=/merritt-filesys/ingest/queue'
       end
 
-      app.post '/ops/ingest-folders/force-failure/notify' do
+      app.post '/ops/show-folders/force-failure/notify' do
         File.new('/merritt-filesys/ingest/queue/Notify_FAIL', 'w')
-        redirect '/ops/ingest-folders/list'
+        redirect '/ops/show-folders/list?path=/merritt-filesys/ingest/queue'
       end
 
       app.post '/ops/zk/snapshot' do
         UC3Queue::ZKClient.client.save_snapshot
-        redirect '/ops/ingest-folders/list?path=/zk-snapshots'
+        redirect '/ops/show-folders/list?path=/zk-snapshots'
       end
 
       app.post '/ops/zk/restore' do
