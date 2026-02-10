@@ -604,9 +604,6 @@ items:
         
         For any items that do not match, an error will be reported in the report.  
         This indicates that maintenance needs to be performed on the LDAP entries for Merritt.
-  - path: show-folders
-    title: Show File System Folders
-    route: /ops/show-folders
   - path: ingest-folders
     title: Ingest Folders
     route: /ops/ingest-folders
@@ -615,6 +612,8 @@ items:
     items:
     - title: Ingest Folders
       route: /ops/ingest-folders/list
+    - title: Show All Folders
+      route: /ops/show-folders/list
     - title: Cleanup Ingest Folders
       route: /ops/ingest-folders/cleanup
       confmsg: This will cleanup ingest batches older than 30 days, RecycleBin items older than 3 days and ZK snapshots older than 3 days.
