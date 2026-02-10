@@ -275,14 +275,14 @@ module UC3
         data = if File.directory?("#{dir}/#{folder}")
                  if folder == '..'
                    {
-                     name: { value: '..', href: "/ops/ingest-folders/list?path=#{File.dirname(path)}" },
+                     name: { value: '..', href: "/ops/show-folders/list?path=#{File.dirname(dir)}" },
                      created: '',
                      size: '',
                      actions: []
                    }
                  else
                    {
-                     name: { value: folder, href: "/ops/ingest-folders/list?path=#{path}/#{folder}" },
+                     name: { value: folder, href: "/ops/show-folders/list?path=#{dir}/#{folder}" },
                      created: date_format(File.ctime("#{dir}/#{folder}")),
                      size: '',
                      actions: []
