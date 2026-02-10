@@ -604,6 +604,9 @@ items:
         
         For any items that do not match, an error will be reported in the report.  
         This indicates that maintenance needs to be performed on the LDAP entries for Merritt.
+  - path: show-folders
+    title: Show File System Folders
+    route: /ops/show-folders
   - path: ingest-folders
     title: Ingest Folders
     route: /ops/ingest-folders

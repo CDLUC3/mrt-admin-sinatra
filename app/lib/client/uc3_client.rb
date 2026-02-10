@@ -241,8 +241,8 @@ module UC3
   # browse ingest folder file system
   class FileSystemClient < UC3Client
     ROOTDIR = '/merritt-filesys'
-    DIR = "#{ROOTDIR}/ingest/queue"
-    
+    DIR = "#{ROOTDIR}/ingest/queue".freeze
+
     def initialize
       `mkdir -p ${ROOTDIR}/ingest/queue`
       `mkdir -p ${ROOTDIR}/uploads`
@@ -250,10 +250,10 @@ module UC3
       `mkdir -p ${ROOTDIR}/zk-snapshots`
     end
 
-    def ingest_folders(route, params)
+    def show_folders(root, route, params)
       path = params.fetch('path', '')
       path = '' if path =~ /^\.\./
-      dir = path.empty? ? DIR : "#{DIR}/#{path}"
+      dir = path.empty? ? root : "#{root}/#{path}"
 
       table = AdminUI::FilterTable.new(
         columns: [
@@ -433,6 +433,7 @@ module UC3
             /ops/zk/ingest/batches
             /ops/zk/nodes/orphan
             /ops/ingest-folders/list
+            /ops/show-folders/list
           ].each do |pattern|
             @consistency_checks << path if path =~ /#{pattern}/
           end

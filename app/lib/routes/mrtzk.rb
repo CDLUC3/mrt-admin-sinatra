@@ -276,10 +276,17 @@ module Sinatra
         redirect '/ops/zk/access/jobs'
       end
 
+      app.get '/ops/show-folders/list' do
+        adminui_show_table(
+          AdminUI::Context.new(request.path, request.params),
+          UC3::FileSystemClient.client.show_folders(UC3::FileSystemClient::ROOTDIR, request.path, request.params)
+        )
+      end
+
       app.get '/ops/ingest-folders/list' do
         adminui_show_table(
           AdminUI::Context.new(request.path, request.params),
-          UC3::FileSystemClient.client.ingest_folders(request.path, request.params)
+          UC3::FileSystemClient.client.show_folders(UC3::FileSystemClient::DIR, request.path, request.params)
         )
       end
 
