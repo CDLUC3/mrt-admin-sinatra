@@ -244,6 +244,7 @@ module UC3
     DIR = "#{ROOTDIR}/ingest/queue".freeze
 
     def initialize
+      super
       `mkdir -p ${ROOTDIR}/ingest/queue`
       `mkdir -p ${ROOTDIR}/uploads`
       `mkdir -p ${ROOTDIR}/assemblies`
