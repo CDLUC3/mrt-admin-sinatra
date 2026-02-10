@@ -241,14 +241,14 @@ module UC3
   # browse ingest folder file system
   class FileSystemClient < UC3Client
     ROOTDIR = '/merritt-filesys'
-    DIR = "#{ROOTDIR}/ingest/queue".freeze
+    DIR = "#{FileSystemClient::ROOTDIR}/ingest/queue".freeze
 
     def initialize
       super
-      `mkdir -p #{ROOTDIR}/ingest/queue`
-      `mkdir -p #{ROOTDIR}/uploads`
-      `mkdir -p #{ROOTDIR}/assemblies`
-      `mkdir -p #{ROOTDIR}/zk-snapshots`
+      `mkdir -p #{FileSystemClient::ROOTDIR}/ingest/queue`
+      `mkdir -p #{FileSystemClient::ROOTDIR}/uploads`
+      `mkdir -p #{FileSystemClient::ROOTDIR}/assemblies`
+      `mkdir -p #{FileSystemClient::ROOTDIR}/zk-snapshots`
     end
 
     def show_folders(root, route, params)
@@ -324,11 +324,11 @@ module UC3
     end
 
     def cleanup_ingest_folders
-      `find #{DIR} -maxdepth 1  -name "bid-*" -mtime +30 | xargs rm -rf`
-      `find #{DIR}/FAILED -maxdepth 1  -name "bid-*" -mtime +30 | xargs rm -rf`
-      `find #{DIR}/RecycleBin -maxdepth 1  -name "jid-*" -mtime +3 | xargs rm -rf`
+      `find #{FileSystemClient::DIR} -maxdepth 1  -name "bid-*" -mtime +30 | xargs rm -rf`
+      `find #{FileSystemClient::DIR}/FAILED -maxdepth 1  -name "bid-*" -mtime +30 | xargs rm -rf`
+      `find #{FileSystemClient::DIR}/RecycleBin -maxdepth 1  -name "jid-*" -mtime +3 | xargs rm -rf`
       name = '-name "latest_snapshot.#{UC3::UC3Client.stack_name}.20*"'
-      `find #{ROOTDIR}/zk-snapshots -maxdepth 1 #{name} -mtime +3 | xargs rm -rf`
+      `find #{FileSystemClient::ROOTDIR}/zk-snapshots -maxdepth 1 #{name} -mtime +3 | xargs rm -rf`
     end
   end
 
