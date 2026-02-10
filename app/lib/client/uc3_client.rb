@@ -254,7 +254,7 @@ module UC3
     def show_folders(root, route, params)
       path = params.fetch('path', '')
       path = '' if path =~ /^\.\./
-      dir = path.empty? ? root : "#{root}/#{path}"
+      dir = path.empty? ? root : path
 
       table = AdminUI::FilterTable.new(
         columns: [
