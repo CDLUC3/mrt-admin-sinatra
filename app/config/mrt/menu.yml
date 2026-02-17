@@ -812,6 +812,19 @@ items:
         - title: 20MB (30 days)
           disable: ecs-dev, docker, ecs-ephemeral
           route: /ops/metrics/benchmark-retrieval/20_mb_random.dat?offset_days=30&period_min=360
+      - path: 90day
+        title: 90 days, 24 hours
+        breadcrumb: true
+        items:
+        - title: README (90 days)
+          disable: ecs-prd
+          route: /ops/metrics/benchmark-retrieval/README.md?offset_days=90&period_min=1440
+        - title: 100MB (90 days)
+          disable: ecs-dev, docker, ecs-ephemeral
+          route: /ops/metrics/benchmark-retrieval/100_mb_random.dat?offset_days=90&period_min=1440
+        - title: 20MB (90 days)
+          disable: ecs-dev, docker, ecs-ephemeral
+          route: /ops/metrics/benchmark-retrieval/20_mb_random.dat?offset_days=90&period_min=1440
   - title: Delete List Review
     route: /ops/inventory/delete-lists
     disable: ecs-dbsnapshot
