@@ -1233,6 +1233,11 @@ items:
           route: /infra/ecs/tasks/launch/mrt-integ-tests/runEndToEndTests
           confmsg: This will initiate a task that runs End to End tests
           method: post
+        - title: With Ingest (Alt URL)
+          route: /infra/ecs/tasks/launch/mrt-integ-tests/runEndToEndTestsAlt
+          confmsg: This will initiate a task that runs End to End tests
+          disable: default, docker, ecs-ephemeral, ecs-dbsnapshot, ecs-dev
+          method: post
         - title: Without Ingest
           route: /infra/ecs/tasks/launch/mrt-integ-tests/runEndToEndTestsNoIngest
           confmsg: This will initiate a task that runs End to End tests
