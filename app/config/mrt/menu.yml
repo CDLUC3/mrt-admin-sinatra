@@ -1214,6 +1214,11 @@ items:
           disable: default, docker, ecs-ephemeral, ecs-dbsnapshot
           confmsg: This will run a job in the merritt-ops container 
           method: post
+        - title: Run Locust Benchmarks for UI (Alt URL)
+          route: /infra/ecs/tasks/launch/merritt-ops/runLocustBenchmarksUIAlt
+          disable: default, docker, ecs-ephemeral, ecs-dbsnapshot, ecs-dev
+          confmsg: This will run a job in the merritt-ops container 
+          method: post
         - title: Purge Test Collections
           route: /infra/ecs/tasks/launch/merritt-ops/runPurgeCollections
           disable: default, docker, ecs-ephemeral, ecs-dbsnapshot, ecs-prd
