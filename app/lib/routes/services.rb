@@ -564,7 +564,7 @@ module Sinatra
         metrics.merge!({
           number_of_active_replications: -1,
           number_of_bytes_to_be_replicated: -1,
-          oldest_audit_in_days: run_query_get_val('/queries/misc/oldest-audit-in-days')
+          oldest_audit_in_days: UC3Query::QueryClient.client.run_query_get_val('/queries/misc/oldest-audit-in-days')
         })
 
         metrics.to_json
