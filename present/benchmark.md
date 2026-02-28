@@ -133,7 +133,16 @@ aws cloudwatch put-metric-data --region us-west-2 --namespace merritt \
 
 ## Viewing the Data in CloudWatch in the AWS Console
 
-<img width="825" height="320" alt="image" src="https://github.com/user-attachments/assets/e8dc6c76-b2f2-4674-b18b-b93b0169d7de" />
+Choose Access method across providers
+
+<img width="916" height="446" alt="image" src="https://github.com/user-attachments/assets/aadb90cf-f9d6-4956-8359-401bb1e88a5c" />
+
+<img width="1317" height="203" alt="image" src="https://github.com/user-attachments/assets/facc372d-025f-41f5-9e70-4b71b350a379" />
+
+Note how the graph changes when the focus is on fixity calculation
+
+<img width="1318" height="175" alt="image" src="https://github.com/user-attachments/assets/49c79db0-ba4d-442a-aa8f-146917203bd3" />
+
 
 ## Notes About CloudWatch Metrics
 
