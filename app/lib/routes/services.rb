@@ -561,6 +561,12 @@ module Sinatra
         content_type :json
 
         metrics = UC3Queue::ZKClient.client.metrics
+        metrics.merge!({
+          number_of_pending_assemblies: -1,
+          number_of_active_replications: -1,
+          number_of_bytes_to_be_replicated: -1,
+          oldest_audit_in_days: -1
+        })
 
         metrics.to_json
       end
@@ -572,21 +578,6 @@ module Sinatra
         mysql: check_mysql.fetch(:state, ''),
         zk: check_zk.fetch(:state, ''),
         ldap: check_ldap.fetch(:state, '')
-      }
-    end
-
-    def admin_metrics
-      ZKCli
-      {
-        number_of_pending_batches: -1,
-        number_of_failed_batches: -1,
-        number_of_pending_jobs: -1,
-        number_of_failed_jobs: -1,
-        bytes_in_process: -1,
-        number_of_pending_assemblies: -1,
-        number_of_active_replications: -1,
-        number_of_bytes_to_be_replicated: -1,
-        oldest_audit_in_days: -1
       }
     end
 
