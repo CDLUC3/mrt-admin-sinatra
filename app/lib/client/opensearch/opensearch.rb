@@ -60,7 +60,7 @@ module UC3OpenSearch
             }
           },
           sort: [
-            { '@timestamp': { order: 'asc' } }
+            { '@timestamp': { order: 'desc' } }
           ],
           size: 1000
         }
@@ -104,7 +104,7 @@ module UC3OpenSearch
       results = {}
       osres.fetch('hits', {}).fetch('hits', []).each do |hit|
         res = make_result(hit, link_label: true)
-        results[res[:label]] = res
+        results[res[:label]] = res unless results.key?(res[:label])
       end
 
       table = UC3OpenSearch::OSClient.task_table
@@ -131,7 +131,7 @@ module UC3OpenSearch
           sort: [
             { '@timestamp': { order: 'desc' } }
           ],
-          size: 20
+          size: 50
         }
       )
     rescue StandardError => e
