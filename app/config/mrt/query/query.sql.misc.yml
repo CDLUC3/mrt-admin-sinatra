@@ -153,4 +153,5 @@ queries:
         status != 'processing'
         AND NOT verified IS NULL
       ORDER BY
-        verified LIMIT 1
+        verified 
+      LIMIT 1

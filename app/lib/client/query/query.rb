@@ -220,10 +220,11 @@ module UC3Query
       rs.map(&:to_h)
     end
 
-    def run_query_get_val(path, urlparams = {}, defval: 0)
-      val = defval
+    def run_query_get_val(path, colname, urlparams = {}, defval: 0)
+      val = nil
       run_query(path, urlparams).each do |row|
-        val = row[0]
+        val = row.fetch(colname, defval)
+        break if val
       end
       val
     end
