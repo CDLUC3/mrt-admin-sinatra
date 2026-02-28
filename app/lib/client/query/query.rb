@@ -220,6 +220,14 @@ module UC3Query
       rs.map(&:to_h)
     end
 
+    def run_query_get_val(path, urlparams = {}, defval: 0)
+      val = defval
+      run_query(path, urlparams).each do |row|
+        val = row[0]
+      end
+      val
+    end
+
     def query(path, urlparams, sqlsym: :sql, dispcols: [], resolver: UC3Query::QueryResolvers.method(:default_resolver))
       query = @queries.fetch(path.to_sym, {})
 

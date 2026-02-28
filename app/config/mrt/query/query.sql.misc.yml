@@ -142,3 +142,15 @@ queries:
         (select max(audit_date) from billing.audits_processed) as audits_processed_date,
         (select max(ingest_date) from billing.ingests_completed) as ingests_completed_date,
         (select max(as_of_date) from billing.daily_node_counts) as daily_node_counts_date
+  /queries/misc/oldest-audit-in-days:
+    non_report: true
+    sql:
+      SELECT
+        DATEDIFF(CURDATE(), DATE(verified)) AS days_since_today
+      FROM
+        inv.inv_audits
+      WHERE
+        status != 'processing'
+        AND NOT verified IS NULL
+      ORDER BY
+        verified LIMIT 1

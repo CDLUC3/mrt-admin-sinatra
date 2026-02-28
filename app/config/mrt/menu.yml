@@ -46,6 +46,10 @@ items:
       route: /merritt_manifest
     - title: Help
       route: /help
+  - title: Admin Tool State
+    route: /state
+  - title: Admin Tool Metrics
+    route: /metrics
   - title: Merritt Troubleshooting
     route: https://github.com/CDLUC3/mrt-doc-private/blob/main/docs/system-recovery/README.md
     external: true
