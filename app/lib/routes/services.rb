@@ -561,9 +561,12 @@ module Sinatra
         content_type :json
 
         metrics = UC3Queue::ZKClient.client.metrics
-        rephash = UC3Query::QueryClient.client.run_query(
-          '/queries/misc/oldest-audit-in-days'
-        )
+        rephash = {}
+        UC3Query::QueryClient.client.run_query(
+          '/queries/misc/outstanding-replciation'
+        ).first do |row|
+          rephash = row
+        end
         metrics.merge!({
           number_of_active_replications: rephash.fetch('object_count', 0),
           number_of_bytes_to_be_replicated: rephash.fetch('bytes_to_replicate', 0),
