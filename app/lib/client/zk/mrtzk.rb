@@ -58,6 +58,7 @@ module UC3Queue
       ZK.open(@zkconn, timeout: 2) do |zk|
         metrics.merge!(MerrittZK::Job.metrics(zk))
         metrics.merge!(MerrittZK::Access.metrics(zk))
+        metrics.merge!(MerrittZK::Batch.metrics(zk))
       end
       metrics
     end
