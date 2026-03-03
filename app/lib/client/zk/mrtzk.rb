@@ -76,24 +76,24 @@ module UC3Queue
           completed = zkcount(zk, "/batches/#{bid}/states/batch-completed")
           failed = zkcount(zk, "/batches/#{bid}/states/batch-failed")
           processing = zkcount(zk, "/batches/#{bid}/states/batch-processing")
-          num_jobs_processing += processing
-          num_jobs_failed += failed
-          num_jobs_completed += completed
+          metrics[:num_jobs_processing] += processing
+          metrics[:num_jobs_failed] += failed
+          metrics[:num_jobs_completed] += completed
           if failed > 0
-            num_batches_failed += 1
+            metrics[:num_batches_failed] += 1
           elsif processing > 0
-            num_batches_processing += 1
+            metrics[:num_batches_processing] += 1
           elsif completed > 0
-            num_batches_completed += 1
+            metrics[:num_batches_completed] += 1
           end
           zk.children("/batches/#{bid}/states/batch-processing").sort.each do |jid|
             if zk.exists?("/jobs/#{jid}/space-needed")
-              bytes_in_process += zk.get("/jobs/#{jid}/space-needed")[0].to_i
+              metrics[:bytes_in_process] += zk.get("/jobs/#{jid}/space-needed")[0].to_i
             end
           end
         end
       end
-      metrics
+      metrics.merge!(MerrittZK::Access.metrics(zk))
     end
 
     def metrics2
