@@ -92,8 +92,9 @@ module UC3Queue
             end
           end
         end
+        metrics.merge!(MerrittZK::Access.metrics(zk))
       end
-      metrics.merge!(MerrittZK::Access.metrics(zk))
+      metrics
     end
 
     def metrics2
