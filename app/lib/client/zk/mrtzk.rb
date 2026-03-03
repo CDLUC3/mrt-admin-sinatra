@@ -73,9 +73,9 @@ module UC3Queue
       }
       ZK.open(@zkconn, timeout: 2) do |zk|
         zk.children('/batches').sort.each do |bid|
-          completed = zkcount("/batches/#{bid}/states/batch-completed")
-          failed = zkcount("/batches/#{bid}/states/batch-failed")
-          processing = zkcount("/batches/#{bid}/states/batch-processing")
+          completed = zkcount(zk, "/batches/#{bid}/states/batch-completed")
+          failed = zkcount(zk, "/batches/#{bid}/states/batch-failed")
+          processing = zkcount(zk, "/batches/#{bid}/states/batch-processing")
           num_jobs_processing += processing
           num_jobs_failed += failed
           num_jobs_completed += completed
