@@ -86,9 +86,11 @@ module UC3Queue
           elsif completed > 0
             metrics[:num_batches_completed] += 1
           end
-          zk.children("/batches/#{bid}/states/batch-processing").sort.each do |jid|
-            if zk.exists?("/jobs/#{jid}/space-needed")
-              metrics[:bytes_in_process] += zk.get("/jobs/#{jid}/space-needed")[0].to_i
+          if zk.exists?("/batches/#{bid}/states/batch-processing")
+            zk.children("/batches/#{bid}/states/batch-processing").sort.each do |jid|
+              if zk.exists?("/jobs/#{jid}/space-needed")
+                metrics[:bytes_in_process] += zk.get("/jobs/#{jid}/space-needed")[0].to_i
+              end
             end
           end
         end
