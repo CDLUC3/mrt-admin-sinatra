@@ -53,7 +53,50 @@ module UC3Queue
       end
     end
 
+    def zkcount(zk, path)
+      return 0 unless zk.exists?(path)
+      zk.children(path).length
+    end
+
     def metrics
+      metrics = {
+        num_jobs_processing: 0,
+        num_jobs_completed: 0,
+        num_jobs_failed: 0,
+        bytes_in_process: 0,
+        num_assemblies_completed: 0,
+        num_assemblies_failed: 0,
+        num_assemblies_processing: 0,
+        num_batches_processing: 0,
+        num_batches_completed: 0,
+        num_batches_failed: 0
+      }
+      ZK.open(@zkconn, timeout: 2) do |zk|
+        zk.children('/batches').sort.each do |bid|
+          completed = zkcount("/batches/#{bid}/states/batch-completed")
+          failed = zkcount("/batches/#{bid}/states/batch-failed")
+          processing = zkcount("/batches/#{bid}/states/batch-processing")
+          num_jobs_processing += processing
+          num_jobs_failed += failed
+          num_jobs_completed += completed
+          if failed > 0
+            num_batches_failed += 1
+          elsif processing > 0
+            num_batches_processing += 1
+          elsif completed > 0
+            num_batches_completed += 1
+          end
+          zk.children("/batches/#{bid}/states/batch-processing").sort.each do |jid|
+            if zk.exists?("/jobs/#{jid}/space-needed")
+              bytes_in_process += zk.get("/jobs/#{jid}/space-needed")[0].to_i
+            end
+          end
+        end
+      end
+      metrics
+    end
+
+    def metrics2
       metrics = {}
       ZK.open(@zkconn, timeout: 2) do |zk|
         metrics.merge!(MerrittZK::Job.metrics(zk))

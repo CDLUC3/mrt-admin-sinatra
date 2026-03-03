@@ -276,6 +276,17 @@ module UC3Resources
       table
     end
 
+
+    def retag_and_redeploy_service(service)
+      return unless enabled
+
+      @client.update_service(
+        cluster: UC3::UC3Client.cluster_name,
+        service: service,
+        force_new_deployment: true
+      ).to_json
+    end
+
     def redeploy_service(service)
       return unless enabled
 

@@ -868,6 +868,11 @@ items:
         disable: default, docker
         confmsg: This will re-deploy the UI service in ECS.
         method: post
+      - title: Retag and Redeploy UI
+        route: /infra/ecs/retag-redeploy/ui
+        disable: default, docker
+        confmsg: This will re-deploy the UI service in ECS.
+        method: post
       - title: UI Logs
         route: /ops/cloudwatch/logs/ui
       - title: UI Errors
@@ -1098,6 +1103,11 @@ items:
       items:
       - title: Redeploy Admin Tool
         route: /infra/ecs/redeploy/admintool
+        disable: default, docker
+        confmsg: This will re-deploy the Admin Tool service in ECS.
+        method: post
+      - title: Retag and Redeploy Admin Tool
+        route: /infra/ecs/retag-redeploy/admintool
         disable: default, docker
         confmsg: This will re-deploy the Admin Tool service in ECS.
         method: post

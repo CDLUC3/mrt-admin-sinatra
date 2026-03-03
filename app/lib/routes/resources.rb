@@ -82,6 +82,11 @@ module Sinatra
         redirect '/infra/ecs/services/state'
       end
 
+      app.post '/infra/ecs/retag-redeploy/*' do |service|
+        UC3Resources::ServicesClient.new.redeploy_service(service)
+        redirect '/infra/ecs/services/state'
+      end
+
       app.post '/infra/ecs/deploy/*' do |service|
         UC3Resources::ServicesClient.new.deploy_service(service)
         redirect '/infra/ecs/services/state'
