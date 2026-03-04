@@ -53,9 +53,10 @@ module UC3Queue
       end
     end
 
-    def zkcount(zk, path)
-      return 0 unless zk.exists?(path)
-      zk.children(path).length
+    def zkcount(zkcli, path)
+      return 0 unless zkcli.exists?(path)
+
+      zkcli.children(path).length
     end
 
     def metrics
@@ -79,18 +80,18 @@ module UC3Queue
           metrics[:num_jobs_processing] += processing
           metrics[:num_jobs_failed] += failed
           metrics[:num_jobs_completed] += completed
-          if failed > 0
+          if failed.positive?
             metrics[:num_batches_failed] += 1
-          elsif processing > 0
+          elsif processing.positive?
             metrics[:num_batches_processing] += 1
-          elsif completed > 0
+          elsif completed.positive?
             metrics[:num_batches_completed] += 1
           end
-          if zk.exists?("/batches/#{bid}/states/batch-processing")
-            zk.children("/batches/#{bid}/states/batch-processing").sort.each do |jid|
-              if zk.exists?("/jobs/#{jid}/space-needed")
-                metrics[:bytes_in_process] += zk.get("/jobs/#{jid}/space-needed")[0].to_i
-              end
+          next unless zk.exists?("/batches/#{bid}/states/batch-processing")
+
+          zk.children("/batches/#{bid}/states/batch-processing").sort.each do |jid|
+            if zk.exists?("/jobs/#{jid}/space-needed")
+              metrics[:bytes_in_process] += zk.get("/jobs/#{jid}/space-needed")[0].to_i
             end
           end
         end

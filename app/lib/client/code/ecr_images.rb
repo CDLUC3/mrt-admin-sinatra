@@ -156,19 +156,38 @@ module UC3Code
     end
 
     def retag_image(tag, newtag, image)
-      resp = @client.batch_get_image(
-        repository_name: image,
-        image_ids: [
-          {
-            image_tag: tag
-          }
-        ]
-      )
-      @client.put_image(
-        repository_name: image,
-        image_manifest: resp.images[0].image_manifest,
-        image_tag: newtag
-      )
+      ecracct = ENV.fetch("ECR_ACCOUNT", "")
+      if ecracct.empty?
+        resp = @client.batch_get_image(
+          repository_name: image,
+          image_ids: [
+            {
+              image_tag: tag
+            }
+          ]
+        )
+        @client.put_image(
+          repository_name: image,
+          image_manifest: resp.images[0].image_manifest,
+          image_tag: newtag
+        )
+      else
+        resp = @client.batch_get_image(
+          registry_id: ecracct,
+          repository_name: image,
+          image_ids: [
+            {
+              image_tag: tag
+            }
+          ]
+        )
+        @client.put_image(
+          registry_id: ecracct,
+          repository_name: image,
+          image_manifest: resp.images[0].image_manifest,
+          image_tag: newtag
+        )
+      end
     end
 
     def untag_image(tag, image)

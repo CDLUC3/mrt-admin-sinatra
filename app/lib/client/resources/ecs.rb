@@ -9,6 +9,7 @@ require_relative '../code/ecr_images'
 module UC3Resources
   # Query for repository images by tag
   class ServicesClient < UC3::UC3Client
+
     def self.client
       UC3::UC3Client.clients.fetch(self.class.to_s, ServicesClient.new)
     end
@@ -276,9 +277,19 @@ module UC3Resources
       table
     end
 
-
     def retag_and_redeploy_service(service)
       return unless enabled
+
+      repo = service == 'ui' ? 'mrt-dashboard' : "mrt-#{service}"
+
+      tag = UC3S3::ConfigObjectsClient.client.get_ecs_release_manifest
+        .fetch("ecs-tagmap", {})
+        .fetch(repo, {})
+        .fetch(UC3::UC3Client.stack_name, '')
+
+      unless tag.empty?
+        UC3Code::SourceCodeClient.client.retag_image(tag, UC3::UC3Client.stack_name, repo)
+      end
 
       @client.update_service(
         cluster: UC3::UC3Client.cluster_name,
