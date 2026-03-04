@@ -295,7 +295,7 @@ module AdminUI
         elsif col.idlist
           pre = col.prefix
           arr = v.split(',').map do |vv|
-            (pre.empty? ? vv : { value: vv, href: "#{pre}#{vv}", title: vv })
+            pre.empty? ? vv : { value: vv, href: "#{pre}#{vv}", title: vv }
           end
           v = arr
         elsif v.is_a?(Integer)

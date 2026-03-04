@@ -156,7 +156,7 @@ module UC3Code
     end
 
     def retag_image(tag, newtag, image)
-      ecracct = ENV.fetch("ECR_ACCOUNT", "")
+      ecracct = ENV.fetch('ECR_ACCOUNT', '')
       if ecracct.empty?
         resp = @client.batch_get_image(
           repository_name: image,

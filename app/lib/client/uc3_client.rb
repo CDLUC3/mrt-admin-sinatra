@@ -327,7 +327,7 @@ module UC3
       `find #{FileSystemClient::DIR} -maxdepth 1  -name "bid-*" -mtime +30 | xargs rm -rf`
       `find #{FileSystemClient::DIR}/FAILED -maxdepth 1  -name "bid-*" -mtime +30 | xargs rm -rf`
       `find #{FileSystemClient::DIR}/RecycleBin -maxdepth 1  -name "jid-*" -mtime +3 | xargs rm -rf`
-      name = '-name "latest_snapshot.#{UC3::UC3Client.stack_name}.20*"'
+      name = %(-name "latest_snapshot.#{UC3::UC3Client.stack_name}.20*")
       `find #{FileSystemClient::ROOTDIR}/zk-snapshots -maxdepth 1 #{name} -mtime +3 | xargs rm -rf`
     end
   end
