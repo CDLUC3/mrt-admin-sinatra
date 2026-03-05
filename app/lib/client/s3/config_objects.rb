@@ -317,6 +317,14 @@ module UC3S3
       tags.uniq
     end
 
+    def get_ecs_release_manifest_repo_map(repo)
+      get_ecs_release_manifest.fetch('ecs-tagmap', {}).fetch(repo, {})
+    end
+
+    def get_ecs_release_manifest_stack_tag(repo)
+      get_ecs_release_manifest_repo_map(repo).fetch(UC3::UC3Client.stack_name, '')
+    end
+
     def get_ec2_release_manifest_deploy_tags(reposhort)
       tags = []
       %w[prd stg].each do |env|

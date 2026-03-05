@@ -152,6 +152,12 @@ div#controls {
 span.val {
   display: block;
 }
+
+td.image span.val:nth-of-type(2), td.digest {
+  max-width: 130px;
+  display: inline-block;
+  color: green;
+}
 span.inline {
   display: inline;
 }
@@ -182,6 +188,7 @@ td.images span.val {
   display: list-item;
 }
 
+td.image, th.image,
 td.object_count, th.object_count,
 td.total_files, th.total_files,
 td.num_colls, th.num_colls,

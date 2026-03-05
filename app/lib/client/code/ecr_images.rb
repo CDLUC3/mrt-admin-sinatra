@@ -157,37 +157,23 @@ module UC3Code
 
     def retag_image(tag, newtag, image)
       ecracct = ENV.fetch('ECR_ACCOUNT', '')
-      if ecracct.empty?
-        resp = @client.batch_get_image(
-          repository_name: image,
-          image_ids: [
-            {
-              image_tag: tag
-            }
-          ]
-        )
-        @client.put_image(
-          repository_name: image,
-          image_manifest: resp.images[0].image_manifest,
-          image_tag: newtag
-        )
-      else
-        resp = @client.batch_get_image(
-          registry_id: ecracct,
-          repository_name: image,
-          image_ids: [
-            {
-              image_tag: tag
-            }
-          ]
-        )
-        @client.put_image(
-          registry_id: ecracct,
-          repository_name: image,
-          image_manifest: resp.images[0].image_manifest,
-          image_tag: newtag
-        )
-      end
+      options = {
+        repository_name: image,
+        image_ids: [
+          {
+            image_tag: tag
+          }
+        ]
+      }
+      options[:registry_id] = ecracct unless ecracct.empty?
+      resp = @client.batch_get_image(options)
+      options = {
+        repository_name: image,
+        image_manifest: resp.images[0].image_manifest,
+        image_tag: newtag
+      }
+      options[:registry_id] = ecracct unless ecracct.empty?
+      @client.put_image(options)
     end
 
     def untag_image(tag, image)
@@ -197,7 +183,9 @@ module UC3Code
     def get_image_tags_by_digest(image, tag, digest)
       arr = []
       return arr unless enabled
-      return arr unless image =~ /^(mrt|merritt)-(dashboard|ingest|store|inventory|audit|replic|admin-sinatra|ops|opswrite)$/
+      unless image =~ /^(mrt|merritt)-(dashboard|ingest|store|inventory|audit|replic|admin-sinatra|ops|opswrite)$/
+        return arr
+      end
 
       begin
         options = {
@@ -210,9 +198,8 @@ module UC3Code
         }
         options[:registry_id] = ENV.fetch('ECR_ACCOUNT', '') unless ENV.fetch('ECR_ACCOUNT', '').empty?
         resp = @client.describe_images(options)
-        if resp.image_details.nil?
-          return arr
-        end
+        return arr if resp.image_details.nil?
+
         resp.image_details.each do |img|
           next if img.image_tags.nil?
 

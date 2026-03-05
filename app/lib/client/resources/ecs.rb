@@ -77,7 +77,8 @@ module UC3Resources
               created: date_format(dep.created_at, convert_timezone: true),
               updated: date_format(dep.updated_at, convert_timezone: true),
               image: [image, digest],
-              tags: @ecr_client.get_image_tags_by_digest(image_name, image_tag, digest)
+              tags: @ecr_client.get_image_tags_by_digest(image_name, image_tag, digest),
+              manifest_tag: UC3S3::ConfigObjectsClient.client.get_ecs_release_manifest_stack_tag(image_name)
             }
           end
         end
@@ -95,10 +96,10 @@ module UC3Resources
           AdminUI::Column.new(:desired_count, header: 'Desired'),
           AdminUI::Column.new(:running_count, header: 'Running'),
           AdminUI::Column.new(:pending_count, header: 'Pending'),
-          AdminUI::Column.new(:created, header: 'Created'),
           AdminUI::Column.new(:updated, header: 'Updated'),
           AdminUI::Column.new(:image, header: 'Image'),
-          AdminUI::Column.new(:tags, header: 'Matching Tags')
+          AdminUI::Column.new(:tags, header: 'Matching Tags'),
+          AdminUI::Column.new(:manifest_tag, header: 'Manifest Tag')
         ]
       )
       return table unless enabled
@@ -281,10 +282,7 @@ module UC3Resources
 
       repo = service == 'ui' ? 'mrt-dashboard' : "mrt-#{service}"
 
-      tag = UC3S3::ConfigObjectsClient.client.get_ecs_release_manifest
-        .fetch('ecs-tagmap', {})
-        .fetch(repo, {})
-        .fetch(UC3::UC3Client.stack_name, '')
+      tag = UC3S3::ConfigObjectsClient.client.get_ecs_release_manifest_stack_tag(repo)
 
       UC3Code::SourceCodeClient.client.retag_image(tag, UC3::UC3Client.stack_name, repo) unless tag.empty?
 
