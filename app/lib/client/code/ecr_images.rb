@@ -200,26 +200,18 @@ module UC3Code
       return arr unless image =~ /^(mrt|merritt)-(dashboard|ingest|store|inventory|audit|replic|admin-sinatra|ops|opswrite)$/
 
       begin
-        ecracct = ENV.fetch('ECR_ACCOUNT', '')
-        if ecracct.empty?
-          resp = @client.describe_images(
-            repository_name: image,
-            image_ids: [
-              {
-                image_digest: digest
-              }
-            ]
-          )
-        else
-          resp = @client.describe_images(
-            registry_id: ecracct,
-            repository_name: image,
-            image_ids: [
-              {
-                image_digest: digest
-              }
-            ]
-          )
+        options = {
+          repository_name: image,
+          image_ids: [
+            {
+              image_digest: digest
+            }
+          ]
+        }
+        options[:registry_id] = ENV.fetch('ECR_ACCOUNT', '') unless ENV.fetch('ECR_ACCOUNT', '').empty?
+        resp = @client.describe_images(options)
+        if resp.image_details.nil?
+          return arr
         end
         resp.image_details.each do |img|
           next if img.image_tags.nil?
