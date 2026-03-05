@@ -611,7 +611,6 @@ items:
   - path: show-folders
     title: File System
     route: /ops/show-folders
-    disable: ecs-prd
     breadcrumb: true
     items:
     - title: Ingest Folders
