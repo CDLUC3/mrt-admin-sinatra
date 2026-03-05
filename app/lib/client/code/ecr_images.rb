@@ -202,7 +202,7 @@ module UC3Code
       end
       return tag if date.nil?
 
-      { title: "#{tag}* (#{date_format(date)})", value: tag }
+      { title: "#{tag} (#{date_format(date)})", value: "#{tag}*" }
     end
 
     def get_image_tags_by_digest(image, tag, digest)

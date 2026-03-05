@@ -20,6 +20,7 @@ module UC3Query
     end
 
     def initialize
+      throw 'QueryClient is disabled' unless ENV.fetch('SKIP_DATABASE', '').empty?
       @columndefs = {}
       @fragments = {}
       @queries = {}
