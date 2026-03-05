@@ -197,20 +197,30 @@ module UC3Code
     def get_image_tags_by_digest(image, tag, digest)
       arr = []
       return arr unless enabled
-      return arr unless image =~ /^mrt-(dashboard|ingest|store|inventory|audit|replic|admin-sinatra)$/
+      return arr unless image =~ /^(mrt|merritt)-(dashboard|ingest|store|inventory|audit|replic|admin-sinatra|ops|opswrite)$/
 
       begin
-        resp = @client.describe_images(
-          repository_name: image,
-          image_ids: [
-            {
-              image_digest: digest
-            }
-          ],
-          filter: {
-            tag_status: 'TAGGED'
-          }
-        )
+        ecracct = ENV.fetch('ECR_ACCOUNT', '')
+        if ecracct.empty?
+          resp = @client.describe_images(
+            repository_name: image,
+            image_ids: [
+              {
+                image_digest: digest
+              }
+            ]
+          )
+        else
+          resp = @client.describe_images(
+            registry_id: ecracct,
+            repository_name: image,
+            image_ids: [
+              {
+                image_digest: digest
+              }
+            ]
+          )
+        end
         resp.image_details.each do |img|
           next if img.image_tags.nil?
 
