@@ -78,7 +78,7 @@ module UC3Resources
               updated: date_format(dep.updated_at, convert_timezone: true),
               image: [image, digest],
               tags: @ecr_client.get_image_tags_by_digest(image_name, image_tag, digest),
-              manifest_tag: UC3S3::ConfigObjectsClient.client.get_ecs_release_manifest_stack_tag(image_name)
+              manifest_tag: @ecr_client.get_manifest_tag(image_name)
             }
           end
         end
@@ -280,7 +280,14 @@ module UC3Resources
     def retag_and_redeploy_service(service)
       return unless enabled
 
-      repo = service == 'ui' ? 'mrt-dashboard' : "mrt-#{service}"
+      repo = case service
+             when 'ui'
+               'mrt-dashboard'
+             when 'admintool'
+               'mrt-admin-sinatra'
+             else
+               "mrt-#{service}"
+             end
 
       tag = UC3S3::ConfigObjectsClient.client.get_ecs_release_manifest_stack_tag(repo)
 

@@ -180,6 +180,31 @@ module UC3Code
       delete_image(tag, image)
     end
 
+    def get_manifest_tag(image)
+      tag = UC3S3::ConfigObjectsClient.client.get_ecs_release_manifest_stack_tag(image)
+      return '' if tag.empty?
+
+      options = {
+        repository_name: image,
+        image_ids: [
+          {
+            image_tag: tag
+          }
+        ]
+      }
+      options[:registry_id] = ENV.fetch('ECR_ACCOUNT', '') unless ENV.fetch('ECR_ACCOUNT', '').empty?
+      resp = @client.describe_images(options)
+      return '' if resp.image_details.nil?
+
+      date = ''
+      resp.image_details.each do |img|
+        date = img.image_pushed_at if img.image_pushed_at
+      end
+      return tag if date.nil?
+
+      { title: "#{tag}* (#{date_format(date)})", value: tag }
+    end
+
     def get_image_tags_by_digest(image, tag, digest)
       arr = []
       return arr unless enabled

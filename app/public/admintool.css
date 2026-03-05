@@ -153,11 +153,16 @@ span.val {
   display: block;
 }
 
-td.image span.val:nth-of-type(2), td.digest {
+td.image span.val:nth-of-type(2) {
   max-width: 130px;
   display: inline-block;
   color: green;
 }
+td.digest {
+  max-width: 100px;
+  color: green;
+}
+
 span.inline {
   display: inline;
 }
