@@ -164,4 +164,6 @@ queries:
       from 
         inv.inv_nodes_inv_objects 
       where 
-        completion_status='partial'
+        role = 'primary'
+      and
+        completion_status in ('partial', 'unknown')
