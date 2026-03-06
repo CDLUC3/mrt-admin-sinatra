@@ -64,7 +64,7 @@ module UC3Queue
         num_jobs_processing: 0,
         num_jobs_completed: 0,
         num_jobs_failed: 0,
-        bytes_in_process: 0,
+        gb_in_process: 0.0,
         num_assemblies_completed: 0,
         num_assemblies_failed: 0,
         num_assemblies_processing: 0,
