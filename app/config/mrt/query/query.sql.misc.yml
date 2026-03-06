@@ -164,6 +164,4 @@ queries:
       from 
         inv.inv_nodes_inv_objects 
       where 
-        role='primary' 
-      and 
-        replicated is null
+        completion_status='partial'
