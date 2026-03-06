@@ -565,7 +565,8 @@ module Sinatra
         repbytes = 0
         UC3Query::QueryClient.client.run_query(
           '/queries/misc/outstanding-replication'
-        ).first do |row|
+        ).each do |row|
+          # only one row is actually expected here
           repcount = row.fetch('object_count', 0)
           repbytes = row.fetch('bytes_to_replicate', 0)
         end
