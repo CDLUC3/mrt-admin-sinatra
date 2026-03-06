@@ -90,8 +90,8 @@ module UC3Queue
           next unless zk.exists?("/batches/#{bid}/states/batch-processing")
 
           zk.children("/batches/#{bid}/states/batch-processing").sort.each do |jid|
-            if zk.exists?("/jobs/#{jid}/space-needed")
-              metrics[:bytes_in_process] += zk.get("/jobs/#{jid}/space-needed")[0].to_i
+            if zk.exists?("/jobs/#{jid}/space_needed")
+              metrics[:bytes_in_process] += zk.get("/jobs/#{jid}/space_needed")[0].to_i
             end
           end
         end
