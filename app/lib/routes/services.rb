@@ -572,7 +572,7 @@ module Sinatra
         end
         metrics.merge!({
           number_of_active_replications: repcount,
-          gb_to_be_replicated: repbytes / 10_000_000 / 100.0,
+          gb_to_be_replicated: (repbytes / 10_000_000).to_i / 100.0,
           oldest_audit_in_days: UC3Query::QueryClient.client.run_query_get_val(
             '/queries/misc/oldest-audit-in-days', 'days_since_today'
           )
