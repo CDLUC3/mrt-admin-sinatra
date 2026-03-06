@@ -155,7 +155,7 @@ queries:
       ORDER BY
         verified 
       LIMIT 1
-  /queries/misc/outstanding-replciation:
+  /queries/misc/outstanding-replication:
     non_report: true
     sql:
       select 
