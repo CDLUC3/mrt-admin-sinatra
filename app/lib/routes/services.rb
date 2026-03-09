@@ -91,11 +91,17 @@ module Sinatra
       end
 
       app.post '/json/inventory/start' do
-        java_service_send_stop_start(inventory_host, 'inventory', START_ENDPOINT)
+        resp = java_service_send_stop_start('inventory', START_ENDPOINT)
+        return post_url("#{inventory_host}/#{START_ENDPOINT}") if resp.empty?
+
+        resp.to_json
       end
 
       app.post '/json/inventory/stop' do
-        java_service_send_stop_start(inventory_host, 'inventory', STOP_ENDPOINT)
+        resp = java_service_send_stop_start('inventory', STOP_ENDPOINT)
+        return post_url("#{inventory_host}/#{STOP_ENDPOINT}") if resp.empty?
+
+        resp.to_json
       end
 
       app.post '/json/inventory/admin-init' do
@@ -119,11 +125,17 @@ module Sinatra
       end
 
       app.post '/json/audit/start' do
-        java_service_send_stop_start(audit_host, 'audit', START_ENDPOINT)
+        resp = java_service_send_stop_start('audit', START_ENDPOINT)
+        return post_url("#{audit_host}/#{START_ENDPOINT}") if resp.empty?
+
+        resp.to_json
       end
 
       app.post '/json/audit/stop' do
-        java_service_send_stop_start(audit_host, 'audit', STOP_ENDPOINT)
+        resp = java_service_send_stop_start('audit', STOP_ENDPOINT)
+        return post_url("#{audit_host}/#{STOP_ENDPOINT}") if resp.empty?
+
+        resp.to_json
       end
 
       app.get '/json/replic/state' do
@@ -136,11 +148,17 @@ module Sinatra
       end
 
       app.post '/json/replic/start' do
-        java_service_send_stop_start(replic_host, 'replic', START_ENDPOINT)
+        resp = java_service_send_stop_start('replic', START_ENDPOINT)
+        return post_url("#{replic_host}/#{START_ENDPOINT}") if resp.empty?
+
+        resp.to_json
       end
 
       app.post '/json/replic/pause' do
-        java_service_send_stop_start(replic_host, 'replic', 'service/pause?t=json')
+        resp = java_service_send_stop_start('replic', STOP_ENDPOINT)
+        return post_url("#{replic_host}/#{STOP_ENDPOINT}") if resp.empty?
+
+        resp.to_json
       end
 
       app.get '/json/replic/nodes' do
@@ -579,7 +597,7 @@ module Sinatra
       end
     end
 
-    def java_service_send_stop_start(host, service, endpoint)
+    def java_service_send_stop_start(service, endpoint)
       resp = []
       Aws::ServiceDiscovery::Client.new(region: UC3::UC3Client.region)
         .discover_instances(
@@ -590,11 +608,9 @@ module Sinatra
           hostip = instance.attributes.fetch('AWS_INSTANCE_IPV4', '')
           resp << JSON.parse(post_url("http://#{hostip}:8080/#{service}/#{endpoint}")) unless hostip.empty?
         end
-      # if service is not yet in ECS, use ALB address to send request to one host
-      return post_url("#{host}/#{endpoint}") if resp.empty?
-      resp.to_json
+      resp
     rescue StandardError
-      post_url("#{host}/#{endpoint}")
+      []
     end
 
     def admin_state

@@ -78,11 +78,15 @@ module Sinatra
       end
 
       app.post '/infra/ecs/redeploy/*' do |service|
+        java_service_send_stop_start(service, STOP_ENDPOINT) if %w[inventory audit replic].include?(service)
+
         UC3Resources::ServicesClient.new.redeploy_service(service)
         redirect '/infra/ecs/services/state'
       end
 
       app.post '/infra/ecs/retag-redeploy/*' do |service|
+        java_service_send_stop_start(service, STOP_ENDPOINT) if %w[inventory audit replic].include?(service)
+
         UC3Resources::ServicesClient.new.retag_and_redeploy_service(service)
         redirect '/infra/ecs/services/state'
       end
