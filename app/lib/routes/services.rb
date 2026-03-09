@@ -588,7 +588,7 @@ module Sinatra
           health_status: 'HEALTHY'
         ).instances.each do |instance|
           host = instance.attributes.fetch('AWS_INSTANCE_IPV4', '')
-          resp << post_url("#{host}/#{endpoint}") unless host.empty?
+          resp << post_url("http://#{host}/#{endpoint}") unless host.empty?
         end
       resp
     rescue StandardError
