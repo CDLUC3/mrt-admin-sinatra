@@ -4,6 +4,7 @@ require 'sinatra/base'
 require 'net/http'
 require 'net/http/post/multipart'
 require 'benchmark'
+require 'aws-sdk-servicediscovery'
 require_relative '../ui/context'
 
 # custom sinatra routes
@@ -14,6 +15,10 @@ module Sinatra
     TEST_SLA = 'ark:/13030/77777777'
     MONITOR_OPEN_TIMEOUT = 2
     MONITOR_READ_TIMEOUT = 5
+
+    START_ENDPOINT = 'service/start?t=json'
+    STOP_ENDPOINT = 'service/stop?t=json'
+    BUILD_TAG_ENDPOINT = 'static/build.content.txt'
 
     def ui_host
       host = ENV.fetch('SVC_UI', 'ui:8086')
@@ -58,7 +63,7 @@ module Sinatra
       end
 
       app.get '/json/ingest/tag' do
-        get_url("#{ingest_host}/static/build.content.txt")
+        get_url("#{ingest_host}/#{BUILD_TAG_ENDPOINT}")
       end
 
       app.get '/json/store/state' do
@@ -70,15 +75,7 @@ module Sinatra
       end
 
       app.get '/json/store/tag' do
-        get_url("#{store_host}/static/build.content.txt")
-      end
-
-      app.get '/json/access/state' do
-        get_url("#{access_host}/state?t=json")
-      end
-
-      app.get '/json/access/tag' do
-        get_url("#{access_host}/static/build.content.txt")
+        get_url("#{store_host}/#{BUILD_TAG_ENDPOINT}")
       end
 
       app.get '/json/store/nodes' do
@@ -94,11 +91,11 @@ module Sinatra
       end
 
       app.post '/json/inventory/start' do
-        post_url("#{inventory_host}/service/start?t=json")
+        send_stop_start(inventory_host, 'inventory', START_ENDPOINT)
       end
 
       app.post '/json/inventory/stop' do
-        post_url("#{inventory_host}/service/stop?t=json")
+        send_stop_start(inventory_host, 'inventory', STOP_ENDPOINT)
       end
 
       app.post '/json/inventory/admin-init' do
@@ -106,7 +103,7 @@ module Sinatra
       end
 
       app.get '/json/inventory/tag' do
-        get_url("#{inventory_host}/static/build.content.txt")
+        get_url("#{inventory_host}/#{BUILD_TAG_ENDPOINT}")
       end
 
       app.get '/json/audit/state' do
@@ -114,7 +111,7 @@ module Sinatra
       end
 
       app.get '/json/audit/tag' do
-        get_url("#{audit_host}/static/build.content.txt")
+        get_url("#{audit_host}/#{BUILD_TAG_ENDPOINT}")
       end
 
       app.get '/json/audit/nodes' do
@@ -122,11 +119,11 @@ module Sinatra
       end
 
       app.post '/json/audit/start' do
-        post_url("#{audit_host}/service/start?t=json")
+        send_stop_start(audit_host, 'audit', START_ENDPOINT)
       end
 
       app.post '/json/audit/stop' do
-        post_url("#{audit_host}/service/stop?t=json")
+        send_stop_start(audit_host, 'audit', STOP_ENDPOINT)
       end
 
       app.get '/json/replic/state' do
@@ -135,15 +132,15 @@ module Sinatra
       end
 
       app.get '/json/replic/tag' do
-        get_url("#{replic_host}/static/build.content.txt")
+        get_url("#{replic_host}/#{BUILD_TAG_ENDPOINT}")
       end
 
       app.post '/json/replic/start' do
-        post_url("#{replic_host}/service/start?t=json")
+        send_stop_start(replic_host, 'replic', START_ENDPOINT)
       end
 
       app.post '/json/replic/pause' do
-        post_url("#{replic_host}/service/pause?t=json")
+        send_stop_start(replic_host, 'replic', 'service/pause?t=json')
       end
 
       app.get '/json/replic/nodes' do
@@ -155,7 +152,7 @@ module Sinatra
       end
 
       app.get '/json/access/tag' do
-        get_url("#{access_host}/static/build.content.txt")
+        get_url("#{access_host}/#{BUILD_TAG_ENDPOINT}")
       end
 
       app.get '/json/access/nodes' do
@@ -580,6 +577,22 @@ module Sinatra
 
         metrics.to_json
       end
+    end
+
+    def send_stop_start(host, service, endpoint)
+      resp = []
+      Aws::ServiceDiscovery::Client.new(region: UC3::UC3Client.region)
+        .discover_instances(
+          service_name: service,
+          namespace_name: "merritt-#{UC3::UC3Client.stack_name}",
+          health_status: 'HEALTHY'
+        ).instances.each do |instance|
+          host = instance.attributes.fetch('AWS_INSTANCE_IPV4', '')
+          resp << post_url("#{host}/#{endpoint}") unless host.empty?
+        end
+      resp
+    rescue StandardError
+      post_url("#{host}/#{endpoint}")
     end
 
     def admin_state
