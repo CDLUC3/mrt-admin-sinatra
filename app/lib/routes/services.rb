@@ -588,11 +588,11 @@ module Sinatra
           health_status: 'HEALTHY'
         ).instances.each do |instance|
           hostip = instance.attributes.fetch('AWS_INSTANCE_IPV4', '')
-          resp << post_url("http://#{hostip}:8080/#{service}/#{endpoint}") unless hostip.empty?
+          resp << JSON.parse(post_url("http://#{hostip}:8080/#{service}/#{endpoint}")) unless hostip.empty?
         end
       # if service is not yet in ECS, use ALB address to send request to one host
       return post_url("#{host}/#{endpoint}") if resp.empty?
-      resp
+      resp.to_json
     rescue StandardError
       post_url("#{host}/#{endpoint}")
     end
