@@ -603,15 +603,17 @@ module Sinatra
       Aws::ServiceDiscovery::Client.new(region: UC3::UC3Client.region)
         .discover_instances(
           service_name: service,
-          namespace_name: "merritt-#{UC3::UC3Client.stack_name}",
-          health_status: 'HEALTHY'
+          namespace_name: "merritt-#{UC3::UC3Client.stack_name}"
+          #, health_status: 'HEALTHY'
         ).instances.each do |instance|
-          puts instance.inspect
+          puts instance.instance_id
+          puts instance.health_status
           hostip = instance.attributes.fetch('AWS_INSTANCE_IPV4', '')
           resp << JSON.parse(post_url("http://#{hostip}:8080/#{service}/#{endpoint}")) unless hostip.empty?
         end
       resp
-    rescue StandardError
+    rescue StandardError => e
+      puts "Error sending #{endpoint} to #{service} instances: #{e}"
       []
     end
 
