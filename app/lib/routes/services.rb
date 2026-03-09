@@ -91,11 +91,11 @@ module Sinatra
       end
 
       app.post '/json/inventory/start' do
-        send_stop_start(inventory_host, 'inventory', START_ENDPOINT)
+        java_service_send_stop_start(inventory_host, 'inventory', START_ENDPOINT)
       end
 
       app.post '/json/inventory/stop' do
-        send_stop_start(inventory_host, 'inventory', STOP_ENDPOINT)
+        java_service_send_stop_start(inventory_host, 'inventory', STOP_ENDPOINT)
       end
 
       app.post '/json/inventory/admin-init' do
@@ -119,11 +119,11 @@ module Sinatra
       end
 
       app.post '/json/audit/start' do
-        send_stop_start(audit_host, 'audit', START_ENDPOINT)
+        java_service_send_stop_start(audit_host, 'audit', START_ENDPOINT)
       end
 
       app.post '/json/audit/stop' do
-        send_stop_start(audit_host, 'audit', STOP_ENDPOINT)
+        java_service_send_stop_start(audit_host, 'audit', STOP_ENDPOINT)
       end
 
       app.get '/json/replic/state' do
@@ -136,11 +136,11 @@ module Sinatra
       end
 
       app.post '/json/replic/start' do
-        send_stop_start(replic_host, 'replic', START_ENDPOINT)
+        java_service_send_stop_start(replic_host, 'replic', START_ENDPOINT)
       end
 
       app.post '/json/replic/pause' do
-        send_stop_start(replic_host, 'replic', 'service/pause?t=json')
+        java_service_send_stop_start(replic_host, 'replic', 'service/pause?t=json')
       end
 
       app.get '/json/replic/nodes' do
@@ -579,7 +579,7 @@ module Sinatra
       end
     end
 
-    def send_stop_start(host, service, endpoint)
+    def java_service_send_stop_start(host, service, endpoint)
       resp = []
       Aws::ServiceDiscovery::Client.new(region: UC3::UC3Client.region)
         .discover_instances(
