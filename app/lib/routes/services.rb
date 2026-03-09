@@ -609,7 +609,9 @@ module Sinatra
           puts instance.instance_id
           puts instance.health_status
           hostip = instance.attributes.fetch('AWS_INSTANCE_IPV4', '')
-          resp << JSON.parse(post_url("http://#{hostip}:8080/#{service}/#{endpoint}")) unless hostip.empty?
+          next if hostip.empty?
+          url = "http://#{hostip}:8080/#{service}/#{endpoint}"
+          resp << ::JSON.parse(post_url(url))
         end
       resp
     rescue StandardError => e
