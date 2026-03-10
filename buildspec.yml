@@ -75,7 +75,7 @@ phases:
         then
           aws ecs update-service --cluster mrt-ecs-dev-stack --service $SERVICENAME \
             --desired-count $RUNNING_COUNT --output text --no-cli-pager \
-           --query "service.deployments[0].[id,taskDefinition,status,desiredCount,createdAt]" \
+            --query "service.deployments[0].[id,taskDefinition,status,desiredCount,createdAt]" \
             --force-new-deployment || echo "Skip ecs-dev Deployment"
         fi  
       fi

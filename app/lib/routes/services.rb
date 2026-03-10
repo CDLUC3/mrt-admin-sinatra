@@ -155,8 +155,8 @@ module Sinatra
       end
 
       app.post '/json/replic/pause' do
-        resp = java_service_send_stop_start('replic', STOP_ENDPOINT)
-        return post_url("#{replic_host}/#{STOP_ENDPOINT}") if resp.empty?
+        resp = java_service_send_stop_start('replic', 'service/pause?t=json')
+        return post_url("#{replic_host}/service/pause?t=json") if resp.empty?
 
         resp.to_json
       end
