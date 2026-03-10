@@ -607,6 +607,7 @@ module Sinatra
         ).instances.each do |instance|
           hostip = instance.attributes.fetch('AWS_INSTANCE_IPV4', '')
           next if hostip.empty?
+
           url = "http://#{hostip}:8080/#{service}/#{endpoint}"
           resp << ::JSON.parse(post_url(url))
         end
