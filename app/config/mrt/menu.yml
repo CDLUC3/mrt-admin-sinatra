@@ -178,6 +178,13 @@ items:
           route: /queries/repository/all-time/file-size
         - title: Cumulative File Size with - 3 Years + Forecast (GB)
           route: /queries/repository/all-time/cuml-file-size
+      - path: last-year
+        title: Last 12 Months
+        items:
+        - title: Producer Files Added by Date (Last 12 months)
+          route: /queries/repository/last-year/producer-files
+        - title: File Size Added by Date (GB, Last 12 months)
+          route: /queries/repository/last-year/file-size
       - path: last-month
         title: Last Month
         items:

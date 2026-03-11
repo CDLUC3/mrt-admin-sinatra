@@ -709,6 +709,21 @@ queries:
         {{{WEEKS}}}
     sql: |
       {{{COLLTOTAL}}}
+  /queries/repository/last-year/producer-files:
+    description: 
+      This report shows the producer file count added each Merritt collection
+      week by week for the last 12 months.
+    totals: true
+    template-params:
+      FIELD: cast(ifnull(sum(ocmud.count_files), 0) as signed)
+      FILTER: |
+        and 
+          ocmud.date_added >= date_add(date(now()), INTERVAL -DAYOFMONTH(date(now())) +1 -365 DAYS)
+    template-sql:
+      RANGE: |
+        {{{MONTHS}}}
+    sql: |
+      {{{COLLTOTAL}}}
   /queries/repository/all-time/producer-files:
     description: |
       This report shows the cumulative producer file count in each Merritt collection
@@ -734,6 +749,21 @@ queries:
     template-sql:
       RANGE: |
         {{{WEEKS}}}
+    sql: |
+      {{{COLLTOTAL}}}
+  /queries/repository/last-year/file-size:
+    description: 
+      This report shows the byte count added each Merritt collection
+      week by week for the last 12 months.
+    totals: true
+    template-params:
+      FIELD: sum(ocmud.billable_size) / 1000000000.0
+      FILTER: |
+        and 
+          ocmud.date_added >= date_add(date(now()), INTERVAL -DAYOFMONTH(date(now())) +1 -365 DAYS)
+    template-sql:
+      RANGE: |
+        {{{MONTHS}}}
     sql: |
       {{{COLLTOTAL}}}
   /queries/repository/all-time/file-size:
