@@ -102,6 +102,54 @@ fragments:
     select 
       date_add(date(now()), INTERVAL -dayofweek(date(now())) +1 DAY) start,
       date_add(date(now()), INTERVAL -dayofweek(date(now())) +8 DAY) end
+  MONTHS: |
+    select 
+      date_add(date_add(date(now()), INTERVAL -dayofmonth(date(now())) +1 DAY), INTERVAL -12 MONTH) start,
+      date_add(date_add(date(now()), INTERVAL -dayofmonth(date(now())) +1 DAY), INTERVAL -11 MONTH) end
+    union
+    select 
+      date_add(date_add(date(now()), INTERVAL -dayofmonth(date(now())) +1 DAY), INTERVAL -11 MONTH) start,
+      date_add(date_add(date(now()), INTERVAL -dayofmonth(date(now())) +1 DAY), INTERVAL -10 MONTH) end
+    union
+    select 
+      date_add(date_add(date(now()), INTERVAL -dayofmonth(date(now())) +1 DAY), INTERVAL -10 MONTH) start,
+      date_add(date_add(date(now()), INTERVAL -dayofmonth(date(now())) +1 DAY), INTERVAL -9 MONTH) end
+    union
+    select 
+      date_add(date_add(date(now()), INTERVAL -dayofmonth(date(now())) +1 DAY), INTERVAL -9 MONTH) start,
+      date_add(date_add(date(now()), INTERVAL -dayofmonth(date(now())) +1 DAY), INTERVAL -8 MONTH) end
+    union
+    select 
+      date_add(date_add(date(now()), INTERVAL -dayofmonth(date(now())) +1 DAY), INTERVAL -8 MONTH) start,
+      date_add(date_add(date(now()), INTERVAL -dayofmonth(date(now())) +1 DAY), INTERVAL -7 MONTH) end
+    union
+    select 
+      date_add(date_add(date(now()), INTERVAL -dayofmonth(date(now())) +1 DAY), INTERVAL -7 MONTH) start,
+      date_add(date_add(date(now()), INTERVAL -dayofmonth(date(now())) +1 DAY), INTERVAL -6 MONTH) end
+    union
+    select 
+      date_add(date_add(date(now()), INTERVAL -dayofmonth(date(now())) +1 DAY), INTERVAL -6 MONTH) start,
+      date_add(date_add(date(now()), INTERVAL -dayofmonth(date(now())) +1 DAY), INTERVAL -5 MONTH) end
+    union
+    select 
+      date_add(date_add(date(now()), INTERVAL -dayofmonth(date(now())) +1 DAY), INTERVAL -5 MONTH) start,
+      date_add(date_add(date(now()), INTERVAL -dayofmonth(date(now())) +1 DAY), INTERVAL -4 MONTH) end
+    union
+    select 
+      date_add(date_add(date(now()), INTERVAL -dayofmonth(date(now())) +1 DAY), INTERVAL -4 MONTH) start,
+      date_add(date_add(date(now()), INTERVAL -dayofmonth(date(now())) +1 DAY), INTERVAL -3 MONTH) end
+    union
+    select 
+      date_add(date_add(date(now()), INTERVAL -dayofmonth(date(now())) +1 DAY), INTERVAL -3 MONTH) start,
+      date_add(date_add(date(now()), INTERVAL -dayofmonth(date(now())) +1 DAY), INTERVAL -2 MONTH) end
+    union
+    select 
+      date_add(date_add(date(now()), INTERVAL -dayofmonth(date(now())) +1 DAY), INTERVAL -2 MONTH) start,
+      date_add(date_add(date(now()), INTERVAL -dayofmonth(date(now())) +1 DAY), INTERVAL -1 MONTH) end
+    union
+    select 
+      date_add(date_add(date(now()), INTERVAL -dayofmonth(date(now())) +1 DAY), INTERVAL -1 MONTH) start,
+      date(now()) end
   COLLTOTAL: |
     select
       ogroup,
@@ -718,7 +766,7 @@ queries:
       FIELD: cast(ifnull(sum(ocmud.count_files), 0) as signed)
       FILTER: |
         and 
-          ocmud.date_added >= date_add(date(now()), INTERVAL -DAYOFMONTH(date(now())) +1 -365 DAYS)
+          ocmud.date_added >= date_add(date(now()), INTERVAL -DAYOFMONTH(date(now())) +1 -365 DAY)
     template-sql:
       RANGE: |
         {{{MONTHS}}}
@@ -760,7 +808,7 @@ queries:
       FIELD: sum(ocmud.billable_size) / 1000000000.0
       FILTER: |
         and 
-          ocmud.date_added >= date_add(date(now()), INTERVAL -DAYOFMONTH(date(now())) +1 -365 DAYS)
+          ocmud.date_added >= date_add(date(now()), INTERVAL -DAYOFMONTH(date(now())) +1 -365 DAY)
     template-sql:
       RANGE: |
         {{{MONTHS}}}
