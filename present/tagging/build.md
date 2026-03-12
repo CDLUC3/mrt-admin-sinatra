@@ -159,10 +159,12 @@ Merritt Java services can be configured to auto-deploy to ECS Dev from the main 
 
 ### Image Rebuild Conventions
 
-Each of the service branch/tags that are registered in the [ecs manifest](https://github.com/CDLUC3/mrt-service-release-manifest/blob/main/ecs-release-manifest.yaml) will be rebuilt daily.  Each rebuild will also create an "archive" tag.  A lifecycle policy will expire old archive tags based on image push date.
+Each of the service branch/tags that are registered in the [ecs manifest](https://github.com/CDLUC3/mrt-service-release-manifest/blob/main/ecs-release-manifest.yaml) will be rebuilt daily.  
+
+Each rebuild will also create an "archive" tag.  A lifecycle policy will expire old archive tags based on image push date.
 
 - Docker Image Patched After Code Deployment of tag `tag`
-  - `subservice:archive-${stack}-${TAG_OR_BRANCH}-${BUILDDATE}`
+  - `subservice:archive-${TAG_OR_BRANCH}-${BUILDDATE}`
 
 ---
 
@@ -255,10 +257,12 @@ Merritt UI and Admin Tool will auto-deploy to ECS development environments from 
 
 ### Image Rebuild Conventions
 
-Each of the service branch/tags that are registered in the [ecs manifest](https://github.com/CDLUC3/mrt-service-release-manifest/blob/main/ecs-release-manifest.yaml) will be rebuilt daily.  Each rebuild will also create an "archive" tag.  A lifecycle policy will expire old archive tags based on image push date.
+Each of the service branch/tags that are registered in the [ecs manifest](https://github.com/CDLUC3/mrt-service-release-manifest/blob/main/ecs-release-manifest.yaml) will be rebuilt daily.  
+
+Each rebuild will also create an "archive" tag.  A lifecycle policy will expire old archive tags based on image push date.
 
 - Docker Image Patched After Code Deployment of tag `tag`
-  - `subservice:archive-archive-${stack}-${TAG_OR_BRANCH}-${BUILDDATE}`
+  - `subservice:archive-${TAG_OR_BRANCH}-${BUILDDATE}`
 
 ----
 
