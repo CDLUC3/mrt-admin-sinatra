@@ -166,7 +166,8 @@ Each rebuild will also create an "archive" tag.  A lifecycle policy will expire 
 - Docker Image Patched After Code Deployment of tag `tag`
   - `subservice:archive-${TAG_OR_BRANCH}-${BUILDDATE}`
 
-#### Sample Rebuild Code
+<details>
+<summary> Sample Rebuild Code</summary>
 ```
       git fetch --all
       if [[ "$MODE" == "OnDemand" ]]
@@ -217,6 +218,8 @@ Each rebuild will also create an "archive" tag.  A lifecycle policy will expire 
         done
       fi
 ```
+  
+</details>
 
 ---
 
@@ -316,8 +319,9 @@ Each rebuild will also create an "archive" tag.  A lifecycle policy will expire 
 - Docker Image Patched After Code Deployment of tag `tag`
   - `subservice:archive-${TAG_OR_BRANCH}-${BUILDDATE}`
 
-#### Sample Rebuild Code
 
+<details>
+<summary> Sample Rebuild Code</summary>
 ```
       git fetch --all
       # daily / on-demand rebuild of deployed images
@@ -347,6 +351,9 @@ Each rebuild will also create an "archive" tag.  A lifecycle policy will expire 
         done
       fi
 ```
+  
+</details>
+
 ----
 
 ### Interesting Build Specs
