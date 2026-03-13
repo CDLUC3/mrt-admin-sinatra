@@ -89,8 +89,8 @@ module Sinatra
 
         UC3Resources::ServicesClient.new.retag_and_redeploy_service(service)
         redirect '/infra/ecs/services/state'
-      resucue StandardError => e
-        {message: "Error redeploying service: #{e.message}"}.to_json
+        resucue StandardError => e
+        { message: "Error redeploying service: #{e.message}" }.to_json
       end
 
       app.post '/infra/ecs/deploy/*' do |service|

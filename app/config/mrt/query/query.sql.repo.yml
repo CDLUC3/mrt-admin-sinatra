@@ -571,7 +571,7 @@ queries:
       The report displays the last daily count of objects and files for each storage node (captured in the billing database).
 
       - SKIP: No set allocation for the storage node
-      - ERROR: Node size > 95% allocation
+      - FAIL: Node size > 95% allocation
       - WARN: Node size > 90% allocation
       - PASS: Node size <= 90% allocation
     status: PASS
