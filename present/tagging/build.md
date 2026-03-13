@@ -159,10 +159,69 @@ Merritt Java services can be configured to auto-deploy to ECS Dev from the main 
 
 ### Image Rebuild Conventions
 
-Each of the service branch/tags that are registered in the [ecs manifest](https://github.com/CDLUC3/mrt-service-release-manifest/blob/main/ecs-release-manifest.yaml) will be rebuilt daily.  Each rebuild will also create an "archive" tag.  A lifecycle policy will expire old archive tags based on image push date.
+Each of the service branch/tags that are registered in the [ecs manifest](https://github.com/CDLUC3/mrt-service-release-manifest/blob/main/ecs-release-manifest.yaml) will be rebuilt daily.  
+
+Each rebuild will also create an "archive" tag.  A lifecycle policy will expire old archive tags based on image push date.
 
 - Docker Image Patched After Code Deployment of tag `tag`
-  - `subservice:archive-${stack}-${TAG_OR_BRANCH}-${BUILDDATE}`
+  - `subservice:archive-${TAG_OR_BRANCH}-${BUILDDATE}`
+
+<details>
+  
+<summary> Sample Rebuild Code</summary>
+
+```
+      git fetch --all
+      if [[ "$MODE" == "OnDemand" ]]
+      then
+        for stack in ecs-dev ecs-ephemeral ecs-stg ecs-prd
+        do
+          TAG_ECS=$(yq -r ".\"ecs-tagmap\".\"${REPONAME}\".\"$stack\"" /tmp/ecs-release-manifest.yaml)
+          if [[ "$TAG_ECS" == "null" ]]
+          then
+            echo "${TAG_ECS} undefined for ${stack}"
+          elif [[ "$BRANCHTAG" == "$TAG_ECS" ]]
+          then
+            echo "${TAG_ECS} Already Built for ${stack}"
+          else
+            # perform get checkout get the specific dockerfile
+            git checkout $TAG_ECS
+
+            #mkdir -p store-war/target
+
+            # this command will succeed if TAG_ECS is a valid tag
+            mvn dependency:copy \
+              -DrepoUrl=${CODEARTIFACT_URL} \
+              -Dartifact=org.cdlib.mrt:mrt-storewar:${TAG_ECS}:war \
+              -DoutputDirectory=store-war/target \
+              -Dtransitive=false
+            
+            # if TAG_ECS is a branch, then rebuild the war
+            if [[ $? -ne 0 ]]
+            then
+              mvn -ntp clean install -Ddocker.skip -DskipITs -Dmaven.test.skip=true              
+              bstate=$?            
+              mkdir -p /build/static
+              echo "build_tag: ${TAG_ECS}" > /build/static/build.content.txt 
+              ${JAVA_HOME}/bin/jar uf $(ls store-war/target/mrt-storewar-*.war) -C /build static/build.content.txt
+            fi
+
+            if [[ $bstate -eq 0 ]]
+            then
+              docker build --quiet --push \
+                --build-arg ECR_REGISTRY=${ECR_REGISTRY} \
+                -t ${ECR_REGISTRY}/${REPONAME}:${TAG_ECS} .
+
+              docker build --quiet --push \
+                --build-arg ECR_REGISTRY=${ECR_REGISTRY} \
+                -t ${ECR_REGISTRY}/${REPONAME}:archive-${TAG_ECS}-${BUILDDATE} .
+            fi
+          fi
+        done
+      fi
+```
+  
+</details>
 
 ---
 
@@ -255,10 +314,49 @@ Merritt UI and Admin Tool will auto-deploy to ECS development environments from 
 
 ### Image Rebuild Conventions
 
-Each of the service branch/tags that are registered in the [ecs manifest](https://github.com/CDLUC3/mrt-service-release-manifest/blob/main/ecs-release-manifest.yaml) will be rebuilt daily.  Each rebuild will also create an "archive" tag.  A lifecycle policy will expire old archive tags based on image push date.
+Each of the service branch/tags that are registered in the [ecs manifest](https://github.com/CDLUC3/mrt-service-release-manifest/blob/main/ecs-release-manifest.yaml) will be rebuilt daily.  
+
+Each rebuild will also create an "archive" tag.  A lifecycle policy will expire old archive tags based on image push date.
 
 - Docker Image Patched After Code Deployment of tag `tag`
-  - `subservice:archive-archive-${stack}-${TAG_OR_BRANCH}-${BUILDDATE}`
+  - `subservice:archive-${TAG_OR_BRANCH}-${BUILDDATE}`
+
+
+<details>
+  
+<summary> Sample Rebuild Code</summary>
+
+```
+      git fetch --all
+      # daily / on-demand rebuild of deployed images
+      # note that this also applied to a main branch build
+      if [[ "$MODE" == "OnDemand" ]]
+      then
+        for stack in ecs-dev ecs-ephemeral ecs-dbsnapshot ecs-stg ecs-prd
+        do
+          TAG_ECS=$(yq -r ".\"ecs-tagmap\".\"${REPONAME}\".\"$stack\"" /tmp/ecs-release-manifest.yaml)
+
+          if [[ "$BRANCHTAG" != "$TAG_ECS" ]]
+          then
+            git checkout $TAG_ECS
+            CA_CERT_NAME=UC3-Self-Signed-CA.crt
+            aws ssm get-parameter --name /uc3/default/uc3_ca/$CA_CERT_NAME --output text --query 'Parameter.Value' > $CA_CERT_NAME
+
+            docker build --quiet --push \
+              --build-arg ECR_REGISTRY=${ECR_REGISTRY} \
+              --build-arg BUILD_TAG=${TAG_ECS} \
+              -t ${ECR_REGISTRY}/${REPONAME}:$TAG_ECS .
+
+            docker build --quiet --push \
+              --build-arg ECR_REGISTRY=${ECR_REGISTRY} \
+              --build-arg BUILD_TAG=${TAG_ECS} \
+              -t ${ECR_REGISTRY}/${REPONAME}:archive-${TAG_ECS}-${BUILDDATE} .
+          fi
+        done
+      fi
+```
+  
+</details>
 
 ----
 
