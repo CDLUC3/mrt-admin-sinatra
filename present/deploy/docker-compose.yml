@@ -1,6 +1,6 @@
 services:
   reveal-md:
-    image: webpronl/reveal-md
+    image: ${ECR_REGISTRY}/reveal-md
     ports:
     - 8099:1948
     command: ["/slides", "build.md", "--theme", "white", "--css", "demo.css"]

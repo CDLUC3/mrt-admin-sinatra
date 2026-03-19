@@ -157,7 +157,7 @@ phases:
       aws s3 cp --recursive api s3://${S3CFBUCKET}/api 
       aws cloudfront create-invalidation --distribution-id ${CFDISTRIBUTIONID} --paths /api/${REPONAME}/* --region us-east-1
 
-      docker pull ${ECR_REGISTRY}/docker-hub/webpronl/reveal-md --quiet
+      docker pull ${ECR_REGISTRY}/reveal-md --quiet
       docker-compose -f present/deploy/docker-compose-static.yml up
       aws s3 rm --recursive --only-show-errors s3://${S3CFBUCKET}/present/ecs-deploy|| echo 'delete skipped'
       aws s3 cp --recursive --only-show-errors present/deploy/present_build s3://${S3CFBUCKET}/present/ecs-deploy
