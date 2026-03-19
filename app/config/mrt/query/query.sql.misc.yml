@@ -176,7 +176,7 @@ queries:
           count(*) as file_count,
           sum(f.full_size) as bytes_count
         from 
-          inv_audits a
+          inv.inv_audits a
         inner join inv.inv_files f
           on a.inv_file_id = f.id
         inner join inv.inv_nodes n
