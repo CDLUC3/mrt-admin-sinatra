@@ -177,9 +177,9 @@ queries:
           sum(f.full_size) as bytes_count
         from 
           inv_audits a
-        inner join inv_files f
+        inner join inv.inv_files f
           on a.inv_file_id = f.id
-        inner join inv_nodes n
+        inner join inv.inv_nodes n
           on a.inv_node_id = n.id
         where
           verified > date_add(now(), interval -10 minute)
