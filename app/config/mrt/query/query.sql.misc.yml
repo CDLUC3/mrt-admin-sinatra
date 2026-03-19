@@ -173,8 +173,8 @@ queries:
       with node_counts as (
         select
           n.access_mode,
-          count(*) as file_count,
-          sum(f.full_size) as bytes_count
+          ifnull(count(*), 0) as file_count,
+          ifnull(sum(f.full_size), 0) as bytes_count
         from 
           inv.inv_audits a
         inner join inv.inv_files f
