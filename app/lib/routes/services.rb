@@ -592,9 +592,9 @@ module Sinatra
         UC3Query::QueryClient.client.run_query(
           '/queries/misc/audit-metrics'
         ).each do |row|
-          audit_online_file_count = row.fetch('audit_online_file_count', 0)
-          audit_online_bytes_count = row.fetch('audit_online_bytes_count', 0)
-          audit_nearline_file_count = row.fetch('audit_nearline_file_count', 0)
+          audit_online_file_count = row.fetch('audit_online_file_count', 0).to_i
+          audit_online_bytes_count = row.fetch('audit_online_bytes_count', 0).to_i
+          audit_nearline_file_count = row.fetch('audit_nearline_file_count', 0).to_i
         end
         metrics.merge!({
           number_of_active_replications: repcount,
