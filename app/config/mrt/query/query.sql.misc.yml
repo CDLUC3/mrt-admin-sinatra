@@ -190,3 +190,10 @@ queries:
         (select sum(file_count) from node_counts where access_mode = 'on-line') as audit_online_file_count,
         (select sum(bytes_count) from node_counts where access_mode = 'on-line') as audit_online_bytes_count,
         (select sum(file_count) from node_counts where access_mode = 'near-line') as audit_nearline_file_count
+        where exists (select 1 from node_counts)
+      union
+      select 
+        0 as audit_online_file_count, 
+        0 as audit_online_bytes_count, 
+        0 as audit_nearline_file_count
+      where not exists (select 1 from node_counts)
