@@ -600,7 +600,7 @@ module Sinatra
           number_of_active_replications: repcount,
           gb_to_be_replicated: (repbytes / 10_000_000).to_i / 100.0,
           audit_online_file_count: audit_online_file_count,
-          audit_online_gb_count: (audit_online_bytes_count / 10_000_000).to_i / 100.0,
+          gb_audited_online: (audit_online_bytes_count / 10_000_000).to_i / 100.0,
           audit_nearline_file_count: audit_nearline_file_count,
           oldest_audit_in_days: UC3Query::QueryClient.client.run_query_get_val(
             '/queries/misc/oldest-audit-in-days', 'days_since_today'
