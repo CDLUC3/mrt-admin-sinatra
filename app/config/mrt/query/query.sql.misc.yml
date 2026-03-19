@@ -157,7 +157,7 @@ queries:
       LIMIT 1
   /queries/misc/outstanding-replication:
     non_report: true
-    sql:
+    sql: |
       select 
         count(*) object_count, 
         ifnull(sum(ifnull(replic_size,0)),0) bytes_to_replicate 
@@ -167,3 +167,26 @@ queries:
         role = 'primary'
       and
         completion_status in ('partial', 'unknown')
+  /queries/misc/audit-metrics:
+    non_report: true
+    sql: |
+      with node_counts as (
+        select
+          n.access_mode,
+          count(*) as file_count,
+          sum(f.full_size) as bytes_count
+        from 
+          inv_audits a
+        inner join inv_files f
+          on a.inv_file_id = f.id
+        inner join inv_nodes n
+          on a.inv_node_id = n.id
+        where
+          verified > date_add(now(), interval -10 minute)
+        group by 
+          a.inv_node_id
+      )
+      select
+        (select sum(file_count) from node_counts where access_mode = 'on-line') as audit_online_file_count,
+        (select sum(bytes_count) from node_counts where access_mode = 'on-line') as audit_online_bytes_count,
+        (select sum(file_count) from node_counts where access_mode = 'near-line') as audit_nearline_file_count

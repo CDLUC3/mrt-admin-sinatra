@@ -578,6 +578,10 @@ module Sinatra
         metrics = UC3Queue::ZKClient.client.metrics
         repcount = 0
         repbytes = 0
+        audit_online_file_count = 0
+        audit_online_bytes_count = 0
+        audit_nearline_file_count = 0
+
         UC3Query::QueryClient.client.run_query(
           '/queries/misc/outstanding-replication'
         ).each do |row|
@@ -585,9 +589,19 @@ module Sinatra
           repcount = row.fetch('object_count', 0)
           repbytes = row.fetch('bytes_to_replicate', 0)
         end
+        UC3Query::QueryClient.client.run_query(
+          '/queries/misc/audit-metrics'
+        ).each do |row|
+          audit_online_file_count = row.fetch('audit_online_file_count', 0)
+          audit_online_bytes_count = row.fetch('audit_online_bytes_count', 0)
+          audit_nearline_file_count = row.fetch('audit_nearline_file_count', 0)
+        end
         metrics.merge!({
           number_of_active_replications: repcount,
           gb_to_be_replicated: (repbytes / 10_000_000).to_i / 100.0,
+          audit_online_file_count: audit_online_file_count,
+          audit_online_gb_count: (audit_online_bytes_count / 10_000_000).to_i / 100.0,
+          audit_nearline_file_count: audit_nearline_file_count,
           oldest_audit_in_days: UC3Query::QueryClient.client.run_query_get_val(
             '/queries/misc/oldest-audit-in-days', 'days_since_today'
           )
