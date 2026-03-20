@@ -579,7 +579,7 @@ queries:
     sql: |
       with lim as (
         select
-          9501 as node, 650 as tb
+          9501 as node, 700 as tb
       )
       select
         n.number as node_number,

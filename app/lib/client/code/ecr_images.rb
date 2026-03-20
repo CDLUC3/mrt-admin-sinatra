@@ -260,7 +260,8 @@ module UC3Code
 
           img.image_tags.each do |t|
             next if t == tag
-            #next if t =~ /^archive/
+
+            # next if t =~ /^archive/
 
             arr << t
           end
