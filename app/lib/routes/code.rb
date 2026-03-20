@@ -36,6 +36,15 @@ module Sinatra
         )
       end
 
+      app.get '/source/archive-images' do
+        srccode = UC3Code::SourceCodeClient.client
+
+        adminui_show_table(
+          AdminUI::Context.new(request.path, request.params),
+          srccode.archive_images_table
+        )
+      end
+
       app.get '/source/artifact/*/*/*' do |artifact, version, asset|
         srccode = UC3Code::SourceCodeClient.client
         content_type :xml

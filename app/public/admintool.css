@@ -65,6 +65,11 @@ th.sha,
 td.sha {
   width: 250px;
 }
+
+td.sha span.val {
+  overflow-x: clip;
+}
+
 th.tag, 
 td.tag {
   width: 100px;
@@ -153,11 +158,19 @@ span.val {
   display: block;
 }
 
+td.digest {
+  max-width: 180px;
+  color: green;
+  overflow-x: clip;
+}
+
 td.image span.val:nth-of-type(2) {
-  max-width: 130px;
+  max-width: 180px;
   display: inline-block;
   color: green;
+  overflow-x: clip;
 }
+
 td.digest {
   max-width: 100px;
   color: green;
@@ -170,7 +183,6 @@ span.inline {
 td.artifacts,
 td.images {
   width: 240px;
-  padding-left: 20px;
 }
 td.local_ids span.val,
 td.mnemonics span.val {
@@ -188,12 +200,24 @@ td.s3key_annotated span.val,
 th.nodedesc span.val,
 td.nodedesc span.val,
 td.metadata span.val,
-td.artifacts span.val,
-td.images span.val {
+td.artifacts span.val {
   display: list-item;
 }
 
+td.matching_tags span.val,
+td.tags span.val {
+  display: list-item;
+  list-style: disc;              
+  list-style-position: inside;   
+}
+
 td.image, th.image,
+td.tags, th.tags {
+  max-width: 200px;
+  width: 200px;
+}
+
+
 td.object_count, th.object_count,
 td.total_files, th.total_files,
 td.num_colls, th.num_colls,

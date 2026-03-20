@@ -99,6 +99,10 @@ module UC3Code
       @ecrimages.image_table(images(repo))
     end
 
+    def archive_images_table
+      @ecrimages.archive_image_table
+    end
+
     def artifact(artifact, version, asset)
       @codeartifact.artifact(artifact, version, asset)
     end

@@ -72,6 +72,7 @@ module UC3Code
 
             rec[:matching_tags] << t
           end
+          rec[:digest] = { value: rec[:digest], title: rec[:digest] }
 
           rec[:deployed] = UC3::UC3Client.deployed_tag?(tag, rec[:matching_tags])
 
@@ -116,6 +117,35 @@ module UC3Code
     end
 
     def image_table(res)
+      table = AdminUI::FilterTable.new(
+        columns: [
+          AdminUI::Column.new(:tag, header: 'Image Tag'),
+          AdminUI::Column.new(:image, header: 'Image'),
+          AdminUI::Column.new(:digest, header: 'Digest'),
+          AdminUI::Column.new(:pushed, header: 'Pushed At'),
+          AdminUI::Column.new(:matching_tags, header: 'Matching Image Tags'),
+          AdminUI::Column.new(:actions, header: 'Actions')
+        ],
+        description: "#### Tag deletion rules:\n\n" \
+                     "- Tags matching Merritt stack names cannot be deleted\n" \
+                     '- Tags registered in the [ECS Release Manifest](/merritt_manifest) cannot be deleted'
+      )
+      res.each_key do |tag|
+        next if UC3::UC3Client.semantic_prefix_tag?(tag)
+
+        res.fetch(tag, []).each do |rec|
+          table.add_row(
+            AdminUI::Row.make_row(
+              table.columns,
+              rec
+            )
+          )
+        end
+      end
+      table
+    end
+
+    def archive_image_table
       table = AdminUI::FilterTable.new(
         columns: [
           AdminUI::Column.new(:tag, header: 'Image Tag'),
@@ -230,7 +260,7 @@ module UC3Code
 
           img.image_tags.each do |t|
             next if t == tag
-            next if t =~ /^archive/
+            #next if t =~ /^archive/
 
             arr << t
           end

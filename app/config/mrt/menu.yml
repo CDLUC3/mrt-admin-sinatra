@@ -87,7 +87,7 @@ items:
       route: /source/tags/cloud
     - title: ZK
       route: /source/tags/zk
-  - title: Repostiory Images
+  - title: Repository Images
     route: /source/images
     path: images
     breadcrumb: true
@@ -106,7 +106,9 @@ items:
       route: /source/images/audit
     - title: Replic
       route: /source/images/replic
-  - title: Repostiory Artifacts
+  - title: Archive Images
+    route: /source/archive-images
+  - title: Repository Artifacts
     route: /source/artifacts
     path: artifacts
     breadcrumb: true
