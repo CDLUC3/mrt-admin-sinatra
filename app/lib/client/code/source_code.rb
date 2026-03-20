@@ -99,8 +99,35 @@ module UC3Code
       @ecrimages.image_table(images(repo))
     end
 
+    def archive_images
+      images = []
+      @repos.each_value do |rep|
+        rep.fetch(:image_repos, []).each do |image_repo|
+          @ecrimages.cleanup_archive_images(image_repo).each do |rec|
+            images << rec
+          end
+        end
+      end
+      images
+    end
+
     def archive_images_table
-      @ecrimages.archive_image_table
+      table = AdminUI::FilterTable.new(
+        columns: [
+          AdminUI::Column.new(:image, header: 'Image'),
+          AdminUI::Column.new(:tag, header: 'Tag'),
+          AdminUI::Column.new(:status, header: 'Status')
+        ]
+      )
+      archive_images.each do |rec|
+        table.add_row(
+          AdminUI::Row.make_row(
+            table.columns,
+            rec
+          )
+        )
+      end
+      table
     end
 
     def artifact(artifact, version, asset)

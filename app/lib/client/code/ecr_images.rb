@@ -19,6 +19,41 @@ module UC3Code
       !@client.nil?
     end
 
+    def cleanup_archive_images(image_repo)
+      images = []
+      @client.list_images(
+        repository_name: image_repo
+      ).image_ids.each do |img|
+        tag = img.image_tag
+        next if tag.nil?
+
+        match = /^archive-.*-(\d{8,8})$/.match(tag)
+        next if match.nil?
+
+        status = 'Keep'
+        deltag = Date.strptime(match[1], '%Y%m%d') < Date.today - 14
+
+        if deltag
+          begin
+            @client.batch_delete_image(
+              repository_name: image_repo,
+              image_ids: [
+                {
+                  image_tag: tag
+                }
+              ]
+            )
+            status = 'Deleted'
+          rescue StandardError
+            status = 'Delete Failed'
+          end
+        end
+
+        images << { image: image_repo, tag: tag, status: status }
+      end
+      images
+    end
+
     def list_images(repohash: {})
       res = {}
       dig = {}
@@ -145,33 +180,8 @@ module UC3Code
       table
     end
 
-    def archive_image_table
-      table = AdminUI::FilterTable.new(
-        columns: [
-          AdminUI::Column.new(:tag, header: 'Image Tag'),
-          AdminUI::Column.new(:image, header: 'Image'),
-          AdminUI::Column.new(:digest, header: 'Digest'),
-          AdminUI::Column.new(:pushed, header: 'Pushed At'),
-          AdminUI::Column.new(:matching_tags, header: 'Matching Image Tags'),
-          AdminUI::Column.new(:actions, header: 'Actions')
-        ],
-        description: "#### Tag deletion rules:\n\n" \
-                     "- Tags matching Merritt stack names cannot be deleted\n" \
-                     '- Tags registered in the [ECS Release Manifest](/merritt_manifest) cannot be deleted'
-      )
-      res.each_key do |tag|
-        next if UC3::UC3Client.semantic_prefix_tag?(tag)
-
-        res.fetch(tag, []).each do |rec|
-          table.add_row(
-            AdminUI::Row.make_row(
-              table.columns,
-              rec
-            )
-          )
-        end
-      end
-      table
+    def archive_images
+      []
     end
 
     def delete_image(tag, image)

@@ -36,7 +36,7 @@ module Sinatra
         )
       end
 
-      app.get '/source/archive-images' do
+      app.post '/source/archive-images' do
         srccode = UC3Code::SourceCodeClient.client
 
         adminui_show_table(

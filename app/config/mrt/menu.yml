@@ -106,8 +106,9 @@ items:
       route: /source/images/audit
     - title: Replic
       route: /source/images/replic
-  - title: Archive Images
+  - title: Archive Images Cleanup
     route: /source/archive-images
+    method: post
   - title: Repository Artifacts
     route: /source/artifacts
     path: artifacts

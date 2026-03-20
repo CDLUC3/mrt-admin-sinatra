@@ -581,7 +581,6 @@ module Sinatra
         audit_online_file_count = 0
         audit_online_bytes_count = 0
         audit_nearline_file_count = 0
-        ingest_bytes_count = 0
 
         UC3Query::QueryClient.client.run_query(
           '/queries/misc/outstanding-replication'

@@ -212,6 +212,7 @@ td.tags span.val {
 }
 
 td.image, th.image,
+td.tag, th.tag,
 td.tags, th.tags {
   max-width: 200px;
   width: 200px;
