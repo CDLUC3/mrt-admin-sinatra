@@ -607,7 +607,7 @@ module Sinatra
           ),
           gb_ingested: (UC3Query::QueryClient.client.run_query_get_val(
             '/queries/misc/ingest-metrics', 'ingest_bytes_count'
-          ) / 10_000_000).to_i / 100.0
+          ).to_i / 10_000_000).to_i / 100.0
         })
 
         metrics.to_json
