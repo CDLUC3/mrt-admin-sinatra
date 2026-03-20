@@ -197,3 +197,12 @@ queries:
         0 as audit_online_bytes_count, 
         0 as audit_nearline_file_count
       where not exists (select 1 from node_counts)
+  /queries/misc/ingest-metrics:
+    non_report: true
+    sql: |
+      select
+        ifnull(sum(billable_size), 0) as ingest_bytes_count
+      from
+        inv.inv_files
+      where
+        created > date_add(now(), interval -10 minute)

@@ -581,6 +581,7 @@ module Sinatra
         audit_online_file_count = 0
         audit_online_bytes_count = 0
         audit_nearline_file_count = 0
+        ingest_bytes_count = 0
 
         UC3Query::QueryClient.client.run_query(
           '/queries/misc/outstanding-replication'
@@ -604,7 +605,10 @@ module Sinatra
           audit_nearline_file_count: audit_nearline_file_count,
           oldest_audit_in_days: UC3Query::QueryClient.client.run_query_get_val(
             '/queries/misc/oldest-audit-in-days', 'days_since_today'
-          )
+          ),
+          gb_ingested: (UC3Query::QueryClient.client.run_query_get_val(
+            '/queries/misc/ingest-metrics', 'ingest_bytes_count'
+          ) / 10_000_000).to_i / 100.0
         })
 
         metrics.to_json

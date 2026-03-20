@@ -8,6 +8,7 @@ queries:
     sql: |
       insert into inv.inv_nodes(
         number,
+        description,
         media_type,
         media_connectivity,
         access_mode,
@@ -22,6 +23,7 @@ queries:
       )
       select
         7777,
+        '7777',
         'magnetic-disk',
         'cloud',
         'on-line',
@@ -36,6 +38,7 @@ queries:
       union
       select
         8888,
+        '8888',
         'magnetic-disk',
         'cloud',
         'on-line',
