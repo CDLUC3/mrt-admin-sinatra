@@ -25,12 +25,27 @@ docker: &docker
     connect_timeout: 15
 dockerlocal:
   <<: *docker
-ecs-dev:
-  <<: *docker
+ecs-dev: &ecs-dev
+  admin_password: 
+    val: password
+  host:
+    val: ldap
+  port:
+    val: 1636
+  default_read:
+    val: merritt-test, anonymous
+  default_write:
+    val: merritt-test
+  default_download:
+    val: merritt-test, anonymous
+  default_admin:
+    val: merritt-test
+  _fixed:
+    <<: *fixed
 ecs-dbsnapshot:
-  <<: *docker
+  <<: *ecs-dev
 ecs-ephemeral:
-  <<: *docker
+  <<: *ecs-dev
 ecs-stg:
   admin_password: 
     ssm: /uc3/mrt/stg/ldap/admin-password
