@@ -40,6 +40,8 @@ ecs-dev: &ecs-dev
     val: merritt-test, anonymous
   default_admin:
     val: merritt-test
+  encryption: 
+    val: simple_tls
   _fixed:
     <<: *fixed
 ecs-dbsnapshot:
