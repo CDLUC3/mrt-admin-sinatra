@@ -596,7 +596,7 @@ module Sinatra
           audit_online_bytes_count = row.fetch('audit_online_bytes_count', 0).to_i
           audit_nearline_file_count = row.fetch('audit_nearline_file_count', 0).to_i
         end
-        # json values were being written in exponential notation, so converting to int and back to float 
+        # json values were being written in exponential notation, so converting to int and back to float
         # to get a more readable value when loading to CW metrics.  We lose precision on values less than 10MB.
         metrics.merge!({
           number_of_active_replications: repcount,

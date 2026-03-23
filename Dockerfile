@@ -8,6 +8,14 @@ FROM ${ECR_REGISTRY}/mysql-ruby-lambda
 ENV RACK_CONFIG=app/config_mrt.ru
 ENV TZ=America/Los_Angeles
 
+# ui logic that is working
+# RUN mkdir /usr/local/share/ca-certificates/extra
+# COPY docker/ldap-ca.crt /usr/local/share/ca-certificates/extra/ldap-ca.crt
+# RUN /usr/sbin/update-ca-certificates
+
+# copy default ca cert for opendj
+COPY docker/ldap-ca.crt /etc/pki/ca-trust/source/anchors/ldap-ca.crt
+# copy uc3 self-signed ca cert for use with EC2 ldap
 COPY UC3-Self-Signed-CA.crt /etc/pki/ca-trust/source/anchors/UC3-Self-Signed-CA.crt
 RUN /usr/bin/update-ca-trust extract
 
