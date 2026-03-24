@@ -58,12 +58,12 @@ ecs-ephemeral:
 ecs-stg:
   admin_password: 
     ssm: /uc3/mrt/stg/ldap/admin-password
-  host:
-    env: HOST_LDAP
+  # host:
+  #  env: HOST_LDAP
   port: 
     val: 1636
-  # tls_ca_file:
-  #   val: /etc/pki/ca-trust/source/anchors/ldap-ca.crt
+  tls_ca_file:
+    val: /etc/pki/ca-trust/source/anchors/ldap-ca.crt
   encryption:
     val: simple_tls
   default_read:
