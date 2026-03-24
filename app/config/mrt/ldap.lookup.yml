@@ -23,8 +23,10 @@ docker: &docker
     guest_password: guest
     guest_user: anonymous
     connect_timeout: 15
+
 dockerlocal:
   <<: *docker
+
 ecs-dev: &ecs-dev
   admin_password: 
     val: password
@@ -32,6 +34,8 @@ ecs-dev: &ecs-dev
     val: ldap
   port:
     val: 1636
+  tls_ca_file:
+    val: /etc/pki/ca-trust/source/anchors/ldap-ca.crt
   default_read:
     val: merritt-test, anonymous
   default_write:
@@ -44,10 +48,13 @@ ecs-dev: &ecs-dev
     val: simple_tls
   _fixed:
     <<: *fixed
+
 ecs-dbsnapshot:
   <<: *ecs-dev
+
 ecs-ephemeral:
   <<: *ecs-dev
+
 ecs-stg:
   admin_password: 
     ssm: /uc3/mrt/stg/ldap/admin-password
@@ -55,6 +62,8 @@ ecs-stg:
     env: HOST_LDAP
   port: 
     val: 1636
+  tls_ca_file:
+    val: /etc/pki/ca-trust/source/anchors/ldap-ca.crt
   encryption:
     val: simple_tls
   default_read:
@@ -67,6 +76,7 @@ ecs-stg:
     ssm: /uc3/mrt/stg/ldap/default-admin
   _fixed:
     <<: *fixed
+
 ecs-prd:
   admin_password: 
     ssm: /uc3/mrt/prd/ldap/admin-password
@@ -74,6 +84,8 @@ ecs-prd:
     env: HOST_LDAP
   port: 
     val: 1636
+  tls_ca_file:
+    val: /etc/pki/ca-trust/source/anchors/ldap-ca.crt
   encryption: 
     val: simple_tls
   default_read:
@@ -86,5 +98,6 @@ ecs-prd:
     ssm: /uc3/mrt/prd/ldap/default-admin
   _fixed:
     <<: *fixed
+
 default:
   <<: *docker 

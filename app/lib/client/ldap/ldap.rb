@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'net/ldap'
+require 'openssl'
 
 module UC3Ldap
   # LDAP Client
@@ -33,11 +34,19 @@ module UC3Ldap
         connect_timeout: @ldapconf.fetch(:connect_timeout, '60').to_i
       }
       if @ldapconf.fetch(:encryption, '') == 'simple_tls'
+        tls_options = {
+          ssl_version: @ldapconf.fetch('tls', 'TLSv1_2')
+        }
+
+        ca_file = @ldapconf.fetch(:tls_ca_file, '').to_s
+        unless ca_file.empty?
+          tls_options[:ca_file] = ca_file
+          tls_options[:verify_mode] = OpenSSL::SSL::VERIFY_PEER
+        end
+
         @ldap_connect[:encryption] = {
           method: :simple_tls,
-          tls_options: {
-            ssl_version: @ldapconf.fetch('tls', 'TLSv1_2')
-          }
+          tls_options: tls_options
         }
       end
       @ldap = Net::LDAP.new(@ldap_connect)
