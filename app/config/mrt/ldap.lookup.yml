@@ -29,7 +29,7 @@ dockerlocal:
 
 ecs-dev: &ecs-dev
   admin_password: 
-    val: password
+    ssm: /uc3/mrt/dev/ldap/ecs-admin-password
   host:
     val: ldap
   port:
