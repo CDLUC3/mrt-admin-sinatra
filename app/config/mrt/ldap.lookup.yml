@@ -58,8 +58,8 @@ ecs-ephemeral:
 ecs-stg:
   admin_password: 
     ssm: /uc3/mrt/stg/ldap/ecs-admin-password
-  # host:
-  #  env: HOST_LDAP
+  host:
+    val: ldap
   port: 
     val: 1636
   tls_ca_file:
