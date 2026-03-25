@@ -60,10 +60,10 @@ ecs-stg:
     # ssm: /uc3/mrt/stg/ldap/ecs-admin-password
     ssm: /uc3/mrt/stg/ldap/admin-password
   host:
-    val: ldap
-  port: 
-    # val: 1636
+    # val: ldap
     env: HOST_LDAP
+  port: 
+    val: 1636
   # tls_ca_file:
   #   val: /etc/pki/ca-trust/source/anchors/ldap-ca.crt
   encryption:
