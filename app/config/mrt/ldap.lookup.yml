@@ -64,8 +64,8 @@ ecs-stg:
   port: 
     # val: 1636
     env: HOST_LDAP
-  tls_ca_file:
-    val: /etc/pki/ca-trust/source/anchors/ldap-ca.crt
+  # tls_ca_file:
+  #   val: /etc/pki/ca-trust/source/anchors/ldap-ca.crt
   encryption:
     val: simple_tls
   default_read:
