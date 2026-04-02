@@ -1292,6 +1292,26 @@ queries:
           ),
           0
         ) as online_bytes,
+        ifnull(
+          sum(
+            case
+              when a.inv_node_id in (select id from inv.inv_nodes where number in (9401, 9402, 9403))
+                then full_size
+              else 0
+            end
+          ),
+          0
+        ) as sdsc_bytes,
+        ifnull(
+          sum(
+            case
+              when a.inv_node_id in (select id from inv.inv_nodes where number in (2001, 2002, 2003))
+                then full_size
+              else 0
+            end
+          ),
+          0
+        ) as wasabi_bytes,
         case
           when verified is null and min(f.created) < date_add(now(), INTERVAL -1 DAY) then 'FAIL'
           when verified is null and min(f.created) < date_add(now(), INTERVAL -10 HOUR) then 'WARN'
