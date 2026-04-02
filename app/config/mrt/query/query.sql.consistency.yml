@@ -1295,7 +1295,7 @@ queries:
         ifnull(
           sum(
             case
-              when a.inv_node_id in (select id from inv.inv_nodes where number in (9401, 9402, 9403))
+              when a.inv_node_id in (select id from inv.inv_nodes where number in (9501, 9502, 9503))
                 then full_size
               else 0
             end
@@ -1312,6 +1312,16 @@ queries:
           ),
           0
         ) / 1000000000.0 as wasabi_bytes_gb,
+        ifnull(
+          sum(
+            case
+              when a.inv_node_id in (select id from inv.inv_nodes where number in (5001, 5002, 5003))
+                then full_size
+              else 0
+            end
+          ),
+          0
+        ) / 1000000000.0 as s3_bytes_gb,
         case
           when verified is null and min(f.created) < date_add(now(), INTERVAL -1 DAY) then 'FAIL'
           when verified is null and min(f.created) < date_add(now(), INTERVAL -10 HOUR) then 'WARN'
