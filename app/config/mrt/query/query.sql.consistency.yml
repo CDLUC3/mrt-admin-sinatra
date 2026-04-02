@@ -1291,7 +1291,7 @@ queries:
             end
           ),
           0
-        ) as online_bytes,
+        ) / 1000000000.0 as online_gb,
         ifnull(
           sum(
             case
@@ -1301,7 +1301,7 @@ queries:
             end
           ),
           0
-        ) as sdsc_bytes,
+        ) / 1000000000.0 as sdsc_gb,
         ifnull(
           sum(
             case
@@ -1311,7 +1311,7 @@ queries:
             end
           ),
           0
-        ) as wasabi_bytes,
+        ) / 1000000000.0 as wasabi_gb,
         case
           when verified is null and min(f.created) < date_add(now(), INTERVAL -1 DAY) then 'FAIL'
           when verified is null and min(f.created) < date_add(now(), INTERVAL -10 HOUR) then 'WARN'
