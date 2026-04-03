@@ -1211,6 +1211,11 @@ items:
           disable: default, docker, ecs-stg, ecs-prd, ecs-dbsnapshot
           confmsg: This will run a job in the merritt-ops container
           method: post
+        - title: Initialize LDAP
+          route: /infra/ecs/tasks/launch/merritt-ops/runLdapInit
+          disable: default, docker, ecs-dev, ecs-ephemeral, ecs-dbsnapshot
+          confmsg: This will run a job in the merritt-ops container
+          method: post
       - title: Service Testing
         path: merritt-ops-testing
         route: /infra/ecs/tasks/launch/merritt-ops
