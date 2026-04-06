@@ -287,11 +287,13 @@ queries:
     sql: |
       insert into inv.inv_tasks(
         task_name,
-        task_item
+        task_item,
+        current_status
       )
       values(
         'object delete',
-        ?
+        ?,
+        'ok'
       )
     parameters:
     - name: ark
