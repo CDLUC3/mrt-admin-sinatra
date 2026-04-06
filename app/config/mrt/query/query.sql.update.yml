@@ -282,3 +282,17 @@ queries:
       type: string
     - name: id
       type: integer
+  /queries-update/log-delete:
+    update: true
+    sql: |
+      insert into inv.inv_tasks(
+        task_name,
+        task_item
+      )
+      values(
+        'object delete',
+        ?
+      )
+    parameters:
+    - name: ark
+      type: string

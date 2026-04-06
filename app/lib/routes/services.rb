@@ -263,6 +263,7 @@ module Sinatra
 
       app.post '/test/purge/*' do |mnemonic|
         raise 'Collection purge not allowed' if UC3Query::QueryResolvers.collection_purge_disabled?
+
         urlparams = {}
         urlparams['count'] = [50, request.params.fetch('count', '20').to_i].min
         urlparams['mnemonic'] = mnemonic
@@ -1274,6 +1275,7 @@ module Sinatra
       if fail
         { message: "#{ark}: FAIL: (#{steps.join('; ')})" }
       else
+        UC3Query::QueryClient.client.query_update('/queries-update/log-delete', { ark: ark })
         { message: "#{ark}: SUCCESS: (#{steps.join('; ')})" }
       end
     end

@@ -218,6 +218,7 @@ td.tags, th.tags {
   width: 200px;
 }
 
+td.file_count, th.file_count,
 td.billable_size, th.billable_size,
 td.object_count, th.object_count,
 td.total_files, th.total_files,
