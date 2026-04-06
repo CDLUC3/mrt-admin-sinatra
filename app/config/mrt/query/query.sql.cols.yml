@@ -52,8 +52,6 @@ columns:
       cssclass: float
     size:
       cssclass: float
-    billable_size:
-      cssclass: float
     daily_average_projected_gb:
       cssclass: float
     average_available_gb:
