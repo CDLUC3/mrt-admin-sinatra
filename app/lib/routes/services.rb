@@ -1275,7 +1275,9 @@ module Sinatra
       if fail
         { message: "#{ark}: FAIL: (#{steps.join('; ')})" }
       else
-        UC3Query::QueryClient.client.query_update('/queries-update/log-delete', { ark: ark })
+        params = {}
+        params['ark'] = ark
+        UC3Query::QueryClient.client.query_update('/queries-update/log-delete', params)
         { message: "#{ark}: SUCCESS: (#{steps.join('; ')})" }
       end
     end
