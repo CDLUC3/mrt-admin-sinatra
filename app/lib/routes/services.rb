@@ -262,6 +262,7 @@ module Sinatra
       end
 
       app.post '/test/purge/*' do |mnemonic|
+        raise 'Collection purge not allowed' if UC3Query::QueryResolvers.collection_purge_disabled?
         urlparams = {}
         urlparams['count'] = [50, request.params.fetch('count', '20').to_i].min
         urlparams['mnemonic'] = mnemonic

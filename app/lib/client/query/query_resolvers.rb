@@ -13,6 +13,10 @@ module UC3Query
     end
 
     def self.object_delete_disabled?
+      UC3::UC3Client.dbsnapshot_stack?
+    end
+
+    def self.collection_purge_disabled?
       UC3::UC3Client.dbsnapshot_stack? || UC3::UC3Client.prod_stack?
     end
 
