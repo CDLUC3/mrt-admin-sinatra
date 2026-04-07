@@ -30,10 +30,10 @@ module Sinatra
     end
 
     def ingest_hosts
-      hosts = ENV.fetch('HOSTS_INGEST', '').split.map do |host|
+      hosts = ENV.fetch('HOSTS_INGEST', '').split(',').map do |host|
         "http://#{host}"
       end
-      hosts << ingest_host if hosts.empty?
+      return service_urls('ingest') if hosts.empty?
       hosts
     end
 
@@ -42,10 +42,10 @@ module Sinatra
     end
 
     def store_hosts
-      hosts = ENV.fetch('HOSTS_STORE', '').split.map do |host|
+      hosts = ENV.fetch('HOSTS_STORE', '').split(',').map do |host|
         "http://#{host}"
       end
-      hosts << store_host if hosts.empty?
+      return service_urls('store') if hosts.empty?
       hosts
     end
 
@@ -54,10 +54,10 @@ module Sinatra
     end
 
     def access_hosts
-      hosts = ENV.fetch('HOSTS_ACCESS', '').split.map do |host|
+      hosts = ENV.fetch('HOSTS_ACCESS', '').split(',').map do |host|
         "http://#{host}"
       end
-      hosts << access_host if hosts.empty?
+      return service_urls('access') if hosts.empty?
       hosts
     end
 
@@ -66,10 +66,10 @@ module Sinatra
     end
 
     def audit_hosts
-      hosts = ENV.fetch('HOSTS_AUDIT', '').split.map do |host|
+      hosts = ENV.fetch('HOSTS_AUDIT', '').split(',').map do |host|
         "http://#{host}"
       end
-      hosts << audit_host if hosts.empty?
+        return service_urls('audit') if hosts.empty?
       hosts
     end
 
@@ -78,10 +78,10 @@ module Sinatra
     end
 
     def replic_hosts
-      hosts = ENV.fetch('HOSTS_REPLIC', '').split.map do |host|
+      hosts = ENV.fetch('HOSTS_REPLIC', '').split(',').map do |host|
         "http://#{host}"
       end
-      hosts << replic_host if hosts.empty?
+      return service_urls('replic') if hosts.empty?
       hosts
     end
 
@@ -90,10 +90,10 @@ module Sinatra
     end
 
     def inventory_hosts
-      hosts = ENV.fetch('HOSTS_INVENTORY', '').split.map do |host|
+      hosts = ENV.fetch('HOSTS_INVENTORY', '').split(',').map do |host|
         "http://#{host}"
       end
-      hosts << inventory_host if hosts.empty?
+      return service_urls('inventory') if hosts.empty?
       hosts
     end
 
@@ -682,6 +682,17 @@ module Sinatra
 
     def java_service_send_stop_start(service, endpoint)
       resp = []
+      service_urls(service).each do |url|
+        resp << ::JSON.parse(post_url("#{url}/#{endpoint}"))
+      end
+      resp
+    rescue StandardError => e
+      puts "Error sending #{endpoint} to #{service} instances: #{e}"
+      []
+    end
+
+    def service_urls(service)
+      urls = []
       Aws::ServiceDiscovery::Client.new(region: UC3::UC3Client.region)
         .discover_instances(
           service_name: service,
@@ -691,12 +702,12 @@ module Sinatra
           hostip = instance.attributes.fetch('AWS_INSTANCE_IPV4', '')
           next if hostip.empty?
 
-          url = "http://#{hostip}:8080/#{service}/#{endpoint}"
-          resp << ::JSON.parse(post_url(url))
+          url = "http://#{hostip}:8080/#{service}"
+          urls << url
         end
-      resp
+      urls
     rescue StandardError => e
-      puts "Error sending #{endpoint} to #{service} instances: #{e}"
+      puts "Error finding URLs for #{service} instances: #{e}"
       []
     end
 
