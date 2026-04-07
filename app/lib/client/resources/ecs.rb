@@ -67,6 +67,7 @@ module UC3Resources
 
             dep = svc.deployments ? svc.deployments[0] : {}
             next if image.nil?
+
             image_name = image.split(':')[0]
             image_tag = image.split(':')[1]
             services[svc.service_name] = {

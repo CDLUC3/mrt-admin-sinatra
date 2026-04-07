@@ -30,9 +30,8 @@ module Sinatra
     end
 
     def ingest_hosts
-      hosts = []
-      ENV.fetch('HOSTS_INGEST', '').split() .each do |host|
-        hosts << "http://#{host}"
+      hosts = ENV.fetch('HOSTS_INGEST', '').split.map do |host|
+        "http://#{host}"
       end
       hosts << ingest_host if hosts.empty?
       hosts
@@ -43,9 +42,8 @@ module Sinatra
     end
 
     def store_hosts
-      hosts = []
-      ENV.fetch('HOSTS_STORE', '').split() .each do |host|
-        hosts << "http://#{host}"
+      hosts = ENV.fetch('HOSTS_STORE', '').split.map do |host|
+        "http://#{host}"
       end
       hosts << store_host if hosts.empty?
       hosts
@@ -56,9 +54,8 @@ module Sinatra
     end
 
     def access_hosts
-      hosts = []
-      ENV.fetch('HOSTS_ACCESS', '').split() .each do |host|
-        hosts << "http://#{host}"
+      hosts = ENV.fetch('HOSTS_ACCESS', '').split.map do |host|
+        "http://#{host}"
       end
       hosts << access_host if hosts.empty?
       hosts
@@ -69,9 +66,8 @@ module Sinatra
     end
 
     def audit_hosts
-      hosts = []
-      ENV.fetch('HOSTS_AUDIT', '').split() .each do |host|
-        hosts << "http://#{host}"
+      hosts = ENV.fetch('HOSTS_AUDIT', '').split.map do |host|
+        "http://#{host}"
       end
       hosts << audit_host if hosts.empty?
       hosts
@@ -82,9 +78,8 @@ module Sinatra
     end
 
     def replic_hosts
-      hosts = []
-      ENV.fetch('HOSTS_REPLIC', '').split() .each do |host|
-        hosts << "http://#{host}"
+      hosts = ENV.fetch('HOSTS_REPLIC', '').split.map do |host|
+        "http://#{host}"
       end
       hosts << replic_host if hosts.empty?
       hosts
@@ -95,9 +90,8 @@ module Sinatra
     end
 
     def inventory_hosts
-      hosts = []
-      ENV.fetch('HOSTS_INVENTORY', '').split() .each do |host|
-        hosts << "http://#{host}"
+      hosts = ENV.fetch('HOSTS_INVENTORY', '').split.map do |host|
+        "http://#{host}"
       end
       hosts << inventory_host if hosts.empty?
       hosts
