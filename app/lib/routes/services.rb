@@ -33,6 +33,7 @@ module Sinatra
       hosts = ENV.fetch('HOSTS_INGEST', '').split(',').map do |host|
         "http://#{host}"
       end
+      puts "Hosts from ENV: #{hosts}"
       return service_urls('ingest') if hosts.empty?
       hosts
     end
@@ -45,6 +46,7 @@ module Sinatra
       hosts = ENV.fetch('HOSTS_STORE', '').split(',').map do |host|
         "http://#{host}"
       end
+      puts "Hosts from ENV: #{hosts}"
       return service_urls('store') if hosts.empty?
       hosts
     end
@@ -57,6 +59,7 @@ module Sinatra
       hosts = ENV.fetch('HOSTS_ACCESS', '').split(',').map do |host|
         "http://#{host}"
       end
+      puts "Hosts from ENV: #{hosts}"
       return service_urls('access') if hosts.empty?
       hosts
     end
@@ -69,7 +72,8 @@ module Sinatra
       hosts = ENV.fetch('HOSTS_AUDIT', '').split(',').map do |host|
         "http://#{host}"
       end
-        return service_urls('audit') if hosts.empty?
+      puts "Hosts from ENV: #{hosts}"
+      return service_urls('audit') if hosts.empty?
       hosts
     end
 
@@ -81,6 +85,7 @@ module Sinatra
       hosts = ENV.fetch('HOSTS_REPLIC', '').split(',').map do |host|
         "http://#{host}"
       end
+      puts "Hosts from ENV: #{hosts}"
       return service_urls('replic') if hosts.empty?
       hosts
     end
@@ -93,6 +98,7 @@ module Sinatra
       hosts = ENV.fetch('HOSTS_INVENTORY', '').split(',').map do |host|
         "http://#{host}"
       end
+      puts "Hosts from ENV: #{hosts}"
       return service_urls('inventory') if hosts.empty?
       hosts
     end
@@ -705,6 +711,7 @@ module Sinatra
           url = "http://#{hostip}:8080/#{service}"
           urls << url
         end
+      puts "Monitor #{urls}"
       urls
     rescue StandardError => e
       puts "Error finding URLs for #{service} instances: #{e}"
