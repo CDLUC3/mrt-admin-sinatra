@@ -29,24 +29,78 @@ module Sinatra
       "http://#{ENV.fetch('SVC_INGEST', 'ingest:8080/ingest')}"
     end
 
+    def ingest_hosts
+      hosts = []
+      ENV.fetch('HOSTS_INGEST', '').split() .each do |host|
+        hosts << "http://#{host}"
+      end
+      hosts << ingest_host if hosts.empty?
+      hosts
+    end
+
     def store_host
       "http://#{ENV.fetch('SVC_STORE', 'store:8080/store')}"
+    end
+
+    def store_hosts
+      hosts = []
+      ENV.fetch('HOSTS_STORE', '').split() .each do |host|
+        hosts << "http://#{host}"
+      end
+      hosts << store_host if hosts.empty?
+      hosts
     end
 
     def access_host
       "http://#{ENV.fetch('SVC_ACCESS', 'store:8080/store')}"
     end
 
+    def access_hosts
+      hosts = []
+      ENV.fetch('HOSTS_ACCESS', '').split() .each do |host|
+        hosts << "http://#{host}"
+      end
+      hosts << access_host if hosts.empty?
+      hosts
+    end
+
     def audit_host
       "http://#{ENV.fetch('SVC_AUDIT', 'audit:8080/audit')}"
+    end
+
+    def audit_hosts
+      hosts = []
+      ENV.fetch('HOSTS_AUDIT', '').split() .each do |host|
+        hosts << "http://#{host}"
+      end
+      hosts << audit_host if hosts.empty?
+      hosts
     end
 
     def replic_host
       "http://#{ENV.fetch('SVC_REPLIC', 'replic:8080/replic')}"
     end
 
+    def replic_hosts
+      hosts = []
+      ENV.fetch('HOSTS_REPLIC', '').split() .each do |host|
+        hosts << "http://#{host}"
+      end
+      hosts << replic_host if hosts.empty?
+      hosts
+    end
+
     def inventory_host
       "http://#{ENV.fetch('SVC_INVENTORY', 'inventory:8080/inventory')}"
+    end
+
+    def inventory_hosts
+      hosts = []
+      ENV.fetch('HOSTS_INVENTORY', '').split() .each do |host|
+        hosts << "http://#{host}"
+      end
+      hosts << inventory_host if hosts.empty?
+      hosts
     end
 
     def self.registered(app)
@@ -553,14 +607,28 @@ module Sinatra
         states << check_ldap
 
         states << monitor_service_status(:ui, :state, "#{ui_host}/state.json")
-        states << monitor_service_status(:ingest, :state, "#{ingest_host}/state?t=json")
-        states << monitor_service_status(:store, :state, "#{store_host}/state?t=json")
-        states << monitor_service_status(:access, :state, "#{access_host}/state?t=json")
+
+        ingest_hosts.each do |host|
+          states << monitor_service_status(:ingest, :state, "#{host}/state?t=json")
+        end
+        store_hosts.each do |host|
+          states << monitor_service_status(:store, :state, "#{host}/state?t=json")
+        end
+        access_hosts.each do |host|
+          states << monitor_service_status(:access, :jsonstatus, "#{host}/jsonstatus")
+        end
 
         # Per David, state and status are equivalent
-        states << monitor_service_status(:audit, :state, "#{audit_host}/state?t=json")
-        states << monitor_service_status(:replic, :status, "#{replic_host}/status?t=json")
-        states << monitor_service_status(:inventory, :state, "#{inventory_host}/state?t=json")
+        audit_hosts.each do |host|
+          states << monitor_service_status(:audit, :state, "#{host}/state?t=json")
+        end
+
+        replic_hosts.each do |host|
+          states << monitor_service_status(:replic, :status, "#{host}/status?t=json")
+        end
+        inventory_hosts.each do |host|
+          states << monitor_service_status(:inventory, :state, "#{host}/state?t=json")
+        end
 
         adminui_show_table(
           AdminUI::Context.new(request.path, request.params),
