@@ -33,8 +33,8 @@ module Sinatra
       hosts = ENV.fetch('HOSTS_INGEST', '').split(',').map do |host|
         "http://#{host}"
       end
-      puts "Hosts from ENV: #{hosts}"
       return service_urls('ingest') if hosts.empty?
+
       hosts
     end
 
@@ -46,8 +46,8 @@ module Sinatra
       hosts = ENV.fetch('HOSTS_STORE', '').split(',').map do |host|
         "http://#{host}"
       end
-      puts "Hosts from ENV: #{hosts}"
       return service_urls('store') if hosts.empty?
+
       hosts
     end
 
@@ -59,8 +59,8 @@ module Sinatra
       hosts = ENV.fetch('HOSTS_ACCESS', '').split(',').map do |host|
         "http://#{host}"
       end
-      puts "Hosts from ENV: #{hosts}"
       return service_urls('access') if hosts.empty?
+
       hosts
     end
 
@@ -72,8 +72,8 @@ module Sinatra
       hosts = ENV.fetch('HOSTS_AUDIT', '').split(',').map do |host|
         "http://#{host}"
       end
-      puts "Hosts from ENV: #{hosts}"
       return service_urls('audit') if hosts.empty?
+
       hosts
     end
 
@@ -85,8 +85,8 @@ module Sinatra
       hosts = ENV.fetch('HOSTS_REPLIC', '').split(',').map do |host|
         "http://#{host}"
       end
-      puts "Hosts from ENV: #{hosts}"
       return service_urls('replic') if hosts.empty?
+
       hosts
     end
 
@@ -98,8 +98,8 @@ module Sinatra
       hosts = ENV.fetch('HOSTS_INVENTORY', '').split(',').map do |host|
         "http://#{host}"
       end
-      puts "Hosts from ENV: #{hosts}"
       return service_urls('inventory') if hosts.empty?
+
       hosts
     end
 
@@ -687,11 +687,9 @@ module Sinatra
     end
 
     def java_service_send_stop_start(service, endpoint)
-      resp = []
-      service_urls(service).each do |url|
-        resp << ::JSON.parse(post_url("#{url}/#{endpoint}"))
+      service_urls(service).map do |url|
+        ::JSON.parse(post_url("#{url}/#{endpoint}"))
       end
-      resp
     rescue StandardError => e
       puts "Error sending #{endpoint} to #{service} instances: #{e}"
       []
@@ -1229,9 +1227,12 @@ module Sinatra
         uri = URI.parse(url)
         req = Net::HTTP::Get.new(uri)
 
-        response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: uri.scheme == 'https') do |http|
-          http.read_timeout = read_timeout
-          http.open_timeout = open_timeout
+        response = Net::HTTP.start(
+          uri.hostname, uri.port,
+          use_ssl: uri.scheme == 'https',
+          read_timeout: read_timeout,
+          open_timeout: open_timeout
+        ) do |http|
           http.request(req)
         end
         status[:code] = response.code.to_i
