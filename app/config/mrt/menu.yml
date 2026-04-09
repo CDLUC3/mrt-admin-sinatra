@@ -907,6 +907,10 @@ items:
         route: /infra/ecs/redeploy/ingest
         confmsg: This will re-deploy the Ingest service in ECS.
         method: post
+      - title: Retag and Redeploy Ingest
+        route: /infra/ecs/retag-redeploy/ingest
+        confmsg: This will re-deploy the Ingest service in ECS.
+        method: post
       - title: Scale Up Ingest
         route: /infra/ecs/scale-up/ingest
         disable: default, docker
@@ -947,6 +951,10 @@ items:
       - title: Redeploy Store
         route: /infra/ecs/redeploy/store
         disable: default, docker
+        confmsg: This will re-deploy the Store service in ECS.
+        method: post
+      - title: Retag and Redeploy Store
+        route: /infra/ecs/retag-redeploy/store
         confmsg: This will re-deploy the Store service in ECS.
         method: post
       - title: Scale Up Store
@@ -998,6 +1006,10 @@ items:
         disable: default, docker
         confmsg: This will re-deploy the Inventory service in ECS.
         method: post
+      - title: Retag and Redeploy Inventory
+        route: /infra/ecs/retag-redeploy/inventory
+        confmsg: This will re-deploy the Inventory service in ECS.
+        method: post
       - title: Inventory Logs
         route: /ops/cloudwatch/logs/inventory
       - title: Inventory Errors
@@ -1032,6 +1044,10 @@ items:
       - title: Redeploy Audit
         route: /infra/ecs/redeploy/audit
         disable: default, docker
+        confmsg: This will re-deploy the Audit service in ECS.
+        method: post
+      - title: Retag and Redeploy Audit
+        route: /infra/ecs/retag-redeploy/audit
         confmsg: This will re-deploy the Audit service in ECS.
         method: post
       - title: Audit Logs
@@ -1069,6 +1085,10 @@ items:
         route: /infra/ecs/redeploy/replic
         disable: default, docker
         confmsg: This will re-deploy the Recplic service in ECS.
+        method: post
+      - title: Retag and Redeploy Replic
+        route: /infra/ecs/retag-redeploy/replic
+        confmsg: This will re-deploy the Replic service in ECS.
         method: post
       - title: Replic Logs
         route: /ops/cloudwatch/logs/replic
