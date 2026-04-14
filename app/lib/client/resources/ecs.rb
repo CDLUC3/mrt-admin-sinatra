@@ -70,6 +70,19 @@ module UC3Resources
 
             image_name = image.split(':')[0]
             image_tag = image.split(':')[1]
+
+            status = 'SKIP'
+
+            if svc.running_count.positive?
+              if dep.updated_at > (Date.today - 7)
+                status = 'PASS'
+              elsif dep.updated_at > (Date.today - 14)
+                status = 'WARN'
+              else
+                status = 'FAIL'
+              end
+            end
+
             services[svc.service_name] = {
               name: svc.service_name,
               deploying: pendcount.positive?,
@@ -80,7 +93,8 @@ module UC3Resources
               updated: date_format(dep.updated_at, convert_timezone: true),
               image: [image, digest],
               tags: @ecr_client.get_image_tags_by_digest(image_name, image_tag, digest),
-              manifest_tag: @ecr_client.get_manifest_tag(image_name)
+              manifest_tag: @ecr_client.get_manifest_tag(image_name),
+              status: status
             }
           end
         end
@@ -101,7 +115,8 @@ module UC3Resources
           AdminUI::Column.new(:updated, header: 'Updated'),
           AdminUI::Column.new(:image, header: 'Image'),
           AdminUI::Column.new(:tags, header: 'Matching Tags'),
-          AdminUI::Column.new(:manifest_tag, header: 'Manifest Tag')
+          AdminUI::Column.new(:manifest_tag, header: 'Manifest Tag'),
+          AdminUI::Column.new(:status, header: 'Status')
         ]
       )
       return table unless enabled
