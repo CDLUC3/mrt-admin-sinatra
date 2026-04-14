@@ -74,9 +74,9 @@ module UC3Resources
             status = 'SKIP'
 
             if svc.running_count.positive?
-              if dep.updated_at > (Date.today - 7)
+              if dep.updated_at > (Date.today - 7).to_time
                 status = 'PASS'
-              elsif dep.updated_at > (Date.today - 14)
+              elsif dep.updated_at > (Date.today - 14).to_time
                 status = 'WARN'
               else
                 status = 'FAIL'
