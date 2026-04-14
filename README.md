@@ -92,3 +92,6 @@ MERRITT_ECS=ecs-dev configkey=ecs-dev bundle exec puma app/config_mrt.ru
 ```
 MERRITT_ECS=desktop bundle exec puma app/config_uc3.ru
 ```
+
+## Internal Links
+- https://github.com/CDLUC3/mrt-doc-private/blob/main/uc3-mrt-admin.md
