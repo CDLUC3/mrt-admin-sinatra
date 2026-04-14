@@ -51,7 +51,7 @@ module Sinatra
 
       app.get '/infra/ecs/services/state' do
         table = UC3Resources::ServicesClient.new.list_services
-        record_status(request.path, table.status)
+        UC3::UC3Client.client.record_status(request.path, table.status)
         adminui_show_table(
           AdminUI::Context.new(request.path, request.params),
           table
