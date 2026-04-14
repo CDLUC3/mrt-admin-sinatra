@@ -430,6 +430,7 @@ module UC3
           @test_paths << path
           # TODO: SSM documentation
           %w[
+            /ecs/services/state
             /ldap/collections-missing
             /ops/zk/access/jobs
             /ops/zk/ingest/jobs-by-collection
