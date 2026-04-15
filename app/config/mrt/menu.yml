@@ -1113,6 +1113,11 @@ items:
         route: /json/access/tag
       - title: Access Nodes
         route: /json/access/nodes
+      - title: Redeploy Access
+        route: /infra/ecs/redeploy/access
+        disable: default, docker
+        confmsg: This will re-deploy the Access service in ECS.
+        method: post
       - title: Access Logs
         route: /ops/cloudwatch/logs/access
       - title: Access Errors
