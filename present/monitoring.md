@@ -28,4 +28,25 @@
   - Check the "state" of a service as a whole
     - 200 return code
     - valid json returned
-  - Check the status of specific json properties  
+  - Check the status of specific json properties
+  - Post health status to CloudWatch metrics
+    - 1 Healthy
+    - 0 Unhealthy
+   
+## CloudWatch Metrics
+
+## CloudWatch Alarms
+
+## Let AWS Do the Statistcal Work For Us
+
+## Alarm Resolution
+
+## Missing Metrics
+
+## Escalope API
+
+## Invoking Escalope with CloudWatch Alarm Data
+
+## Resulting Slack Message
+
+## Should this Be a Recommended Pattern to Follow?
