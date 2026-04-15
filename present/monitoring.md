@@ -52,7 +52,15 @@
 ## CloudWatch Alarms
 
 - [Alarm Configuration Yaml](https://github.com/CDLUC3/mrt-sceptre/blob/sprint-133/mrt-ecs/config/service_data.yaml#L513-L543)
+  - This yaml mirrors the checks that exist in the monitoring script
+  - The "key" names match the named dimensions used in CloudWatch metrics
+  - For each alarm, the yaml allows us to
+    - configure alarm escalation/resolution
+    - configure an alert when data is missing
+    - configure the number of periods to review when determining if an alarm should be activated  
 - [Alarm Sceptre Template](https://github.com/CDLUC3/mrt-sceptre/blob/main/mrt-ecs/templates/stack.alarms.yaml.j2)
+  - currently, only escalope escalation is configured
+  - since escalope sends messages to SNS, we did not configure an SNS notification 
 
 ### Action Types
 - SNS Channel (i.e. Slack, email)
