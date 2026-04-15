@@ -25,10 +25,12 @@
 
 - [run-monitor-checks.sh](https://github.com/CDLUC3/merritt-docker/blob/main/mrt-inttest-services/merritt-ops/scripts/run-monitor-checks.sh#L140-L209)
   - If the service resides in the main account, check each host individually
+    - As service migrate from the main account to ECS, these host specific checks will be deprecated 
   - Check the "state" of a service as a whole
     - 200 return code
     - valid json returned
   - Check the status of specific json properties
+    - jq queries perform these checks 
   - Post health status to CloudWatch metrics
     - 1 Healthy
     - 0 Unhealthy
