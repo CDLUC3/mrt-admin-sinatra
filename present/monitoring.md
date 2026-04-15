@@ -117,11 +117,42 @@ local payload=$(jq -n \
 
 ## Invoking Escalope with CloudWatch Alarm Data
 
-Martin is able to parse the CloudWatch Alarm data in order to call Escalope directly.
+Escalope is able to directly parse the CloudWatch Alarm data to initiate escalations or de-escalate them.
 
-The ECS Stack Name becomes the Escalope "host".
+Here's an example, un-jinjafied, to talk through:
+```
+  MrtAlarmstgaudit1:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: mrt_stg_audit1_Alarm
+      ComparisonOperator: LessThanThreshold
+      Dimensions: 
+        - Name: stack
+          Value: ecs-stg
+        - Name: service
+          Value: audit
+      MetricName: healthy-count
+      Namespace: merritt
+      Statistic: Average
+      EvaluationPeriods: 1
+      Threshold: 1
+      Period: 300
+      Unit: Count
+      AlarmActions:
+      - arn:aws:lambda:us-west-2:451826914157:function:ias-escalope-func
+      OKActions:
+      - arn:aws:lambda:us-west-2:451826914157:function:ias-escalope-func
+      InsufficientDataActions:
+      - arn:aws:lambda:us-west-2:451826914157:function:ias-escalope-func
+```
 
-Custom escalation rules can be set on a stack by stack basis.
+Escalope's [code](https://github.com/cdlib/ias-escalope/blob/main/func/escalope.py#L736) derives three pieces of information from the alarm:
+- "host" - the `namespace` plus the `stack` dimension are joined by a hypen to form a `host` value. So in this case, host will be `merritt-ecs-stg`
+- "service" - taken from the `service` dimension, in this case `audit`
+- "cause" - taken from the alarm's name, so `mrt_stg_audit1_Alarm` in this case
+
+Custom escalation rules can thus be set on a stack by stack basis.
+
 
 ## Resulting Slack Message
 
