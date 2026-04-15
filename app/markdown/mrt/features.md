@@ -13,12 +13,17 @@
 - View services running within an ECS Stack
   - Restart services
   - Trigger auto-scaling of services
+  - Send start/stop/status checks to individual services
+  - Re-tag ECR images based on the [ECS Manifest](https://github.com/CDLUC3/mrt-service-release-manifest/blob/main/ecs-release-manifest.yaml)
   - Initiate ECS Tasks to perform discrete actions (vs long-running services)
-  - View AWS resources associated with a stack (Dev Stack Only)
 - Merritt Operational Actions
   - Make service calls to Merritt microservices
   - Requeue Audit and Replication Tasks
   - Re-queue and delete ZooKeeper Queue Items
+  - Start storage scans
+  - Link to CloudWatch and OpenSearch instances for a stack
+  - Perform queries against OpenSearch
+  - Initiate the object deletion process
 - In a Development Environment, trigger particular test cases in a Merritt Stack
   - Create a baseline set of collections in an empty Merritt Stack
   - Trigger the ingestion of test data into multiple Merritt collections
