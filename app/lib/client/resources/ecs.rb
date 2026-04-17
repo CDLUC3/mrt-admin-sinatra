@@ -9,6 +9,8 @@ require_relative '../code/ecr_images'
 module UC3Resources
   # Query for repository images by tag
   class ServicesClient < UC3::UC3Client
+    MERRITT_SERVICES = %w[ingest inventory audit replic access store ui admintool].freeze
+
     def self.client
       UC3::UC3Client.clients.fetch(self.class.to_s, ServicesClient.new)
     end
@@ -73,6 +75,8 @@ module UC3Resources
 
             matching = @ecr_client.get_image_tags_by_digest(image_name, image_tag, digest)
 
+            name = svc.service_name
+
             status = 'SKIP'
 
             if svc.running_count.positive?
@@ -83,14 +87,11 @@ module UC3Resources
                        else
                          'FAIL'
                        end
-              status = 'FAIL' if matching.empty? && svc.serice_name in %w[
-                ingest inventory audit replic access store ui
-                admintool
-]
+              status = 'FAIL' if matching.empty? && name.in?(MERRITT_SERVICES)
             end
 
-            services[svc.service_name] = {
-              name: svc.service_name,
+            services[name] = {
+              name: name,
               deploying: pendcount.positive?,
               desired_count: svc.desired_count,
               running_count: svc.running_count,
