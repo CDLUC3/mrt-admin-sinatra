@@ -87,7 +87,7 @@ module UC3Resources
                        else
                          'FAIL'
                        end
-              status = 'FAIL' if matching.empty? && name.in?(MERRITT_SERVICES)
+              status = 'FAIL' if matching.empty? && name in MERRITT_SERVICES
             end
 
             services[name] = {
@@ -126,10 +126,10 @@ module UC3Resources
           AdminUI::Column.new(:status, header: 'Status')
         ],
         description:
-          "- SKIP if service is not running\n\n" \
-          "- FAIL if no matching tags for a Merritt Service\n\n" \
-          "- PASS if service is running and updated within the last 7 days\n\n" \
-          "- WARN if updated within the last 14 days\n\n" \
+          "- SKIP if service is not running\n" \
+          "- FAIL if no matching tags for a Merritt Service\n" \
+          "- PASS if service is running and updated within the last 7 days\n" \
+          "- WARN if updated within the last 14 days\n" \
           '- FAIL if not updated in over 14 days'
       )
       return table unless enabled
