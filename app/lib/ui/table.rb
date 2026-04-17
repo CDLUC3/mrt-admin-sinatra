@@ -118,7 +118,7 @@ module AdminUI
     <div class='table'>
     <table class='data sortable'>
     <caption>
-      <details>
+      <details open>
       <summary>Table Details</summary>
       #{render_status}
       #{render_counts}
