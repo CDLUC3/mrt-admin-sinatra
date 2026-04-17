@@ -71,6 +71,8 @@ module UC3Resources
             image_name = image.split(':')[0]
             image_tag = image.split(':')[1]
 
+            matching = @ecr_client.get_image_tags_by_digest(image_name, image_tag, digest)
+
             status = 'SKIP'
 
             if svc.running_count.positive?
@@ -81,6 +83,7 @@ module UC3Resources
                        else
                          'FAIL'
                        end
+              status
             end
 
             services[svc.service_name] = {
@@ -92,7 +95,7 @@ module UC3Resources
               created: date_format(dep.created_at, convert_timezone: true),
               updated: date_format(dep.updated_at, convert_timezone: true),
               image: [image, digest],
-              tags: @ecr_client.get_image_tags_by_digest(image_name, image_tag, digest),
+              tags: matching,
               manifest_tag: @ecr_client.get_manifest_tag(image_name),
               status: status
             }
@@ -117,7 +120,13 @@ module UC3Resources
           AdminUI::Column.new(:tags, header: 'Matching Tags'),
           AdminUI::Column.new(:manifest_tag, header: 'Manifest Tag'),
           AdminUI::Column.new(:status, header: 'Status')
-        ]
+        ],
+        description: 
+          "- SKIP if service is not running\n\n" \
+          "- FAIL if no matching tags\n\n" \
+          "- PASS if service is running and updated within the last 7 days\n\n" \
+          "- WARN if updated within the last 14 days\n\n" \
+          "- FAIL if not updated in over 14 days" 
       )
       return table unless enabled
 
