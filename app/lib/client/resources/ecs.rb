@@ -83,7 +83,10 @@ module UC3Resources
                        else
                          'FAIL'
                        end
-              status
+              status = 'FAIL' if matching.empty? && svc.serice_name in %w[
+                ingest inventory audit replic access store ui
+                admintool
+]
             end
 
             services[svc.service_name] = {
@@ -121,12 +124,12 @@ module UC3Resources
           AdminUI::Column.new(:manifest_tag, header: 'Manifest Tag'),
           AdminUI::Column.new(:status, header: 'Status')
         ],
-        description: 
+        description:
           "- SKIP if service is not running\n\n" \
-          "- FAIL if no matching tags\n\n" \
+          "- FAIL if no matching tags for a Merritt Service\n\n" \
           "- PASS if service is running and updated within the last 7 days\n\n" \
           "- WARN if updated within the last 14 days\n\n" \
-          "- FAIL if not updated in over 14 days" 
+          '- FAIL if not updated in over 14 days'
       )
       return table unless enabled
 
