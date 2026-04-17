@@ -87,8 +87,7 @@ module UC3Resources
                        else
                          'FAIL'
                        end
-              status = 'FAIL' if matching.empty? && name in MERRITT_SERVICES
-              puts "Status #{status}; #{matching.length}; #{name}; #{name in MERRITT_SERVICES}"
+              status = 'FAIL' if matching.empty? && MERRITT_SERVICES.include?(name)
             end
 
             services[name] = {
