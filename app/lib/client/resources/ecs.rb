@@ -88,7 +88,7 @@ module UC3Resources
                          'FAIL'
                        end
               status = 'FAIL' if matching.empty? && name in MERRITT_SERVICES
-              puts "Status #{status}; {matching.length}; #{name}; #{name in MERRITT_SERVICES}"
+              puts "Status #{status}; #{matching.length}; #{name}; #{name in MERRITT_SERVICES}"
             end
 
             services[name] = {
@@ -112,6 +112,27 @@ module UC3Resources
       services
     end
 
+    def service_description
+      %{
+        ## Service Status Criteria
+        
+        - SKIP if service is not running
+        - FAIL if no matching tags for a Merritt Service
+        - PASS if service is running and updated within the last 7 days
+        - WARN if updated within the last 14 days
+        - FAIL if not updated in over 14 days
+
+        ## Matching Tags
+        
+        - The matching tags contain the list of ECR tags that match the digest of the running image.
+        - The stack deployment tag (i.e. ecs-prd) is excluded from this list
+        - For branches and tags that are listed in the [ECS Manifest](/merritt_manifest), the images will be rebuilt daily
+        - A named archive tag should confinue to be present
+        - If a matching tag is not present, there is a risk that the ECR lifecycle policy may purge the image, which would prevent redeployments.
+        - See [Merritt Tagging Conventions](https://github.com/CDLUC3/mrt-admin-sinatra/blob/main/present/tagging/build.md) for more details
+      }
+    end
+
     def list_services
       table = AdminUI::FilterTable.new(
         columns: [
@@ -126,13 +147,9 @@ module UC3Resources
           AdminUI::Column.new(:manifest_tag, header: 'Manifest Tag'),
           AdminUI::Column.new(:status, header: 'Status')
         ],
-        description:
-          "- SKIP if service is not running\n" \
-          "- FAIL if no matching tags for a Merritt Service\n" \
-          "- PASS if service is running and updated within the last 7 days\n" \
-          "- WARN if updated within the last 14 days\n" \
-          '- FAIL if not updated in over 14 days'
+        description: service_description
       )
+      
       return table unless enabled
 
       list_services_data.sort.each do |_key, value|
