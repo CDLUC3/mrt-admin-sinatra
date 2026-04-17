@@ -118,11 +118,14 @@ module AdminUI
     <div class='table'>
     <table class='data sortable'>
     <caption>
+      <details>
+      <summary>Table Details</summary>
       #{render_status}
       #{render_counts}
       #{render_description}
       #{render_details}
       #{render_filters}
+      </details>
     </caption>
     <thead>
     <tr class='header'>
