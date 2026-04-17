@@ -113,8 +113,7 @@ module UC3Resources
 
     def service_description
       <<~DESC
-        <details>
-        <summary>Service Status Criteria</summary>
+        #### Service Status Criteria
 
         - SKIP if service is not running
         - FAIL if no matching tags for a Merritt Service
@@ -122,10 +121,7 @@ module UC3Resources
         - WARN if updated within the last 14 days
         - FAIL if not updated in over 14 days
 
-        </details>
-
-        <details>
-        <summary>Matching Tags</summary>
+        #### Matching Tags
 
         - The matching tags contain the list of ECR tags that match the digest of the running image.
         - The stack deployment tag (i.e. ecs-prd) is excluded from this list
@@ -135,7 +131,6 @@ module UC3Resources
         - If a matching tag is not present, there is a risk that the ECR lifecycle policy may purge the image,
           which would prevent redeployments.
         - See [Merritt Tagging Conventions](https://github.com/CDLUC3/mrt-admin-sinatra/blob/main/present/tagging/build.md) for more details
-        </details>
       DESC
     end
 
