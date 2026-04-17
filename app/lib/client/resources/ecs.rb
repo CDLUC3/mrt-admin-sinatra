@@ -41,6 +41,7 @@ module UC3Resources
         # A ServiceRevision has ContainerImage which has an ImageDigest.
         # The ImageDigest is the identity key for an image inside of an ECR Repository.
         @client.list_services(cluster: UC3::UC3Client.cluster_name, max_results: 20).service_arns.each do |arn|
+          puts "ARN #{arn}"
           @client.describe_services(cluster: UC3::UC3Client.cluster_name, services: [arn]).services.each do |svc|
             digest = nil
             image = nil
@@ -60,6 +61,7 @@ module UC3Resources
                 sr.container_images.each do |ci|
                   # next if ci.image.to_s =~ /fluent-bit/ # skip sidecar images
 
+                  puts "Container Image #{ci.image} with digest #{ci.image_digest}"
                   digest = ci.image_digest
                   image = ci.image.to_s.gsub(%r{^.*amazonaws.com/}, '')
                 end
