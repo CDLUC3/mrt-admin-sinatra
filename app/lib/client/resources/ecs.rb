@@ -117,9 +117,9 @@ module UC3Resources
 
         - SKIP if service is not running
         - FAIL if no matching tags for a Merritt Service
-        - PASS if service is running and updated within the last 7 days
-        - WARN if updated within the last 14 days
-        - FAIL if not updated in over 14 days
+        - PASS if service is running and redeployed within the last 7 days
+        - WARN if redeployed within the last 14 days
+        - FAIL if not redeployed in over 14 days
 
         #### Matching Tags
 
