@@ -142,7 +142,7 @@ module UC3Resources
           AdminUI::Column.new(:desired_count, header: 'Desired'),
           AdminUI::Column.new(:running_count, header: 'Running'),
           AdminUI::Column.new(:pending_count, header: 'Pending'),
-          AdminUI::Column.new(:updated, header: 'Updated'),
+          AdminUI::Column.new(:created, header: 'Deploy Created'),
           AdminUI::Column.new(:image, header: 'Image'),
           AdminUI::Column.new(:tags, header: 'Matching Tags'),
           AdminUI::Column.new(:manifest_tag, header: 'Manifest Tag'),
