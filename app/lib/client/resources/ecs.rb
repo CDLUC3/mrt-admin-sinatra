@@ -79,7 +79,7 @@ module UC3Resources
 
             status = 'SKIP'
 
-            if svc.running_count.positive?
+            if svc.running_count.positive? && pendcount.zero?
               status = if dep.created_at > (Date.today - 7).to_time
                          'PASS'
                        elsif dep.created_at > (Date.today - 14).to_time
@@ -115,7 +115,7 @@ module UC3Resources
       <<~DESC
         #### Service Status Criteria
 
-        - SKIP if service is not running
+        - SKIP if service is not running or deployment in progress
         - FAIL if no matching tags for a Merritt Service
         - PASS if service is running and redeployed within the last 7 days
         - WARN if redeployed within the last 14 days
