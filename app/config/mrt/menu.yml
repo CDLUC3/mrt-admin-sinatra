@@ -1118,6 +1118,10 @@ items:
         disable: default, docker
         confmsg: This will re-deploy the Access service in ECS.
         method: post
+      - title: Retag Store and Redeploy Access
+        route: /infra/ecs/retag-redeploy/access
+        confmsg: This will re-deploy the Access service in ECS.
+        method: post
       - title: Access Logs
         route: /ops/cloudwatch/logs/access
       - title: Access Errors
