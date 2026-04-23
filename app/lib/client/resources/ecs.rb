@@ -332,8 +332,6 @@ module UC3Resources
       repo = case service
              when 'ui'
                'mrt-dashboard'
-             when 'ui'
-               'mrt-dashboard'
              when 'access'
                'mrt-store'
              when 'admintool'

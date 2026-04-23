@@ -274,17 +274,19 @@ module UC3
         count += 1
         break if count > 1000
 
+        pdir = URI.encode_www_form_component(File.dirname(dir))
+        cdir = URI.encode_www_form_component("#{dir}/#{folder}")
         data = if File.directory?("#{dir}/#{folder}")
                  if folder == '..'
                    {
-                     name: { value: '..', href: "/ops/show-folders/list?path=#{File.dirname(dir)}" },
+                     name: { value: '..', href: "/ops/show-folders/list?path=#{pdir}" },
                      created: '',
                      size: '',
                      actions: []
                    }
                  else
                    {
-                     name: { value: folder, href: "/ops/show-folders/list?path=#{dir}/#{folder}" },
+                     name: { value: folder, href: "/ops/show-folders/list?path=#{cdir}" },
                      created: date_format(File.ctime("#{dir}/#{folder}")),
                      size: '',
                      actions: []
