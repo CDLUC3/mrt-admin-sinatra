@@ -697,6 +697,7 @@ module Sinatra
 
     def service_urls(service)
       urls = []
+      svcsuff = service == 'access' ? 'store' : service
       Aws::ServiceDiscovery::Client.new(region: UC3::UC3Client.region)
         .discover_instances(
           service_name: service,
@@ -706,7 +707,7 @@ module Sinatra
           hostip = instance.attributes.fetch('AWS_INSTANCE_IPV4', '')
           next if hostip.empty?
 
-          url = "http://#{hostip}:8080/#{service}"
+          url = "http://#{hostip}:8080/#{svcsuff}"
           urls << url
         end
       puts "Monitor #{urls}"
