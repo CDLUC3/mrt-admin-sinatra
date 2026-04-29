@@ -277,6 +277,9 @@ module UC3
 
         pdir = URI.encode_www_form_component(File.dirname(dir))
         cdir = URI.encode_www_form_component("#{dir}/#{folder}")
+
+        next if folder == '..' and pdir == root
+        
         data = if File.directory?("#{dir}/#{folder}")
                  if folder == '..'
                    {
