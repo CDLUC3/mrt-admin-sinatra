@@ -283,6 +283,13 @@ module Sinatra
         )
       end
 
+      app.get '/ops/show-s3folders/list' do
+        adminui_show_table(
+          AdminUI::Context.new(request.path, request.params),
+          UC3::FileSystemClient.client.show_folders(UC3::FileSystemClient::S3ROOTDIR, request.path, request.params)
+        )
+      end
+
       app.post '/ops/show-folders/cleanup' do
         UC3::FileSystemClient.client.cleanup_ingest_folders
         redirect '/ops/show-folders/list?path=/merritt-filesys/ingest/queue'

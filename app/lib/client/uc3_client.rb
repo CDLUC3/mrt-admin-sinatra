@@ -241,6 +241,7 @@ module UC3
   # browse ingest folder file system
   class FileSystemClient < UC3Client
     ROOTDIR = '/merritt-filesys'
+    S3ROOTDIR = '/s3filesys'
     DIR = "#{FileSystemClient::ROOTDIR}/ingest/queue".freeze
 
     def initialize

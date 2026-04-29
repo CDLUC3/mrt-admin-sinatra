@@ -623,10 +623,10 @@ items:
     route: /ops/show-folders
     breadcrumb: true
     items:
-    - title: Ingest Folders
-      route: /ops/show-folders/list?path=/merritt-filesys/ingest/queue
     - title: Show All Folders
       route: /ops/show-folders/list
+    - title: Ingest Folders
+      route: /ops/show-folders/list?path=/merritt-filesys/ingest/queue
     - title: Cleanup Ingest Folders
       route: /ops/show-folders/cleanup
       confmsg: This will cleanup ingest batches older than 30 days, RecycleBin items older than 3 days and ZK snapshots older than 3 days.
@@ -656,6 +656,8 @@ items:
         confmsg: This will cause all Processing jobs to fail until the failure file is removed from the ingest folder.
         route: /ops/show-folders/force-failure/processing
         method: post
+    - title: S3 Folders
+      route: /ops/show-s3folders/list
   - path: db-queue
     title: Database Queues
     route: /ops/db-queue
