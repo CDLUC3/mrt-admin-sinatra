@@ -209,6 +209,7 @@ module UC3Code
         if commit.empty?
           lookup += 1
           next if lookup > 10
+
           commit = commit_rec(@client.commit(repo, tag.commit.sha))
         end
 
@@ -229,11 +230,11 @@ module UC3Code
         next unless UC3::UC3Client.semantic_prefix_tag?(tag.name) || !tagartifacts.empty? || !tagimages.empty?
 
         tdate = commit.fetch(:date, '')
-        if tdate.is_a?(Time)
-          protected_tag = Time.now - tdate < (6 * 30 * 24 * 60 * 60) && UC3::UC3Client.semantic_tag?(tag.name)
-        else
-          protected_tag = false
-        end
+        protected_tag = if tdate.is_a?(Time)
+                          Time.now - tdate < (6 * 30 * 24 * 60 * 60) && UC3::UC3Client.semantic_tag?(tag.name)
+                        else
+                          false
+                        end
 
         @tags[tag.name] = {
           cssclass: css_classes(tag.name, commit, tagrelease, tagartifacts, tagimages).join(' '),

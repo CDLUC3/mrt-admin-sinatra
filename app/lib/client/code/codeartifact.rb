@@ -208,9 +208,18 @@ module UC3Code
         z.each do |entry|
           next if entry.name.end_with?('/')
 
+          label = File.basename(entry.name)
+          suffix = ''
+          if label == 'build.content.txt'
+            entry.get_input_stream.read.each_line do |line|
+              suffix += line.strip
+            end
+            label += " (#{suffix})" unless suffix.empty?
+          end
+
           res[entry.name] = {
             dir: File.dirname(entry.name),
-            name: File.basename(entry.name),
+            name: label,
             size: entry.size,
             ext: File.basename(entry.name).split('.').last,
             mrt: File.basename(entry.name).start_with?('mrt-')
