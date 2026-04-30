@@ -68,17 +68,21 @@ module UC3Code
       )
     end
 
+    def commit_rec(commit)
+      {
+        sha: commit.sha,
+        message: commit.commit.message,
+        author: commit.commit.author.name,
+        date: commit.commit.author.date,
+        url: commit.html_url
+      }
+    end
+
     def get_commits(repo)
       commits = {}
       @client.branches(repo).each do |branch|
         @client.commits_since(repo, @since, sha: branch.name).each do |commit|
-          commits[commit.sha] = {
-            sha: commit.sha,
-            message: commit.commit.message,
-            author: commit.commit.author.name,
-            date: commit.commit.author.date,
-            url: commit.html_url
-          }
+          commits[commit.sha] = commit_rec(commit)
         end
       end
       commits
@@ -195,11 +199,18 @@ module UC3Code
       commits = get_commits(repo)
       releases = get_releases(repo)
 
+      lookup = 0
       @client.tags(repo).each do |tag|
         next if tag.name =~ /^sprint-/
 
         commit = commits.fetch(tag.commit.sha, {})
-        next if commit.empty?
+        # tags that are created outside of a branch require an explicit lookup
+        # assume that the first N tags returned are most likely to be of interst
+        if commit.empty?
+          lookup += 1
+          next if lookup > 10
+          commit = commit_rec(@client.commit(repo, tag.commit.sha))
+        end
 
         tagrelease = releases.fetch(tag.name, {})
         tagartifacts = artifacts.fetch(tag.name, [])
@@ -218,7 +229,11 @@ module UC3Code
         next unless UC3::UC3Client.semantic_prefix_tag?(tag.name) || !tagartifacts.empty? || !tagimages.empty?
 
         tdate = commit.fetch(:date, '')
-        protected_tag = Time.now - tdate < (6 * 30 * 24 * 60 * 60) && UC3::UC3Client.semantic_tag?(tag.name)
+        if tdate.is_a?(Time)
+          protected_tag = Time.now - tdate < (6 * 30 * 24 * 60 * 60) && UC3::UC3Client.semantic_tag?(tag.name)
+        else
+          protected_tag = false
+        end
 
         @tags[tag.name] = {
           cssclass: css_classes(tag.name, commit, tagrelease, tagartifacts, tagimages).join(' '),
