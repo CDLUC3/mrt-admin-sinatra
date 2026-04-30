@@ -272,14 +272,14 @@ module UC3
       Dir.entries(dir).sort.each do |folder|
         next if folder == '.' || (folder == '..' && path.empty?)
 
+        next if folder == '..' and File.dirname(dir) == root
+
         count += 1
         break if count > 1000
 
         pdir = URI.encode_www_form_component(File.dirname(dir))
         cdir = URI.encode_www_form_component("#{dir}/#{folder}")
 
-        next if folder == '..' and pdir == root
-        
         data = if File.directory?("#{dir}/#{folder}")
                  if folder == '..'
                    {
