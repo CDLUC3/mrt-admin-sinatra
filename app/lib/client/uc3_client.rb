@@ -272,7 +272,7 @@ module UC3
       Dir.entries(dir).sort.each do |folder|
         next if folder == '.' || (folder == '..' && path.empty?)
 
-        next if folder == '..' and File.dirname(dir) == root
+        next if folder == '..' and dir == root
 
         count += 1
         break if count > 1000
