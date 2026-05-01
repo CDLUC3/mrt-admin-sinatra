@@ -342,7 +342,11 @@ module UC3Resources
 
       tag = UC3S3::ConfigObjectsClient.client.get_ecs_release_manifest_stack_tag(repo)
 
-      UC3Code::SourceCodeClient.client.retag_image(tag, UC3::UC3Client.stack_name, repo) unless tag.empty?
+      begin
+        UC3Code::SourceCodeClient.client.retag_image(tag, UC3::UC3Client.stack_name, repo) unless tag.empty?
+      rescue Aws::ECR::Errors::ImageAlreadyExistsException
+        # No action, just update the service without retagging
+      end
 
       @client.update_service(
         cluster: UC3::UC3Client.cluster_name,
