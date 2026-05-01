@@ -349,6 +349,8 @@ module UC3Resources
         service: service,
         force_new_deployment: true
       ).to_json
+    rescue Aws::ECR::Errors::ImageAlreadyExistsException => e
+      { message: "Matching image digest already exists for image tag '#{tag}'.  #{e.message}" }
     end
 
     def redeploy_service(service)
