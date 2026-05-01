@@ -350,7 +350,7 @@ module UC3Resources
         force_new_deployment: true
       ).to_json
     rescue Aws::ECR::Errors::ImageAlreadyExistsException => e
-      { 
+      {
         modal: true,
         message: "Matching image digest already exists for image tag '#{tag}'.  #{e.message}"
       }.to_json
