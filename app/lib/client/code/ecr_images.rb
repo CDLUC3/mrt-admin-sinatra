@@ -214,6 +214,8 @@ module UC3Code
       }
       options[:registry_id] = ecracct unless ecracct.empty?
       @client.put_image(options)
+    rescue Aws::ECR::Errors::ImageAlreadyExistsException => e
+      { message: "Image tag '#{newtag}' already exists for image '#{image}'.  #{e.message}" }
     end
 
     def untag_image(tag, image)
