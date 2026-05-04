@@ -27,7 +27,7 @@ module UC3Code
         tag = img.image_tag
         next if tag.nil?
 
-        match = /^archive-.*-(\d{8,8})$/.match(tag)
+        match = /^archive-.*-(\d{8,8}).*$/.match(tag)
         next if match.nil?
 
         status = 'Keep'
