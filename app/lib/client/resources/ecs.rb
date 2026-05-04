@@ -341,10 +341,15 @@ module UC3Resources
              end
 
       tag = UC3S3::ConfigObjectsClient.client.get_ecs_release_manifest_stack_tag(repo)
-      arctag = "archive-#{tag}-#{Date.today.strftime('%Y%m%d')}-#{UC3::UC3Client.stack_name}"
 
       begin
         UC3Code::SourceCodeClient.client.retag_image(tag, UC3::UC3Client.stack_name, repo) unless tag.empty?
+      rescue Aws::ECR::Errors::ImageAlreadyExistsException
+        # No action, just update the service without retagging
+      end
+
+      arctag = "archive-#{tag}-#{Date.today.strftime('%Y%m%d')}-#{UC3::UC3Client.stack_name}"
+      begin
         UC3Code::SourceCodeClient.client.retag_image(tag, arctag, repo) unless tag.empty?
       rescue Aws::ECR::Errors::ImageAlreadyExistsException
         # No action, just update the service without retagging
