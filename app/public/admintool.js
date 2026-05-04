@@ -194,6 +194,7 @@ function applyMenuPost() {
     confmsg += "\n\nAre you sure you want to proceed?";
 
     if (confirm(confmsg)) {
+      $("ul.menu ul.submenu").first().click();
       const route = $(this).attr('data-route');
       const form = $('<form></form>').attr('method', 'POST').attr('action', route).text($(this).attr('data'));
       form.appendTo('body');
