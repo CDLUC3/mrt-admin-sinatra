@@ -121,13 +121,6 @@ module Sinatra
         end
       end
 
-      app.get '/queries/repository/mimes/campus/all' do
-        adminui_show_table(
-          AdminUI::Context.new(request.path, request.params),
-          UC3Query::QueryClient.client.query(request.path, request.params)
-        )        
-      end
-
       app.get '/queries/repository/mimes/campus/*' do
         request.params['campus'] = params[:splat][0]
         adminui_show_table(

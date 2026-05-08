@@ -241,8 +241,6 @@ items:
         route: /queries/repository/mimes/campus
         breadcrumb: true
         items:
-        - title: All Campuses
-          route: /queries/repository/mimes/campus/all
         - title: CDL
           route: /queries/repository/mimes/campus/CDL
         - title: UCB
