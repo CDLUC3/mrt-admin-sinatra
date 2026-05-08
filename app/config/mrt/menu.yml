@@ -242,6 +242,8 @@ items:
         breadcrumb: true
         items:
         - title: CDL
+          route: /queries/repository/mimes/campus/all
+        - title: CDL
           route: /queries/repository/mimes/campus/CDL
         - title: UCB
           route: /queries/repository/mimes/campus/UCB
@@ -270,6 +272,8 @@ items:
         route: /queries/repository/mimes/group
         breadcrumb: true
         items:
+        - title: software
+          route: /queries/repository/mimes/group/all
         - title: software
           route: /queries/repository/mimes/group/software
         - title: audio

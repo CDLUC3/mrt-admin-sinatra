@@ -402,6 +402,12 @@ queries:
       type: string
     unit_tests:
     - /CDL
+  /queries/repository/mimes/campus/all:
+    template-params:
+      WHERE: 
+    totals: true
+    sql: |
+      {{{MIME}}}
   /queries/repository/mimes/group:
     description: |
       A high-level _Mime Group_ is assigned to each Mime Type based on the work of the UC Digital Preservation Strategy working group.
@@ -417,6 +423,12 @@ queries:
       type: string
     unit_tests:
     - /software
+  /queries/repository/mimes/group/all:
+    template-params:
+      WHERE: 
+    totals: true
+    sql: |
+      {{{MIME}}}
   /queries/use-cases/largest-objects:
     description: |
       Objects with the largest billable size.
