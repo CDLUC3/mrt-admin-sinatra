@@ -403,11 +403,26 @@ queries:
     unit_tests:
     - /CDL
   /queries/repository/mimes/campus/all:
-    template-params:
-      WHERE: 
     totals: true
     sql: |
-      {{{MIME}}}
+      select
+        distinct
+          ogroup,
+          inv_collection_id,
+          mnemonic,
+          collection_name,
+          sum(count_files) files,
+          sum(billable_size) / 1000000000.0 size_gb
+      from
+        owner_coll_mime_use_details
+      group by
+        ogroup,
+        inv_collection_id,
+        mnemonic,
+        collection_name
+      order by
+        ogroup,
+        mnemonic
   /queries/repository/mimes/group:
     description: |
       A high-level _Mime Group_ is assigned to each Mime Type based on the work of the UC Digital Preservation Strategy working group.
@@ -428,7 +443,17 @@ queries:
       WHERE: 
     totals: true
     sql: |
-      {{{MIME}}}
+      select
+        distinct
+          mime_group,
+          mime_type,
+          sum(count_files) files,
+          sum(billable_size) / 1000000000.0 size_gb
+      from
+        owner_coll_mime_use_details
+      group by
+        mime_group,
+        mime_type
   /queries/use-cases/largest-objects:
     description: |
       Objects with the largest billable size.
