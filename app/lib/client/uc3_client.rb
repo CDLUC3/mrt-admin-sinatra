@@ -251,7 +251,6 @@ module UC3
       `mkdir -p #{FileSystemClient::ROOTDIR}/assemblies`
       `mkdir -p #{FileSystemClient::ROOTDIR}/zk-snapshots`
       `mkdir -p #{FileSystemClient::ROOTDIR}/ldap/db`
-      `mkdir -p #{FileSystemClient::ROOTDIR}/ldap/config`
     end
 
     def show_folders(root, route, params)
