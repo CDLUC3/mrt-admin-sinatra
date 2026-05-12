@@ -52,7 +52,7 @@ module Sinatra
     end
 
     def access_host
-      "http://#{ENV.fetch('SVC_ACCESS', 'store:8080/store')}"
+      "http://#{ENV.fetch('SVC_ACCESS', 'access:8080/store')}"
     end
 
     def access_hosts
@@ -252,6 +252,7 @@ module Sinatra
           responseForm: 'json'
         }
 
+        puts "DATA: #{data}"
         deleteurl = "#{inventory_host}/object/#{CGI.escape(ark)}"
         resp = delete_url_resp(deleteurl)
         if resp.code.to_i == 200
