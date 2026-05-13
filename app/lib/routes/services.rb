@@ -267,27 +267,27 @@ module Sinatra
               }.to_json
             else
               msg = "ERROR re-adding object (#{addurl}): #{resp.code}"
-              puts msg
+              Sinatra::Application.logger.info msg
               content_type :json
               { uri: addurl, message: msg }.to_json
             end
           rescue StandardError => e
             msg = "Exception while re-adding object (#{addurl}): #{e}"
-            puts msg
+            Sinatra::Application.logger.info msg
             content_type :json
             { uri: addurl, message: msg }.to_json
           end
         else
           msg = "ERROR deleting object (#{deleteurl}): #{resp.code}"
-          puts msg
+          Sinatra::Application.logger.info msg
           content_type :json
           { uri: deleteurl, message: msg }.to_json
         end
       rescue StandardError => e
-          msg = "Exception while rebuilding inventory (#{deleteurl}): #{e}"
-          puts msg
-          content_type :json
-          { uri: deleteurl, message: msg }.to_json
+        msg = "Exception while rebuilding inventory (#{deleteurl}): #{e}"
+        Sinatra::Application.logger.info msg
+        content_type :json
+        { uri: deleteurl, message: msg }.to_json
       end
 
       app.post '/ops/inventory/delete' do
@@ -337,7 +337,7 @@ module Sinatra
         resp = UC3Query::QueryClient.client.run_query('/queries/misc/purgable_arks', urlparams).map do |row|
           delete_object(row['ark'], row['nodenum'].to_s)
         end
-        puts resp
+        Sinatra::Application.logger.info resp
         resp.to_json
       end
 
@@ -351,7 +351,7 @@ module Sinatra
           next if ark.empty?
 
           deleteurl = "#{replic_host}/delete/#{nodenumber}/#{CGI.escape(ark)}"
-          puts deleteurl
+          Sinatra::Application.logger.info deleteurl
           dresp = delete_url_resp(deleteurl)
           if dresp.code.to_i == 200
             success += 1
@@ -465,10 +465,10 @@ module Sinatra
             params
           )
           if res.fetch(:status, '') == 'OK'
-            puts params
+            Sinatra::Application.logger.info params
             count += 1
           else
-            puts res
+            Sinatra::Application.logger.info res
             errors += 1
           end
         end
@@ -704,7 +704,7 @@ module Sinatra
         ::JSON.parse(post_url("#{url}/#{endpoint}"))
       end
     rescue StandardError => e
-      puts "Error sending #{endpoint} to #{service} instances: #{e}"
+      Sinatra::Application.logger.error "Error sending #{endpoint} to #{service} instances: #{e}"
       []
     end
 
@@ -723,10 +723,10 @@ module Sinatra
           url = "http://#{hostip}:8080/#{svcsuff}"
           urls << url
         end
-      puts "Monitor #{urls}"
+      Sinatra::Application.logger.info "Monitor #{urls}"
       urls
     rescue StandardError => e
-      puts "Error finding URLs for #{service} instances: #{e}"
+      Sinatra::Application.logger.error "Error finding URLs for #{service} instances: #{e}"
       []
     end
 
@@ -1092,7 +1092,7 @@ module Sinatra
     end
 
     def load_test_file_to_merritt(file, type, mnemonic)
-      puts "Loading #{file} to #{mnemonic} #{ui_host}/object/update"
+      Sinatra::Application.logger.info "Loading #{file} to #{mnemonic} #{ui_host}/object/update"
 
       puts `curl -H 'Accept: application/json' \
         -F 'file=@#{file}' \
@@ -1202,7 +1202,7 @@ module Sinatra
 
     # this method may be over-customized for EZID.  Consider refactoring.
     def post_url_body(url, body: nil, user: nil, password: nil)
-      puts "URI: #{url}, body: #{body}, user: #{user}, password: #{'****' if password}"
+      Sinatra::Application.logger.info "URI: #{url}, body: #{body}, user: #{user}, password: #{'****' if password}"
       uri = URI.parse(url)
       req = Net::HTTP::Post.new(uri)
       if user && password
@@ -1284,7 +1284,7 @@ module Sinatra
 
     def delete_url_resp(url, body: nil)
       uri = URI.parse(url)
-      puts "Delete URI: #{url}, body: #{body}"
+      Sinatra::Application.logger.info "Delete URI: #{url}, body: #{body}"
       req = Net::HTTP::Delete.new(uri)
       req['Content-Type'] = '*/*'
       # req['Accept'] = 'text/plain'
@@ -1303,10 +1303,14 @@ module Sinatra
     end
 
     def post_url_multipart(url, params)
-      puts "Multipart POST #{url} with #{params.inspect}"
+      Sinatra::Application.logger.info "Multipart POST #{url} with #{params.inspect}"
       uri = URI.parse(url)
       req = Net::HTTP::Post::Multipart.new(uri, params)
-      Net::HTTP.start(uri.hostname, uri.port) do |http|
+      Net::HTTP.start(
+        uri.hostname,
+        uri.port,
+        read_timeout: 300
+      ) do |http|
         http.request(req)
       end
     end

@@ -65,7 +65,7 @@ module UC3
           purpose: 'Record Consistency status'
         )
       rescue StandardError => e
-        puts "Error recording status for #{path}: #{e.message}"
+        Sinatra::Application.logger.info "Error recording status for #{path}: #{e.message}"
       end
     end
 
@@ -410,7 +410,7 @@ module UC3
 
       Sinatra::Application.routes['GET'].each do |path, route|
         # .each_keys does not work, so make use of route object
-        puts "Route #{path}: #{route.inspect}" unless route.empty?
+        Sinatra::Application.logger.info "Route #{path}: #{route.inspect}" unless route.empty?
         path = path.to_s
 
         next if path.include?('**')

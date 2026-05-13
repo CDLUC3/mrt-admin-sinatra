@@ -236,6 +236,7 @@ DEPENDENCIES
   csv
   debug
   json
+  logger
   mrt-zk!
   multipart-post
   mustache

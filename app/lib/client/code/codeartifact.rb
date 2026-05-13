@@ -39,7 +39,7 @@ module UC3Code
             namespace: repohash.fetch(:namespace, ARTNAMESPACE)
           )
         rescue StandardError
-          # puts "Client ERR: #{e}: #{@client}"
+          # Sinatra::Application.logger.error "Client ERR: #{e}: #{@client}"
           return res
         end
         pv.versions.each do |v|
@@ -66,7 +66,7 @@ module UC3Code
             namespace: repohash.fetch(:namespace, ARTNAMESPACE)
           )
         rescue StandardError
-          # puts "Client ERR: #{e}: #{@client}"
+          # Sinatra::Application.logger.error "Client ERR: #{e}: #{@client}"
           return res
         end
         pv.versions.each do |v|

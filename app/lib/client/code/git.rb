@@ -28,7 +28,7 @@ module UC3Code
       begin
         @client = Octokit::Client.new(opts)
       rescue StandardError
-        # puts "GitHub client error #{e}"
+        # Sinatra::Application.logger.error "GitHub client error #{e}"
       end
       @tags = {}
       @since = Time.now - (2 * 365 * 24 * 60 * 60)

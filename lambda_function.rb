@@ -85,7 +85,7 @@ module LambdaFunctions
           body_content += item.to_s
         end
 
-        puts "Status: #{status}; Body Length: #{body_content.length}"
+        Sinatra::Application.logger.info "Status: #{status}; Body Length: #{body_content.length}"
 
         is_base64_encoded = headers.fetch('content-type', '').start_with?('image/')
 
