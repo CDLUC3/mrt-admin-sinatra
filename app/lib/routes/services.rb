@@ -362,7 +362,7 @@ module Sinatra
           )
         end
 
-        url = "#{store_host}/manifest/#{nodenum}/#{CGI.escape(ark)}"
+        url = manifest_url(nodenum, ark)
         get_url(url, ctype: :xml)
       end
 
@@ -1093,7 +1093,7 @@ module Sinatra
     end
 
     def manifest_url(node_number, ark)
-      "#{store_host}/manifest/#{node_number}/#{CGI.escape(ark)}"
+      "#{access_host}/manifest/#{node_number}/#{CGI.escape(ark)}"
     end
 
     def stack_init
