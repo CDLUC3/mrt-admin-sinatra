@@ -252,30 +252,42 @@ module Sinatra
           responseForm: 'json'
         }
 
-        puts "DATA: #{data}"
         deleteurl = "#{inventory_host}/object/#{CGI.escape(ark)}"
         resp = delete_url_resp(deleteurl)
         if resp.code.to_i == 200
           addurl = "#{inventory_host}/add"
-          resp = post_url_multipart(addurl, data)
-          if resp.code.to_i == 200
-            url = "/queries/repository/object-ark?ark=#{CGI.escape(ark)}"
-            {
-              message: "Sucessfully re-added #{ark} to inventory",
-              redirect: url,
-              modal: true
-            }.to_json
-          else
+          begin
+            resp = post_url_multipart(addurl, data)
+            if resp.code.to_i == 200
+              url = "/queries/repository/object-ark?ark=#{CGI.escape(ark)}"
+              {
+                message: "Sucessfully re-added #{ark} to inventory",
+                redirect: url,
+                modal: true
+              }.to_json
+            else
+              msg = "ERROR re-adding object (#{addurl}): #{resp.code}"
+              puts msg
+              content_type :json
+              { uri: addurl, message: msg }.to_json
+            end
+          rescue StandardError => e
+            msg = "Exception while re-adding object (#{addurl}): #{e}"
+            puts msg
             content_type :json
-            { uri: addurl, message: "ERROR re-adding object: #{resp.code}" }.to_json
+            { uri: addurl, message: msg }.to_json
           end
         else
+          msg = "ERROR deleting object (#{deleteurl}): #{resp.code}"
+          puts msg
           content_type :json
-          { uri: deleteurl, message: "ERROR deleting object: #{resp.code}" }.to_json
+          { uri: deleteurl, message: msg }.to_json
         end
       rescue StandardError => e
-        content_type :json
-        { uri: deleteurl, message: "Exception while rebuilding inventory: #{e}" }.to_json
+          msg = "Exception while rebuilding inventory (#{deleteurl}): #{e}"
+          puts msg
+          content_type :json
+          { uri: deleteurl, message: msg }.to_json
       end
 
       app.post '/ops/inventory/delete' do
