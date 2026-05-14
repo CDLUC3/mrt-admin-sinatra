@@ -245,14 +245,14 @@ module Sinatra
         nodenum = request.params.fetch('node_number', '')
         ark = request.params.fetch('ark', '')
         data = <<~EOF_CMD
-        # session #{UC3::UC3Client.cluster_name}/merritt-ops
-          curl -X DELETE #{inventory_host}/object/#{CGI.escape(ark)}?t=json
+          # session #{UC3::UC3Client.cluster_name}/merritt-ops
+            curl -X DELETE #{inventory_host}/object/#{CGI.escape(ark)}?t=json
 
-          curl -F "url=#{manifest_url(nodenum, ark)}" \\
-            -F "responseForm=json" \\
-            #{inventory_host}/add
+            curl -F "url=#{manifest_url(nodenum, ark)}" \\
+              -F "responseForm=json" \\
+              #{inventory_host}/add
 
-          # In a browser, open /queries/repository/object-ark?ark=#{CGI.escape(ark)}
+            # In a browser, open /queries/repository/object-ark?ark=#{CGI.escape(ark)}
         EOF_CMD
         erb :pre,
           :layout => :page_layout,
@@ -1330,7 +1330,7 @@ module Sinatra
       Net::HTTP.start(
         uri.hostname,
         uri.port,
-        write_timeout: 300
+        read_timeout: 300
       ) do |http|
         http.request(req)
       end
