@@ -9,6 +9,7 @@ set :root, File.dirname(__FILE__)
 set :views, proc { File.join(root, 'views') }
 set :logger, Logger.new($stdout)
 set :logging, Logger::DEBUG if ENV.key?('DEBUG')
+set :server_settings, :timeout => 300
 
 set :host_authorization => { permitted_hosts: [] }
 
