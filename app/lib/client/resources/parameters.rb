@@ -15,7 +15,7 @@ module UC3Resources
       @client = Aws::SSM::Client.new(
         region: UC3::UC3Client.region
       )
-      @client.get_parameters_by_path(path: '/uc3/foo/bar')
+      # @client.get_parameters_by_path(path: '/uc3/foo/bar')
       super(enabled: enabled)
     rescue StandardError => e
       super(enabled: false, message: e.to_s)

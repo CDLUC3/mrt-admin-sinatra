@@ -93,6 +93,11 @@ module UC3Query
           disabled: storage_mgt_disabled?
         }
         row['actions'] << {
+          value: 'Rebuild Inventory Commands',
+          href: "/ops/inventory/rebuild-commands?node_number=#{row['node_number']}&ark=#{row['ark']}",
+          cssclass: 'button'
+        }
+        row['actions'] << {
           value: 'Clear Scan Entries for Ark',
           href: "/queries-update/storage-maints/clear-entries-for-ark?ark=#{row['ark']}",
           cssclass: 'button',

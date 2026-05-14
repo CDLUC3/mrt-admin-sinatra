@@ -36,7 +36,7 @@ module UC3Code
             repository: ARTREPOSITORY,
             package: artifact,
             format: ARTFORMAT,
-            namespace: repohash.fetch(:namespace, ARTNAMESPACE)
+            namespace: repohash.fetch(:namespace, UC3Code::CodeArtifactClient::ARTNAMESPACE)
           )
         rescue StandardError
           # logger.error("Client ERR: #{e}: #{@client}")
@@ -63,7 +63,7 @@ module UC3Code
             repository: ARTREPOSITORY,
             package: artifact,
             format: ARTFORMAT,
-            namespace: repohash.fetch(:namespace, ARTNAMESPACE)
+            namespace: repohash.fetch(:namespace, UC3Code::CodeArtifactClient::ARTNAMESPACE)
           )
         rescue StandardError
           # logger.error("Client ERR: #{e}: #{@client}")
@@ -78,7 +78,7 @@ module UC3Code
             domain: ARTDOMAIN,
             repository: ARTREPOSITORY,
             format: ARTFORMAT,
-            namespace: repohash.fetch(:namespace, ARTNAMESPACE),
+            namespace: repohash.fetch(:namespace, UC3Code::CodeArtifactClient::ARTNAMESPACE),
             assets: [],
             pom: nil,
             command: ''
@@ -87,7 +87,7 @@ module UC3Code
             domain: ARTDOMAIN,
             repository: ARTREPOSITORY,
             format: ARTFORMAT,
-            namespace: repohash.fetch(:namespace, ARTNAMESPACE),
+            namespace: repohash.fetch(:namespace, UC3Code::CodeArtifactClient::ARTNAMESPACE),
             package: artifact,
             package_version: v.version
           ).package_version.published_time
@@ -95,7 +95,7 @@ module UC3Code
             domain: ARTDOMAIN,
             repository: ARTREPOSITORY,
             format: ARTFORMAT,
-            namespace: repohash.fetch(:namespace, ARTNAMESPACE),
+            namespace: repohash.fetch(:namespace, UC3Code::CodeArtifactClient::ARTNAMESPACE),
             package: artifact,
             package_version: v.version
           }).assets.each do |asset|
@@ -164,7 +164,7 @@ module UC3Code
     end
 
     def artifact(artifact, version, asset)
-      namespace = artifact == 'MerrittZK' ? 'org.cdlib.mrt.zk' : ARTNAMESPACE
+      namespace = artifact == 'MerrittZK' ? 'org.cdlib.mrt.zk' : UC3Code::CodeArtifactClient::ARTNAMESPACE
       res = @client.get_package_version_asset(
         domain: ARTDOMAIN,
         repository: ARTREPOSITORY,
@@ -251,7 +251,7 @@ module UC3Code
     end
 
     def delete_artifact(tag, artifact)
-      namespace = artifact == 'MerrittZK' ? 'org.cdlib.mrt.zk' : ARTNAMESPACE
+      namespace = artifact == 'MerrittZK' ? 'org.cdlib.mrt.zk' : UC3Code::CodeArtifactClient::ARTNAMESPACE
       @client.delete_package_versions(
         domain: ARTDOMAIN,
         repository: ARTREPOSITORY,

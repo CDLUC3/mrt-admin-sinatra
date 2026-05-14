@@ -241,6 +241,22 @@ module Sinatra
         collections_init.to_json
       end
 
+      app.get '/ops/inventory/rebuild-commands' do
+        nodenum = request.params.fetch('node_number', '')
+        ark = request.params.fetch('ark', '')
+        data = <<~EOF_CMD
+          curl -X DELETE #{inventory_host}/object/#{CGI.escape(ark)}
+
+          curl -F "url=#{manifest_url(nodenum, ark)}" -F "responseForm=json" #{inventory_host}/add
+        EOF_CMD
+        erb :pre,
+          :layout => :page_layout,
+          :locals => {
+            context: AdminUI::Context.new(request.path, request.params),
+            data: data
+          }
+      end
+
       app.post '/ops/inventory/rebuild' do
         nodenum = request.params.fetch('node_number', '')
         ark = request.params.fetch('ark', '')

@@ -63,7 +63,7 @@ module Sinatra
 
       app.get '/source/artifact_command/*/*/*' do |artifact, version, asset|
         ext = asset =~ /jar$/ ? 'jar' : 'war'
-        namespace = artifact == 'MerrittZK' ? 'org.cdlib.mrt.zk' : ARTNAMESPACE
+        namespace = artifact == 'MerrittZK' ? 'org.cdlib.mrt.zk' : UC3Code::CodeArtifactClient::ARTNAMESPACE
 
         data = <<~EOF_CMD
           aws codeartifact get-package-version-asset \\
