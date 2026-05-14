@@ -245,8 +245,8 @@ module Sinatra
         nodenum = request.params.fetch('node_number', '')
         ark = request.params.fetch('ark', '')
         data = <<~EOF_CMD
-          # session #{UC3::UC3Client.stack_name}/merritt-ops
-          curl -X DELETE #{inventory_host}/object/#{CGI.escape(ark)}
+          # session #{UC3::UC3Client.cluster_name}/merritt-ops
+          curl -X DELETE #{inventory_host}/object/#{CGI.escape(ark)}?t=json
 
           curl -F "url=#{manifest_url(nodenum, ark)}" \
             -F "responseForm=json" \
