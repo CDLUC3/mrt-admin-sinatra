@@ -31,7 +31,7 @@ module UC3Query
         @fragments.merge!(config.fetch(:fragments, {}))
         @queries.merge!(config.fetch(:queries, {}))
       rescue StandardError => e
-        Sinatra::Application.logger.error "(Query1) #{e.class}: #{e} in #{file}"
+        Sinatra::Application.logger.error("(Query1) #{e.class}: #{e} in #{file}")
       end
 
       map = UC3::UC3Client.lookup_map_by_filename(
@@ -45,7 +45,7 @@ module UC3Query
       @formatter = AnbtSql::Formatter.new(AnbtSql::Rule.new)
       super(enabled: enabled)
     rescue StandardError => e
-      Sinatra::Application.logger.error "(Query2) #{e.class}: #{e};"
+      Sinatra::Application.logger.error("(Query2) #{e.class}: #{e};")
       super(enabled: false, message: e.to_s)
     end
 
@@ -83,7 +83,7 @@ module UC3Query
           hasharr << row.to_h
         end
       rescue StandardError => e
-        Sinatra::Application.logger.error "(Query3) #{e.class}: #{e}"
+        Sinatra::Application.logger.error("(Query3) #{e.class}: #{e}")
         raise e
       end
       hasharr
@@ -186,7 +186,7 @@ module UC3Query
 
         stmt.execute(*params)
       rescue StandardError => e
-        Sinatra::Application.logger.error "#{purpose} SQL: #{e.class}: #{e}"
+        Sinatra::Application.logger.error("#{purpose} SQL: #{e.class}: #{e}")
         return {
           status: 'FAIL',
           message: "#{purpose} SQL: #{e.class}: #{e}"

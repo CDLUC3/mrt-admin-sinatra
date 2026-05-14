@@ -41,7 +41,7 @@ module UC3S3
         )
         @config_objects = YAML.safe_load(resp.body.read, symbolize_names: true)
       rescue StandardError => e
-        # Sinatra::Application.logger.error e
+        # Sinatra::Application.logger.error(e)
         raise "Unable to load configuration data from S3: #{e}"
       end
 
@@ -52,7 +52,7 @@ module UC3S3
       )
       super(enabled: !@config_objects.empty?)
     rescue StandardError => e
-      # Sinatra::Application.logger.error e
+      # Sinatra::Application.logger.error(e)
       super(enabled: false, message: e.to_s)
     end
 
@@ -138,7 +138,7 @@ module UC3S3
 
     def create_sla(params)
       ark = mint(mint_sla_url, params.fetch('name', ''))
-      Sinatra::Application.logger.info "SLA Ark Minted: #{ark}"
+      Sinatra::Application.logger.info("SLA Ark Minted: #{ark}")
       add_sla(ark, params.fetch('name', ''), params.fetch('mnemonic', ''))
       ark
     end
@@ -149,7 +149,7 @@ module UC3S3
 
     def create_owner(params)
       ark = mint(mint_owner_url, params.fetch('name', ''))
-      Sinatra::Application.logger.info "Owner Ark Minted: #{ark}"
+      Sinatra::Application.logger.info("Owner Ark Minted: #{ark}")
       add_owner(ark, params.fetch('name', ''), params.fetch('sla', ''))
       ark
     end
@@ -185,7 +185,7 @@ module UC3S3
 
     def create_collection(params)
       ark = mint(mint_collection_url, params.fetch('description', ''))
-      Sinatra::Application.logger.info "Collection Ark Minted: #{ark}"
+      Sinatra::Application.logger.info("Collection Ark Minted: #{ark}")
       add_collection(ark, params.fetch('description', ''), params.fetch('name', ''), public: params.key?('public'))
       # add ldap stuff
       ark
@@ -293,7 +293,7 @@ module UC3S3
       )
       YAML.safe_load(resp.body.read)
     rescue StandardError => e
-      Sinatra::Application.logger.error "Error retrieving ECS release manifest: #{e}"
+      Sinatra::Application.logger.error("Error retrieving ECS release manifest: #{e}")
       { manifest: 'Not Found' }
     end
 
@@ -304,7 +304,7 @@ module UC3S3
       )
       YAML.safe_load(resp.body.read)
     rescue StandardError => e
-      Sinatra::Application.logger.error "Error retrieving ECS release manifest: #{e}"
+      Sinatra::Application.logger.error("Error retrieving ECS release manifest: #{e}")
       { manifest: 'Not Found' }
     end
 

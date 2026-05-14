@@ -23,6 +23,3 @@ if ENV.key?('ECS_CONTAINER_METADATA_URI')
     "#{json}\n"
   end
 end
-
-Sinatra::Application.logger.info "hello"
-Sinatra::Application.logger.debug "hello2"

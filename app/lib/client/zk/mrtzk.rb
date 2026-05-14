@@ -43,7 +43,7 @@ module UC3Queue
       @cache = {}
       super(enabled: true)
     rescue StandardError => e
-      Sinatra::Application.logger.error "ZooKeeper Creation Error: #{e.message}"
+      Sinatra::Application.logger.error("ZooKeeper Creation Error: #{e.message}")
       super(enabled: false, message: e.to_s)
     end
 
@@ -132,7 +132,7 @@ module UC3Queue
         batch[:submissionDate] = date_format(batch[:submissionDate])
 
         unless batch[:submissionDate].empty? || batch[:status] == 'FAIL'
-          Sinatra::Application.logger.info "Batch #{id} found, flagging for age"
+          Sinatra::Application.logger.info("Batch #{id} found, flagging for age")
           batch[:status] = 'WARN' if Time.now - Time.new(batch[:submissionDate]) > AGE_BATCHWARN
         end
         batch[:jobdata] = []
@@ -675,7 +675,7 @@ module UC3Queue
 
     def cleanup_access_queue
       ZK.open(@zkconn, timeout: 2) do |zk|
-        Sinatra::Application.logger.info 'Cleaning up access jobs'
+        Sinatra::Application.logger.info('Cleaning up access jobs')
         jobs = MerrittZK::Access.list_jobs_as_json(zk)
         jobs = [] if jobs.nil?
         jobs.each do |job|
@@ -846,7 +846,7 @@ module UC3Queue
         end
       end
     rescue StandardError => e
-      Sinatra::Application.logger.error "Error creating node #{path}: #{e.message}"
+      Sinatra::Application.logger.error("Error creating node #{path}: #{e.message}")
     end
 
     def delete_node(path)
@@ -856,7 +856,7 @@ module UC3Queue
         zk.rm_rf(path) if zk.exists?(path)
       end
     rescue StandardError => e
-      Sinatra::Application.logger.error "Error deleting node #{path}: #{e.message}"
+      Sinatra::Application.logger.error("Error deleting node #{path}: #{e.message}")
     end
 
     def lock_collection(mnemonic)
@@ -867,7 +867,7 @@ module UC3Queue
         MerrittZK::Locks.lock_collection(zk, mnemonic)
       end
     rescue StandardError => e
-      Sinatra::Application.logger.error "Error locking collection #{mnemonic}: #{e.message}"
+      Sinatra::Application.logger.error("Error locking collection #{mnemonic}: #{e.message}")
     end
 
     def unlock_collection(mnemonic)
@@ -878,7 +878,7 @@ module UC3Queue
         MerrittZK::Locks.unlock_collection(zk, mnemonic)
       end
     rescue StandardError => e
-      Sinatra::Application.logger.error "Error unlocking collection #{mnemonic}: #{e.message}"
+      Sinatra::Application.logger.error("Error unlocking collection #{mnemonic}: #{e.message}")
     end
 
     def clear_cache
@@ -902,7 +902,7 @@ module UC3Queue
       @cache[:locked] = locked
       locked
     rescue StandardError => e
-      Sinatra::Application.logger.error "Error listing locked collections: #{e.message}"
+      Sinatra::Application.logger.error("Error listing locked collections: #{e.message}")
     end
   end
 end

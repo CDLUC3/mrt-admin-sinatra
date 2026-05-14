@@ -15,12 +15,12 @@ module UC3CloudWatch
       begin
         @cw_client = Aws::CloudWatch::Client.new
       rescue StandardError => e
-        # Sinatra::Application.logger.error e
+        # Sinatra::Application.logger.error(e)
         raise "Unable to load configuration data from S3: #{e}"
       end
       super(enabled: true)
     rescue StandardError => e
-      # Sinatra::Application.logger.error e
+      # Sinatra::Application.logger.error(e)
       super(enabled: false, message: e.to_s)
     end
 

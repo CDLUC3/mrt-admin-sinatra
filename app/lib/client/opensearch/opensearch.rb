@@ -37,12 +37,12 @@ module UC3OpenSearch
         )
         @osclient.ping # Test the connection
       rescue StandardError => e
-        Sinatra::Application.logger.error e
+        Sinatra::Application.logger.error(e)
         raise "Unable to load configuration for OpenSearch: #{e}"
       end
       super(enabled: true)
     rescue StandardError => e
-      # Sinatra::Application.logger.error e
+      # Sinatra::Application.logger.error(e)
       super(enabled: false, message: e.to_s)
     end
 

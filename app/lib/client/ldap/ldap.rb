@@ -22,7 +22,7 @@ module UC3Ldap
         symbolize_names: true
       )
 
-      # Sinatra::Application.logger.error "LDAP HOST: #{@ldapconf.fetch(:host, '')}:#{@ldapconf.fetch(:port, '1389')}"
+      # Sinatra::Application.logger.error("LDAP HOST: #{@ldapconf.fetch(:host, '')}:#{@ldapconf.fetch(:port, '1389')}")
       @ldap_connect = {
         host: @ldapconf.fetch(:host, ''),
         port: @ldapconf.fetch(:port, '1389').to_i,
@@ -54,13 +54,13 @@ module UC3Ldap
       @ldap.bind
       super(enabled: true)
     rescue Errno::ECONNRESET => e
-      Sinatra::Application.logger.error "(LDAP Conn Reset) #{e.class}: #{e};"
+      Sinatra::Application.logger.error("(LDAP Conn Reset) #{e.class}: #{e};")
       super(enabled: false, message: e.to_s)
     rescue Errno::ECONNREFUSED => e
-      Sinatra::Application.logger.error "(LDAP Conn Refused) #{e.class}: #{e};"
+      Sinatra::Application.logger.error("(LDAP Conn Refused) #{e.class}: #{e};")
       super(enabled: false, message: e.to_s)
     rescue StandardError => e
-      Sinatra::Application.logger.error "(LDAP) #{e.class}: #{e};"
+      Sinatra::Application.logger.error("(LDAP) #{e.class}: #{e};")
       super(enabled: false, message: e.to_s)
     end
 
@@ -170,7 +170,7 @@ module UC3Ldap
         else
           coll = LdapCollection.new(nil, role.coll)
           @collections[role.coll] = coll
-          Sinatra::Application.logger.error "LDAP: Not found: [#{role.coll}]"
+          Sinatra::Application.logger.error("LDAP: Not found: [#{role.coll}]")
         end
         role.set_collection(coll)
 
@@ -179,7 +179,7 @@ module UC3Ldap
           if @users.key?(u)
             user = @users[u]
           else
-            Sinatra::Application.logger.error "LDAP: Not found: [#{u}]"
+            Sinatra::Application.logger.error("LDAP: Not found: [#{u}]")
             user = LdapUser.new(nil, u)
             @users[u] = user
           end
@@ -432,7 +432,7 @@ module UC3Ldap
       entry.to_s.split(',').each do |s|
         return s[part.length, s.length] if s.start_with?(part)
       end
-      Sinatra::Application.logger.error "LDAP: Part not found in [#{entry}], Part[#{part}]"
+      Sinatra::Application.logger.error("LDAP: Part not found in [#{entry}], Part[#{part}]")
       defval
     end
   end
@@ -464,7 +464,7 @@ module UC3Ldap
       entry.to_s.split(',').each do |s|
         return s[part.length, s.length] if s.start_with?(part)
       end
-      Sinatra::Application.logger.error "LDAP: Part not found in [#{entry}], Part[#{part}]"
+      Sinatra::Application.logger.error("LDAP: Part not found in [#{entry}], Part[#{part}]")
       defval
     end
 
