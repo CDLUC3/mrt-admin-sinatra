@@ -16,9 +16,9 @@ run Sinatra::Application
 if ENV.key?('ECS_CONTAINER_METADATA_URI')
   Sinatra::Application.logger.formatter = proc do |severity, datetime, _progname, msg|
     json = {
-      time: datetime.strftime('%Y-%m-%dT%H:%M:%S.%L%z'),
-      level: severity,
-      message: msg
+      # time: datetime.strftime('%Y-%m-%dT%H:%M:%S.%L%z'),
+      "log.level": severity,
+      "message": msg
     }.to_json
     "#{json}\n"
   end
