@@ -33,7 +33,9 @@ module UC3
     end
 
     def self.logger
-      Sinatra::Application.logger
+      logger = Sinatra::Application.logger
+      logger.level = Logger::DEBUG if ENV.key?('DEBUG')
+      logger
     end
 
     def logger

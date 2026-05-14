@@ -64,35 +64,35 @@ end
 
 get '/clients' do
   begin
-    logger.debug("Init UC3Client #{Time.now}")
+    logger.debug { "Init UC3Client #{Time.now}" }
     UC3::UC3Client.client
-    logger.debug("Init FileSystemClient #{Time.now}")
+    logger.debug { "Init FileSystemClient #{Time.now}" }
     UC3::FileSystemClient.client
-    logger.debug("Init QueryClient #{Time.now}")
+    logger.debug { "Init QueryClient #{Time.now}" }
     UC3Query::QueryClient.client
-    logger.debug("Init ZKClient #{Time.now}")
+    logger.debug { "Init ZKClient #{Time.now}" }
     UC3Queue::ZKClient.client
-    logger.debug("Init SourceCodeClient #{Time.now}")
+    logger.debug { "Init SourceCodeClient #{Time.now}" }
     UC3Code::SourceCodeClient.client
-    logger.debug("Init InstancesClient #{Time.now}")
+    logger.debug { "Init InstancesClient #{Time.now}" }
     UC3Resources::InstancesClient.client
-    logger.debug("Init ParametersClient #{Time.now}")
+    logger.debug { "Init ParametersClient #{Time.now}" }
     UC3Resources::ParametersClient.client
-    logger.debug("Init ServicesClient #{Time.now}")
+    logger.debug { "Init ServicesClient #{Time.now}" }
     UC3Resources::ServicesClient.client
-    logger.debug("Init BucketsClient #{Time.now}")
+    logger.debug { "Init BucketsClient #{Time.now}" }
     UC3Resources::BucketsClient.client
-    logger.debug("Init FunctionsClient #{Time.now}")
+    logger.debug { "Init FunctionsClient #{Time.now}" }
     UC3Resources::FunctionsClient.client
-    logger.debug("Init LoadBalancerClient #{Time.now}")
+    logger.debug { "Init LoadBalancerClient #{Time.now}" }
     UC3Resources::LoadBalancerClient.client
-    logger.debug("Init LDAPClient #{Time.now}")
+    logger.debug { "Init LDAPClient #{Time.now}" }
     UC3Ldap::LDAPClient.client
-    logger.debug("Init ConfigObjectsClient #{Time.now}")
+    logger.debug { "Init ConfigObjectsClient #{Time.now}" }
     UC3S3::ConfigObjectsClient.client
-    logger.debug("Init OSClient #{Time.now}")
+    logger.debug { "Init OSClient #{Time.now}" }
     UC3OpenSearch::OSClient.client
-    logger.debug("Init TestClient #{Time.now}")
+    logger.debug { "Init TestClient #{Time.now}" }
     UC3::TestClient.client
   rescue StandardError => e
     logger.error("Error initializing clients: #{e.message}")
