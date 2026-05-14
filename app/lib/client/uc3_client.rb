@@ -42,7 +42,6 @@ module UC3
 
     def initialize(enabled: true, message: '')
       UC3Client.clients[self.class.to_s] = { name: self.class.to_s, enabled: enabled, message: message }
-      logger.info("Initialized #{self.class.to_s} client with enabled=#{enabled} and message='#{message}'")
       @enabled = enabled
     end
 

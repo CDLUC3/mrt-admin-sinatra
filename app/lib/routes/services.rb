@@ -1309,7 +1309,7 @@ module Sinatra
       Net::HTTP.start(
         uri.hostname,
         uri.port,
-        read_timeout: 300
+        write_timeout: 300
       ) do |http|
         http.request(req)
       end
