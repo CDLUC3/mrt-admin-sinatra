@@ -66,7 +66,7 @@ module UC3Code
             repository_name: image
           )
         rescue StandardError
-          # Sinatra::Application.logger.error("Client ERR: #{e}: #{@client}")
+          # logger.error("Client ERR: #{e}: #{@client}")
           return res
         end
         imglist.image_ids.each do |img|
@@ -277,7 +277,7 @@ module UC3Code
           end
         end
       rescue StandardError
-        # Sinatra::Application.logger.error("Client ERR: #{e}")
+        # logger.error("Client ERR: #{e}")
       end
       arr
     end

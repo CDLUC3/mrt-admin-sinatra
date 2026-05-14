@@ -15,11 +15,11 @@ module UC3Ldap
         @ldapcoll = @ldapcli.collections_table_data
         @status = 'PASS'
       else
-        Sinatra::Application.logger.info('LDAP Client not enabled')
+        logger.info('LDAP Client not enabled')
         @status = 'ERROR'
       end
     rescue StandardError => e
-      Sinatra::Application.logger.error("LDAPCollectionMapList init error #{e}")
+      logger.error("LDAPCollectionMapList init error #{e}")
     end
 
     def ldap_collection_map(route)

@@ -11,7 +11,7 @@ module Sinatra
       app.get '/opensearch/tasks' do
         cli = UC3OpenSearch::OSClient.client
         res = cli.task_query
-        Sinatra::Application.logger.error(res.to_json) if res.key?(:error)
+        logger.error(res.to_json) if res.key?(:error)
 
         adminui_show_table(
           AdminUI::Context.new(request.path, request.params),
@@ -33,7 +33,7 @@ module Sinatra
       app.get '/opensearch/logs/status_code/*' do |subservice|
         cli = UC3OpenSearch::OSClient.client
         res = cli.log_query(subservice, code: request.params.fetch('status_code', '400').to_i)
-        Sinatra::Application.logger.error(res.to_json) if res.key?(:error)
+        logger.error(res.to_json) if res.key?(:error)
 
         adminui_show_table(
           AdminUI::Context.new(request.path, request.params),
@@ -44,7 +44,7 @@ module Sinatra
       app.get '/opensearch/logs/level/*' do |subservice|
         cli = UC3OpenSearch::OSClient.client
         res = cli.log_level_query(subservice)
-        Sinatra::Application.logger.error(res.to_json) if res.key?(:error)
+        logger.error(res.to_json) if res.key?(:error)
 
         adminui_show_table(
           AdminUI::Context.new(request.path, request.params),
@@ -63,7 +63,7 @@ module Sinatra
 
         cli = UC3OpenSearch::OSClient.client
         res = cli.log_ark_query(ark)
-        Sinatra::Application.logger.error(res.to_json) if res.key?(:error)
+        logger.error(res.to_json) if res.key?(:error)
 
         adminui_show_table(
           AdminUI::Context.new(request.path, request.params),

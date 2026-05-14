@@ -106,7 +106,7 @@ module UC3Resources
           end
         end
       rescue StandardError => e
-        Sinatra::Application.logger.error("Error listing services: #{e.message}")
+        logger.error("Error listing services: #{e.message}")
       end
       services
     end
@@ -184,7 +184,7 @@ module UC3Resources
           end
         end
       rescue StandardError => e
-        Sinatra::Application.logger.error("Error listing tasks: #{e.message}")
+        logger.error("Error listing tasks: #{e.message}")
       end
       tasks
     end
@@ -233,7 +233,7 @@ module UC3Resources
           end
         end
       rescue StandardError => e
-        Sinatra::Application.logger.error("Error listing tasks: #{e.message}")
+        logger.error("Error listing tasks: #{e.message}")
       end
       taskdefs
     end
@@ -302,7 +302,7 @@ module UC3Resources
           tasks[rule.name] = task
         end
       rescue StandardError => e
-        Sinatra::Application.logger.error("Error listing task schedules: #{e.message}")
+        logger.error("Error listing task schedules: #{e.message}")
       end
       tasks
     end

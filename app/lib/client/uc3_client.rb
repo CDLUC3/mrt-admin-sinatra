@@ -32,8 +32,17 @@ module UC3
       UC3::UC3Client.clients.fetch(self.class.to_s, UC3Client.new)
     end
 
+    def self.logger
+      Sinatra::Application.logger
+    end
+
+    def logger
+      self.class.logger
+    end
+
     def initialize(enabled: true, message: '')
       UC3Client.clients[self.class.to_s] = { name: self.class.to_s, enabled: enabled, message: message }
+      logger.info("Initialized #{self.class.to_s} client with enabled=#{enabled} and message='#{message}'")
       @enabled = enabled
     end
 
@@ -65,7 +74,7 @@ module UC3
           purpose: 'Record Consistency status'
         )
       rescue StandardError => e
-        Sinatra::Application.logger.info("Error recording status for #{path}: #{e.message}")
+        logger.info("Error recording status for #{path}: #{e.message}")
       end
     end
 
@@ -410,7 +419,7 @@ module UC3
 
       Sinatra::Application.routes['GET'].each do |path, route|
         # .each_keys does not work, so make use of route object
-        Sinatra::Application.logger.info("Route #{path}: #{route.inspect}") unless route.empty?
+        logger.info("Route #{path}: #{route.inspect}") unless route.empty?
         path = path.to_s
 
         next if path.include?('**')
