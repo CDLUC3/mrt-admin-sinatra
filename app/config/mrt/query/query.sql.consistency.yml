@@ -184,7 +184,7 @@ fragments:
         o.ark as ark,
         o.version_number,
         (
-          select ifnull(count(distinct inv_file_id), 0)
+          select ifnull(count(distinct id), 0)
           from inv.inv_files f
           where 
             f.inv_object_id = o.id

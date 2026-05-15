@@ -96,6 +96,7 @@ module UC3Query
         row['actions'] << {
           value: 'Rebuild Inventory Commands',
           href: "/ops/inventory/rebuild-commands?node_number=#{row['node_number']}&ark=#{row['ark']}",
+          title: 'Objects with more than 5000 files, this action must be run with curl. to manage timeouts.',
           cssclass: 'button'
         }
         row['actions'] << {
