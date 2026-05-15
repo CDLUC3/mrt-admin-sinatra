@@ -12,6 +12,7 @@ module AdminUI
     BOM = "\uFEFF"
 
     def self.empty(message = '', status: :SKIP, status_message: '')
+      return FilterTable.new if message.nil? || status_message.nil?
       return FilterTable.new if message.empty?
 
       FilterTable.new(
@@ -211,6 +212,7 @@ module AdminUI
     end
 
     def render_details
+      return '' if @details.nil?
       return '' if @details.empty?
 
       %(<div class='table_details'>#{@details}</div>)
