@@ -1381,6 +1381,8 @@ items:
       route: /queries/misc/objects
     - title: DB time
       route: /queries/misc/now
+    - title: Bad Query
+      route: /queries/misc/bad-query
     - title: Last Billing Update
       route: /queries/misc/last-update
     - title: Admin Objects

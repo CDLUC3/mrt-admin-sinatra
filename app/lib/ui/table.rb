@@ -11,9 +11,8 @@ module AdminUI
     # https://stackoverflow.com/a/51996135/3846548
     BOM = "\uFEFF"
 
-    def self.empty(message = '', status: :SKIP, status_message: '')
-      return FilterTable.new if message.nil? || status_message.nil?
-      return FilterTable.new if message.empty?
+    def self.empty(message = '', status: :SKIP, status_message: '', details: '')
+      return FilterTable.new(details: details) if message.empty?
 
       FilterTable.new(
         columns: [
@@ -23,7 +22,8 @@ module AdminUI
           Row.new([message])
         ],
         status: status,
-        status_message: status_message
+        status_message: status_message,
+        details: details
       )
     end
 

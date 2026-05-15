@@ -3,6 +3,10 @@ queries:
     sql: |
       select
         now() as current
+  /queries/misc/bad-query:
+    sql: |
+      select
+        from foo
   /queries/misc/admin:
     sql: |
       select 
