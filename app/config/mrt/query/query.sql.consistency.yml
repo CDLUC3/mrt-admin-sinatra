@@ -175,7 +175,9 @@ fragments:
         select ifnull(count(distinct id), 0)
         from inv.inv_files f
         where 
-          f.inv_object_id = o.id
+          f.inv_object_id = nn.inv_object_id
+        and
+          f.billable_size = f.full_size
       ) as file_count
     from (
       select
