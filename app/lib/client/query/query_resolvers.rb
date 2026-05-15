@@ -88,9 +88,10 @@ module UC3Query
           href: "/ops/inventory/rebuild?node_number=#{row['node_number']}&ark=#{row['ark']}",
           cssclass: 'button button_red',
           confmsg: %(Are you sure you want to rebuild the INV entry for this ark?
+            For objects with more than 5000 files, this action must be run with curl.
             A new inv_object_id will be assigned.),
           post: true,
-          disabled: storage_mgt_disabled?
+          disabled: storage_mgt_disabled? || row['file_count'] > 5000
         }
         row['actions'] << {
           value: 'Rebuild Inventory Commands',

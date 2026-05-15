@@ -182,7 +182,13 @@ fragments:
         inio.replicated as replicated,
         o.id as inv_object_id,
         o.ark as ark,
-        o.version_number
+        o.version_number,
+        (
+          select ifnull(count(distinct inv_file_id), 0)
+          from inv.inv_files f
+          where 
+            f.inv_object_id = o.id
+        ) as file_count
       from
         inv.inv_objects o
       inner join inv.inv_nodes_inv_objects inio
