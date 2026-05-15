@@ -170,7 +170,13 @@ fragments:
         select max(verified) from inv.inv_audits a
         where a.inv_object_id = nn.inv_object_id and a.inv_node_id=nn.node_id
       ) as last_verified,
-      nn.version_number
+      nn.version_number,
+      (
+        select ifnull(count(distinct id), 0)
+        from inv.inv_files f
+        where 
+          f.inv_object_id = o.id
+      ) as file_count
     from (
       select
         inio.role,
@@ -182,13 +188,7 @@ fragments:
         inio.replicated as replicated,
         o.id as inv_object_id,
         o.ark as ark,
-        o.version_number,
-        (
-          select ifnull(count(distinct id), 0)
-          from inv.inv_files f
-          where 
-            f.inv_object_id = o.id
-        ) as file_count
+        o.version_number
       from
         inv.inv_objects o
       inner join inv.inv_nodes_inv_objects inio
