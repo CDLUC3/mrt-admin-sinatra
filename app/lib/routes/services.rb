@@ -25,6 +25,15 @@ module Sinatra
       host =~ /^http/ ? host : "http://#{host}"
     end
 
+    def ui_hosts
+      hosts = ENV.fetch('HOSTS_UI', '').split(',').map do |host|
+        "http://#{host}"
+      end
+      return service_urls('ui') if hosts.empty?
+
+      hosts
+    end
+
     def ingest_host
       "http://#{ENV.fetch('SVC_INGEST', 'ingest:8080/ingest')}"
     end
@@ -105,15 +114,30 @@ module Sinatra
 
     def self.registered(app)
       app.get '/json/ui/state' do
-        get_url("#{ui_host}/state.json")
+        resp = []
+        ui_hosts.each do |host|
+          resp << get_url_json("#{host}/state.json")
+        end
+        resp = get_url("#{ui_host}/state.json") if resp.empty?
+        resp.to_json
       end
 
       app.get '/json/ui/audit-replic' do
-        get_url("#{ui_host}/state-audit-replic.json")
+        resp = []
+        ui_hosts.each do |host|
+          resp << get_url_json("#{host}/state-audit-replic.json")
+        end
+        resp = get_url("#{ui_host}/state-audit-replic.json") if resp.empty?
+        resp.to_json
       end
 
       app.get '/json/ingest/state' do
-        get_url("#{ingest_host}/state?t=json")
+        resp = []
+        ingest_hosts.each do |host|
+          resp << get_url_json("#{host}/state?t=json")
+        end
+        resp = get_url("#{ingest_host}/state?t=json") if resp.empty?
+        resp.to_json
       end
 
       app.get '/json/ingest/tag' do
@@ -121,7 +145,12 @@ module Sinatra
       end
 
       app.get '/json/store/state' do
-        get_url("#{store_host}/state?t=json")
+        resp = []
+        store_hosts.each do |host|
+          resp << get_url_json("#{host}/state?t=json")
+        end
+        resp = get_url("#{store_host}/state?t=json") if resp.empty?
+        resp.to_json
       end
 
       app.get '/json/store/jsonstatus' do
@@ -141,18 +170,21 @@ module Sinatra
       end
 
       app.get '/json/inventory/state' do
-        get_url("#{inventory_host}/state?t=json")
+        resp = []
+        inventory_hosts.each do |host|
+          resp << get_url_json("#{host}/state?t=json")
+        end
+        resp = get_url("#{inventory_host}/state?t=json") if resp.empty?
+        resp.to_json
       end
 
       app.post '/json/inventory/start' do
         resp = java_service_send_stop_start('inventory', START_ENDPOINT)
         if resp.empty?
           inventory_hosts.each do |host|
-            begin
-              resp << post_url("#{host}/#{START_ENDPOINT}")
-            rescue StandardError => e
-              logger.error("Error sending start to inventory host #{host}: #{e}")
-            end
+            resp << post_url("#{host}/#{START_ENDPOINT}")
+          rescue StandardError => e
+            logger.error("Error sending start to inventory host #{host}: #{e}")
           end
         end
         return post_url("#{inventory_host}/#{START_ENDPOINT}") if resp.empty?
@@ -164,11 +196,9 @@ module Sinatra
         resp = java_service_send_stop_start('inventory', STOP_ENDPOINT)
         if resp.empty?
           inventory_hosts.each do |host|
-            begin
-              resp << post_url("#{host}/#{STOP_ENDPOINT}")
-            rescue StandardError => e
-              logger.error("Error sending stop to inventory host #{host}: #{e}")
-            end
+            resp << post_url("#{host}/#{STOP_ENDPOINT}")
+          rescue StandardError => e
+            logger.error("Error sending stop to inventory host #{host}: #{e}")
           end
         end
         return post_url("#{inventory_host}/#{STOP_ENDPOINT}") if resp.empty?
@@ -185,7 +215,12 @@ module Sinatra
       end
 
       app.get '/json/audit/state' do
-        get_url("#{audit_host}/state?t=json")
+        resp = []
+        audit_hosts.each do |host|
+          resp << get_url_json("#{host}/state?t=json")
+        end
+        resp = get_url("#{audit_host}/state?t=json") if resp.empty?
+        resp.to_json
       end
 
       app.get '/json/audit/tag' do
@@ -200,11 +235,9 @@ module Sinatra
         resp = java_service_send_stop_start('audit', START_ENDPOINT)
         if resp.empty?
           audit_hosts.each do |host|
-            begin
-              resp << post_url("#{host}/#{START_ENDPOINT}")
-            rescue StandardError => e
-              logger.error("Error sending start to audit host #{host}: #{e}")
-            end
+            resp << post_url("#{host}/#{START_ENDPOINT}")
+          rescue StandardError => e
+            logger.error("Error sending start to audit host #{host}: #{e}")
           end
         end
         return post_url("#{audit_host}/#{START_ENDPOINT}") if resp.empty?
@@ -216,11 +249,9 @@ module Sinatra
         resp = java_service_send_stop_start('audit', STOP_ENDPOINT)
         if resp.empty?
           audit_hosts.each do |host|
-            begin
-              resp << post_url("#{host}/#{STOP_ENDPOINT}")
-            rescue StandardError => e
-              logger.error("Error sending stop to audit host #{host}: #{e}")
-            end
+            resp << post_url("#{host}/#{STOP_ENDPOINT}")
+          rescue StandardError => e
+            logger.error("Error sending stop to audit host #{host}: #{e}")
           end
         end
         return post_url("#{audit_host}/#{STOP_ENDPOINT}") if resp.empty?
@@ -230,8 +261,13 @@ module Sinatra
 
       app.get '/json/replic/state' do
         # Per David, replic uses status instead of state
-        get_url("#{replic_host}/status?t=json")
-      end
+        resp = []
+        replic_hosts.each do |host|
+          resp << get_url_json("#{host}/status=json")
+        end
+        resp = get_url("#{replic_host}/status=json") if resp.empty?
+        resp.to_json
+     end
 
       app.get '/json/replic/tag' do
         get_url("#{replic_host}/#{BUILD_TAG_ENDPOINT}")
@@ -241,11 +277,9 @@ module Sinatra
         resp = java_service_send_stop_start('replic', START_ENDPOINT)
         if resp.empty?
           replic_hosts.each do |host|
-            begin
-              resp << post_url("#{host}/#{START_ENDPOINT}")
-            rescue StandardError => e
-              logger.error("Error sending start to replic host #{host}: #{e}")
-            end
+            resp << post_url("#{host}/#{START_ENDPOINT}")
+          rescue StandardError => e
+            logger.error("Error sending start to replic host #{host}: #{e}")
           end
         end
         return post_url("#{replic_host}/#{START_ENDPOINT}") if resp.empty?
@@ -257,11 +291,9 @@ module Sinatra
         resp = java_service_send_stop_start('replic', 'service/pause?t=json')
         if resp.empty?
           replic_hosts.each do |host|
-            begin
-              resp << post_url("#{host}/service/pause?t=json")
-            rescue StandardError => e
-              logger.error("Error sending pause to replic host #{host}: #{e}")
-            end
+            resp << post_url("#{host}/service/pause?t=json")
+          rescue StandardError => e
+            logger.error("Error sending pause to replic host #{host}: #{e}")
           end
         end
         return post_url("#{replic_host}/service/pause?t=json") if resp.empty?
@@ -274,7 +306,12 @@ module Sinatra
       end
 
       app.get '/json/access/state' do
-        get_url("#{access_host}/state?t=json")
+        resp = []
+        access_hosts.each do |host|
+          resp << get_url_json("#{host}/state?t=json")
+        end
+        resp = get_url("#{access_host}/state?t=json") if resp.empty?
+        resp.to_json
       end
 
       app.get '/json/access/tag' do

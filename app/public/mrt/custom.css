@@ -64,6 +64,7 @@ td.profile {
 td.nodedata {
   min-width: 300px;
   white-space: pre;
+  text-wrap-mode: wrap;
 }
 
 span.env {
