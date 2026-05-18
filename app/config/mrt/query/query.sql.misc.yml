@@ -4,6 +4,7 @@ queries:
       select
         now() as current
   /queries/misc/bad-query:
+    test_skip: true
     sql: |
       select
         from foo

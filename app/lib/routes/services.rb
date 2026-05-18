@@ -146,6 +146,15 @@ module Sinatra
 
       app.post '/json/inventory/start' do
         resp = java_service_send_stop_start('inventory', START_ENDPOINT)
+        if resp.empty?
+          inventory_hosts.each do |host|
+            begin
+              resp << post_url("#{host}/#{START_ENDPOINT}")
+            rescue StandardError => e
+              logger.error("Error sending start to inventory host #{host}: #{e}")
+            end
+          end
+        end
         return post_url("#{inventory_host}/#{START_ENDPOINT}") if resp.empty?
 
         resp.to_json
@@ -153,6 +162,15 @@ module Sinatra
 
       app.post '/json/inventory/stop' do
         resp = java_service_send_stop_start('inventory', STOP_ENDPOINT)
+        if resp.empty?
+          inventory_hosts.each do |host|
+            begin
+              resp << post_url("#{host}/#{STOP_ENDPOINT}")
+            rescue StandardError => e
+              logger.error("Error sending stop to inventory host #{host}: #{e}")
+            end
+          end
+        end
         return post_url("#{inventory_host}/#{STOP_ENDPOINT}") if resp.empty?
 
         resp.to_json
@@ -180,6 +198,15 @@ module Sinatra
 
       app.post '/json/audit/start' do
         resp = java_service_send_stop_start('audit', START_ENDPOINT)
+        if resp.empty?
+          audit_hosts.each do |host|
+            begin
+              resp << post_url("#{host}/#{START_ENDPOINT}")
+            rescue StandardError => e
+              logger.error("Error sending start to audit host #{host}: #{e}")
+            end
+          end
+        end
         return post_url("#{audit_host}/#{START_ENDPOINT}") if resp.empty?
 
         resp.to_json
@@ -187,6 +214,15 @@ module Sinatra
 
       app.post '/json/audit/stop' do
         resp = java_service_send_stop_start('audit', STOP_ENDPOINT)
+        if resp.empty?
+          audit_hosts.each do |host|
+            begin
+              resp << post_url("#{host}/#{STOP_ENDPOINT}")
+            rescue StandardError => e
+              logger.error("Error sending stop to audit host #{host}: #{e}")
+            end
+          end
+        end
         return post_url("#{audit_host}/#{STOP_ENDPOINT}") if resp.empty?
 
         resp.to_json
@@ -203,6 +239,15 @@ module Sinatra
 
       app.post '/json/replic/start' do
         resp = java_service_send_stop_start('replic', START_ENDPOINT)
+        if resp.empty?
+          replic_hosts.each do |host|
+            begin
+              resp << post_url("#{host}/#{START_ENDPOINT}")
+            rescue StandardError => e
+              logger.error("Error sending start to replic host #{host}: #{e}")
+            end
+          end
+        end
         return post_url("#{replic_host}/#{START_ENDPOINT}") if resp.empty?
 
         resp.to_json
@@ -210,6 +255,15 @@ module Sinatra
 
       app.post '/json/replic/pause' do
         resp = java_service_send_stop_start('replic', 'service/pause?t=json')
+        if resp.empty?
+          replic_hosts.each do |host|
+            begin
+              resp << post_url("#{host}/service/pause?t=json")
+            rescue StandardError => e
+              logger.error("Error sending pause to replic host #{host}: #{e}")
+            end
+          end
+        end
         return post_url("#{replic_host}/service/pause?t=json") if resp.empty?
 
         resp.to_json
