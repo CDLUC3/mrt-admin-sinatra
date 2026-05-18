@@ -114,27 +114,24 @@ module Sinatra
 
     def self.registered(app)
       app.get '/json/ui/state' do
-        resp = []
-        ui_hosts.each do |host|
-          resp << get_url_json("#{host}/state.json")
+        resp = ui_hosts.map do |host|
+          get_url("#{host}/state.json")
         end
         resp = get_url("#{ui_host}/state.json") if resp.empty?
         resp.to_json
       end
 
       app.get '/json/ui/audit-replic' do
-        resp = []
-        ui_hosts.each do |host|
-          resp << get_url_json("#{host}/state-audit-replic.json")
+        resp = ui_hosts.map do |host|
+          get_url("#{host}/state-audit-replic.json")
         end
         resp = get_url("#{ui_host}/state-audit-replic.json") if resp.empty?
         resp.to_json
       end
 
       app.get '/json/ingest/state' do
-        resp = []
-        ingest_hosts.each do |host|
-          resp << get_url_json("#{host}/state?t=json")
+        resp = ingest_hosts.map do |host|
+          get_url("#{host}/state?t=json")
         end
         resp = get_url("#{ingest_host}/state?t=json") if resp.empty?
         resp.to_json
@@ -145,9 +142,8 @@ module Sinatra
       end
 
       app.get '/json/store/state' do
-        resp = []
-        store_hosts.each do |host|
-          resp << get_url_json("#{host}/state?t=json")
+        resp = store_hosts.map do |host|
+          get_url("#{host}/state?t=json")
         end
         resp = get_url("#{store_host}/state?t=json") if resp.empty?
         resp.to_json
@@ -170,9 +166,8 @@ module Sinatra
       end
 
       app.get '/json/inventory/state' do
-        resp = []
-        inventory_hosts.each do |host|
-          resp << get_url_json("#{host}/state?t=json")
+        resp = inventory_hosts.map do |host|
+          get_url("#{host}/state?t=json")
         end
         resp = get_url("#{inventory_host}/state?t=json") if resp.empty?
         resp.to_json
@@ -215,9 +210,8 @@ module Sinatra
       end
 
       app.get '/json/audit/state' do
-        resp = []
-        audit_hosts.each do |host|
-          resp << get_url_json("#{host}/state?t=json")
+        resp = audit_hosts.map do |host|
+          get_url("#{host}/state?t=json")
         end
         resp = get_url("#{audit_host}/state?t=json") if resp.empty?
         resp.to_json
@@ -261,13 +255,12 @@ module Sinatra
 
       app.get '/json/replic/state' do
         # Per David, replic uses status instead of state
-        resp = []
-        replic_hosts.each do |host|
-          resp << get_url_json("#{host}/status=json")
+        resp = replic_hosts.map do |host|
+          get_url("#{host}/status?t=json")
         end
-        resp = get_url("#{replic_host}/status=json") if resp.empty?
+        resp = get_url("#{replic_host}/status?t=json") if resp.empty?
         resp.to_json
-     end
+      end
 
       app.get '/json/replic/tag' do
         get_url("#{replic_host}/#{BUILD_TAG_ENDPOINT}")
@@ -306,9 +299,8 @@ module Sinatra
       end
 
       app.get '/json/access/state' do
-        resp = []
-        access_hosts.each do |host|
-          resp << get_url_json("#{host}/state?t=json")
+        resp = access_hosts.map do |host|
+          get_url("#{host}/state?t=json")
         end
         resp = get_url("#{access_host}/state?t=json") if resp.empty?
         resp.to_json
