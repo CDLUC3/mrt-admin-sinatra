@@ -131,9 +131,9 @@ module Sinatra
 
       app.get '/json/ingest/state' do
         resp = ingest_hosts.map do |host|
-          get_url_json("#{host}/state.json")
+          get_url_json("#{host}/state?t=json")
         end
-        resp = get_url_json("#{ingest_host}/state.json") if resp.empty?
+        resp = get_url_json("#{ingest_host}/state?t=json") if resp.empty?
         resp.to_json
       end
 
@@ -143,9 +143,9 @@ module Sinatra
 
       app.get '/json/store/state' do
         resp = store_hosts.map do |host|
-          get_url_json("#{host}/state.json")
+          get_url_json("#{host}/state?t=json")
         end
-        resp = get_url_json("#{store_host}/state.json") if resp.empty?
+        resp = get_url_json("#{store_host}/state?t=json") if resp.empty?
         resp.to_json
       end
 
@@ -167,9 +167,9 @@ module Sinatra
 
       app.get '/json/inventory/state' do
         resp = inventory_hosts.map do |host|
-          get_url_json("#{host}/state.json")
+          get_url_json("#{host}/state?t=json")
         end
-        resp = get_url_json("#{inventory_host}/state.json") if resp.empty?
+        resp = get_url_json("#{inventory_host}/state?t=json") if resp.empty?
         resp.to_json
       end
 
@@ -211,9 +211,9 @@ module Sinatra
 
       app.get '/json/audit/state' do
         resp = audit_hosts.map do |host|
-          get_url_json("#{host}/state.json")
+          get_url_json("#{host}/state?t=json")
         end
-        resp = get_url_json("#{audit_host}/state.json") if resp.empty?
+        resp = get_url_json("#{audit_host}/state?t=json") if resp.empty?
         resp.to_json
       end
 
@@ -256,9 +256,9 @@ module Sinatra
       app.get '/json/replic/state' do
         # Per David, replic uses status instead of state
         resp = replic_hosts.map do |host|
-          get_url_json("#{host}/status.json")
+          get_url_json("#{host}/status?t=json")
         end
-        resp = get_url_json("#{replic_host}/status.json") if resp.empty?
+        resp = get_url_json("#{replic_host}/status?t=json") if resp.empty?
         resp.to_json
       end
 
@@ -300,9 +300,9 @@ module Sinatra
 
       app.get '/json/access/state' do
         resp = access_hosts.map do |host|
-          get_url_json("#{host}/state.json")
+          get_url_json("#{host}/state?t=json")
         end
-        resp = get_url_json("#{access_host}/state.json") if resp.empty?
+        resp = get_url_json("#{access_host}/state?t=json") if resp.empty?
         resp.to_json
       end
 
@@ -723,8 +723,9 @@ module Sinatra
         states << check_zk
         states << check_ldap
 
-        states << monitor_service_status(:ui, :state, "#{ui_host}/state.json")
-
+        ui_hosts.each do |host|
+          states << monitor_service_status(:ingest, :state, "#{host}/state.json")
+        end
         ingest_hosts.each do |host|
           states << monitor_service_status(:ingest, :state, "#{host}/state?t=json")
         end
@@ -822,6 +823,7 @@ module Sinatra
                 else
                   "/#{service}"
                 end
+      port = service == 'ui' ? '9292' : '8080'
       Aws::ServiceDiscovery::Client.new(region: UC3::UC3Client.region)
         .discover_instances(
           service_name: service,
@@ -831,7 +833,7 @@ module Sinatra
           hostip = instance.attributes.fetch('AWS_INSTANCE_IPV4', '')
           next if hostip.empty?
 
-          url = "http://#{hostip}:8080#{svcsuff}"
+          url = "http://#{hostip}:#{port}#{svcsuff}"
           urls << url
         end
       logger.info("Monitor #{urls}")
