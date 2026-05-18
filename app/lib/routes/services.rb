@@ -724,7 +724,7 @@ module Sinatra
         states << check_ldap
 
         ui_hosts.each do |host|
-          states << monitor_service_status(:ingest, :state, "#{host}/state.json")
+          states << monitor_service_status(:ui, :state, "#{host}/state.json")
         end
         ingest_hosts.each do |host|
           states << monitor_service_status(:ingest, :state, "#{host}/state?t=json")
@@ -823,7 +823,7 @@ module Sinatra
                 else
                   "/#{service}"
                 end
-      port = service == 'ui' ? '9292' : '8080'
+      port = service == 'ui' ? '8086' : '8080'
       Aws::ServiceDiscovery::Client.new(region: UC3::UC3Client.region)
         .discover_instances(
           service_name: service,
