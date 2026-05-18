@@ -115,25 +115,25 @@ module Sinatra
     def self.registered(app)
       app.get '/json/ui/state' do
         resp = ui_hosts.map do |host|
-          get_url("#{host}/state.json")
+          get_url_json("#{host}/state.json")
         end
-        resp = get_url("#{ui_host}/state.json") if resp.empty?
+        resp = get_url_json("#{ui_host}/state.json") if resp.empty?
         resp.to_json
       end
 
       app.get '/json/ui/audit-replic' do
         resp = ui_hosts.map do |host|
-          get_url("#{host}/state-audit-replic.json")
+          get_url_json("#{host}/state-audit-replic.json")
         end
-        resp = get_url("#{ui_host}/state-audit-replic.json") if resp.empty?
+        resp = get_url_json("#{ui_host}/state-audit-replic.json") if resp.empty?
         resp.to_json
       end
 
       app.get '/json/ingest/state' do
         resp = ingest_hosts.map do |host|
-          get_url("#{host}/state?t=json")
+          get_url_json("#{host}/state.json")
         end
-        resp = get_url("#{ingest_host}/state?t=json") if resp.empty?
+        resp = get_url_json("#{ingest_host}/state.json") if resp.empty?
         resp.to_json
       end
 
@@ -143,9 +143,9 @@ module Sinatra
 
       app.get '/json/store/state' do
         resp = store_hosts.map do |host|
-          get_url("#{host}/state?t=json")
+          get_url_json("#{host}/state.json")
         end
-        resp = get_url("#{store_host}/state?t=json") if resp.empty?
+        resp = get_url_json("#{store_host}/state.json") if resp.empty?
         resp.to_json
       end
 
@@ -167,9 +167,9 @@ module Sinatra
 
       app.get '/json/inventory/state' do
         resp = inventory_hosts.map do |host|
-          get_url("#{host}/state?t=json")
+          get_url_json("#{host}/state.json")
         end
-        resp = get_url("#{inventory_host}/state?t=json") if resp.empty?
+        resp = get_url_json("#{inventory_host}/state.json") if resp.empty?
         resp.to_json
       end
 
@@ -211,9 +211,9 @@ module Sinatra
 
       app.get '/json/audit/state' do
         resp = audit_hosts.map do |host|
-          get_url("#{host}/state?t=json")
+          get_url_json("#{host}/state.json")
         end
-        resp = get_url("#{audit_host}/state?t=json") if resp.empty?
+        resp = get_url_json("#{audit_host}/state.json") if resp.empty?
         resp.to_json
       end
 
@@ -256,9 +256,9 @@ module Sinatra
       app.get '/json/replic/state' do
         # Per David, replic uses status instead of state
         resp = replic_hosts.map do |host|
-          get_url("#{host}/status?t=json")
+          get_url_json("#{host}/status.json")
         end
-        resp = get_url("#{replic_host}/status?t=json") if resp.empty?
+        resp = get_url_json("#{replic_host}/status.json") if resp.empty?
         resp.to_json
       end
 
@@ -300,9 +300,9 @@ module Sinatra
 
       app.get '/json/access/state' do
         resp = access_hosts.map do |host|
-          get_url("#{host}/state?t=json")
+          get_url_json("#{host}/state.json")
         end
-        resp = get_url("#{access_host}/state?t=json") if resp.empty?
+        resp = get_url_json("#{access_host}/state.json") if resp.empty?
         resp.to_json
       end
 
@@ -814,7 +814,14 @@ module Sinatra
 
     def service_urls(service)
       urls = []
-      svcsuff = service == 'access' ? 'store' : service
+      svcsuff = case service
+                when 'ui'
+                  ''
+                when 'access'
+                  '/store'
+                else
+                  "/#{service}"
+                end
       Aws::ServiceDiscovery::Client.new(region: UC3::UC3Client.region)
         .discover_instances(
           service_name: service,
@@ -824,7 +831,7 @@ module Sinatra
           hostip = instance.attributes.fetch('AWS_INSTANCE_IPV4', '')
           next if hostip.empty?
 
-          url = "http://#{hostip}:8080/#{svcsuff}"
+          url = "http://#{hostip}:8080#{svcsuff}"
           urls << url
         end
       logger.info("Monitor #{urls}")
@@ -1302,6 +1309,13 @@ module Sinatra
     rescue StandardError => e
       content_type :json
       { uri: uri, error: e.to_s }.to_json
+    end
+
+    def get_url_json(url)
+      body = get_url(url)
+      ::JSON.parse(body)
+    rescue StandardError => e
+      { uri: url, error: e.to_s }
     end
 
     # this method may be over-customized for EZID.  Consider refactoring.
