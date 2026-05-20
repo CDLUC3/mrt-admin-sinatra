@@ -274,7 +274,7 @@ module UC3S3
             href: "/ops/s3-reports/retrieve?report=#{URI.encode_www_form_component(s3obj.key)}",
             value: 'Download'
           },
-          created: s3obj.last_modified,
+          created: date_format(s3obj.last_modified, convert_timezone: true),
           size: s3obj.size
         }
         if show_url
