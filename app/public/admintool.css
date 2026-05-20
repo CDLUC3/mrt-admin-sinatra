@@ -66,6 +66,11 @@ td.sha {
   width: 250px;
 }
 
+th.Title, 
+td.Title {
+  width: 250px;
+}
+
 td.sha span.val {
   overflow-x: clip;
 }

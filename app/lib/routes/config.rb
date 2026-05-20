@@ -137,6 +137,18 @@ module Sinatra
         redirect UC3S3::ConfigObjectsClient.client.get_report(rpt)
       end
 
+      app.get '/ops/s3-reports/unit-test-results' do
+        rpt = request.params.fetch('report', '')
+        redirect '/ops/s3-reports' if rpt.empty?
+
+        rpt = URI.decode_www_form_component(rpt)
+
+        adminui_show_table(
+          AdminUI::Context.new(request.path, request.params),
+          UC3S3::ConfigObjectsClient.client.get_unit_test_results(rpt)
+        )
+      end
+
       app.get '/ops/s3-reports/*' do |folder|
         adminui_show_table(
           AdminUI::Context.new(request.path, request.params),

@@ -233,6 +233,51 @@ module UC3S3
       url
     end
 
+    def retrieve_report(path)
+      @s3_client.get_object(
+        bucket: @report_bucket,
+        key: path,
+      ).body.read
+    end
+
+    def get_unit_test_results(path)
+      table = AdminUI::FilterTable.new(
+        columns: [
+          AdminUI::Column.new(:path, header: 'path'),
+          AdminUI::Column.new(:Result, header: 'Result'),
+          AdminUI::Column.new(:Rows, header: 'Rows', cssclass: 'int'),
+          AdminUI::Column.new(:Status, header: 'Status Code', cssclass: 'int'),
+          AdminUI::Column.new(:Size, header: 'Size', cssclass: 'int'),
+          AdminUI::Column.new(:Time, header: 'Time', cssclass: 'float'),
+          AdminUI::Column.new(:Title, header: 'Title'),
+          AdminUI::Column.new(:status, header: 'Status')
+        ]
+      )
+      row = {}
+      retrieve_report(path).each_line do |line|
+        if line.start_with?('/')
+          row[:status] = 'FAIL' if row[:Result] == 'ERROR' || row.fetch(:Status, 0) >= 400
+          table.add_row(AdminUI::Row.make_row(table.columns, row)) unless row.empty?
+          row = { path: line.strip, status: 'PASS' }
+          next
+        end
+        line.strip.split(';').each do |kv|
+          k, v = kv.split(': ')
+          k = k.strip.to_sym
+          v = v.nil? ? '' : v.strip
+          case k
+            when :Rows, :Size, :Status
+              v = v.to_i
+            when :Time
+              v = v.to_f
+          end
+          row[k] = v
+        end
+      end
+      table.add_row(AdminUI::Row.make_row(table.columns, row)) unless row.empty?
+      table
+    end
+
     def get_doc_page(doc)
       key = "uc3/mrt/mrt-admin-sinatra/docs/#{UC3::UC3Client.stack_name}/#{doc}"
       @s3_client.get_object(
@@ -277,6 +322,17 @@ module UC3S3
           created: date_format(s3obj.last_modified, convert_timezone: true),
           size: s3obj.size
         }
+        if path == 'unit-tests/'
+          row[:download] = {
+            href: "/ops/s3-reports/unit-test-results?report=#{URI.encode_www_form_component(s3obj.key)}",
+            value: 'Review'
+          }
+        else
+          row[:download] = {
+            href: "/ops/s3-reports/retrieve?report=#{URI.encode_www_form_component(s3obj.key)}",
+            value: 'Download'
+          }
+        end
         if show_url
           row[:url] = {
             href: "/saved-reports/url?report=#{URI.encode_www_form_component(s3obj.key)}",

@@ -658,8 +658,8 @@ items:
         confmsg: This will cause all Processing jobs to fail until the failure file is removed from the ingest folder.
         route: /ops/show-folders/force-failure/processing
         method: post
-    - title: S3 Folders
-      route: /ops/show-s3folders/list
+    # - title: S3 Folders
+    #   route: /ops/show-s3folders/list
   - path: db-queue
     title: Database Queues
     route: /ops/db-queue
