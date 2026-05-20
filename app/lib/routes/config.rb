@@ -144,7 +144,7 @@ module Sinatra
 
       app.get '/ops/s3-reports/retrieve' do
         rpt = request.params.fetch('report', '')
-        redirect "/ops/s3-reports" if rpt.empty?
+        redirect '/ops/s3-reports' if rpt.empty?
 
         rpt = URI.decode_www_form_component(rpt)
 
