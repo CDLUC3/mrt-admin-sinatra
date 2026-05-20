@@ -271,7 +271,7 @@ module UC3S3
         row = {
           path: s3obj.key,
           download: {
-            href: "/saved-reports/retrieve?report=#{URI.encode_www_form_component(s3obj.key)}",
+            href: "/ops/s3-reports/retrieve?report=#{URI.encode_www_form_component(s3obj.key)}",
             value: 'Download'
           },
           created: s3obj.last_modified,
