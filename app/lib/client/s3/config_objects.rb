@@ -236,7 +236,7 @@ module UC3S3
     def retrieve_report(path)
       @s3_client.get_object(
         bucket: @report_bucket,
-        key: path,
+        key: path
       ).body.read
     end
 
@@ -266,10 +266,10 @@ module UC3S3
           k = k.strip.to_sym
           v = v.nil? ? '' : v.strip
           case k
-            when :Rows, :Size, :Status
-              v = v.to_i
-            when :Time
-              v = v.to_f
+          when :Rows, :Size, :Status
+            v = v.to_i
+          when :Time
+            v = v.to_f
           end
           row[k] = v
         end
