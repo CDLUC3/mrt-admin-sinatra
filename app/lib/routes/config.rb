@@ -128,6 +128,15 @@ module Sinatra
         UC3S3::ConfigObjectsClient.client.get_ec2_release_manifest.to_json
       end
 
+      app.get '/ops/s3-reports/retrieve' do
+        rpt = request.params.fetch('report', '')
+        redirect '/ops/s3-reports' if rpt.empty?
+
+        rpt = URI.decode_www_form_component(rpt)
+
+        redirect UC3S3::ConfigObjectsClient.client.get_report(rpt)
+      end
+
       app.get '/ops/s3-reports/*' do |folder|
         adminui_show_table(
           AdminUI::Context.new(request.path, request.params),
@@ -140,15 +149,6 @@ module Sinatra
           AdminUI::Context.new(request.path, request.params),
           UC3S3::ConfigObjectsClient.client.list_reports('reports/', show_url: true)
         )
-      end
-
-      app.get '/ops/s3-reports/retrieve' do
-        rpt = request.params.fetch('report', '')
-        redirect '/ops/s3-reports' if rpt.empty?
-
-        rpt = URI.decode_www_form_component(rpt)
-
-        redirect UC3S3::ConfigObjectsClient.client.get_report(rpt)
       end
 
       app.get '/saved-reports/retrieve' do
