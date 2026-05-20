@@ -848,6 +848,17 @@ items:
   - title: Storage Scans
     route: /ops/storage/scans
     disable: ecs-dbsnapshot
+  - path: test-output
+    title: Test Output
+    route: /ops/test-output
+    disable: default, docker
+    items:
+    - title: End To End Tests
+      route: /s3-reports/end2end
+    - title: Locust Tests
+      route: /s3-reports/locust
+    - title: Unit Tests
+      route: /s3-reports/unit-tests
   - title: Cloudwatch Logs
     route: /ops/cloudwatch
     disable: default, docker

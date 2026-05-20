@@ -253,7 +253,7 @@ module UC3S3
       table
     end
 
-    def list_reports(path)
+    def list_reports(path, show_url: false)
       table = AdminUI::FilterTable.new(
         columns: [
           AdminUI::Column.new(:path, header: 'Report Path'),
@@ -274,13 +274,15 @@ module UC3S3
             href: "/saved-reports/retrieve?report=#{URI.encode_www_form_component(s3obj.key)}",
             value: 'Download'
           },
-          url: {
-            href: "/saved-reports/url?report=#{URI.encode_www_form_component(s3obj.key)}",
-            value: 'URL'
-          },
           created: s3obj.last_modified,
           size: s3obj.size
         }
+        if show_url
+          row[:url] = {
+            href: "/saved-reports/url?report=#{URI.encode_www_form_component(s3obj.key)}",
+            value: 'URL'
+          }
+        end
         table.add_row(AdminUI::Row.make_row(table.columns, row))
       end
       table
