@@ -372,20 +372,22 @@ module UC3
       @test_paths = []
       @consistency_checks = []
 
-      UC3Query::QueryClient.client.queries.each do |name, query|
-        next if query.fetch(:update, false) || query.fetch(:non_report, false) || query.fetch(:test_skip, false)
+      if UC3Query::QueryClient.client.enabled
+        UC3Query::QueryClient.client.queries.each do |name, query|
+          next if query.fetch(:update, false) || query.fetch(:non_report, false) || query.fetch(:test_skip, false)
 
-        name = name.to_s
-        CONSIS_QUERIES.each do |pattern|
+          name = name.to_s
+          CONSIS_QUERIES.each do |pattern|
+            next if name =~ %r{/objlist}
+
+            @consistency_checks << name if name =~ /#{pattern}/
+          end
           next if name =~ %r{/objlist}
 
-          @consistency_checks << name if name =~ /#{pattern}/
-        end
-        next if name =~ %r{/objlist}
-
-        @test_paths << name unless @consistency_checks.include?(name)
-        query.fetch(:unit_tests, []).each do |params|
-          @test_paths << "#{name}#{params}"
+          @test_paths << name unless @consistency_checks.include?(name)
+          query.fetch(:unit_tests, []).each do |params|
+            @test_paths << "#{name}#{params}"
+          end
         end
       end
 
