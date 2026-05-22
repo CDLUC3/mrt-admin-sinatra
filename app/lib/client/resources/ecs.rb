@@ -65,6 +65,8 @@ module UC3Resources
                 end
               end
               break unless image.nil?
+            rescue StandardError => e
+              logger.error("Error listing services 1: #{e.message}")
             end
 
             dep = svc.deployments ? svc.deployments[0] : {}
@@ -103,10 +105,14 @@ module UC3Resources
               manifest_tag: @ecr_client.get_manifest_tag(image_name),
               status: status
             }
+          rescue StandardError => e
+            logger.error("Error listing services 2: #{e.message}")
           end
+        rescue StandardError => e
+          logger.error("Error listing services 3: #{e.message}")
         end
       rescue StandardError => e
-        logger.error("Error listing services: #{e.message}")
+        logger.error("Error listing services 4: #{e.message}")
       end
       services
     end
