@@ -243,7 +243,7 @@ module UC3S3
     def get_unit_test_results(path)
       table = AdminUI::FilterTable.new(
         columns: [
-          AdminUI::Column.new(:path, header: 'path'),
+          AdminUI::Column.new(:Route, header: 'Route'),
           AdminUI::Column.new(:Result, header: 'Result'),
           AdminUI::Column.new(:Rows, header: 'Rows', cssclass: 'int'),
           AdminUI::Column.new(:Status, header: 'Status Code', cssclass: 'int'),
@@ -255,12 +255,9 @@ module UC3S3
       )
       row = {}
       retrieve_report(path).each_line do |line|
-        if line.start_with?('/')
-          row[:status] = 'FAIL' if row[:Result] == 'ERROR' || row.fetch(:Status, 0) >= 400
-          table.add_row(AdminUI::Row.make_row(table.columns, row)) unless row.empty?
-          row = { path: line.strip, status: 'PASS' }
-          next
-        end
+        next unless line.start_with?('Route:')
+
+        row = { status: 'PASS' }
         line.strip.split(';').each do |kv|
           k, v = kv.split(': ')
           k = k.strip.to_sym
@@ -273,6 +270,8 @@ module UC3S3
           end
           row[k] = v
         end
+        row[:status] = 'FAIL' if row[:Result] == 'ERROR' || row.fetch(:Status, 0) >= 400
+        table.add_row(AdminUI::Row.make_row(table.columns, row)) unless row.empty?
       end
       table.add_row(AdminUI::Row.make_row(table.columns, row)) unless row.empty?
       table
