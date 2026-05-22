@@ -255,7 +255,7 @@ module UC3S3
       )
       row = {}
       retrieve_report(path).each_line do |line|
-        next unless line.start_with?('Route:')
+        next unless line.start_with?('Result:')
 
         row = { status: 'PASS' }
         line.strip.split(';').each do |kv|
