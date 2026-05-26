@@ -1090,6 +1090,7 @@ queries:
         - Known replication exception has been coded into the report
         - Replication not yet started, it has been more than 4 hours since the object was created/modified.
     status: PASS
+    totals: true
     status_check: true
     sql: |
       select
@@ -1157,6 +1158,7 @@ queries:
       If replication has processed for only one node at the time the report is run, the status will report as a WARN.
     status: PASS
     status_check: true
+    totals: true
     sql: |
       select
         case
