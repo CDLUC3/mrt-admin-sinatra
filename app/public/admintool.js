@@ -163,7 +163,8 @@ function showTotals() {
     'diff_size_gb',
     'ytd_size_gb',
     'average_available_gb',
-    'daily_average_projected_gb'
+    'daily_average_projected_gb',
+    'file_count'
   ];
   $("tfoot tr.totals").find("td").each(function() {
     var b = false;
