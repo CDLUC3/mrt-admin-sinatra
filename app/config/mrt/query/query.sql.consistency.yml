@@ -57,7 +57,7 @@ fragments:
       erc_when,
       (select group_concat(local_id) from inv.inv_localids loc where loc.inv_object_ark = o.ark and loc.inv_owner_ark = own.ark) as local_ids,
       o.created,
-      billable_size,
+      billable_size / 1000000000.0 as size_gb,
       file_count
     from
       inv.inv_objects o
@@ -79,7 +79,7 @@ fragments:
       erc_who,
       erc_when,
       created,
-      billable_size,
+      size_gb,
       file_count
     order by o.id desc
     limit {{{LIMIT}}}
@@ -1106,7 +1106,7 @@ queries:
         o.version_number,
         o.created,
         inio.replic_start,
-        ifnull(inio.replic_size,0) as bytes,
+        ifnull(inio.replic_size,0) / 1000000000.0 as bytes_gb,
         count(i2.created) as seccnt,
         min(i2.version_number) as secmin,
         max(i2.version_number) as secmax,
@@ -1148,7 +1148,7 @@ queries:
         o.version_number,
         o.created,
         inio.replic_start,
-        bytes,
+        bytes_gb,
         status
   /ops/db-queue/replication/failed:
     description: |
@@ -1168,7 +1168,7 @@ queries:
         o.version_number,
         o.created,
         inio.replic_start,
-        ifnull(inio.replic_size,0) as bytes,
+        ifnull(inio.replic_size,0) / 1000000000.0 as bytes_gb,
         inio.completion_status,
         (
           select
@@ -1215,7 +1215,7 @@ queries:
         o.version_number,
         o.created,
         inio.replic_start,
-        ifnull(inio.replic_size,0) as bytes,
+        ifnull(inio.replic_size,0) / 1000000000.0 as bytes_gb,
         inio.completion_status,
         (
           select
