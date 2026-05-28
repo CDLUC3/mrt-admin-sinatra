@@ -158,6 +158,10 @@ module UC3S3
       "#{@ezidconf.fetch(:api, 'http://ezid:4567')}/shoulder/#{@ezidconf.fetch(:collection_shoulder, 'ark:/99999/fk4')}"
     end
 
+    def mint_user_url
+      "#{@ezidconf.fetch(:api, 'http://ezid:4567')}/shoulder/#{@ezidconf.fetch(:user_shoulder, 'ark:/99166/p9')}"
+    end
+
     def mint(url, description)
       raise 'Minting not supported' unless @ezidconf.fetch(:supported, true)
 

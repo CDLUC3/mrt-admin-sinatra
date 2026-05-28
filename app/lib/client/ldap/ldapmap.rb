@@ -52,7 +52,7 @@ module UC3Ldap
           mnemonic: m,
           description: description,
           coll: {
-            value: 'Create LDAP Records (tbd)',
+            value: 'Create LDAP Records',
             href: '/ldap/create-collection-groups',
             data: {
               ark: ark,

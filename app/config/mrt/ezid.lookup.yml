@@ -10,6 +10,7 @@ docker: &docker
     sla_shoulder: ark:/99999/fk4
     owner_shoulder: ark:/99999/fk4
     collection_shoulder: ark:/99999/fk4
+    user_shoulder: ark:/99166/p9
 dockerlocal:
   <<: *docker
 ecs-dev:

@@ -100,6 +100,32 @@ module Sinatra
         content_type :json
         coll.to_json
       end
+
+      app.post '/ldap/create-user' do
+        UC3Ldap::LDAPClient.client.create_user(request.params)
+        redirect '/ldap/users'
+      end
+
+      app.get '/ldap/create-user' do
+        erb :ldap_user, layout: :page_layout, locals: {
+          context: AdminUI::Context.new(request.path, request.params)
+        }
+      end
+
+      app.post '/ldap/user-edit' do
+        UC3Ldap::LDAPClient.client.update_user(request.params)
+        redirect '/ldap/users'
+      end
+
+      app.get '/ldap/user-edit/*' do
+        uid = params[:splat][0]
+        user = UC3Ldap::LDAPClient.client.user(uid)
+        redirect '/ldap/users' if user.nil?
+        erb :ldap_edituser, layout: :page_layout, locals: {
+          context: AdminUI::Context.new(request.path, request.params),
+          user: user
+        }
+      end
     end
   end
   register UC3LdapRoutes

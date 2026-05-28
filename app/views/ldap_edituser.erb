@@ -1,0 +1,122 @@
+<form class="admintool" method="post" action="/ldap/user-edit">
+  <h2 align="center">Edit User <%= user.uid %></h2>
+  <fieldset>
+    <legend>User Credentials</legend>
+    <input type="hidden" id="uid" name="uid" size="20" value="<%= user.uid %>"/>
+    <div>
+      <label for="password">New Password</label>
+      <input type="password" id="password" name="password" size="20"/>
+      <span class='password fieldval' name='password' value=''></span>
+    </div>
+  </fieldset>
+  <fieldset>
+    <legend>Name</legend>
+    <div>
+      <label for="givenname">Given Name</label>
+      <input type="text" id="givenname" name="givenname" size="20" value="<%= user.givenname %>"/>
+      <span class='givenname fieldval' name='givenname'></span>
+    </div>
+    <div>
+      <label for="sn">Surname</label>
+      <input type="text" id="sn" name="sn" size="20" value="<%= user.sn %>"/>
+      <span class='sn fieldval' name='sn'></span>
+    </div>
+    <div>
+      <label for="cn">Display Name</label>
+      <input type="text" id="cn" name="cn" size="40" value="<%= user.cn %>"/>
+      <span class='cn fieldval' name='cn'></span>
+    </div>
+  </fieldset>
+  <fieldset>
+    <legend>Ark</legend>
+    <div>
+      <label for="arkid">Ark ID</label>
+      <input type="text" id="arkid" name="arkid" size="40" value="<%= user.arkid.first %>"/>
+      <span class='arkid fieldval' name='arkid'></span>
+    </div>
+  </fieldset>
+  <fieldset>
+    <legend>Email</legend>
+    <div>
+      <label for="mail">Email</label>
+      <input type="text" id="mail" name="mail" size="40" value="<%= user.email.first %>"/>
+      <span class='mail fieldval' name='mail'></span>
+    </div>
+  </fieldset>
+  <input type="submit" value="Update User">
+</form>
+
+<style type="text/css">
+  span.fieldval {
+    color: red;
+    display: block;
+    font-style: italic;
+    margin-bottom: 20px;
+    padding-left: 10px;
+  }
+</style>
+<script type="text/javascript">
+  $(document).ready(function() {
+    validate()
+    $("#sn, #givenname, #cn, #mail, #password").on("blur", function(){
+      validate();
+    });
+    $("#sn, #givenname").on("blur", function(){
+      displayname();
+    });
+  });
+
+  function validate_field(field, regex, message, okmessage) {
+    var value = $("#" + field).val();
+    if (!regex.test(value)) {
+      $("span." + field).text(message);
+      return false;
+    } else {
+      $("span." + field).text(okmessage);
+      return true;
+    }
+  }
+
+  function displayname() {
+    var givenname = $("#givenname").val();
+    var sn = $("#sn").val();
+    if (givenname && sn) {
+      $("#cn").val(givenname + " " + sn);
+    }
+    validate();
+  }
+
+  function validate() {
+    var is_valid = true;
+    is_valid = validate_field(
+      "password", 
+      /^($|(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.{6,20}))/, 
+      "Password must be 6-20 characters and contain at least one lowercase letter, one uppercase letter, and one digit",
+      "Leave blank to keep current password"
+    ) && is_valid;
+    is_valid = validate_field(
+      "givenname", 
+      /^[a-zA-Z]+$/, 
+      "First name cannot be blank",
+      ""
+    ) && is_valid;
+    is_valid = validate_field(
+      "sn", 
+      /^[a-zA-Z]+$/, 
+      "Last name cannot be blank",
+      ""
+    ) && is_valid;
+    is_valid = validate_field(
+      "cn", 
+      /^[a-zA-Z\s]+$/, 
+      "Display name cannot be blank",
+      ""
+    ) && is_valid;
+    is_valid = validate_field(
+      "mail", 
+      /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/, 
+      "Invalid email address",
+      ""
+    ) && is_valid;
+  }
+</script>

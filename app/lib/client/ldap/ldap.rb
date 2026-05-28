@@ -149,6 +149,14 @@ module UC3Ldap
       end
     end
 
+    def user(uid)
+      load_users if @users.empty?
+      user = @users.fetch(uid, nil)
+      puts user.inspect
+      puts user.cn
+      user
+    end
+
     def load_collections
       @ldap.search(
         base: group_base,
@@ -250,9 +258,7 @@ module UC3Ldap
         columns: [
           AdminUI::Column.new(:uid, header: 'User id'),
           AdminUI::Column.new(:unlinked, header: 'Unlinked'),
-          AdminUI::Column.new(:email, header: 'Email'),
-          AdminUI::Column.new(:displayname, header: 'Display Name'),
-          AdminUI::Column.new(:arkid, header: 'Ark'),
+          AdminUI::Column.new(:actions, header: 'Actions'),
           AdminUI::Column.new(:lastaccess, header: 'Last Access'),
           AdminUI::Column.new(:read_count, header: 'Read Count'),
           AdminUI::Column.new(:write_count, header: 'Write Count'),
@@ -261,6 +267,21 @@ module UC3Ldap
         ]
       )
       users_table_data.each do |user|
+        user[:actions] = []
+        user[:actions] << {
+          value: 'Edit User',
+          href: "/ldap/user-edit/#{user[:uid][:value]}",
+          cssclass: 'button',
+          disabled: UC3::UC3Client.prod_stack?
+        }
+        user[:actions] << {
+          value: 'Delete',
+          href: "/ldap/user-delete/#{user[:uid][:value]}",
+          cssclass: 'button button_red',
+          post: true,
+          confmsg: 'Are you sure you want to delete this user?',
+          disabled: UC3::UC3Client.prod_stack?
+        }
         table.add_row(AdminUI::Row.make_row(table.columns, user))
       end
       table
@@ -398,6 +419,42 @@ module UC3Ldap
       @ldapconf.fetch(role, '').gsub(/\s*/, '').split(',')
     end
 
+    def create_user(params)
+      ark = UC3S3::ConfigObjectsClient.client.mint(
+        UC3S3::ConfigObjectsClient.client.mint_user_url,
+        params.fetch('cn', '')
+      )
+      logger.info("User Ark Minted: #{ark}")
+
+      dn = "uid=#{params.fetch('uid', '')},ou=People,ou=uc3,dc=cdlib,dc=org"
+      attributes = {
+        objectclass: %w[top person organizationalPerson merrittUser inetOrgPerson],
+        uid: params.fetch('uid', ''),
+        mail: params.fetch('mail', ''),
+        sn: params.fetch('sn', ''),
+        givenname: params.fetch('givenname', ''),
+        cn: params.fetch('cn', ''),
+        displayname: params.fetch('cn', ''),
+        userpassword: params.fetch('password', ''),
+        tzregion: 'America/Los_Angeles',
+        arkid: ark
+      }
+
+      @ldap.add(dn: dn, attributes: attributes)
+    end
+
+    def update_user(params)
+      dn = "uid=#{params.fetch('uid', '')},ou=People,ou=uc3,dc=cdlib,dc=org"
+      @ldap.replace_attribute(dn, :mail, params.fetch('mail', ''))
+      @ldap.replace_attribute(dn, :sn, params.fetch('sn', ''))
+      @ldap.replace_attribute(dn, :givenname, params.fetch('givenname', ''))
+      @ldap.replace_attribute(dn, :cn, params.fetch('cn', ''))
+      @ldap.replace_attribute(dn, :displayname, params.fetch('cn', ''))
+      @ldap.replace_attribute(dn, :arkid, params.fetch('arkid', ''))
+      @ldap.replace_attribute(dn, :userpassword, params.fetch('password', '')) unless params.fetch('password',
+        '').empty?
+    end
+
     def create_collection_groups(body)
       j = JSON.parse(body)
       ark = j.fetch('ark', '')
@@ -494,12 +551,18 @@ module UC3Ldap
         @displayname = ''
         @arkid = ''
         @lastaccess = ''
+        @cn = ''
+        @sn = ''
+        @givenname = ''
         super(false)
       else
         @uid = entry['uid'].first
         @email = entry['mail']
         @displayname = entry['displayname'].first
         @arkid = entry['arkid']
+        @cn = entry['cn'].first
+        @sn = entry['sn'].first
+        @givenname = entry['givenname'].first
         begin
           @lastaccess = entry['ds-pwp-last-login-time']
         rescue StandardError
@@ -525,7 +588,7 @@ module UC3Ldap
       LdapUserDetailed.load(self, @roles)
     end
 
-    attr_reader :email, :arkid, :lastaccess
+    attr_reader :email, :arkid, :lastaccess, :sn, :givenname, :cn
   end
 
   # ldap representation of a merritt collection

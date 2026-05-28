@@ -1,0 +1,93 @@
+<form class="admintool" method="post" action="/ldap/create-user">
+  <fieldset>
+    <legend>User Credentials</legend>
+    <div>
+      <label for="uid">Merritt Userid</label>
+      <input type="text" id="uid" name="uid" size="20"/>
+      <span class='uid fieldval' name='uid'></span>
+    </div>
+    <div>
+      <label for="password">Merritt Password</label>
+      <input type="password" id="password" name="password" size="20"/>
+      <span class='password fieldval' name='password'></span>
+    </div>
+  </fieldset>
+  <fieldset>
+    <legend>Name</legend>
+    <div>
+      <label for="givenname">Given Name</label>
+      <input type="text" id="givenname" name="givenname" size="20"/>
+      <span class='givenname fieldval' name='givenname'></span>
+    </div>
+    <div>
+      <label for="sn">Surname</label>
+      <input type="text" id="sn" name="sn" size="20"/>
+      <span class='sn fieldval' name='sn'></span>
+    </div>
+    <div>
+      <label for="cn">Display Name</label>
+      <input type="text" id="cn" name="cn" size="40"/>
+      <span class='cn fieldval' name='cn'></span>
+    </div>
+  </fieldset>
+  <fieldset>
+    <legend>Email</legend>
+    <div>
+      <label for="mail">Email</label>
+      <input type="text" id="mail" name="mail" size="40"/>
+      <span class='mail fieldval' name='mail'></span>
+    </div>
+  </fieldset>
+  <input type="submit" value="Create User">
+</form>
+
+<style type="text/css">
+  span.fieldval {
+    color: red;
+    display: block;
+    font-style: italic;
+    margin-bottom: 20px;
+    padding-left: 10px;
+  }
+</style>
+<script type="text/javascript">
+  $(document).ready(function() {
+    validate()
+    $("#sn, #givenname, #cn, #mail, #uid, #password").on("blur", function(){
+      validate();
+    });
+    $("#sn, #givenname").on("blur", function(){
+      displayname();
+    });
+  });
+
+  function validate_field(field, regex, message) {
+    var value = $("#" + field).val();
+    if (!regex.test(value)) {
+      $("span." + field).text(message);
+      return false;
+    } else {
+      $("span." + field).text("");
+      return true;
+    }
+  }
+
+  function displayname() {
+    var givenname = $("#givenname").val();
+    var sn = $("#sn").val();
+    if (givenname && sn) {
+      $("#cn").val(givenname + " " + sn);
+    }
+    validate();
+  }
+
+  function validate() {
+    var is_valid = true;
+    is_valid = validate_field("uid", /^[a-zA-Z0-9_\.]{6,20}$/, "User id must be between 6 and 20 characters and can only contain letters, numbers, periods, and underscores") && is_valid;
+    is_valid = validate_field("password", /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.{6,20})/, "Password must be 6-20 characters and contain at least one lowercase letter, one uppercase letter, and one digit") && is_valid;
+    is_valid = validate_field("givenname", /^[a-zA-Z]+$/, "First name cannot be blank") && is_valid;
+    is_valid = validate_field("sn", /^[a-zA-Z]+$/, "Last name cannot be blank") && is_valid;
+    is_valid = validate_field("cn", /^[a-zA-Z\s]+$/, "Display name cannot be blank") && is_valid;
+    is_valid = validate_field("mail", /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/, "Invalid email address") && is_valid;
+  }
+</script>
