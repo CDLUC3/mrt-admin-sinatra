@@ -279,7 +279,7 @@ module UC3Ldap
           href: "/ldap/user-delete/#{user[:uid][:value]}",
           cssclass: 'button button_red',
           post: true,
-          confmsg: 'Are you sure you want to delete this user?',
+          confmsg: "User #{user[:uid][:value]} will be deleted.",
           disabled: UC3::UC3Client.prod_stack?
         }
         table.add_row(AdminUI::Row.make_row(table.columns, user))
@@ -453,6 +453,15 @@ module UC3Ldap
       @ldap.replace_attribute(dn, :arkid, params.fetch('arkid', ''))
       @ldap.replace_attribute(dn, :userpassword, params.fetch('password', '')) unless params.fetch('password',
         '').empty?
+    end
+
+    def delete_user(uid)
+      dn = "uid=#{uid},ou=People,ou=uc3,dc=cdlib,dc=org"
+      if @ldap.delete(dn: dn)
+        { message: "User #{uid} deleted.", redirect: '/ldap/users' }
+      else
+        { message: @ldap.get_operation_result.message, redirect: '/ldap/users' }
+      end
     end
 
     def create_collection_groups(body)

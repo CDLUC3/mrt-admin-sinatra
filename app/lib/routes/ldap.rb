@@ -113,8 +113,15 @@ module Sinatra
       end
 
       app.post '/ldap/user-edit' do
-        UC3Ldap::LDAPClient.client.update_user(request.params)
+        resp = UC3Ldap::LDAPClient.client.update_user(request.params)
+        puts resp
         redirect '/ldap/users'
+      end
+
+      app.post '/ldap/user-delete/*' do |uid|
+        resp = UC3Ldap::LDAPClient.client.delete_user(uid)
+        content_type :json
+        resp.to_json
       end
 
       app.get '/ldap/user-edit/*' do
