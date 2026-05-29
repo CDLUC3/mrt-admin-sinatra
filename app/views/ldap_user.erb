@@ -85,9 +85,9 @@
     var is_valid = true;
     is_valid = validate_field("uid", /^[a-zA-Z0-9_\.]{6,20}$/, "User id must be between 6 and 20 characters and can only contain letters, numbers, periods, and underscores") && is_valid;
     is_valid = validate_field("password", /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.{6,20})/, "Password must be 6-20 characters and contain at least one lowercase letter, one uppercase letter, and one digit") && is_valid;
-    is_valid = validate_field("givenname", /^[a-zA-Z]+$/, "First name cannot be blank") && is_valid;
-    is_valid = validate_field("sn", /^[a-zA-Z]+$/, "Last name cannot be blank") && is_valid;
-    is_valid = validate_field("cn", /^[a-zA-Z\s]+$/, "Display name cannot be blank") && is_valid;
+    is_valid = validate_field("givenname", /^\w.*$/, "First name cannot be blank") && is_valid;
+    is_valid = validate_field("sn", /^\w.*$/, "Last name cannot be blank") && is_valid;
+    is_valid = validate_field("cn", /^\w.*$/, "Display name cannot be blank") && is_valid;
     is_valid = validate_field("mail", /^[\w\.]+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/, "Invalid email address") && is_valid;
     $("#submit").prop("disabled", !is_valid);
   }

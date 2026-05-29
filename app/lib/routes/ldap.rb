@@ -124,13 +124,32 @@ module Sinatra
         resp.to_json
       end
 
-      app.get '/ldap/user-edit/*' do
-        uid = params[:splat][0]
+      app.get '/ldap/user-edit/*' do |uid|
         user = UC3Ldap::LDAPClient.client.user(uid)
         redirect '/ldap/users' if user.nil?
         erb :ldap_edituser, layout: :page_layout, locals: {
           context: AdminUI::Context.new(request.path, request.params),
           user: user
+        }
+      end
+
+      app.post '/ldap/collection-edit' do
+        UC3Ldap::LDAPClient.client.update_collection(request.params)
+        redirect '/ldap/collections'
+      end
+
+      app.post '/ldap/collection-delete/*' do |mnemonic|
+        resp = UC3Ldap::LDAPClient.client.delete_collection(mnemonic)
+        content_type :json
+        resp.to_json
+      end
+
+      app.get '/ldap/collection-edit/*' do |mnemonic|
+        coll = UC3Ldap::LDAPClient.client.collection(mnemonic)
+        redirect '/ldap/collections' if coll.nil?
+        erb :ldap_editcollection, layout: :page_layout, locals: {
+          context: AdminUI::Context.new(request.path, request.params),
+          collection: coll
         }
       end
     end

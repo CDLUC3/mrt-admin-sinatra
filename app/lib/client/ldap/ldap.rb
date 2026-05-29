@@ -122,11 +122,11 @@ module UC3Ldap
     end
 
     def user_base
-      @ldapconf.fetch('user_base', '')
+      @ldapconf.fetch(:user_base, '')
     end
 
     def group_base
-      @ldapconf.fetch('group_base', '')
+      @ldapconf.fetch(:group_base, '')
     end
 
     def load
@@ -151,10 +151,12 @@ module UC3Ldap
 
     def user(uid)
       load_users if @users.empty?
-      user = @users.fetch(uid, nil)
-      puts user.inspect
-      puts user.cn
-      user
+      @users.fetch(uid, nil)
+    end
+
+    def collection(mnemonic)
+      load_collections if @collections.empty?
+      @collections.fetch(mnemonic, nil)
     end
 
     def load_collections
@@ -268,20 +270,23 @@ module UC3Ldap
       )
       users_table_data.each do |user|
         user[:actions] = []
-        user[:actions] << {
-          value: 'Edit User',
-          href: "/ldap/user-edit/#{user[:uid][:value]}",
-          cssclass: 'button',
-          disabled: UC3::UC3Client.prod_stack?
-        }
-        user[:actions] << {
-          value: 'Delete',
-          href: "/ldap/user-delete/#{user[:uid][:value]}",
-          cssclass: 'button button_red',
-          post: true,
-          confmsg: "User #{user[:uid][:value]} will be deleted.",
-          disabled: UC3::UC3Client.prod_stack?
-        }
+
+        if user[:unlinked].empty?
+          user[:actions] << {
+            value: 'Edit User',
+            href: "/ldap/user-edit/#{user[:uid][:value]}",
+            cssclass: 'button',
+            disabled: UC3::UC3Client.prod_stack?
+          }
+          user[:actions] << {
+            value: 'Delete',
+            href: "/ldap/user-delete/#{user[:uid][:value]}",
+            cssclass: 'button button_red',
+            post: true,
+            confmsg: "User #{user[:uid][:value]} will be deleted.",
+            disabled: UC3::UC3Client.prod_stack?
+          }
+        end
         table.add_row(AdminUI::Row.make_row(table.columns, user))
       end
       table
@@ -310,9 +315,9 @@ module UC3Ldap
         columns: [
           AdminUI::Column.new(:mnemonic, header: 'Mnemonic'),
           AdminUI::Column.new(:unlinked, header: 'Unlinked'),
+          AdminUI::Column.new(:actions, header: 'Actions'),
           AdminUI::Column.new(:arkid, header: 'Ark'),
           AdminUI::Column.new(:description, header: 'Description'),
-          AdminUI::Column.new(:profile, header: 'Profile'),
           AdminUI::Column.new(:read_count, header: 'Read Count'),
           AdminUI::Column.new(:write_count, header: 'Write Count'),
           AdminUI::Column.new(:download_count, header: 'Download Count'),
@@ -320,6 +325,23 @@ module UC3Ldap
         ]
       )
       collections_table_data.each do |coll|
+        coll[:actions] = []
+        if coll[:unlinked].empty?
+          coll[:actions] << {
+            value: 'Edit Collection',
+            href: "/ldap/collection-edit/#{coll[:mnemonic][:value]}",
+            cssclass: 'button',
+            disabled: UC3::UC3Client.prod_stack?
+          }
+          coll[:actions] << {
+            value: 'Delete',
+            href: "/ldap/collection-delete/#{coll[:mnemonic][:value]}",
+            cssclass: 'button button_red',
+            post: true,
+            confmsg: "Collection #{coll[:mnemonic][:value]} will be deleted.",
+            disabled: UC3::UC3Client.prod_stack?
+          }
+        end
         table.add_row(AdminUI::Row.make_row(table.columns, coll))
       end
       table
@@ -371,23 +393,23 @@ module UC3Ldap
     end
 
     def create_collection_role(mnemonic, perm, users)
-      dn = "cn=#{perm},ou=#{mnemonic},ou=mrt-classes,ou=uc3,dc=cdlib,dc=org"
+      dn = "cn=#{perm},ou=#{mnemonic},#{group_base}"
       attributes = {
         objectclass: %w[top groupOfUniqueNames],
         cn: perm,
         uniquemember: []
       }
       users.each do |u|
-        attributes[:uniquemember] << "uid=#{u},ou=People,ou=uc3,dc=cdlib,dc=org"
+        attributes[:uniquemember] << "uid=#{u},#{user_base}"
       end
 
       @ldap.add(dn: dn, attributes: attributes)
     end
 
     def update_collection_role(mnemonic, perm, users)
-      dn = "cn=#{perm},ou=#{mnemonic},ou=mrt-classes,ou=uc3,dc=cdlib,dc=org"
+      dn = "cn=#{perm},ou=#{mnemonic},#{group_base}"
       data = users.map do |u|
-        "uid=#{u},ou=People,ou=uc3,dc=cdlib,dc=org"
+        "uid=#{u},#{user_base}"
       end
 
       res = @ldap.replace_attribute(dn, :uniquemember, data)
@@ -403,7 +425,7 @@ module UC3Ldap
     end
 
     def create_collection(mnemonic, ark, description)
-      dn = "ou=#{mnemonic},ou=mrt-classes,ou=uc3,dc=cdlib,dc=org"
+      dn = "ou=#{mnemonic},#{group_base}"
       attributes = {
         objectclass: %w[top merrittClass organizationalUnit],
         submissionProfile: "#{mnemonic}_content",
@@ -426,7 +448,7 @@ module UC3Ldap
       )
       logger.info("User Ark Minted: #{ark}")
 
-      dn = "uid=#{params.fetch('uid', '')},ou=People,ou=uc3,dc=cdlib,dc=org"
+      dn = "uid=#{params.fetch('uid', '')},#{user_base}"
       attributes = {
         objectclass: %w[top person organizationalPerson merrittUser inetOrgPerson],
         uid: params.fetch('uid', ''),
@@ -444,7 +466,7 @@ module UC3Ldap
     end
 
     def update_user(params)
-      dn = "uid=#{params.fetch('uid', '')},ou=People,ou=uc3,dc=cdlib,dc=org"
+      dn = "uid=#{params.fetch('uid', '')},#{user_base}"
       @ldap.replace_attribute(dn, :mail, params.fetch('mail', ''))
       @ldap.replace_attribute(dn, :sn, params.fetch('sn', ''))
       @ldap.replace_attribute(dn, :givenname, params.fetch('givenname', ''))
@@ -455,12 +477,31 @@ module UC3Ldap
         '').empty?
     end
 
+    def update_collection(params)
+      dn = "ou=#{params.fetch('mnemonic', '')},#{group_base}"
+      @ldap.replace_attribute(dn, :description, params.fetch('description', ''))
+      @ldap.replace_attribute(dn, :submissionProfile, params.fetch('submissionProfile', ''))
+      @ldap.replace_attribute(dn, :arkid, params.fetch('arkid', ''))
+    end
+
     def delete_user(uid)
-      dn = "uid=#{uid},ou=People,ou=uc3,dc=cdlib,dc=org"
+      dn = "uid=#{uid},#{user_base}"
       if @ldap.delete(dn: dn)
-        { message: "User #{uid} deleted.", redirect: '/ldap/users' }
+        { message: "User #{uid} deleted." }
       else
-        { message: @ldap.get_operation_result.message, redirect: '/ldap/users' }
+        { message: "#{@ldap.get_operation_result.message}; dn: #{dn}" }
+      end
+    end
+
+    def delete_collection(mnemonic)
+      dn = "ou=#{mnemonic},#{group_base}"
+      %w[read write download admin].each do |perm|
+        @ldap.delete(dn: "cn=#{perm},#{dn}")
+      end
+      if @ldap.delete(dn: dn)
+        { message: "Collection #{mnemonic} deleted." }
+      else
+        { message: "#{@ldap.get_operation_result.message}; dn: #{dn}" }
       end
     end
 

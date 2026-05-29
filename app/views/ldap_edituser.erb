@@ -96,19 +96,19 @@
     ) && is_valid;
     is_valid = validate_field(
       "givenname", 
-      /^[a-zA-Z]+$/, 
+      /^\w.*$/, 
       "First name cannot be blank",
       ""
     ) && is_valid;
     is_valid = validate_field(
       "sn", 
-      /^[a-zA-Z]+$/, 
+      /^\w.*$/, 
       "Last name cannot be blank",
       ""
     ) && is_valid;
     is_valid = validate_field(
       "cn", 
-      /^[a-zA-Z\s]+$/, 
+      /^\w.*$/, 
       "Display name cannot be blank",
       ""
     ) && is_valid;

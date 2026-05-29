@@ -1,0 +1,67 @@
+<form class="admintool" method="post" action="/ldap/collection-edit">
+  <h2 align="center">Edit Collection <%= collection.mnemonic %></h2>
+  <fieldset>
+    <legend>Collection Information</legend>
+    <input type="hidden" id="mnemonic" name="mnemonic" size="20" value="<%= collection.mnemonic %>"/>
+    <div>
+      <label for="description">Description</label>
+      <input type="text" id="description" name="description" size="80" value="<%= collection.description %>"/>
+      <span class='description fieldval' name='description'></span>
+    </div>
+  </fieldset>
+  <fieldset>
+    <legend>Ark</legend>
+    <div>
+      <label for="arkid">Ark ID</label>
+      <input type="text" id="arkid" name="ark" size="40" value="<%= collection.ark %>"/>
+      <span class='arkid fieldval' name='arkid'></span>
+    </div>
+  </fieldset>
+  <input id="submit" type="submit" value="Update Collection">
+</form>
+
+<style type="text/css">
+  span.fieldval {
+    color: red;
+    display: block;
+    font-style: italic;
+    margin-bottom: 20px;
+    padding-left: 10px;
+  }
+</style>
+<script type="text/javascript">
+  $(document).ready(function() {
+    validate()
+    $("#arkid, #description").on("blur", function(){
+      validate();
+    });
+  });
+
+  function validate_field(field, regex, message, okmessage) {
+    var value = $("#" + field).val();
+    if (!regex.test(value)) {
+      $("span." + field).text(message);
+      return false;
+    } else {
+      $("span." + field).text(okmessage);
+      return true;
+    }
+  }
+
+  function validate() {
+    var is_valid = true;
+    is_valid = validate_field(
+      "arkid", 
+      /^ark:\/[a-z0-9\/]+$/, 
+      "Ark ID cannot be blank",
+      ""
+    ) && is_valid;
+    is_valid = validate_field(
+      "description", 
+      /^.+$/, 
+      "Description cannot be blank",
+      ""
+    ) && is_valid;
+    $("#submit").prop("disabled", !is_valid);
+  }
+</script>
