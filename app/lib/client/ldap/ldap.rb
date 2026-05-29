@@ -442,13 +442,13 @@ module UC3Ldap
     end
 
     def create_user(params)
-      ark = UC3S3::ConfigObjectsClient.client.mint(
+      dn = "uid=#{params.fetch('uid', '')},#{user_base}"
+      ark = UC3S3::ConfigObjectsClient.client.mint_user(
         UC3S3::ConfigObjectsClient.client.mint_user_url,
-        params.fetch('cn', '')
+        dn
       )
       logger.info("User Ark Minted: #{ark}")
 
-      dn = "uid=#{params.fetch('uid', '')},#{user_base}"
       attributes = {
         objectclass: %w[top person organizationalPerson merrittUser inetOrgPerson],
         uid: params.fetch('uid', ''),

@@ -162,17 +162,8 @@ module UC3S3
       "#{@ezidconf.fetch(:api, 'http://ezid:4567')}/shoulder/#{@ezidconf.fetch(:user_shoulder, 'ark:/99166/p9')}"
     end
 
-    def mint(url, description)
+    def do_mint(url, body)
       raise 'Minting not supported' unless @ezidconf.fetch(:supported, true)
-
-      # https://ezid.cdlib.org/doc/apidoc.html#internal-metadata
-      body = []
-      body << "_target: #{@ezidconf.fetch(:target, '')}"
-      body << '_owner: merritt'
-      body << '_profile: erc'
-      body << '_status: reserved'
-      body << '_export: no'
-      body << "what: #{description}"
 
       r = post_url_body(
         url,
@@ -185,6 +176,34 @@ module UC3S3
       raise "Mint failure: #{r}" unless m[1] == 'success'
 
       m[2]
+    end
+
+    def mint(url, description)
+      # https://ezid.cdlib.org/doc/apidoc.html#internal-metadata
+      body = []
+      body << "_target: #{@ezidconf.fetch(:target, '')}"
+      body << '_owner: merritt'
+      body << '_profile: erc'
+      body << '_status: reserved'
+      body << '_export: no'
+      body << "what: #{description}"
+
+      do_mint(url, body)
+    end
+
+    def mint_user(url, dnid)
+      # https://ezid.cdlib.org/doc/apidoc.html#internal-metadata
+      body = []
+      body << "_target: #{@ezidconf.fetch(:target, '')}"
+      body << '_owner: merritt'
+      body << '_profile: erc'
+      body << '_status: reserved'
+      body << '_export: no'
+      body << "who: #{dnid}"
+      body << 'what: Merritt User'
+      body << "when: #{Date.today.strftime('%Y-%m-%d')}"
+
+      do_mint(url, body)
     end
 
     def create_collection(params)
