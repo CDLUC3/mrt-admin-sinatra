@@ -13,7 +13,7 @@
     <legend>Ark</legend>
     <div>
       <label for="arkid">Ark ID</label>
-      <input type="text" id="arkid" name="ark" size="40" value="<%= collection.ark %>" READONLY/>
+      <input type="text" id="arkid" name="ark" size="40" value="<%= collection.ark %>"/>
       <span class='arkid fieldval' name='arkid'></span>
     </div>
   </fieldset>
@@ -50,6 +50,12 @@
 
   function validate() {
     var is_valid = true;
+    is_valid = validate_field(
+      "arkid", 
+      /^ark:\/[a-z0-9\/]+$/, 
+      "Ark ID cannot be blank",
+      ""
+    ) && is_valid;
     is_valid = validate_field(
       "description", 
       /^.+$/, 
