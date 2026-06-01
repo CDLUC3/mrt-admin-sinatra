@@ -612,7 +612,6 @@ items:
     - title: Users
       route: /ldap/users
     - title: Create LDAP User
-      disable: ecs-prd
       route: /ldap/create-user
     - title: Collections
       route: /ldap/collections
