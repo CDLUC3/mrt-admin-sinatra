@@ -275,16 +275,14 @@ module UC3Ldap
           user[:actions] << {
             value: 'Edit User',
             href: "/ldap/user-edit/#{user[:uid][:value]}",
-            cssclass: 'button',
-            disabled: UC3::UC3Client.prod_stack?
+            cssclass: 'button'
           }
           user[:actions] << {
             value: 'Delete',
             href: "/ldap/user-delete/#{user[:uid][:value]}",
             cssclass: 'button button_red',
             post: true,
-            confmsg: "User #{user[:uid][:value]} will be deleted.",
-            disabled: UC3::UC3Client.prod_stack?
+            confmsg: "User #{user[:uid][:value]} will be deleted."
           }
         end
         table.add_row(AdminUI::Row.make_row(table.columns, user))
@@ -330,16 +328,14 @@ module UC3Ldap
           coll[:actions] << {
             value: 'Edit Collection',
             href: "/ldap/collection-edit/#{coll[:mnemonic][:value]}",
-            cssclass: 'button',
-            disabled: UC3::UC3Client.prod_stack?
+            cssclass: 'button'
           }
           coll[:actions] << {
             value: 'Delete',
             href: "/ldap/collection-delete/#{coll[:mnemonic][:value]}",
             cssclass: 'button button_red',
             post: true,
-            confmsg: "Collection #{coll[:mnemonic][:value]} will be deleted.",
-            disabled: UC3::UC3Client.prod_stack?
+            confmsg: "Collection #{coll[:mnemonic][:value]} will be deleted."
           }
         end
         table.add_row(AdminUI::Row.make_row(table.columns, coll))
