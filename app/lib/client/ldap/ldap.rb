@@ -35,14 +35,15 @@ module UC3Ldap
       }
       if @ldapconf.fetch(:encryption, '') == 'simple_tls'
         tls_options = {
-          ssl_version: @ldapconf.fetch('tls', 'TLSv1_2')
+          ssl_version: @ldapconf.fetch('tls', 'TLSv1_2'),
+          verify_mode: OpenSSL::SSL::VERIFY_NONE
         }
 
-        ca_file = @ldapconf.fetch(:tls_ca_file, '').to_s
-        unless ca_file.empty?
-          tls_options[:ca_file] = ca_file
-          tls_options[:verify_mode] = OpenSSL::SSL::VERIFY_PEER
-        end
+        # ca_file = @ldapconf.fetch(:tls_ca_file, '').to_s
+        # unless ca_file.empty?
+        #   tls_options[:ca_file] = ca_file
+        #   tls_options[:verify_mode] = OpenSSL::SSL::VERIFY_PEER
+        # end
 
         @ldap_connect[:encryption] = {
           method: :simple_tls,
