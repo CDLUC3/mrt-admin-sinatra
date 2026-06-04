@@ -461,6 +461,10 @@ module UC3
       end
       @test_paths = @test_paths.uniq.sort
       @consistency_checks = @consistency_checks.uniq.sort
+      return if UC3::UC3Client.prod_stack?
+
+      @consistency_checks.delete('/ops/db-queue/audit/30-days')
+      @consistency_checks.delete('/ldap/collections-missing')
     end
 
     def self.client
