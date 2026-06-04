@@ -256,12 +256,17 @@ module UC3
 
     def initialize
       super
-      `mkdir -p #{FileSystemClient::ROOTDIR}/ingest/queue`
-      `mkdir -p #{FileSystemClient::ROOTDIR}/uploads`
-      `mkdir -p #{FileSystemClient::ROOTDIR}/assemblies`
-      `mkdir -p #{FileSystemClient::ROOTDIR}/zk-snapshots`
-      `mkdir -p #{FileSystemClient::ROOTDIR}/ldap/import`
-      `mkdir -p #{FileSystemClient::ROOTDIR}/ldapreplica`
+      %w[
+        /ingest/queue
+        /uploads
+        /assemblies
+        /zk-snapshots
+        /ldap/import
+        /ldapreplica
+      ].each do |subdir|
+        `mkdir -p #{FileSystemClient::ROOTDIR}/#{subdir}`
+        `chmod 777 #{FileSystemClient::ROOTDIR}/#{subdir}`
+      end
     end
 
     def show_folders(root, route, params)
