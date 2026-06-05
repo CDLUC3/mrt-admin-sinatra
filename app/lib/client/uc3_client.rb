@@ -254,21 +254,6 @@ module UC3
     S3ROOTDIR = '/s3filesys'
     DIR = "#{FileSystemClient::ROOTDIR}/ingest/queue".freeze
 
-    def initialize
-      super
-      %w[
-        /ingest/queue
-        /uploads
-        /assemblies
-        /zk-snapshots
-        /ldap/import
-        /ldapreplica
-      ].each do |subdir|
-        `mkdir -p #{FileSystemClient::ROOTDIR}/#{subdir}`
-        `chmod 777 #{FileSystemClient::ROOTDIR}/#{subdir}`
-      end
-    end
-
     def show_folders(root, route, params)
       path = params.fetch('path', '')
       path = '' if path =~ /^\.\./
