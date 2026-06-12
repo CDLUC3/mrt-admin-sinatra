@@ -53,15 +53,15 @@ items:
   - title: Merritt Troubleshooting
     route: https://github.com/CDLUC3/mrt-doc-private/blob/main/docs/system-recovery/README.md
     external: true
+  - title: Tag Conventions
+    external: true
+    route: https://github.com/CDLUC3/mrt-admin-sinatra/blob/main/present/tagging/build.md
 - path: source
   title: Source
   route: /source
   breadcrumb: true
   disable: ecs-ephemeral, ecs-dbsnapshot, ecs-stg, ecs-prd
   items:
-  - title: Tag Conventions
-    external: true
-    route: https://github.com/CDLUC3/mrt-admin-sinatra/blob/main/present/tagging/build.md
   - title: Repostiory Tags
     route: /source/tags
     path: tags
