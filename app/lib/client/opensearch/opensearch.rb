@@ -163,7 +163,8 @@ module UC3OpenSearch
             bool: {
               must: [
                 { match: { 'merritt.subservice': subservice } },
-                { range: { 'http.response.status_code': { gte: code } } }
+                { range: { 'http.response.status_code': { gte: code } } },
+                date_filter
               ]
             }
           },
@@ -177,6 +178,16 @@ module UC3OpenSearch
       { error: e.to_s }
     end
 
+    def date_filter
+      {
+        range: {
+          '@timestamp': {
+            gte: 'now-30d'
+          }
+        }
+      }
+    end
+
     def log_level_query(subservice)
       @osclient.search(
         index: index_name,
@@ -184,7 +195,8 @@ module UC3OpenSearch
           query: {
             bool: {
               must: [
-                { match: { 'merritt.subservice': subservice } }
+                { match: { 'merritt.subservice': subservice } },
+                date_filter
               ],
               should: [
                 { match: { 'merritt.log_level': 'WARN' } },
@@ -210,8 +222,11 @@ module UC3OpenSearch
         index: index_name,
         body: {
           query: {
-            match_phrase: {
-              'merritt.ark': ark
+            bool: {
+              must: [
+                { match_phrase: { 'merritt.ark': ark } },
+                date_filter
+              ]
             }
           },
           sort: [
