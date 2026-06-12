@@ -1223,6 +1223,8 @@ items:
     items:
     - title: Running Tasks
       route: /infra/ecs/tasks/running
+      description: |
+        Once running, you can track [running logs](/opensearch/tasks).
     - title: Task Completion Status
       route: /opensearch/tasks
     - title: Scheduled Tasks
