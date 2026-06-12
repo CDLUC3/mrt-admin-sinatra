@@ -273,12 +273,7 @@ module UC3OpenSearch
       res['level'] = merritt.fetch('log_level', '')
       # res['level'] = source.fetch('event', {}).fetch('json', {}).fetch('log.level', '') if res['level'].empty?
       res['path'] = source.fetch('url', {}).fetch('original', '').to_s
-      message = source.fetch('message', '')
-      evmessage = source.fetch('event', {}).fetch('json', {}).fetch('message', '')
-      errmessage = source.fetch('event', {}).fetch('json', {}).fetch('error', {}).fetch('message', '').to_s
-      res['message'] = errmessage
-      res['message'] = evmessage if res['message'].empty?
-      res['message'] = message if res['message'].empty?
+      res['message'] = source.fetch('merritt', {}).fetch('summary', '')
       res['message'] = res['path'] if res['message'].empty?
       res['message'] = res['ark'] if res['message'].empty?
       res['status_code'] = source.fetch('http', {}).fetch('response', {}).fetch('status_code', 0)
