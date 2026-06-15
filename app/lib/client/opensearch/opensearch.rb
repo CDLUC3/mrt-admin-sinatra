@@ -165,7 +165,8 @@ module UC3OpenSearch
                 { match: { 'merritt.subservice': subservice } },
                 { range: { 'http.response.status_code': { gte: code } } },
                 date_filter
-              ]
+              ],
+              must_not: log_exclude
             }
           },
           sort: [
@@ -188,6 +189,22 @@ module UC3OpenSearch
       }
     end
 
+    def type_filter
+      {
+        range: {
+          '@timestamp': {
+            gte: 'now-30d'
+          }
+        }
+      }
+    end
+
+    def log_exclude
+      [
+        { terms: { 'merritt.record_type': %w[ignore_error catalina_log] } }
+      ]
+    end
+
     def log_level_query(subservice)
       @osclient.search(
         index: index_name,
@@ -204,6 +221,7 @@ module UC3OpenSearch
                 { match: { 'merritt.log_level': 'ERROR' } },
                 { match: { 'merritt.log_level': 'SEVERE' } }
               ],
+              must_not: log_exclude,
               minimum_should_match: 1
             }
           },
@@ -226,7 +244,8 @@ module UC3OpenSearch
               must: [
                 { match_phrase: { 'merritt.ark': ark } },
                 date_filter
-              ]
+              ],
+              must_not: log_exclude
             }
           },
           sort: [
