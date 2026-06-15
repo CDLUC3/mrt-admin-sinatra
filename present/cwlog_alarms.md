@@ -1,4 +1,8 @@
-## Backgroud
+# Creating an Alarm on CloudWatch Log Groups
+
+## Background
+
+Jamie, our team member in New Zealand, noticed a spike in AWS Costs during our weekend.  Jamie traced these costs to CloudWatch Logs.
 
 <img width="390" height="248" alt="image" src="https://github.com/user-attachments/assets/4ceb8c85-f456-4d17-917f-c70e8feb7087" />
 
@@ -43,6 +47,12 @@ Examine the CloudWatch metrics for CloudWatch Logs...
 <img width="648" height="183" alt="image" src="https://github.com/user-attachments/assets/603a57ca-1fce-4421-9beb-e282e3e84e60" />
 
 ## Solution: Create a CW Alarm for a LogGroup when the Log Group has been created
+
+- SUM the bytes sent to a CloudWatch Group in a 5 minute period
+- It the log size exceeds a threshold for 3 5-minute periods in a row, notify Escalope
+  - 1MB in Dev or Stage
+  - 5MB in Prod
+- Do not alarm on InsufficientData, it is normal to have no logging during a time period  
 
 ```yaml
   CloudwatchLogsGroup{{serviceNameCf}}:
