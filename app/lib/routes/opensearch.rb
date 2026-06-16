@@ -52,6 +52,14 @@ module Sinatra
         )
       end
 
+      app.get '/opensearch/id/*' do |id|
+        cli = UC3OpenSearch::OSClient.client
+        res = cli.log_id_query(id)
+
+        content_type :json
+        res.fetch('hits', {}).fetch('hits', []).first&.fetch('_source', {}).to_json
+      end
+
       app.get '/opensearch/logs/ark' do
         ark = request.params.fetch('ark', '')
 

@@ -258,6 +258,23 @@ module UC3OpenSearch
       { error: e.to_s }
     end
 
+    def log_id_query(id)
+      @osclient.search(
+        index: index_name,
+        body: {
+          query: {
+            bool: {
+              must: [
+                { term: { id: id } }
+              ]
+            }
+          }
+        }
+      )
+    rescue StandardError => e
+      { error: e.to_s }
+    end
+
     def self.log_table
       AdminUI::FilterTable.new(
         columns: [
@@ -265,7 +282,8 @@ module UC3OpenSearch
           AdminUI::Column.new('record_type', header: 'Record Type', filterable: true),
           AdminUI::Column.new('path', header: 'Path'),
           AdminUI::Column.new('status_code', header: 'Status Code', filterable: true),
-          AdminUI::Column.new('log', header: 'Logs')
+          AdminUI::Column.new('log', header: 'Logs'),
+          AdminUI::Column.new('osid', header: 'Source')
         ]
       )
     end
@@ -277,7 +295,8 @@ module UC3OpenSearch
           AdminUI::Column.new('record_type', header: 'Record Type', filterable: true),
           AdminUI::Column.new('level', header: 'Level', filterable: true),
           AdminUI::Column.new('message', header: 'Message'),
-          AdminUI::Column.new('log', header: 'Logs')
+          AdminUI::Column.new('log', header: 'Logs'),
+          AdminUI::Column.new('osid', header: 'Source')
         ]
       )
     end
@@ -290,7 +309,8 @@ module UC3OpenSearch
           AdminUI::Column.new('record_type', header: 'Record Type', filterable: true),
           AdminUI::Column.new('level', header: 'Level', filterable: true),
           AdminUI::Column.new('message', header: 'Message'),
-          AdminUI::Column.new('log', header: 'Logs')
+          AdminUI::Column.new('log', header: 'Logs'),
+          AdminUI::Column.new('osid', header: 'Source')
         ]
       )
     end
@@ -300,6 +320,7 @@ module UC3OpenSearch
       source = hit.fetch('_source', {})
       cwlogs = source.fetch('cwlogs', {})
       merritt = source.fetch('merritt', {})
+      res['osid'] = { href: "/opensearch/id/#{source.fetch('id', '')}", value: 'source' }
       res['timestamp'] = DateTime.parse(source.fetch('@timestamp', '')).to_time.localtime.strftime('%Y-%m-%d %H:%M:%S')
       res['subservice'] = merritt.fetch('subservice', '')
       res['record_type'] = merritt.fetch('record_type', '')

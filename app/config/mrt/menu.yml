@@ -1343,12 +1343,18 @@ items:
         - [Ingest](/opensearch/logs/status_code/ingest)
         - [Inventory](/opensearch/logs/status_code/inventory)
         - [Store](/opensearch/logs/status_code/store)
+        - [Audit](/opensearch/logs/status_code/audit)
+        - [Replic](/opensearch/logs/status_code/replic)
+        - [Access](/opensearch/logs/status_code/access)
         - [Admin Tool](/opensearch/logs/status_code/admintool)
       - Service Log Levels
         - [UI](/opensearch/logs/level/ui)
         - [Ingest](/opensearch/logs/level/ingest)
         - [Inventory](/opensearch/logs/level/inventory)
         - [Store](/opensearch/logs/level/store)
+        - [Audit](/opensearch/logs/level/audit)
+        - [Replic](/opensearch/logs/level/replic)
+        - [Access](/opensearch/logs/level/access)
         - [Admin Tool](/opensearch/logs/level/admintool)
         - [ZooKeeper](/opensearch/logs/level/zoo)
   - title: Monitor Cluster
