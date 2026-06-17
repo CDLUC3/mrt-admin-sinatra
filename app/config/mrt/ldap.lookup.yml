@@ -57,8 +57,8 @@ ecs-ephemeral:
 
 ecs-stg:
   admin_password: 
-    # ssm: /uc3/mrt/stg/ldap/ecs-admin-password
-    ssm: /uc3/mrt/stg/ldap/admin-password
+    ssm: /uc3/mrt/stg/ldap/ecs-admin-password
+    # ssm: /uc3/mrt/stg/ldap/admin-password
   host:
     # val: ldap
     env: HOST_LDAP
@@ -81,6 +81,7 @@ ecs-stg:
 
 ecs-prd:
   admin_password: 
+    # ssm: /uc3/mrt/prd/ldap/ecs-admin-password
     ssm: /uc3/mrt/prd/ldap/admin-password
   host:
     env: HOST_LDAP
