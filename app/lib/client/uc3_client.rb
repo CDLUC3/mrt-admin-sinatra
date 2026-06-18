@@ -122,9 +122,10 @@ module UC3
       "#{cloudwatch_url}#logsV2:log-groups/log-group/#{log.gsub('/', '$252F')}"
     end
 
-    def self.cloudwatch_stream(log, stream)
+    def self.cloudwatch_stream(log, stream, timestamp = nil)
+      tstamp = timestamp.nil? ? "" : "?start=#{timestamp}"
       "#{cloudwatch_url}#logsV2:log-groups/log-group/#{log.gsub('/',
-        '$252F')}/log-events/#{stream.gsub('/', '$252F')}"
+        '$252F')}/log-events/#{stream.gsub('/', '$252F')}#{tstamp}"
     end
 
     def self.dbsnapshot_stack?
