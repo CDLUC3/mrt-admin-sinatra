@@ -127,7 +127,6 @@ module UC3
       unless timestamp.nil?
         loctime = DateTime.parse(timestamp).to_time.localtime.strftime('%Y-%m-%dT%H:%M:%S.%3N%:z')
         tstamp = "?start=#{loctime}"
-        puts tstamp
       end
       "#{cloudwatch_url}#logsV2:log-groups/log-group/#{log.gsub('/',
         '$252F')}/log-events/#{stream.gsub('/', '$252F')}#{tstamp}"
