@@ -89,7 +89,8 @@ module UC3OpenSearch
       res[:label] = res.fetch('task_label', '')
       res['log'] = {
         value: 'logs',
-        href: UC3::UC3Client.cloudwatch_stream(cwlogs.fetch('logGroup', ''), cwlogs.fetch('logStream', ''))
+        href: UC3::UC3Client.cloudwatch_stream(cwlogs.fetch('logGroup', ''), cwlogs.fetch('logStream', ''),
+          source.fetch('@timestamp', nil))
       }
       if link_label
         res['task_label'] = {
@@ -334,7 +335,8 @@ module UC3OpenSearch
       res['status_code'] = source.fetch('http', {}).fetch('response', {}).fetch('status_code', 0)
       res['log'] = {
         value: 'logs',
-        href: UC3::UC3Client.cloudwatch_stream(cwlogs.fetch('logGroup', ''), cwlogs.fetch('logStream', ''))
+        href: UC3::UC3Client.cloudwatch_stream(cwlogs.fetch('logGroup', ''), cwlogs.fetch('logStream', ''),
+          source.fetch('@timestamp', nil))
       }
       res
     end
