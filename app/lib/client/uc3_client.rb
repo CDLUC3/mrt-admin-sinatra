@@ -123,7 +123,7 @@ module UC3
     end
 
     def self.cloudwatch_stream(log, stream, timestamp = nil)
-      tstamp = timestamp.nil? ? "" : "?start=#{timestamp}"
+      tstamp = timestamp.nil? ? '' : "?start=#{timestamp}"
       "#{cloudwatch_url}#logsV2:log-groups/log-group/#{log.gsub('/',
         '$252F')}/log-events/#{stream.gsub('/', '$252F')}#{tstamp}"
     end
