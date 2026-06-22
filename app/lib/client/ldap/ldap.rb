@@ -181,7 +181,7 @@ module UC3Ldap
         else
           coll = LdapCollection.new(nil, role.coll)
           @collections[role.coll] = coll
-          logger.error("LDAP: Not found: [#{role.coll}]")
+          # logger.error("LDAP: Not found: [#{role.coll}]")
         end
         role.set_collection(coll)
 
@@ -190,7 +190,7 @@ module UC3Ldap
           if @users.key?(u)
             user = @users[u]
           else
-            logger.error("LDAP: Not found: [#{u}]")
+            # logger.error("LDAP: Not found: [#{u}]")
             user = LdapUser.new(nil, u)
             @users[u] = user
           end
