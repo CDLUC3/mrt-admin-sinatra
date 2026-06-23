@@ -1339,13 +1339,13 @@ items:
       - [Task Completion Status](/opensearch/tasks)
       - [Ark Search](/opensearch/logs/ark)
       - Service Status Codes
-        - [UI](/opensearch/logs/status_code/ui)
+        - [UI](/opensearch/logs/status_code/ui?status_code=500)
         - [Ingest](/opensearch/logs/status_code/ingest)
         - [Inventory](/opensearch/logs/status_code/inventory)
         - [Store](/opensearch/logs/status_code/store)
         - [Audit](/opensearch/logs/status_code/audit)
         - [Replic](/opensearch/logs/status_code/replic)
-        - [Access](/opensearch/logs/status_code/access)
+        - [Access](/opensearch/logs/status_code/access?status_code=500)
         - [Admin Tool](/opensearch/logs/status_code/admintool)
       - Service Log Levels
         - [UI](/opensearch/logs/level/ui)
