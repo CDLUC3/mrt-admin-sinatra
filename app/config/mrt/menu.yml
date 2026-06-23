@@ -1357,6 +1357,8 @@ items:
         - [Access](/opensearch/logs/level/access)
         - [Admin Tool](/opensearch/logs/level/admintool)
         - [ZooKeeper](/opensearch/logs/level/zoo)
+        - [LDAP](/opensearch/logs/level/ldap)
+        - [LDAP Replica ](/opensearch/logs/level/ldapreplica)
   - title: Monitor Cluster
     route: /ops/monitoring/service-status
 - path: resources
