@@ -611,6 +611,7 @@ items:
     items:
     - title: LDAP Status
       route: /infra/ecs/ldap-status
+      disable: docker
     - title: Users
       route: /ldap/users
     - title: Create LDAP User

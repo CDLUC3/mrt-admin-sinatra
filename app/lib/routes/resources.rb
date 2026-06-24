@@ -123,7 +123,7 @@ module Sinatra
       end
 
       app.get '/infra/ecs/ldap-status' do
-        UC3Resources::ServicesClient.new.execute_command('/ldap-status.sh2')
+        UC3Resources::ServicesClient.new.execute_command('/ldap-status.sh')
         sleep 5
         redirect "/ops/s3-reports/retrieve?report=#{URI.encode_www_form_component('ldap/status.txt')}"
       end
