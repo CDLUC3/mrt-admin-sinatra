@@ -609,6 +609,8 @@ items:
     classes: needs-ldap
     breadcrumb: true
     items:
+    - title: LDAP Status
+      route: /infra/ecs/ldap-status
     - title: Users
       route: /ldap/users
     - title: Create LDAP User

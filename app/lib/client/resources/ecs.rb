@@ -2,6 +2,7 @@
 
 require 'aws-sdk-ecs'
 require 'aws-sdk-cloudwatchevents'
+
 require_relative '../uc3_client'
 require_relative '../code/ecr_images'
 
@@ -448,6 +449,26 @@ module UC3Resources
         service: service,
         desired_count: 1
       ).to_json
+    end
+
+    def execute_command(command, service: 'merritt-ops')
+      return unless enabled
+
+      begin
+        resp = nil
+        @client.list_tasks(cluster: UC3::UC3Client.cluster_name, service_name: service).task_arns.first do |task_arn|
+          resp = @client.execute_command(
+            cluster: UC3::UC3Client.cluster_name,
+            task: task_arn,
+            container: service,
+            command: command,
+            interactive: true
+          )
+        end
+        resp
+      rescue StandardError => e
+        logger.error("Error executing command: #{e.message}")
+      end
     end
   end
 end
