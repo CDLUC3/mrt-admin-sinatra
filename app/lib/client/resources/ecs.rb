@@ -455,17 +455,14 @@ module UC3Resources
       return unless enabled
 
       begin
-        resp = nil
-        @client.list_tasks(cluster: UC3::UC3Client.cluster_name, service_name: service).task_arns.first do |task_arn|
-          resp = @client.execute_command(
-            cluster: UC3::UC3Client.cluster_name,
-            task: task_arn,
-            container: service,
-            command: command,
-            interactive: true
-          )
-        end
-        resp
+        task_arn = @client.list_tasks(cluster: UC3::UC3Client.cluster_name, service_name: service).task_arns.first
+        @client.execute_command(
+          cluster: UC3::UC3Client.cluster_name,
+          task: task_arn,
+          container: service,
+          command: command,
+          interactive: true
+        )
       rescue StandardError => e
         logger.error("Error executing command: #{e.message}")
       end
