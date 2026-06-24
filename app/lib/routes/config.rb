@@ -137,6 +137,17 @@ module Sinatra
         redirect UC3S3::ConfigObjectsClient.client.get_report(rpt)
       end
 
+      app.get '/ops/s3-reports/download' do
+        rpt = request.params.fetch('report', '')
+        content_type = request.params.fetch('content_type', 'text/plain')
+        redirect '/ops/s3-reports' if rpt.empty?
+
+        rpt = URI.decode_www_form_component(rpt)
+
+        content_type content_type
+        UC3S3::ConfigObjectsClient.client.retrieve_report(rpt)
+      end
+
       app.get '/ops/s3-reports/unit-test-results' do
         rpt = request.params.fetch('report', '')
         redirect '/ops/s3-reports' if rpt.empty?
