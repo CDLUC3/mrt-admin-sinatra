@@ -34,8 +34,6 @@ ecs-dev: &ecs-dev
     val: ldap
   port:
     val: 1636
-  tls_ca_file:
-    val: /etc/pki/ca-trust/source/anchors/ldap-ca.crt
   default_read:
     val: merritt-test, anonymous
   default_write:
@@ -51,9 +49,13 @@ ecs-dev: &ecs-dev
 
 ecs-dbsnapshot:
   <<: *ecs-dev
+  admin_password: 
+    val: password
 
 ecs-ephemeral:
   <<: *ecs-dev
+  admin_password: 
+    val: password
 
 ecs-stg:
   admin_password: 
