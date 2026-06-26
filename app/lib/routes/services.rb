@@ -805,6 +805,7 @@ module Sinatra
     end
 
     def java_service_send_stop_start(service, endpoint)
+      endpoint = 'pause' if endpoint == 'stop' && service == 'replic'
       service_urls(service).map do |url|
         ::JSON.parse(post_url("#{url}/#{endpoint}"))
       end
