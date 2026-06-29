@@ -1260,12 +1260,12 @@ items:
           method: post
         - title: Redeploy LDAP
           route: /infra/ecs/tasks/launch/merritt-ops/redeployLdap
-          disable: default, docker, ecs-prd, ecs-dbsnapshot
+          disable: default, docker, ecs-dbsnapshot
           confmsg: This will run a job in the merritt-ops container
           method: post
         - title: Export LDAP
           route: /infra/ecs/tasks/launch/merritt-ops/exportLdap
-          disable: default, docker, ecs-prd, ecs-dbsnapshot
+          disable: default, docker, ecs-dbsnapshot
           confmsg: This will run a job in the merritt-ops container
           method: post
         - title: Redeploy ZooKeeper
