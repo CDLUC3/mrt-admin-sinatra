@@ -4,13 +4,13 @@
 
 Jamie, our team member in New Zealand, noticed a spike in AWS Costs during our weekend.  Jamie traced these costs to CloudWatch Logs.
 
-<img width="390" height="248" alt="image" src="https://github.com/user-attachments/assets/4ceb8c85-f456-4d17-917f-c70e8feb7087" />
+<img width="390" height="248" alt="Screenshot of AWS Cost Explorer showing a significant spike in CloudWatch charges between April 15-19" src="https://github.com/user-attachments/assets/4ceb8c85-f456-4d17-917f-c70e8feb7087" />
 
 ## How we isolated the problem
 
 View Log Size for relevant log groups in CloudWatch.  Sort by size.
 
-<img width="1067" height="219" alt="image" src="https://github.com/user-attachments/assets/946885fd-f987-40e3-b30d-941bbc00e20f" />
+<img width="1067" height="219" alt="Screenshot of AWS Console showing 'stored bytes' for CloudWatch log groups.  Log groups have been sorted in descending order by 'stored bytes'" src="https://github.com/user-attachments/assets/946885fd-f987-40e3-b30d-941bbc00e20f" />
 
 - One log was 300+ GB
 - The other log was 90+ GB
@@ -31,7 +31,7 @@ View Log Size for relevant log groups in CloudWatch.  Sort by size.
 - CloudWatch can do lots of filtering, but the ingest changes apply once the records are ingested.
 - https://aws.amazon.com/cloudwatch/pricing/
 
-<img width="626" height="412" alt="image" src="https://github.com/user-attachments/assets/8765753f-ed6a-4562-9514-09cb59477b77" />
+<img width="626" height="412" alt="Screenshot of an AWS web page showing standard CloudWatch Logs ingest charges.  For the first 10TB ingested per month, there is a $.50 per GB charge." src="https://github.com/user-attachments/assets/8765753f-ed6a-4562-9514-09cb59477b77" />
 
 ## Remediation Plans
 
@@ -44,7 +44,7 @@ View Log Size for relevant log groups in CloudWatch.  Sort by size.
 
 Examine the CloudWatch metrics for CloudWatch Logs...
 
-<img width="648" height="183" alt="image" src="https://github.com/user-attachments/assets/603a57ca-1fce-4421-9beb-e282e3e84e60" />
+<img width="648" height="183" alt="Screenshot of Graphed CloudWatch Metrics focusing on 'Incoming Bytes' between March 20 - April 30.  The graph illustrates the siginificant spike between Apr 15-19." src="https://github.com/user-attachments/assets/603a57ca-1fce-4421-9beb-e282e3e84e60" />
 
 ## Solution: Create a CW Alarm for a LogGroup when the Log Group has been created
 
