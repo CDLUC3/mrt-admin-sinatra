@@ -12,7 +12,7 @@
 
 ----
 
-![Create Branch Screenshot](images/create-branch.png)
+![Screenshot of the GitHub website showing that a branch named 'sample-feature' exists for the repository 'CDLUC3/mrt-dashboard'](images/create-branch.png)
 
 ----
 
@@ -27,7 +27,7 @@
 
 ----
 
-![Image Listing showing branch Screenshot](images/images-branch.png)
+![Merritt Admin Tool Screenshot listing the images associated with the 'UI' Service.  Within this list are tags named 'dev', 'sample-feature' and 'ecs-prd'.  Next to the imaged named 'sample-feature' is a button with the name 'Tag ecs-dev'.](images/images-branch.png)
 
 ----
 
@@ -35,7 +35,7 @@
 
 ----
 
-![Tag ecs-dev Screenshot](images/tag-ecs-dev.png)
+![Merritt Admin Tool Screenshot that was previously described.  Overlaying that screenshot is a popup message that reads 'Regagged: mrt-dashbord for tag sample-feature --> ecs-dev'.](images/tag-ecs-dev.png)
 
 ----
 
@@ -44,7 +44,7 @@
 ----
 
 Note that a second tag has been assigned to the image
-![Tagged ecs-dev Screenshot](images/tagged-ecs-dev.png)
+![Merritt Admin Tool Screenshot listing the images associated with the 'UI' Service.  Within this list are tags named 'dev', 'sample-feature', 'ecs-dev' and 'ecs-prd'.](images/tagged-ecs-dev.png)
 
 ---
 
@@ -79,7 +79,7 @@ To github.com:CDLUC3/mrt-dashboard
 
 ----
 
-![View Tags including 1.7.9 Screenshot](images/tags-1.7.9.png)
+![Merritt Admintool Screenshot listing Git Tags associated with the service 'UI'.  Tags are listed in descending order.  The list of tags incluces '1.7.9', '1.7.8', '1.7.7', '1.7.6', '1.7.5'.  Tags 1.7.9 and 1.7.8 have an associated ECR Image named 'mrt-dashboard'.  The tag named '1.7.9' has Actions buttons named 'Delete images', 'Tag ecs-dev', and 'Tag ecs-stg'.](images/tags-1.7.9.png)
 
 ----
 
@@ -87,7 +87,7 @@ To github.com:CDLUC3/mrt-dashboard
 
 ----
 
-![Tag 1.7.9 with ecs-stg Screenshot](images/tag-ecs-stg.png)
+![Merritt Admin Tool screenshot previously described along with a popup message that reads 'Retagged: mrt-dashboard for tag 1.7.9 --> ecs-stg'.](images/tag-ecs-stg.png)
 
 ----
 
@@ -95,7 +95,7 @@ To github.com:CDLUC3/mrt-dashboard
 
 ----
 
-![1.7.9 tagged with ecs-stg Screenshot](images/tagged-ecs-stg.png)
+![Merritt Admintool Screenshot listing Git Tags associated with the service 'UI'. The entry for tag 1.7.9 now has a Matching Tag named 'ecs-stg'.  The associate d Actions buttons now read 'Tag ecs-dev' and 'Untag ecs-stg'](images/tagged-ecs-stg.png)
 
 ---
 
@@ -108,7 +108,7 @@ To github.com:CDLUC3/mrt-dashboard
 ----
 
 Note that 1.7.9 does not have a documented release
-![Tag Listing Screenshot](images/tagged-ecs-stg.png)
+![Merritt Admintool Screenshot listing Git Tags associated with the service 'UI'.  Tags are listed in descending order.  The list of tags incluces '1.7.9', '1.7.8', '1.7.7', '1.7.6'.  For tag 1.7.9 under the column named 'Documented Release', a button 'Create' exists.](images/tagged-ecs-stg.png)
 
 ----
 
@@ -116,7 +116,7 @@ Note that 1.7.9 does not have a documented release
 
 ----
 
-![Create Release 1.7.9 Screenshot](images/create-release.png)
+![Screenshot of the GitHub website page to create and describe a Release for tag '1.7.9' for the repository 'CDLUC3/mrt-dashboard'.  A description field contains the text 'Sample Release for Documentation Purposes'.](images/create-release.png)
 
 ----
 
@@ -124,7 +124,7 @@ Note that 1.7.9 does not have a documented release
 
 ----
 
-![Publish Release 1.7.9 Screenshot](images/publish-release.png)
+![PScreenshot of the GitHub website page for release tag '1.7.9' for the repository 'CDLUC3/mrt-dashboard'.  The release has a title that reads 'Sample Release for Documentation Purposes'.](images/publish-release.png)
 
 ----
 
@@ -133,7 +133,7 @@ Note that 1.7.9 does not have a documented release
 ----
 
 Note the published release info
-![Tag 1.7.9 has a published release Screenshot](images/1.7.9-published.png)
+![Merritt Admintool Screenshot listing Git Tags associated with the service 'UI'.  Tags are listed in descending order.  The list of tags incluces '1.7.9', '1.7.8', '1.7.7', '1.7.6'.  For tag 1.7.9 under the column named 'Documented Release', a hyperlink with the title 'Sample Release for Documentation Purposes' exists.  The Actions column of the table now contains an additional button named 'Tag ecs-prd'](images/1.7.9-published.png)
 
 ----
 
@@ -141,7 +141,7 @@ Note the published release info
 
 ----
 
-![Tag 1.7.9 as ecs-prd Screenshot](images/tag-ecs-prd.png)
+![Overlaying the prior screenshot, there is now a popup message that reads 'Retagged: mrt-dashboard for tag 1.7.9 --> ecs-prd'](images/tag-ecs-prd.png)
 
 ----
 
@@ -150,7 +150,7 @@ Note the published release info
 ----
 
 Note that the ecs-prd image has migrated
-![1.7.9 tagged as ecs-prd Screenshot](images/tagged-ecs-prd.png)
+![Merritt Admintool Screenshot listing Git Tags associated with the service 'UI'.  Tags are listed in descending order.  The list of tags incluces '1.7.9', '1.7.8', '1.7.7', '1.7.6'.  For tag 1.7.9, the associated Actions buttons now read 'Tag ecs-dev', 'Untag ecs-stg' and 'Untag ecs-prd'.](images/tagged-ecs-prd.png)
 
 ---
 
