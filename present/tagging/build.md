@@ -30,6 +30,10 @@
 
 ```mermaid
 graph LR
+  accTitle: "Accessibility Title"
+  accDescr {
+    Accessibility Description
+  }
   Commit(👤 Git Commit)
   Commit --> CodeBuild
   CodeBuild --> CodeArtifact
