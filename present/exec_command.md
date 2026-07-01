@@ -1,6 +1,6 @@
 # Merritt Admin Exec Command
 
-![execute command](exec.png)
+![Screenshot of the Merritt Admin Tool Menu illustrating that "Operations --> LDAP --> LDAP Status" has been chosen](exec.png)
 
 Route
 ```ruby
