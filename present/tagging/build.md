@@ -99,7 +99,7 @@ pom.xml for referring WAR file
 
 ```mermaid
 graph LR
-  accTitle: "Flowchart for Merritt Service (WARFILE) Build"
+  accTitle: "Flowchart for Merritt Service (warfile) Build"
   accDescr {
     User commits a change to Git.
     The commit triggers a CodePipeline that starts a CodeBuild.
@@ -243,12 +243,12 @@ Each rebuild will also create an "archive" tag.  A lifecycle policy will expire 
 ## Ruby Libraries (Gem)
 
 ```mermaid
-accTitle: "Flowchart for Merritt Gem/Library Build"
-accDescr {
-  User commits a change to Git.
-  We do not build gem artifacts.  Merritt code is included by github tags.
-}
 graph LR
+  accTitle: "Flowchart for Merritt Gem/Library Build"
+  accDescr {
+    User commits a change to Git.
+    We do not build gem artifacts.  Merritt code is included by github tags.
+  }
   Commit(👤 Git Commit)
 ```
 
@@ -279,15 +279,15 @@ gem 'mrt-zk', git: 'https://github.com/CDLUC3/mrt-zk.git', tag: '2.4.6'
 ## Ruby Services
 
 ```mermaid
-accTitle: "Flowchart for Merritt Ruby Service Build"
-accDescr {
-  User commits a change to Git.
-  The commit triggers a CodePipeline that starts a CodeBuild.
-  CodeBuild creates a docker image that bundles the necessary ruby gems.
-  Docker image is pushed to Elastic Container Registry.
-  Merritt Admin Tool deploys a service to Elastic Container Service using the image published in the Elastic Container Registry.
-}
 graph LR
+  accTitle: "Flowchart for Merritt Ruby Service Build"
+  accDescr {
+    User commits a change to Git.
+    The commit triggers a CodePipeline that starts a CodeBuild.
+    CodeBuild creates a docker image that bundles the necessary ruby gems.
+    Docker image is pushed to Elastic Container Registry.
+    Merritt Admin Tool deploys a service to Elastic Container Service using the image published in the Elastic Container Registry.
+  }
   Commit(👤 Git Commit)
   Daily(👤 Daily Build)
   Tag(👤 Git Tag)
