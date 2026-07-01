@@ -19,7 +19,16 @@
 ## Demo
 
 ### View the Benchmark Fixity Screens in the Admin Tool
-<img width="865" height="494" alt="image" src="https://github.com/user-attachments/assets/a302085b-2cb8-478d-82cb-d70fa043491b" />
+<img width="865" height="494" alt="Admin Tool table illustrating benchmark options for 3 storage nodes (5001, 9501, 2001).  Extracted table data follows." src="https://github.com/user-attachments/assets/a302085b-2cb8-478d-82cb-d70fa043491b" />
+
+
+### Table Data
+
+| Node Number | Cloud Service | Audit Test | Access Test |
+|---|---|---|---|
+| 5001 | aws-s3 | [Audit Benchmark](#) | [Access Benchmark](#) |
+| 9501 | sdsc   | [Audit Benchmark](#) | [Access Benchmark](#) |
+| 2001 | wasabi | [Audit Benchmark](#) | [Access Benchmark](#) |
 
 ### Navigate to the Sample JSON entries
 - Note the URL's that are provided for the purpose of running the benchmark tests
@@ -65,7 +74,24 @@ aws cloudwatch put-metric-data --region us-west-2 --namespace merritt \
 
 ## Retrieve Benchmark Data from CloudWatch Metrics
 
-<img width="1239" height="510" alt="image" src="https://github.com/user-attachments/assets/024ed207-47ef-4675-838b-f5308065970b" />
+<img width="1239" height="510" alt="Sample benchmark readings for 3 storage nodes.  Sample readings extracted as text follows this image." src="https://github.com/user-attachments/assets/024ed207-47ef-4675-838b-f5308065970b" />
+
+### Extracted Table Data
+
+| Timestamp | aws-s3 access | aws-s3 audit | sdsc access | sdsc audit | wasabi access | wasabi audit |
+|---|---:|---:|---:|---:|---:|---:|
+| 2025-12-05 09:27:00 | 1.00 | 3.80 | 1.94 | 2.19 |  |  |
+| 2025-12-05 09:42:00 |  |  |  |  | 231.12 | 207.23 |
+| 2025-12-05 10:27:00 | 2.17 | 1.26 | 1.94 | 1.75 | 8.00 | 102.12 |
+| 2025-12-05 15:42:00 | 3.53 | 1.19 | 9.59 | 1.91 | 57.69 | 29.68 |
+| 2025-12-05 15:57:00 | 5.02 | 1.32 | 1.85 | 1.95 | 14.72 | 41.24 |
+| 2025-12-05 16:42:00 | 3.76 | 1.24 | 1.89 | 1.83 | 45.14 |  |
+| 2025-12-05 16:57:00 |  |  |  |  |  | 67.46 |
+| 2025-12-05 21:57:00 | 3.65 | 1.39 | 1.80 | 1.93 | 32.76 | 4.41 |
+| 2025-12-06 03:57:00 | 1.86 | 1.24 | 1.00 | 1.84 | 3.00 | 6.14 |
+| 2025-12-06 09:57:00 | 2.56 | 1.24 | 1.81 | 1.87 | 4.34 | 5.19 |
+| 2025-12-06 15:57:00 | 2.94 | 1.18 | 1.85 | 1.80 | 3.95 | 4.61 |
+
 
 ### Retrieval Script
 
@@ -135,13 +161,13 @@ aws cloudwatch put-metric-data --region us-west-2 --namespace merritt \
 
 Choose Access method across providers
 
-<img width="916" height="446" alt="image" src="https://github.com/user-attachments/assets/aadb90cf-f9d6-4956-8359-401bb1e88a5c" />
+<img width="916" height="446" alt="Screenshot of available CloudWatch metrics associated with the benchmark readings.  The 3 'access' 'retreival-duration-sec' readings for the file 100_mb_random.dat have been selected.  These readings correspond to the 3 storage nodes of interest." src="https://github.com/user-attachments/assets/aadb90cf-f9d6-4956-8359-401bb1e88a5c" />
 
-<img width="1317" height="203" alt="image" src="https://github.com/user-attachments/assets/facc372d-025f-41f5-9e70-4b71b350a379" />
+<img width="1317" height="203" alt="Line chart graphing the 3 readings of interest between 2/12 - 2/18.  The 'wasabi' reading is the slowest." src="https://github.com/user-attachments/assets/facc372d-025f-41f5-9e70-4b71b350a379" />
 
 Note how the graph changes when the focus is on fixity calculation
 
-<img width="1318" height="175" alt="image" src="https://github.com/user-attachments/assets/49c79db0-ba4d-442a-aa8f-146917203bd3" />
+<img width="1318" height="175" alt="Line chart graphing 3 'audit' readings for the same 3 storage nodes between 2/12 - 2/18.  These numbers are based on a retrieval plus a fixity calculation.  There is less variation in the chart han in the prior chart." src="https://github.com/user-attachments/assets/49c79db0-ba4d-442a-aa8f-146917203bd3" />
 
 
 ## Notes About CloudWatch Metrics
