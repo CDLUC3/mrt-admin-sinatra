@@ -45,9 +45,9 @@
 
 ## CloudWatch Metrics Graphs
 
-<img width="419" height="257" alt="image" src="https://github.com/user-attachments/assets/637fd5f6-c580-42d7-9ae0-7ea2fd2316cd" />
+<img width="419" height="257" alt="Screenshot of AWS Cloudwatch Metrics Graph illustrating a healthy count for 8 Merritt Services (access, admintool, audit, ingest, inventory, replic, store, ui)" src="https://github.com/user-attachments/assets/637fd5f6-c580-42d7-9ae0-7ea2fd2316cd" />
 
-<img width="910" height="524" alt="image" src="https://github.com/user-attachments/assets/c9604d6c-406a-4b24-870c-9c9ca5ed5af0" />
+<img width="910" height="524" alt="AWS Cloud Watch Metrics Graph illustrating a healthy count for various Merritt application states (admintool MySQL not running, admintool ZooKeeper not running, admintool LDAP not running, audit fixity not running, ingest submission state not thawed, inventory systemStatus not running, replic replicationStatus not running)" src="https://github.com/user-attachments/assets/c9604d6c-406a-4b24-870c-9c9ca5ed5af0" />
 
 ## CloudWatch Alarms
 
@@ -73,7 +73,7 @@
   - This would be particularly tricky to script this ourselves! 
 
 ## CloudWatch Alarms Console View
-<img width="1433" height="662" alt="image" src="https://github.com/user-attachments/assets/0ac27b2b-731f-406d-8f75-f189ada4b7f1" />
+<img width="1433" height="662" alt="AWS Console screen illustrating the CloudWatch Alarm criteria build for a subset of the CloudWatch Metrics under observation.  For example, each service health check allarm will be triggered if 'healthy-count < 1 for 1 datapoints within 5 minutes'" src="https://github.com/user-attachments/assets/0ac27b2b-731f-406d-8f75-f189ada4b7f1" />
 
 ## Let AWS Do the Statistcal Work For Us
 
