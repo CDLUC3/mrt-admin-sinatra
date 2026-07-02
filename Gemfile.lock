@@ -15,8 +15,8 @@ GEM
     anbt-sql-formatter (0.1.2)
     ast (2.4.3)
     aws-eventstream (1.4.0)
-    aws-partitions (1.1259.0)
-    aws-sdk-cloudwatch (1.140.0)
+    aws-partitions (1.1264.0)
+    aws-sdk-cloudwatch (1.142.0)
       aws-sdk-core (~> 3, >= 3.248.0)
       aws-sigv4 (~> 1.5)
     aws-sdk-cloudwatchevents (1.107.0)
@@ -33,13 +33,13 @@ GEM
       bigdecimal
       jmespath (~> 1, >= 1.6.1)
       logger
-    aws-sdk-ec2 (1.623.0)
+    aws-sdk-ec2 (1.628.0)
       aws-sdk-core (~> 3, >= 3.248.0)
       aws-sigv4 (~> 1.5)
     aws-sdk-ecr (1.130.0)
       aws-sdk-core (~> 3, >= 3.248.0)
       aws-sigv4 (~> 1.5)
-    aws-sdk-ecs (1.236.0)
+    aws-sdk-ecs (1.240.0)
       aws-sdk-core (~> 3, >= 3.248.0)
       aws-sigv4 (~> 1.5)
     aws-sdk-elasticloadbalancingv2 (1.153.0)
@@ -48,10 +48,10 @@ GEM
     aws-sdk-kms (1.129.0)
       aws-sdk-core (~> 3, >= 3.248.0)
       aws-sigv4 (~> 1.5)
-    aws-sdk-lambda (1.183.0)
+    aws-sdk-lambda (1.186.0)
       aws-sdk-core (~> 3, >= 3.248.0)
       aws-sigv4 (~> 1.5)
-    aws-sdk-s3 (1.225.1)
+    aws-sdk-s3 (1.226.0)
       aws-sdk-core (~> 3, >= 3.248.0)
       aws-sdk-kms (~> 1)
       aws-sigv4 (~> 1.5)
@@ -69,13 +69,12 @@ GEM
     base64 (0.3.0)
     bigdecimal (4.1.2)
     csv (3.3.5)
-    date (3.5.1)
     debug (1.11.1)
       irb (~> 1.10)
       reline (>= 0.3.8)
     diff-lcs (1.6.2)
     erb (6.0.4)
-    faraday (2.14.2)
+    faraday (2.14.3)
       faraday-net_http (>= 2.0, < 3.5)
       json
       logger
@@ -88,7 +87,7 @@ GEM
       rdoc (>= 4.0.0)
       reline (>= 0.4.2)
     jmespath (1.6.2)
-    json (2.19.9)
+    json (2.20.0)
     language_server-protocol (3.17.0.5)
     lint_roller (1.1.0)
     logger (1.7.0)
@@ -105,7 +104,7 @@ GEM
       base64
       ostruct
     nio4r (2.7.5)
-    nokogiri (1.19.3)
+    nokogiri (1.19.4)
       mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
     octokit (10.0.0)
@@ -122,13 +121,10 @@ GEM
     parser (3.3.11.1)
       ast (~> 2.4.1)
       racc
-    pp (0.6.3)
+    pp (0.6.4)
       prettyprint
     prettyprint (0.2.0)
     prism (1.9.0)
-    psych (5.4.0)
-      date
-      stringio
     public_suffix (7.0.5)
     puma (8.0.2)
       nio4r (~> 2.0)
@@ -148,9 +144,14 @@ GEM
     rackup (2.3.1)
       rack (>= 3)
     rainbow (3.1.1)
-    rdoc (7.2.0)
+    rbs (4.0.3)
+      logger
+      prism (>= 1.6.0)
+      tsort
+    rdoc (8.0.0)
       erb
-      psych (>= 4.0.0)
+      prism (>= 1.6.0)
+      rbs (>= 4.0.0)
       tsort
     redcarpet (3.6.1)
     regexp_parser (2.12.0)
@@ -169,7 +170,7 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.13.0)
     rspec-support (3.13.7)
-    rubocop (1.87.0)
+    rubocop (1.88.1)
       json (~> 2.3)
       language_server-protocol (~> 3.17.0.2)
       lint_roller (~> 1.1.0)
@@ -185,7 +186,7 @@ GEM
       prism (~> 1.7)
     ruby-progressbar (1.13.0)
     rubysl-base64 (2.0.0)
-    rubyzip (3.3.1)
+    rubyzip (3.4.1)
     sawyer (0.9.3)
       addressable (>= 2.3.5)
       faraday (>= 0.17.3, < 3)
@@ -202,7 +203,6 @@ GEM
       rack-protection (= 4.2.1)
       sinatra (= 4.2.1)
       tilt (~> 2.0)
-    stringio (3.2.0)
     tilt (2.7.0)
     tsort (0.2.0)
     unicode-display_width (3.2.0)
@@ -266,4 +266,4 @@ RUBY VERSION
   ruby 3.3.6p108
 
 BUNDLED WITH
-  4.0.14
+  4.0.15
