@@ -804,7 +804,7 @@ module UC3Queue
     end
 
     def snapshot_path
-      "/uc3/mrt/zk/snapshots/#{UC3::UC3Client.stack_name_brief}"
+      "uc3/mrt/zk/snapshots/#{UC3::UC3Client.stack_name_brief}"
     end
 
     def save_snapshot
