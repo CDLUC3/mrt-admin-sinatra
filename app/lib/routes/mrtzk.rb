@@ -336,8 +336,8 @@ module Sinatra
       end
 
       app.post '/ops/zk/snapshot' do
-        UC3Queue::ZKClient.client.save_snapshot
-        content_type :text
+        content_type :json
+        UC3Queue::ZKClient.client.save_snapshot.to_json
       end
 
       app.post '/ops/zk/restore' do

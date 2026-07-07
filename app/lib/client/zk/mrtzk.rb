@@ -808,6 +808,7 @@ module UC3Queue
     end
 
     def save_snapshot
+      res = []
       url = "http://#{@zk_hosts.first}:#{@admin_port}/commands/snapshot?streaming=true"
       fname = "latest_snapshot.#{UC3::UC3Client.stack_name}.#{Time.new.strftime('%Y-%m-%d_%H:%M:%S')}.out"
       puts `curl -H #{zk_auth} #{url} --output /tmp/#{fname}`
@@ -815,10 +816,11 @@ module UC3Queue
       body = File.read("/tmp/#{fname}")
       ct = "'Content-Type:application/octet-stream'"
       UC3S3::ConfigObjectsClient.client.save_config(path, body, content_type: ct)
-      puts "Saved ZK snapshot to S3 at #{path}"
+      res << "Saved ZK snapshot to S3 at #{path}"
       path = "#{snapshot_path}/#{LATEST_SNAPSHOT}"
       UC3S3::ConfigObjectsClient.client.save_config(path, body, content_type: ct)
-      puts "Saved ZK snapshot to S3 at #{path}"
+      res << "Saved ZK snapshot to S3 at #{path}"
+      res
     end
 
     def restore_from_snapshot
