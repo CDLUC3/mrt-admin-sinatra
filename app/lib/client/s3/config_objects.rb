@@ -246,6 +246,24 @@ module UC3S3
       @s3_client.put_object(arg)
     end
 
+    def save_config(path, body, content_type: nil)
+      arg = {
+        body: body,
+        bucket: @bucket,
+        key: path
+      }
+      arg[:content_type] = content_type unless content_type.nil?
+      @s3_client.put_object(arg)
+    end
+
+    def get_config(path)
+      arg = {
+        bucket: @bucket,
+        key: path
+      }
+      @s3_client.get_object(arg).body.read
+    end
+
     def get_report(path)
       url, = @s3_presigner.presigned_request(
         :get_object,

@@ -11,9 +11,6 @@ docker: &docker
   admin_pass:
     env: ZK_ADMIN_PASS
     default: root_passwd
-  snapshot_dir:
-    env: ZK_SNAPSHOT_DIR
-    default: /merritt-filesys/zk-snapshots
 dockerlocal:
   <<: *docker
 ecs-dev:

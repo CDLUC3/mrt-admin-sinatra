@@ -337,7 +337,7 @@ module Sinatra
 
       app.post '/ops/zk/snapshot' do
         UC3Queue::ZKClient.client.save_snapshot
-        redirect '/ops/show-folders/list?path=/zk-snapshots'
+        content_type :text
       end
 
       app.post '/ops/zk/restore' do

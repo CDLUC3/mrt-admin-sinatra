@@ -13,6 +13,7 @@ module UC3Queue
   class ZKClient < UC3::UC3Client
     AGE_BATCHWARN = 3600 * 24 # 1 hour in seconds, converted to days
     TDESC = '[Merritt ZooKeeper Data Design](https://github.com/CDLUC3/mrt-zk/blob/main/design/data.md)'
+    LATEST_SNAPSHOT = 'latest_snapshot.out'
 
     def self.client
       UC3::UC3Client.clients.fetch(self.class.to_s, ZKClient.new)
@@ -39,7 +40,6 @@ module UC3Queue
       @admin_port = map.fetch('admin_port', 8080)
       @admin_user = map.fetch('admin_user', 'root')
       @admin_passwd = map.fetch('admin_passwd', 'root_passwd')
-      @snapshot_path = map.fetch('snapshot_path', '/merritt-filesys/zk-snapshots')
       @cache = {}
       super(enabled: true)
     rescue StandardError => e
@@ -803,20 +803,32 @@ module UC3Queue
       "'Authorization: digest #{@admin_user}:#{@admin_passwd}'"
     end
 
+    def snapshot_path
+      "/uc3/mrt/zk/snapshots/#{UC3::UC3Client.stack_name_brief}"
+    end
+
     def save_snapshot
-      `mkdir -p #{@snapshot_path}`
       url = "http://#{@zk_hosts.first}:#{@admin_port}/commands/snapshot?streaming=true"
-      path = "#{@snapshot_path}/latest_snapshot.#{UC3::UC3Client.stack_name}.#{Time.new.strftime('%Y-%m-%d_%H:%M:%S')}.out"
-      path_ln = "#{@snapshot_path}/latest_snapshot.#{UC3::UC3Client.stack_name}.out"
-      puts `curl -H #{zk_auth} #{url} --output #{path} && rm #{path_ln} && ln -s #{path} #{path_ln}`
+      fname = "latest_snapshot.#{UC3::UC3Client.stack_name}.#{Time.new.strftime('%Y-%m-%d_%H:%M:%S')}.out"
+      puts `curl -H #{zk_auth} #{url} --output /tmp/#{fname}`
+      path = "#{snapshot_path}/#{fname}"
+      body = File.read("/tmp/#{fname}")
+      ct = "'Content-Type:application/octet-stream'"
+      UC3S3.ConfigObjectsClient.instance.save_config(path, body, content_type: ct)
+      puts "Saved ZK snapshot to S3 at #{path}"
+      path = "#{snapshot_path}/#{LATEST_SNAPSHOT}"
+      UC3S3.ConfigObjectsClient.instance.save_config(path, body, content_type: ct)
+      puts "Saved ZK snapshot to S3 at #{path}"
     end
 
     def restore_from_snapshot
       ct = "'Content-Type:application/octet-stream'"
-      path = "#{@snapshot_path}/latest_snapshot.#{UC3::UC3Client.stack_name}.out"
+      path = "#{snapshot_path}/#{LATEST_SNAPSHOT}"
+      body = UC3S3.ConfigObjectsClient.instance.get_config(path)
+      File.write("/tmp/#{LATEST_SNAPSHOT}", body)
       @zk_hosts.each do |zkhost|
         url = "http://#{zkhost}:#{@admin_port}/commands/restore"
-        put `curl -H #{ct} -H #{zk_auth} -POST #{url} --data-binary "@#{path}"`
+        put `curl -H #{ct} -H #{zk_auth} -POST #{url} --data-binary "@/tmp/#{LATEST_SNAPSHOT}"`
       end
     end
 
