@@ -830,7 +830,7 @@ module UC3Queue
       File.write("/tmp/#{LATEST_SNAPSHOT}", body)
       @zk_hosts.each do |zkhost|
         url = "http://#{zkhost}:#{@admin_port}/commands/restore"
-        put `curl -H #{ct} -H #{zk_auth} -POST #{url} --data-binary "@/tmp/#{LATEST_SNAPSHOT}"`
+        puts `curl -H #{ct} -H #{zk_auth} -POST #{url} --data-binary "@/tmp/#{LATEST_SNAPSHOT}"`
       end
     end
 
