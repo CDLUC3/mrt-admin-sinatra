@@ -814,17 +814,17 @@ module UC3Queue
       path = "#{snapshot_path}/#{fname}"
       body = File.read("/tmp/#{fname}")
       ct = "'Content-Type:application/octet-stream'"
-      UC3S3::ConfigObjectsClient.instance.save_config(path, body, content_type: ct)
+      UC3S3::ConfigObjectsClient.client.save_config(path, body, content_type: ct)
       puts "Saved ZK snapshot to S3 at #{path}"
       path = "#{snapshot_path}/#{LATEST_SNAPSHOT}"
-      UC3S3::ConfigObjectsClient.instance.save_config(path, body, content_type: ct)
+      UC3S3::ConfigObjectsClient.client.save_config(path, body, content_type: ct)
       puts "Saved ZK snapshot to S3 at #{path}"
     end
 
     def restore_from_snapshot
       ct = "'Content-Type:application/octet-stream'"
       path = "#{snapshot_path}/#{LATEST_SNAPSHOT}"
-      body = UC3S3::ConfigObjectsClient.instance.get_config(path)
+      body = UC3S3::ConfigObjectsClient.client.get_config(path)
       File.write("/tmp/#{LATEST_SNAPSHOT}", body)
       @zk_hosts.each do |zkhost|
         url = "http://#{zkhost}:#{@admin_port}/commands/restore"
