@@ -4,7 +4,6 @@ require 'zk'
 require 'merritt_zk'
 require 'yaml'
 require_relative '../uc3_client'
-require_relative '../s3/config_objects'
 require_relative '../../ui/context'
 
 # Scope custom code for UC3 to distinguish from 3rd party classes
@@ -815,17 +814,17 @@ module UC3Queue
       path = "#{snapshot_path}/#{fname}"
       body = File.read("/tmp/#{fname}")
       ct = "'Content-Type:application/octet-stream'"
-      UC3S3.ConfigObjectsClient.instance.save_config(path, body, content_type: ct)
+      UC3S3::ConfigObjectsClient.instance.save_config(path, body, content_type: ct)
       puts "Saved ZK snapshot to S3 at #{path}"
       path = "#{snapshot_path}/#{LATEST_SNAPSHOT}"
-      UC3S3.ConfigObjectsClient.instance.save_config(path, body, content_type: ct)
+      UC3S3::ConfigObjectsClient.instance.save_config(path, body, content_type: ct)
       puts "Saved ZK snapshot to S3 at #{path}"
     end
 
     def restore_from_snapshot
       ct = "'Content-Type:application/octet-stream'"
       path = "#{snapshot_path}/#{LATEST_SNAPSHOT}"
-      body = UC3S3.ConfigObjectsClient.instance.get_config(path)
+      body = UC3S3::ConfigObjectsClient.instance.get_config(path)
       File.write("/tmp/#{LATEST_SNAPSHOT}", body)
       @zk_hosts.each do |zkhost|
         url = "http://#{zkhost}:#{@admin_port}/commands/restore"
