@@ -4,6 +4,7 @@ require 'zk'
 require 'merritt_zk'
 require 'yaml'
 require_relative '../uc3_client'
+require_relative '../s3/config_objects'
 require_relative '../../ui/context'
 
 # Scope custom code for UC3 to distinguish from 3rd party classes
