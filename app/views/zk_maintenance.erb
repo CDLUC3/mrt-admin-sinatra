@@ -1,12 +1,20 @@
+<h2>Maintain Zookeeper</h2>
+<h3>Export ZK to S3</h3>
 <div>
-<fieldset>
-  <legend>Maintain Zookeeper</legend>
-  <form method="POST" action="/ops/zk/snapshot">
-    <input type="submit" value="Snapshot ZK and Save to S3"/>
-  </form>
-  <form method="POST" action="/ops/zk/restore">
-    <input type="submit" value="Restore ZK from S3" class="button_red"
-    onclick="return confirm('This will erase the current ZooKeeper state and restore from the snapshot. Are you sure you want to proceed?')"/>
-  </form>
-</fieldset>
+Exports will be saved with the configuration bucket to a folder specific to the stack.
+An export will be saved with a date and timestamp.
+The export will also be saved as <code>latest_snapshot.out</code>.
+</div>
+<form method="POST" action="/ops/zk/snapshot">
+  <input type="submit" value="Snapshot ZK and Save to S3"/>
+</form>
+<h3>Restore ZK from S3</h3>
+<div>
+Exports are saved with the configuration bucket to a folder specific to the stack.
+The file will be restored from the file <code>latest_snapshot.out</code>.
+</div>
+<form method="POST" action="/ops/zk/restore">
+  <input type="submit" value="Restore ZK from S3" class="button_red"
+  onclick="return confirm('This will erase the current ZooKeeper state and restore from the snapshot. Are you sure you want to proceed?')"/>
+</form>
 </div>
