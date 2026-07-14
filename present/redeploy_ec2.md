@@ -27,7 +27,7 @@ Ideally, we would like this to run by AWS cli commands (vs running Sceptre/Cloud
 
 ### Generate an Elastic IP (EIP)
 
-```
+```yaml
 Resources:
   MerrittProxyEIP:
     Type: AWS::EC2::EIP 
@@ -48,7 +48,7 @@ Outputs:
 
 ### Rather than creating an EC2 Instance, Create an EC2 AutoScaling Group that will generate the instance
 
-```
+```yaml
   MerrittProxyASG:
     Type: AWS::AutoScaling::AutoScalingGroup
     Properties:
@@ -71,7 +71,7 @@ Outputs:
 
 ### Define the EC2 Properties within a Launch Template
 
-```
+```yaml
   MerrittProxyLaunchTemplate:
     Type: AWS::EC2::LaunchTemplate
     Properties:
@@ -92,7 +92,7 @@ Outputs:
 
 ### Create an Apache Forward Proxy
 
-```
+```bash
             dnf update -y
             dnf install -y httpd
 
@@ -118,7 +118,7 @@ Outputs:
 
 ### Obtain the Instance ID and Private IP of the generated instance
 
-```
+```bash
             # Obtain the instance ID and private IP address of the EC2 instance
             TOKEN=$(curl -X PUT "http://169.254.169.254/latest/api/token" \
               -H "X-aws-ec2-metadata-token-ttl-seconds: 21600")
@@ -131,7 +131,7 @@ Outputs:
 
 ### Associate the EIP with the Instance
 
-```
+```bash
             # Associate the Elastic IP with the EC2 instance.
             # The allocationId of the Elastic IP is passed in as a parameter to the CloudFormation template.
             aws ec2 associate-address \
@@ -142,7 +142,7 @@ Outputs:
 
 ### Assign a Route53 Address with the Instance
 
-```
+```bash
             aws route53 change-resource-record-sets --hosted-zone-id {{sceptre_user_data.hosted_zone}} --change-batch '{
               "Changes": [
                 {
@@ -160,7 +160,7 @@ Outputs:
 
 ### Create a Security Group allowing all Egress and Ingress from our ECS Stacks to the Proxy Port
 
-```
+```yaml
   MyEC2SG:
     Type: AWS::EC2::SecurityGroup
   MyEC2SGEgress:
@@ -173,7 +173,7 @@ Outputs:
 
 ### Create an Instance Profile to Grant Permissions to the UserData script
 
-```
+```yaml
   MyInstanceProfile:
     Type: AWS::IAM::InstanceProfile
     Properties:
@@ -184,7 +184,7 @@ Outputs:
 
 ### Create The Role to all EIP Attach and Route 53 Update
 
-```
+```yaml
   MyInstanceRole:
     Type: AWS::IAM::Role
     Properties:
@@ -218,21 +218,36 @@ Outputs:
 
 ## Trigger the Cycling of the Instance
 
-```
+```bash
 aws autoscaling start-instance-refresh --auto-scaling-group-name merritt-ingest-proxy-asg
+```
+
+Note that this has been integrated into our redeployStack.sh script
+```bash
+# pause ingest queue
+aws ecs update-service --cluster $ECS_STACK_NAME --service ingest --force-new-deployment --desired-count 1 \
+    --query 'service.{service:serviceName,status:status,desired:desiredCount,running:runningCount}' --output text --no-cli-pager
+aws ecs update-service --cluster $ECS_STACK_NAME --service store --force-new-deployment --desired-count 1 \
+    --query 'service.{service:serviceName,status:status,desired:desiredCount,running:runningCount}' --output text --no-cli-pager
+
+aws autoscaling start-instance-refresh --auto-scaling-group-name merritt-ingest-proxy-asg
+
+aws ecs wait services-stable --cluster $ECS_STACK_NAME \
+    --services ingest store
+# release ingest queue
 ```
 
 ## Not Yet Implemented
 
 ### Script Shutdown of a running instance (not applicable for our proxy)
 
-```
+```bash
 aws autoscaling set-desired-capacity --desired-capacity 0
 ```
 
 ### Schedule Shutdown of a running instance
 
-```
+```yaml
 Type: AWS::AutoScaling::ScheduledAction
 Properties:
   AutoScalingGroupName: String
