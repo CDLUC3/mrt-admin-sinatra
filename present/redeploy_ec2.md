@@ -242,7 +242,8 @@ aws ecs wait services-stable --cluster $ECS_STACK_NAME \
 ### Script Shutdown of a running instance (not applicable for our proxy)
 
 ```bash
-aws autoscaling set-desired-capacity --desired-capacity 0
+aws autoscaling set-desired-capacity --desired-capacity 0 \
+  --auto-scaling-group-name merritt-ingest-proxy-asg
 ```
 
 ### Schedule Shutdown of a running instance
