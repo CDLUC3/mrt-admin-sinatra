@@ -56,7 +56,7 @@ Outputs:
       LaunchTemplate:
         LaunchTemplateName: MerrittProxyLaunchTemplate
         Version: !GetAtt MerrittProxyLaunchTemplate.LatestVersionNumber
-      MinSize: '1'
+      MinSize: '0'
       MaxSize: '1'
       DesiredCapacity: '1'
       VPCZoneIdentifier:
