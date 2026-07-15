@@ -139,7 +139,7 @@ MyEC2SG:
       ToPort: -1
       CidrIp: '0.0.0.0/0'
       Description: Allow all outbound traffic from EC2 instance
-``
+```
 
   ### Allow Ingress from Merritt Stack Security Group on proxy port
 
