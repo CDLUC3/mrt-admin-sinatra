@@ -448,7 +448,7 @@ aws ecs wait services-stable --cluster $ECS_STACK_NAME \
 # release ingest queue
 ```
 
-## Not Yet Implemented
+## Shutting Down the Instance
 
 ### Script Shutdown of a running instance (not applicable for our proxy)
 
@@ -460,15 +460,12 @@ aws autoscaling set-desired-capacity --desired-capacity 0 \
 ### Schedule Shutdown of a running instance
 
 ```yaml
-Type: AWS::AutoScaling::ScheduledAction
-Properties:
-  AutoScalingGroupName: String
-  DesiredCapacity: Integer
-  EndTime: String
-  MaxSize: Integer
-  MinSize: Integer
-  Recurrence: String
-  StartTime: String
-  TimeZone: String
+  AsgShutdownSchedule:
+    Type: AWS::AutoScaling::ScheduledAction
+    Properties:
+      AutoScalingGroupName: !Ref MerrittProxyASG
+      DesiredCapacity: 0
+      Recurrence: '0 20 * * FRI' # Every FRI at 8 PM
+      TimeZone: 'America/Los_Angeles'
 ```
 
