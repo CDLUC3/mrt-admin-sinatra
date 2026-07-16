@@ -12,7 +12,8 @@ Fortunately, this will only be used by a small percentage of Merritt deposits.
 
 ## Desired Solution
 
-We have a weekly script `deployStack.sh` that redeploys all of our ECS services while our processing queues are on hold.
+We have a script [redployStack.sh](https://github.com/CDLUC3/merritt-docker/blob/main/mrt-inttest-services/merritt-ops/scripts/redeploy-stack.sh) 
+that runs weekly and redeploys all of our ECS services while our processing queues are on hold.
 
 We would like to force the rebuild ot our proxy server within the same window.
 
