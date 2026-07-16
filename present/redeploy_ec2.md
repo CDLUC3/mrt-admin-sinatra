@@ -49,6 +49,12 @@ Outputs:
 
 ### Rather than creating an EC2 Instance, Create an EC2 AutoScaling Group that will generate the instance
 
+This is a singleton instance.  Our proxy server should always be available, so our `MinSize` and `MaxSize` are both set to 1.
+
+If we anticipated stopping the instance, we could set the `MinSize` to 0.
+
+The `DesiredCapacity` setting can be modified by API calls.
+
 ```yaml
   MerrittProxyASG:
     Type: AWS::AutoScaling::AutoScalingGroup
@@ -161,6 +167,14 @@ MyEC2SG:
 
 ### Create a Lifecycle Hook for Launch and Termination
 
+Because our EC2 instances will not persist, we cannot declare our DNS Names and EIP addresses in Sceptre/CloudFormation.
+
+Initially, I assigned attached these properties by adding AWS api calls to the UserData script.
+
+Fortunately, an AutoScalingGroup allows to you to attach hooks to key lifecycle events: **Launch** and **Terminate**.
+
+I had hoped to re-use the same hook for both events, but I found that I needed to create 2 separate hooks.
+
 ```yaml
   AsgLaunchLifecycleHookLaunch:
     Type: AWS::AutoScaling::LifecycleHook
@@ -183,6 +197,10 @@ MyEC2SG:
 ```
 
 ### Associate the Hooks with Launch and Termination
+
+The Event Rule associates the AutoScalingGroup lifecycle events with the hooks.
+
+_I still wonder if I can simplify this a bit._
 
 ```yaml
   AsgLifecycleEventRule:
@@ -219,6 +237,12 @@ MyEC2SG:
 ```
 
 ### Grant Specific AWS Permissions to the Lambda Implementing the Hook
+
+The hooks will be implemented as a lambda.  
+
+This grants the lamda the permissions it will need to
+- attach/detach EIPs
+- create/delete Route 53 DNS names
 
 ```yaml
   AsgLifecycleLambdaInvokePermission:
