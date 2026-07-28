@@ -1,7 +1,7 @@
 GIT
   remote: https://github.com/CDLUC3/mrt-zk.git
-  revision: 1653d9ebd418bc57df906c510030d3e420d2607e
-  tag: 2.6.9
+  revision: f113b84f203f84ddd0d1c981aa8c87f7f6bc98d7
+  tag: 2.7.0
   specs:
     mrt-zk (1.0.1)
       zk (~> 1.10.0)
@@ -260,10 +260,6 @@ DEPENDENCIES
   sinatra-contrib
   yaml
   zk
-  zookeeper
-
-RUBY VERSION
-  ruby 3.3.6p108
 
 BUNDLED WITH
   4.0.15

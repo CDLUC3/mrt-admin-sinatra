@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 source 'http://rubygems.org'
-ruby '~> 3.2'
+# ruby '~> 3.2'
 
 gem 'anbt-sql-formatter'
 gem 'aws-sdk-cloudwatch'
@@ -22,7 +22,7 @@ gem 'csv'
 gem 'debug'
 gem 'json'
 gem 'logger'
-gem 'mrt-zk', git: 'https://github.com/CDLUC3/mrt-zk.git', tag: '2.6.9'
+gem 'mrt-zk', git: 'https://github.com/CDLUC3/mrt-zk.git', tag: '2.7.0'
 gem 'multipart-post'
 gem 'mustache'
 gem 'mysql2'
@@ -43,7 +43,7 @@ gem 'sinatra'
 gem 'sinatra-contrib'
 gem 'yaml'
 gem 'zk'
-gem 'zookeeper'
+# gem 'zookeeper'
 
 # These are the dependencies that are used only for unit tests.
 group :test do
