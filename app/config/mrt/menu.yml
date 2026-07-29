@@ -1338,6 +1338,21 @@ items:
           route: /infra/ecs/tasks/launch/mrt-integ-tests/runEndToEndTestsLoad
           confmsg: This will initiate a task that runs End to End tests
           method: post
+      - title: Batch Processes
+        route: /infra/ecs/tasks/launch/batch-processes
+        path: batch-processes
+        disable: default, docker, ecs-dev, ecs-ephemeral, ecs-dbsnapshot
+        items:
+        - title: Nuxeo Stage
+          route: /infra/ecs/tasks/launch/batch-processes/nuxeoStage
+          confmsg: Run Nuxeo Stage Ingests
+          disable: ecs-prd
+          method: post
+        - title: Nuxeo Stage
+          route: /infra/ecs/tasks/launch/batch-processes/nuxeoProd
+          confmsg: Run Nuxeo Prod Ingests
+          disable: ecs-stg, ecs-prd
+          method: post
     - title: Task Logs
       route: /ops/cloudwatch/logs/tasks
   - title: OpenSearch Queries
