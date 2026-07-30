@@ -1344,7 +1344,7 @@ items:
         disable: default, docker, ecs-ephemeral, ecs-dbsnapshot
         items:
         - title: Nuxeo Init
-          route: /infra/ecs/tasks/launch/batch-processes/nuxeoInit
+          route: /infra/ecs/tasks/launch/merritt-ops-batch/nuxeoInit
           confmsg: Run Nuxeo Ingests
           disable: ecs-prd, ecs-dev
           method: post
