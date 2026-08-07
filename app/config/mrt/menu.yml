@@ -1492,6 +1492,48 @@ items:
         description: This will purge N items from a test collection.  To iteratively run the purge, launch a Purge task. 
         method: post
         confmsg: 'Warning: This will purge items from a collection.'
+      - title: ucr_lib_nuxeo_content
+        route: /test/purge/ucr_lib_nuxeo_content?days=0
+        description: This will purge N items from a Nuxeo collection.  To iteratively run the purge, launch a Purge task. 
+        disable: ecs-dev, ecs-ephemeral
+        method: post
+        confmsg: 'Warning: This will purge items from a collection.'
+      - title: ucm_lib_dsc_content
+        route: /test/purge/ucm_lib_dsc_content?days=0
+        description: This will purge N items from a Nuxeo collection.  To iteratively run the purge, launch a Purge task. 
+        disable: ecs-dev, ecs-ephemeral
+        method: post
+        confmsg: 'Warning: This will purge items from a collection.'
+      - title: ucm_lib_jaac_newsletters_content
+        route: /test/purge/ucm_lib_jaac_newsletters_content?days=0
+        description: This will purge N items from a Nuxeo collection.  To iteratively run the purge, launch a Purge task. 
+        disable: ecs-dev, ecs-ephemeral
+        method: post
+        confmsg: 'Warning: This will purge items from a collection.'
+      - title: ucm_lib_mcdaniel_content
+        route: /test/purge/ucm_lib_mcdaniel_content?days=0
+        description: This will purge N items from a Nuxeo collection.  To iteratively run the purge, launch a Purge task. 
+        disable: ecs-dev, ecs-ephemeral
+        method: post
+        confmsg: 'Warning: This will purge items from a collection.'
+      - title: ucm_lib_acm_content
+        route: /test/purge/ucm_lib_acm_content?days=0
+        description: This will purge N items from a Nuxeo collection.  To iteratively run the purge, launch a Purge task. 
+        disable: ecs-dev, ecs-ephemeral
+        method: post
+        confmsg: 'Warning: This will purge items from a collection.'
+      - title: ucm_lib_mclean_content?days=0
+        route: /test/purge/ucm_lib_mclean_content
+        description: This will purge N items from a Nuxeo collection.  To iteratively run the purge, launch a Purge task. 
+        disable: ecs-dev, ecs-ephemeral
+        method: post
+        confmsg: 'Warning: This will purge items from a collection.'
+      - title: ucm_lib_clark_content?days=0
+        route: /test/purge/ucm_lib_clark_content
+        description: This will purge N items from a Nuxeo collection.  To iteratively run the purge, launch a Purge task. 
+        disable: ecs-dev, ecs-ephemeral
+        method: post
+        confmsg: 'Warning: This will purge items from a collection.'
     - title: "Info: How To Force Scan Errors"
       route: /test/no-action-scan
       disable: ecs-stg, ecs-prd, ecs-dbsnapshot

@@ -111,11 +111,13 @@ queries:
       ON
         n.id = inio.inv_node_id
       WHERE 
-        o.modified <  date_add(NOW(), INTERVAL -3 DAY)
+        o.modified <  date_add(NOW(), INTERVAL -? DAY)
       AND 
         c.mnemonic = ?
       LIMIT ?
     parameters:
+    - name: days
+      type: integer
     - name: mnemonic
       type: string
     - name: count

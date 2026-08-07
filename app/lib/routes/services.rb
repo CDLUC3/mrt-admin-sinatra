@@ -436,8 +436,9 @@ module Sinatra
         raise 'Collection purge not allowed' if UC3Query::QueryResolvers.collection_purge_disabled?
 
         urlparams = {}
-        urlparams['count'] = [50, request.params.fetch('count', '20').to_i].min
+        urlparams['count'] = [250, request.params.fetch('count', '250').to_i].min
         urlparams['mnemonic'] = mnemonic
+        urlparams['days'] = request.params.fetch('days', '3').to_i
         resp = UC3Query::QueryClient.client.run_query('/queries/misc/purgable_arks', urlparams).map do |row|
           delete_object(row['ark'], row['nodenum'].to_s)
         end
