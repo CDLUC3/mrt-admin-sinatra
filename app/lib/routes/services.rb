@@ -1501,6 +1501,8 @@ module Sinatra
         UC3Query::QueryClient.client.query_update('/queries-update/log-delete', params)
         { message: "#{ark}: SUCCESS: (#{steps.join('; ')})" }
       end
+    rescue StandardError => e
+      { message: "Exception in delete_object for #{ark}: #{e}" }
     end
   end
 
