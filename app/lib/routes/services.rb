@@ -1404,7 +1404,7 @@ module Sinatra
       json.to_json
     end
 
-    def delete_url_resp(url, body: nil)
+    def delete_url_resp(url, body: nil, read_timeout: 180, open_timeout: 20)
       uri = URI.parse(url)
       logger.info("Delete URI: #{url}, body: #{body}")
       req = Net::HTTP::Delete.new(uri)
@@ -1412,7 +1412,12 @@ module Sinatra
       # req['Accept'] = 'text/plain'
       req.body = body
 
-      Net::HTTP.start(uri.hostname, uri.port, use_ssl: uri.scheme == 'https') do |http|
+      Net::HTTP.start(
+        uri.hostname, uri.port, 
+        read_timeout: read_timeout,
+        open_timeout: open_timeout,
+        use_ssl: uri.scheme == 'https'
+      ) do |http|
         http.request(req)
       end
     end
