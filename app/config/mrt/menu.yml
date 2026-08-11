@@ -1338,6 +1338,11 @@ items:
           route: /infra/ecs/tasks/launch/mrt-integ-tests/runEndToEndTestsLoad
           confmsg: This will initiate a task that runs End to End tests
           method: post
+        - title: Large Load Test
+          disable: default, docker, ecs-ephemeral, ecs-dbsnapshot, ecs-dev, ecs-prd
+          route: /infra/ecs/tasks/launch/mrt-integ-tests/runEndToEndTestsLoadLarge
+          confmsg: This will initiate a task that runs End to End tests
+          method: post
       - title: Batch Processes
         route: /infra/ecs/tasks/launch/batch-processes
         path: batch-processes
