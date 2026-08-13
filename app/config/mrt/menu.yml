@@ -1339,7 +1339,7 @@ items:
           confmsg: This will initiate a task that runs End to End tests
           method: post
         - title: Large Load Test
-          disable: default, docker, ecs-ephemeral, ecs-dbsnapshot, ecs-dev, ecs-prd
+          disable: default, docker, ecs-ephemeral, ecs-dbsnapshot, ecs-prd
           route: /infra/ecs/tasks/launch/mrt-integ-tests/runEndToEndTestsLoadLarge
           confmsg: This will initiate a task that runs End to End tests
           method: post
