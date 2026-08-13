@@ -618,14 +618,6 @@ module Sinatra
                        'A lifecycle policy will expire content in this bucket.',
           profile: defprofile
         }
-        rows << {
-          bucket: ENV.fetch('S3WORKSPACE_BUCKET', ''),
-          description: 'Versioned Workspace Bucket. Merritt Ingest and Storage ' \
-                       'services will use this bucket for content that is actively being ingested. ' \
-                       'A lifecycle policy will function like a recycle bin for content that has been deleted ' \
-                       'from this bucket.',
-          profile: defprofile
-        }
 
         desc = '[Creating a merritt-ops session for this stack](/#create-ops)'
 
