@@ -548,6 +548,8 @@ items:
         route: /ops/zk/nodes/node-names?zkpath=/jobs/states&mode=node
       - title: Locks
         route: /ops/zk/nodes/node-names?zkpath=/locks&mode=node
+      - title: Edit Locks
+        route: /ops/zk/nodes/node-names?zkpath=/locks&mode=data&mod=true
       - title: Access Nodes
         route: /ops/zk/nodes/node-names?zkpath=/access&mode=node
       - title: Orphan Report
