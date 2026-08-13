@@ -749,6 +749,7 @@ module UC3Queue
         j = MerrittZK::Job.new(queueid)
         j.load(zk)
         j.set_status(zk, MerrittZK::JobState::Failed)
+        j.unlock(zk)
       end
     end
 
