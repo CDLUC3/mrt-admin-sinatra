@@ -1405,7 +1405,7 @@ module Sinatra
       req.body = body
 
       Net::HTTP.start(
-        uri.hostname, uri.port, 
+        uri.hostname, uri.port,
         read_timeout: read_timeout,
         open_timeout: open_timeout,
         use_ssl: uri.scheme == 'https'

@@ -6,3 +6,4 @@
 - [Creating an Alarm on CloudWatch Log Groups](cwlog_alarms.md)
 - [Merritt Admin Exec Command](exec_command.md)
 - [Re-deploying EC2 with Auto-scaling Groups](redeploy_ec2.md)
+- [ECS Step Auto-Scaling using CloudWatch Metrics](step_autoscaling_with_metrics.md)
