@@ -749,8 +749,7 @@ module UC3Queue
         j = MerrittZK::Job.new(queueid)
         j.load(zk)
         j.set_status(zk, MerrittZK::JobState::Failed)
-        ark = j.json_property(zk, MerrittZK::ZkKeys::IDENTIFIERS)
-          .fetch(MerrittZK::ZkKeys::PRIMARYID, nil)
+        ark = j.json_property(zk, MerrittZK::ZkKeys::IDENTIFIERS).fetch('primary_id', nil)
         if ark
           MerrittZK::Locks.unlock_object_storage(zk, ark) if MerrittZK::Locks.check_lock_object_storage(zk, ark)
           MerrittZK::Locks.unlock_object_inventory(zk, ark) if MerrittZK::Locks.check_lock_object_inventory(zk, ark)
