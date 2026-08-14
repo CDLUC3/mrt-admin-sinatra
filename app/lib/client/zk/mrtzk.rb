@@ -749,12 +749,18 @@ module UC3Queue
         j = MerrittZK::Job.new(queueid)
         j.load(zk)
         j.set_status(zk, MerrittZK::JobState::Failed)
+
+        puts "Failing job #{queueid} and releasing any locks on object storage and inventory"
         ark = j.json_property(zk, MerrittZK::ZkKeys::IDENTIFIERS).fetch('primary_id', nil)
+        puts "Releasing locks for ark: #{ark}"
         if ark
+          puts "Releasing lock on object storage for ark: #{ark}"
           MerrittZK::Locks.unlock_object_storage(zk, ark) if MerrittZK::Locks.check_lock_object_storage(zk, ark)
+          puts "Releasing lock on object inventory for ark: #{ark}"
           MerrittZK::Locks.unlock_object_inventory(zk, ark) if MerrittZK::Locks.check_lock_object_inventory(zk, ark)
         end
 
+        puts "Releasing any locks on the job itself: #{j.path}/lock"
         j.unlock(zk) if zk.exists?("#{j.path}/lock")
       end
     end
