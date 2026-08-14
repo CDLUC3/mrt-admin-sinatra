@@ -751,7 +751,9 @@ module UC3Queue
         j.set_status(zk, MerrittZK::JobState::Failed)
 
         puts "Failing job #{queueid} and releasing any locks on object storage and inventory"
-        ark = j.json_property(zk, MerrittZK::ZkKeys::IDENTIFIERS).fetch('primary_id', nil)
+        identifiers = j.json_property(zk, MerrittZK::ZkKeys::IDENTIFIERS)
+        puts "Identifiers for job #{queueid}: #{identifiers}.to_s"
+        ark = identifiers.fetch(:primary_id, nil)
         puts "Releasing locks for ark: #{ark}"
         if ark
           puts "Releasing lock on object storage for ark: #{ark}"
