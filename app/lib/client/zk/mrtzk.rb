@@ -749,7 +749,14 @@ module UC3Queue
         j = MerrittZK::Job.new(queueid)
         j.load(zk)
         j.set_status(zk, MerrittZK::JobState::Failed)
-        j.unlock(zk)
+        ark = j.json_property(zk, MerrittZK::ZkKeys::IDENTIFIERS)
+          .fetch(MerrittZK::ZkKeys::PRIMARYID, nil)
+        if ark
+          MerrittZK::Locks.unlock_object_storage(zk, ark) if MerrittZK::Locks.check_lock_object_storage(zk, ark)
+          MerrittZK::Locks.unlock_object_inventory(zk, ark) if MerrittZK::Locks.check_lock_object_inventory(zk, ark)
+        end
+
+        j.unlock(zk) if zk.exists?("#{j.path}/lock")
       end
     end
 
