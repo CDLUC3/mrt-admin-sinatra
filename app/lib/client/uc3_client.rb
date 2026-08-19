@@ -337,9 +337,14 @@ module UC3
     end
 
     def cleanup_ingest_folders
-      `find #{FileSystemClient::DIR} -maxdepth 1  -name "bid-*" -mtime +30 | xargs rm -rf`
-      `find #{FileSystemClient::DIR}/FAILED -maxdepth 1  -name "bid-*" -mtime +30 | xargs rm -rf`
-      `find #{FileSystemClient::DIR}/RecycleBin -maxdepth 1  -name "jid-*" -mtime +3 | xargs rm -rf`
+      # queue_dir = FileSystemClient::DIR
+      queue_dir = "#{FileSystemClient::S3ROOTDIR}/queue".freeze
+
+      unless UC3::UC3Client.prod_stack?
+        `find #{queue_dir} -maxdepth 1  -name "bid-*" -mtime +30 | xargs rm -rf`
+        `find #{queue_dir}/FAILED -maxdepth 1  -name "bid-*" -mtime +30 | xargs rm -rf`
+      end
+      `find #{queue_dir}/RecycleBin -maxdepth 1  -name "jid-*" -mtime +7 | xargs rm -rf`        
     end
   end
 
