@@ -385,7 +385,7 @@ module UC3S3
     end
 
     def list_deleted_files(path: '')
-      folderpath = URI.encode_www_form_component(path.gsub(%r{/$}, ''))
+      folderpath = URI.encode_www_form_component("/s3filesys/#{path}").gsub(%r{/$}, '')
       table = AdminUI::FilterTable.new(
         columns: [
           AdminUI::Column.new(:key, header: 'Filename'),
