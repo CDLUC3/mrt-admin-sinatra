@@ -344,7 +344,7 @@ module UC3
         `find #{queue_dir} -maxdepth 1  -name "bid-*" -mtime +30 | xargs rm -rf`
         `find #{queue_dir}/FAILED -maxdepth 1  -name "bid-*" -mtime +30 | xargs rm -rf`
       end
-      `find #{queue_dir}/RecycleBin -maxdepth 1  -name "jid-*" -mtime +7 | xargs rm -rf`        
+      `find #{queue_dir}/RecycleBin -maxdepth 1  -name "jid-*" -mtime +7 | xargs rm -rf`
     end
   end
 

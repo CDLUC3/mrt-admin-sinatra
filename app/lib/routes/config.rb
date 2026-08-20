@@ -194,6 +194,20 @@ module Sinatra
           UC3S3::ConfigObjectsClient.client.get_report_url(rpt)
         )
       end
+
+      app.get '/ops/show-deleted-files/*' do |path|
+        adminui_show_table(
+          AdminUI::Context.new(request.path, request.params),
+          UC3S3::ConfigObjectsClient.client.list_deleted_files(path: path.to_s)
+        )
+      end
+
+      app.post '/ops/restore-deleted-object-version' do
+        UC3S3::ConfigObjectsClient.client.restore_deleted_object_version(
+          request.params.fetch('key', ''),
+          request.params.fetch('version_id', '')
+        ).to_json
+      end
     end
   end
   register UC3S3Routes

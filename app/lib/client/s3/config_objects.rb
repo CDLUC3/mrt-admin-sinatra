@@ -384,6 +384,78 @@ module UC3S3
       table
     end
 
+    def list_deleted_files(path: '')
+      folderpath = URI.encode_www_form_component(path.gsub(%r{/$}, ''))
+      table = AdminUI::FilterTable.new(
+        columns: [
+          AdminUI::Column.new(:key, header: 'Filename'),
+          AdminUI::Column.new(:version_id, header: 'Version ID'),
+          AdminUI::Column.new(:modified, header: 'Last Modified'),
+          AdminUI::Column.new(:actions, header: 'Actions')
+        ],
+        description: "[file system folder](/ops/show-folders/list?path=#{folderpath})"
+      )
+      unless path.empty?
+        pre = File.dirname(path)
+        row = {
+          key: {
+            href: "/ops/show-deleted-files/#{URI.encode_www_form_component(pre)}/",
+            value: '..'
+          }
+        }
+        table.add_row(AdminUI::Row.make_row(table.columns, row))
+      end
+      resp = @s3_client.list_object_versions({
+        bucket: ENV.fetch('S3INGEST_BUCKET', ''),
+        prefix: path,
+        delimiter: '/'
+      })
+      resp.common_prefixes.each do |prefix|
+        pre = prefix.prefix.gsub(%r{/$}, '')
+        next if pre.empty?
+
+        row = {
+          key: {
+            href: "/ops/show-deleted-files/#{URI.encode_www_form_component(pre)}/",
+            value: File.basename(pre)
+          }
+        }
+        table.add_row(AdminUI::Row.make_row(table.columns, row))
+      end
+      resp.delete_markers.each do |marker|
+        next if marker.key.end_with?('/')
+
+        row = {
+          key: File.basename(marker.key),
+          version_id: marker.version_id,
+          modified: date_format(marker.last_modified, convert_timezone: true),
+          actions: [
+            {
+              href: "/ops/restore-deleted-object-version?key=#{URI.encode_www_form_component(marker.key)}" \
+                    "&version_id=#{marker.version_id}",
+              value: 'Restore',
+              cssclass: 'button',
+              post: true
+            }
+          ]
+        }
+        table.add_row(AdminUI::Row.make_row(table.columns, row))
+      end
+      table
+    end
+
+    def restore_deleted_object_version(key, version_id)
+      @s3_client.delete_object(
+        bucket: ENV.fetch('S3INGEST_BUCKET', ''),
+        key: key,
+        version_id: version_id
+      )
+      { message: "Object version restored: #{key}" }
+    rescue StandardError => e
+      logger.error("Error restoring deleted object version: #{e}")
+      { message: "Error restoring deleted object version: #{e}" }
+    end
+
     def get_ecs_release_manifest
       resp = @s3_client.get_object(
         bucket: @bucket,

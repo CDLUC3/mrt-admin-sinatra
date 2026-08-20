@@ -643,9 +643,9 @@ module Sinatra
         rows.each do |row|
           cmd = "aws s3#{" --profile #{row[:profile]}" unless row[:profile].empty?} ls s3://#{row[:bucket]}/"
           if row[:versioned]
-            cmd += "\n\naws s3api list-object-versions --bucket #{row[:bucket]} \\\n" + 
-              "  --query 'DeleteMarkers[].[Key, VersionId]' \\\n" + 
-              "  --output text --prefix queue"
+            cmd += "\n\naws s3api list-object-versions --bucket #{row[:bucket]} \\\n  " \
+                   "--query 'DeleteMarkers[].[Key, VersionId]' \\\n  " \
+                   '--output text --prefix queue'
           end
           row[:command] = cmd unless row[:bucket].empty?
           table.add_row(

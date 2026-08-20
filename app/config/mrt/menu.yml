@@ -667,6 +667,8 @@ items:
         method: post
     - title: S3 Folders
       route: /ops/show-s3folders/list
+    - title: S3 Folders (Deleted)
+      route: /ops/show-deleted-files/
   - path: db-queue
     title: Database Queues
     route: /ops/db-queue
