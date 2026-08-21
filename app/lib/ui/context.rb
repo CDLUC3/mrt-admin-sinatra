@@ -255,13 +255,13 @@ module AdminUI
       attr_accessor :css, :index_md
     end
 
-    def initialize(route, params, title: nil, show_formats: true)
+    def initialize(route, params, title: nil, auxtitle: '', show_formats: true)
       @route = route
       @params = params
       page = TopMenu.instance.route_names[route]
       deftitle = title || File.basename(route).capitalize
-      calctitle = page ? page.fetch(:title, deftitle) : deftitle
-      @title = title ? title : calctitle
+      @title = page ? page.fetch(:title, deftitle) : deftitle
+      @auxtitle = auxtitle
       @description = TopMenu.instance.description_for_route(@route)
       @breadcrumbs = breadcrumbs
       # Breadcrumbs are an array of hashes with keys :title and :url
