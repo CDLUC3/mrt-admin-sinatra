@@ -278,14 +278,14 @@ module Sinatra
 
       app.get '/ops/show-folders/list' do
         adminui_show_table(
-          AdminUI::Context.new(request.path, request.params),
+          AdminUI::Context.new(request.path, request.params, title: "Show Folders: #{request.params.fetch('path', '/')}"),
           UC3::FileSystemClient.client.show_folders(UC3::FileSystemClient::ROOTDIR, request.path, request.params)
         )
       end
 
       app.get '/ops/show-s3folders/list' do
         adminui_show_table(
-          AdminUI::Context.new(request.path, request.params),
+          AdminUI::Context.new(request.path, request.params, title: "Show S3 Folders: #{request.params.fetch('path', '/')}"),
           UC3::FileSystemClient.client.show_folders(UC3::FileSystemClient::S3ROOTDIR, request.path, request.params)
         )
       end
