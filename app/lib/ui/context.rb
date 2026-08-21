@@ -260,7 +260,8 @@ module AdminUI
       @params = params
       page = TopMenu.instance.route_names[route]
       deftitle = title || File.basename(route).capitalize
-      @title = title || page ? page.fetch(:title, deftitle) : deftitle
+      calctitle = page ? page.fetch(:title, deftitle) : deftitle
+      @title = title ? title : calctitle
       @description = TopMenu.instance.description_for_route(@route)
       @breadcrumbs = breadcrumbs
       # Breadcrumbs are an array of hashes with keys :title and :url
