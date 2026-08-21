@@ -318,6 +318,6 @@ module AdminUI
       }
     end
 
-    attr_accessor :title, :route, :ctime
+    attr_accessor :title, :route, :ctime, :auxtitle
   end
 end
