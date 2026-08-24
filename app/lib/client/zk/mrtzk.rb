@@ -819,7 +819,7 @@ module UC3Queue
     def save_snapshot
       res = []
       url = "http://#{@zk_hosts.first}:#{@admin_port}/commands/snapshot?streaming=true"
-      fname = "latest_snapshot.#{UC3::UC3Client.stack_name}.#{Time.new.strftime('%Y-%m-%d_%H:%M:%S')}.out"
+      fname = "latest_snapshot.#{UC3::UC3Client.stack_name}.#{Time.now.strftime('%Y-%m-%d_%H:%M:%S')}.out"
       puts `curl -H #{zk_auth} #{url} --output /tmp/#{fname}`
       path = "#{snapshot_path}/#{fname}"
       body = File.read("/tmp/#{fname}")

@@ -667,8 +667,10 @@ items:
         method: post
     - title: S3 Folders
       route: /ops/show-s3folders/list
+      disable: ecs-dbsnapshot, ecs-ephemeral, ecs-prd
     - title: S3 Folders (Deleted)
       route: /ops/show-deleted-files/
+      disable: ecs-dbsnapshot, ecs-ephemeral, ecs-prd
   - path: db-queue
     title: Database Queues
     route: /ops/db-queue
