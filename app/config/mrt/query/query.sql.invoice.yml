@@ -121,7 +121,7 @@ queries:
       from
         owner_collections c
       where
-        ogroup = campus.ogroup
+        ogroup = (select ogroup from campus)
       group by
         own_name
       union
@@ -221,7 +221,7 @@ queries:
       from
         owner_collections c
       where
-        ogroup = campus.ogroup
+        ogroup = (select ogroup from campus)
       union
       select
         'ZZ Campus 10TB Discount' as own_name,
