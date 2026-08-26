@@ -32,6 +32,7 @@ queries:
           select sum(x.val)
           from (
             select
+              c.mnemonic, 
               ifnull(avg(billable_size) / 1000000000.0, 0) val
             from
               daily_billing db,
@@ -42,12 +43,15 @@ queries:
               c.inv_owner_id = db.inv_owner_id
             and
               billing_totals_date = fydates.start
+            group by
+              c.mnemonic
           ) as x
         ) as start_size_gb,
         (
           select sum(x.val)
           from (
             select 
+              c.mnemonic,
               ifnull(avg(billable_size) / 1000000000.0, 0) val
             from
               daily_billing db,
@@ -58,12 +62,15 @@ queries:
               c.inv_owner_id = db.inv_owner_id
             and
               billing_totals_date = fydates.dytd
+            group by
+              c.mnemonic
           ) as x
         ) as ytd_size_gb,
         (
           select sum(x.val)
           from (
             select 
+              c.mnemonic,
               ifnull(avg(billable_size)  / 1000000000.0, 0) val
             from
               daily_billing db,
@@ -74,6 +81,8 @@ queries:
               c.inv_owner_id = db.inv_owner_id
             and
               billing_totals_date = date_add(fydates.end, interval -1 day)
+            group by
+              c.mnemonic
           ) as x
         ) as end_size_gb,
         (
@@ -101,7 +110,9 @@ queries:
         (
           select sum(x.val)
           from (
-            select avg(billable_size) / 1000000000.0 val
+            select 
+              c.mnemonic,
+              avg(billable_size) / 1000000000.0 val
             from
               daily_billing db,
               fydates
@@ -113,6 +124,8 @@ queries:
               billing_totals_date >= fydates.start
             and
               billing_totals_date <= fydates.dytd
+            group by
+              c.mnemonic
           ) as x
         ) as average_available_gb,
         (
