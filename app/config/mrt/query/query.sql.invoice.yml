@@ -29,43 +29,52 @@ queries:
         own_name,
         '_OWNER TOTAL' as mnemonic,
         (
-          select
-            sum(ifnull(avg(billable_size) / 1000000000.0, 0))
-          from
-            daily_billing db,
-            fydates
-          where
-            c.inv_collection_id = db.inv_collection_id
-          and
-            c.inv_owner_id = db.inv_owner_id
-          and
-            billing_totals_date = fydates.start
+          select sum(x.val)
+          from (
+            select
+              ifnull(avg(billable_size) / 1000000000.0, 0) val
+            from
+              daily_billing db,
+              fydates
+            where
+              c.inv_collection_id = db.inv_collection_id
+            and
+              c.inv_owner_id = db.inv_owner_id
+            and
+              billing_totals_date = fydates.start
+          ) as x
         ) as start_size_gb,
         (
-          select
-            sum(ifnull(avg(billable_size) / 1000000000.0, 0))
-          from
-            daily_billing db,
-            fydates
-          where
-            c.inv_collection_id = db.inv_collection_id
-          and
-            c.inv_owner_id = db.inv_owner_id
-          and
-            billing_totals_date = fydates.dytd
+          select sum(x.val)
+          from (
+            select 
+              ifnull(avg(billable_size) / 1000000000.0, 0) val
+            from
+              daily_billing db,
+              fydates
+            where
+              c.inv_collection_id = db.inv_collection_id
+            and
+              c.inv_owner_id = db.inv_owner_id
+            and
+              billing_totals_date = fydates.dytd
+          ) as x
         ) as ytd_size_gb,
         (
-          select
-            sum(ifnull(avg(billable_size)  / 1000000000.0, 0))
-          from
-            daily_billing db,
-            fydates
-          where
-            c.inv_collection_id = db.inv_collection_id
-          and
-            c.inv_owner_id = db.inv_owner_id
-          and
-            billing_totals_date = date_add(fydates.end, interval -1 day)
+          select sum(x.val)
+          from (
+            select 
+              ifnull(avg(billable_size)  / 1000000000.0, 0) val
+            from
+              daily_billing db,
+              fydates
+            where
+              c.inv_collection_id = db.inv_collection_id
+            and
+              c.inv_owner_id = db.inv_owner_id
+            and
+              billing_totals_date = date_add(fydates.end, interval -1 day)
+          ) as x
         ) as end_size_gb,
         (
           select ytd_size_gb - start_size_gb
@@ -90,19 +99,21 @@ queries:
           from fydates
         ) as days_projected,
         (
-          select
-            sum(avg(billable_size) / 1000000000.0)
-          from
-            daily_billing db,
-            fydates
-          where
-            c.inv_collection_id = db.inv_collection_id
-          and
-            c.inv_owner_id = db.inv_owner_id
-          and
-            billing_totals_date >= fydates.start
-          and
-            billing_totals_date <= fydates.dytd
+          select sum(x.val)
+          from (
+            select avg(billable_size) / 1000000000.0 val
+            from
+              daily_billing db,
+              fydates
+            where
+              c.inv_collection_id = db.inv_collection_id
+            and
+              c.inv_owner_id = db.inv_owner_id
+            and
+              billing_totals_date >= fydates.start
+            and
+              billing_totals_date <= fydates.dytd
+          ) as x
         ) as average_available_gb,
         (
           select
