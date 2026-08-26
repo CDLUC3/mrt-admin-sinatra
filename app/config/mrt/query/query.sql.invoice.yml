@@ -7,7 +7,8 @@ queries:
       including the 10TB storage allocation made available to each main campus library free of recharge.
     totals: true
     sql: |
-      WITH fyear as
+      WITH 
+      fyear as
         (select concat(?,'-07-01') as start),
       fyend as
         (select date_add(fyear.start, INTERVAL 1 YEAR) as end from fyear),
@@ -22,7 +23,8 @@ queries:
           fyend
         where
           billing_totals_date < fyend.end
-      )
+      ),
+      campus as (select ? as ogroup)
       select
         own_name,
         'OWNER TOTAL' as mnemonic,
@@ -119,7 +121,7 @@ queries:
       from
         owner_collections c
       where
-        ogroup = ?
+        ogroup = campus.ogroup
       group by
         own_name
       union
@@ -219,7 +221,7 @@ queries:
       from
         owner_collections c
       where
-        ogroup = ?
+        ogroup = campus.ogroup
       union
       select
         'ZZ Campus 10TB Discount' as own_name,
