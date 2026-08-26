@@ -209,7 +209,7 @@ queries:
         ) as diff_size_gb,
         (
           select
-            count(billable_size)
+            count(distinct billing_totals_date)
           from
             daily_billing db,
             fydates
