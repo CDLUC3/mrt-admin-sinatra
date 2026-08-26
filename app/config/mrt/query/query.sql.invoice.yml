@@ -10,6 +10,7 @@ queries:
       WITH 
       fyear as
         (select concat(?,'-07-01') as start),
+      campus as (select ? as ogroup),
       fyend as
         (select date_add(fyear.start, INTERVAL 1 YEAR) as end from fyear),
       fydates as (
@@ -23,8 +24,7 @@ queries:
           fyend
         where
           billing_totals_date < fyend.end
-      ),
-      campus as (select ? as ogroup)
+      )
       select
         own_name,
         '_OWNER TOTAL' as mnemonic,
@@ -36,8 +36,11 @@ queries:
               ifnull(avg(billable_size) / 1000000000.0, 0) val
             from
               daily_billing db,
-              fydates
+              fydates,
+              owner_collections c
             where
+              c.ogroup = (select ogroup from campus)
+            and
               c.inv_collection_id = db.inv_collection_id
             and
               c.inv_owner_id = db.inv_owner_id
@@ -55,8 +58,11 @@ queries:
               ifnull(avg(billable_size) / 1000000000.0, 0) val
             from
               daily_billing db,
-              fydates
+              fydates,
+              owner_collections c
             where
+              c.ogroup = (select ogroup from campus)
+            and
               c.inv_collection_id = db.inv_collection_id
             and
               c.inv_owner_id = db.inv_owner_id
@@ -74,8 +80,11 @@ queries:
               ifnull(avg(billable_size)  / 1000000000.0, 0) val
             from
               daily_billing db,
-              fydates
+              fydates,
+              owner_collections c
             where
+              c.ogroup = (select ogroup from campus)
+            and
               c.inv_collection_id = db.inv_collection_id
             and
               c.inv_owner_id = db.inv_owner_id
@@ -115,8 +124,11 @@ queries:
               avg(billable_size) / 1000000000.0 val
             from
               daily_billing db,
-              fydates
+              fydates,
+              owner_collections c
             where
+              c.ogroup = (select ogroup from campus)
+            and
               c.inv_collection_id = db.inv_collection_id
             and
               c.inv_owner_id = db.inv_owner_id
