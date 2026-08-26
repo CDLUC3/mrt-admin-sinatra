@@ -178,8 +178,6 @@ queries:
             daily_billing db,
             fydates
           where
-            c.inv_collection_id = db.inv_collection_id
-          and
             c.inv_owner_id = db.inv_owner_id
           and
             billing_totals_date = fydates.start
@@ -191,8 +189,6 @@ queries:
             daily_billing db,
             fydates
           where
-            c.inv_collection_id = db.inv_collection_id
-          and
             c.inv_owner_id = db.inv_owner_id
           and
             billing_totals_date = fydates.dytd
@@ -204,8 +200,6 @@ queries:
             daily_billing db,
             fydates
           where
-            c.inv_collection_id = db.inv_collection_id
-          and
             c.inv_owner_id = db.inv_owner_id
           and
             billing_totals_date = date_add(fydates.end, interval -1 day)
@@ -220,8 +214,6 @@ queries:
             daily_billing db,
             fydates
           where
-            c.inv_collection_id = db.inv_collection_id
-          and
             c.inv_owner_id = db.inv_owner_id
           and
             billing_totals_date >= fydates.start
@@ -239,8 +231,6 @@ queries:
             daily_billing db,
             fydates
           where
-            c.inv_collection_id = db.inv_collection_id
-          and
             c.inv_owner_id = db.inv_owner_id
           and
             billing_totals_date >= fydates.start
