@@ -170,91 +170,120 @@ queries:
           billing_totals_date < fyend.end
       )
       select
-        own_name,
-        (
+        coll_totals.own_name,
+        sum(start_size_gb) as start_size_gb,
+        sum(ytd_size_gb) as ytd_size_gb,
+        sum(end_size_gb) as end_size_gb,
+        sum(diff_size_gb) as diff_size_gb,
+        avg(days_available) as days_available,
+        avg(days_projected) as days_projected,
+        sum(average_available_gb) as average_available_gb,
+        sum(daily_average_projected_gb) as daily_average_projected_gb,
+        sum(size) as size,
+        avg(cost) as cost
+        from (
           select
-            ifnull(avg(billable_size) / 1000000000.0, 0)
-          from
-            daily_billing db,
-            fydates
-          where
-            c.inv_owner_id = db.inv_owner_id
-          and
-            billing_totals_date = fydates.start
-        ) as start_size_gb,
-        (
-          select
-            ifnull(avg(billable_size) / 1000000000.0, 0)
-          from
-            daily_billing db,
-            fydates
-          where
-            c.inv_owner_id = db.inv_owner_id
-          and
-            billing_totals_date = fydates.dytd
-        ) as ytd_size_gb,
-        (
-          select
-            ifnull(avg(billable_size)  / 1000000000.0, 0)
-          from
-            daily_billing db,
-            fydates
-          where
-            c.inv_owner_id = db.inv_owner_id
-          and
-            billing_totals_date = date_add(fydates.end, interval -1 day)
-        ) as end_size_gb,
-        (
-          select ytd_size_gb - start_size_gb
-        ) as diff_size_gb,
-        (
-          select
-            count(distinct billing_totals_date)
-          from
-            daily_billing db,
-            fydates
-          where
-            c.inv_owner_id = db.inv_owner_id
-          and
-            billing_totals_date >= fydates.start
-          and
-            billing_totals_date <= fydates.dytd
-        ) as days_available,
-        (
-          select if(datediff(fydates.end, fydates.dytd) = 0, 0, datediff(fydates.end, fydates.dytd) - 1)
-          from fydates
-        ) as days_projected,
-        (
-          select
-            avg(billable_size) / 1000000000.0
-          from
-            daily_billing db,
-            fydates
-          where
-            c.inv_owner_id = db.inv_owner_id
-          and
-            billing_totals_date >= fydates.start
-          and
-            billing_totals_date <= fydates.dytd
-        ) as average_available_gb,
-        (
-          select
+            own_name,
+            mnemonic,
             (
-              (average_available_gb * days_available) + 
-              (ytd_size_gb * days_projected)
-            ) / datediff(fydates.end, fydates.start)
-            from fydates
-        ) as daily_average_projected_gb,
-        (
-          select daily_average_projected_gb * 365
-        ) as size,
-        (
-          select size * 0.000410959
-        ) as cost
-      from
+              select
+                ifnull(avg(billable_size) / 1000000000.0, 0)
+              from
+                daily_billing db,
+                fydates
+              where
+                c.inv_collection_id = db.inv_collection_id
+              and
+                c.inv_owner_id = db.inv_owner_id
+              and
+                billing_totals_date = fydates.start
+            ) as start_size_gb,
+            (
+              select
+                ifnull(avg(billable_size) / 1000000000.0, 0)
+              from
+                daily_billing db,
+                fydates
+              where
+                c.inv_collection_id = db.inv_collection_id
+              and
+                c.inv_owner_id = db.inv_owner_id
+              and
+                billing_totals_date = fydates.dytd
+            ) as ytd_size_gb,
+            (
+              select
+                ifnull(avg(billable_size)  / 1000000000.0, 0)
+              from
+                daily_billing db,
+                fydates
+              where
+                c.inv_collection_id = db.inv_collection_id
+              and
+                c.inv_owner_id = db.inv_owner_id
+              and
+                billing_totals_date = date_add(fydates.end, interval -1 day)
+            ) as end_size_gb,
+            (
+              select ytd_size_gb - start_size_gb
+            ) as diff_size_gb,
+            (
+              select
+                count(billable_size)
+              from
+                daily_billing db,
+                fydates
+              where
+                c.inv_collection_id = db.inv_collection_id
+              and
+                c.inv_owner_id = db.inv_owner_id
+              and
+                billing_totals_date >= fydates.start
+              and
+                billing_totals_date <= fydates.dytd
+            ) as days_available,
+            (
+              select if(datediff(fydates.end, fydates.dytd) = 0, 0, datediff(fydates.end, fydates.dytd) - 1)
+              from fydates
+            ) as days_projected,
+            (
+              select
+                avg(billable_size) / 1000000000.0
+              from
+                daily_billing db,
+                fydates
+              where
+                c.inv_collection_id = db.inv_collection_id
+              and
+                c.inv_owner_id = db.inv_owner_id
+              and
+                billing_totals_date >= fydates.start
+              and
+                billing_totals_date <= fydates.dytd
+            ) as average_available_gb,
+            (
+              select
+                (
+                  (average_available_gb * days_available) + 
+                  (ytd_size_gb * days_projected)
+                ) / datediff(fydates.end, fydates.start)
+                from fydates
+            ) as daily_average_projected_gb,
+            (
+              select daily_average_projected_gb * 365
+            ) as size,
+            (
+              select size * 0.000410959
+            ) as cost
+          from
+            owner_collections c
+          where
+            ogroup = (select ogroup from campus)
+          group by
+            own_name,
+            mnemonic
+        ) as coll_totals,
         owner_collections c
-      where
-        ogroup = (select ogroup from campus)
       group by
         own_name
       order by 
