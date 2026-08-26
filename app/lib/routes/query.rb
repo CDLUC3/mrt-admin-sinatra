@@ -95,6 +95,7 @@ module Sinatra
 
       [
         '/queries/repository/campus/invoices',
+        '/queries/repository/campus/owners',
         '/queries/repository/mimes/campus',
         '/queries/repository/mimes/group'
       ].each do |path|
@@ -117,6 +118,22 @@ module Sinatra
           adminui_show_table(
             AdminUI::Context.new(request.path, request.params),
             UC3Query::QueryClient.client.query('/queries/repository/campus/invoices', request.params)
+          )
+        end
+      end
+
+      app.get '/queries/repository/campus/owners/*/*' do
+        request.params['year'] = params[:splat][0]
+        request.params['campus'] = params[:splat][1]
+
+        if request.params['campus'].to_s.empty?
+          adminui_show_none(
+            AdminUI::Context.new(request.path, request.params, show_formats: false)
+          )
+        else
+          adminui_show_table(
+            AdminUI::Context.new(request.path, request.params),
+            UC3Query::QueryClient.client.query('/queries/repository/campus/owners', request.params)
           )
         end
       end

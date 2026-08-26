@@ -442,6 +442,40 @@ items:
           route: /queries/repository/campus/invoices/2026/UCSF
         - title: Other
           route: /queries/repository/campus/invoices/2026/Other
+    - title: Campus Owners
+      path: owners
+      route: /queries/repository/campus/owners
+      breadcrumb: true
+      items:
+      - title: 'FY Begin 2026'
+        path: '2026'
+        route: /queries/repository/campus/owners/2026
+        breadcrumb: true
+        items:
+        - title: CDL
+          route: /queries/repository/campus/owners/2026/CDL
+        - title: UCB
+          route: /queries/repository/campus/owners/2026/UCB
+        - title: UCD
+          route: /queries/repository/campus/owners/2026/UCD
+        - title: UCI
+          route: /queries/repository/campus/owners/2026/UCI
+        - title: UCLA
+          route: /queries/repository/campus/owners/2026/UCLA
+        - title: UCM
+          route: /queries/repository/campus/owners/2026/UCM
+        - title: UCR
+          route: /queries/repository/campus/owners/2026/UCR
+        - title: UCSB
+          route: /queries/repository/campus/owners/2026/UCSB
+        - title: UCSC
+          route: /queries/repository/campus/owners/2026/UCSC
+        - title: UCSD
+          route: /queries/repository/campus/owners/2026/UCSD
+        - title: UCSF
+          route: /queries/repository/campus/owners/2026/UCSF
+        - title: Other
+          route: /queries/repository/campus/owners/2026/Other
   - path: consistency
     title: Consistency
     route: /queries/consistency
