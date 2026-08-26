@@ -27,10 +27,10 @@ queries:
       campus as (select ? as ogroup)
       select
         own_name,
-        'OWNER TOTAL' as mnemonic,
+        '_OWNER TOTAL' as mnemonic,
         (
           select
-            ifnull(avg(billable_size) / 1000000000.0, 0)
+            sum(ifnull(avg(billable_size) / 1000000000.0, 0))
           from
             daily_billing db,
             fydates
@@ -43,7 +43,7 @@ queries:
         ) as start_size_gb,
         (
           select
-            ifnull(avg(billable_size) / 1000000000.0, 0)
+            sum(ifnull(avg(billable_size) / 1000000000.0, 0))
           from
             daily_billing db,
             fydates
@@ -56,7 +56,7 @@ queries:
         ) as ytd_size_gb,
         (
           select
-            ifnull(avg(billable_size)  / 1000000000.0, 0)
+            sum(ifnull(avg(billable_size)  / 1000000000.0, 0))
           from
             daily_billing db,
             fydates
@@ -91,7 +91,7 @@ queries:
         ) as days_projected,
         (
           select
-            avg(billable_size) / 1000000000.0
+            sum(avg(billable_size) / 1000000000.0)
           from
             daily_billing db,
             fydates
