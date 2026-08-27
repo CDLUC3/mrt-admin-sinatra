@@ -282,8 +282,7 @@ queries:
           group by
             own_name,
             mnemonic
-        ) as coll_totals,
-        owner_collections c
+        ) as coll_totals
       group by
         own_name
       order by 
