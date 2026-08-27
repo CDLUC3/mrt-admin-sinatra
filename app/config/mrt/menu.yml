@@ -447,6 +447,35 @@ items:
       route: /queries/repository/campus/owners
       breadcrumb: true
       items:
+      - title: 'FY Begin 2025'
+        path: '2025'
+        route: /queries/repository/campus/owners/2025
+        breadcrumb: true
+        items:
+        - title: CDL
+          route: /queries/repository/campus/owners/2025/CDL
+        - title: UCB
+          route: /queries/repository/campus/owners/2025/UCB
+        - title: UCD
+          route: /queries/repository/campus/owners/2025/UCD
+        - title: UCI
+          route: /queries/repository/campus/owners/2025/UCI
+        - title: UCLA
+          route: /queries/repository/campus/owners/2025/UCLA
+        - title: UCM
+          route: /queries/repository/campus/owners/2025/UCM
+        - title: UCR
+          route: /queries/repository/campus/owners/2025/UCR
+        - title: UCSB
+          route: /queries/repository/campus/owners/2025/UCSB
+        - title: UCSC
+          route: /queries/repository/campus/owners/2025/UCSC
+        - title: UCSD
+          route: /queries/repository/campus/owners/2025/UCSD
+        - title: UCSF
+          route: /queries/repository/campus/owners/2025/UCSF
+        - title: Other
+          route: /queries/repository/campus/owners/2025/Other
       - title: 'FY Begin 2026'
         path: '2026'
         route: /queries/repository/campus/owners/2026
@@ -571,6 +600,8 @@ items:
         route: /queries/content/mnemonic/ucsc-objects-preview
       - title: UCSC Object Listing (☁️)
         route: /queries/content/mnemonic/ucsc-objects
+    - title: PAD Team Zero Byte PDF Report
+      route: /queries/content/pad-team-zero-byte-pdf    
   - title: Saved Reports (☁️)
     route: /saved-reports/list
     description: |

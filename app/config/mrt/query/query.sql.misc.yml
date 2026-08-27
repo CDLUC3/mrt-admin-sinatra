@@ -213,3 +213,30 @@ queries:
         inv.inv_files
       where
         created > date_add(now(), interval -10 minute)
+  /queries/content/pad-team-zero-byte-pdf:
+    sql: |
+      select distinct 
+        c.mnemonic, 
+        o.ark, 
+        f.pathname 
+      from 
+        inv.inv_files f
+      inner join 
+        inv.inv_objects o on f.inv_object_id=o.id
+      inner join 
+        inv.inv_collections_inv_objects icio on o.id=icio.inv_object_id
+      inner join 
+       inv.inv_collections c on icio.inv_collection_id=c.id
+      where 
+        full_size=0 
+        and lower(pathname) like '%.pdf'
+        and c.mnemonic in (
+          'cdl_dsc', 
+          'cdl_eartharxiv', 
+          'cdl_ecoevo', 
+          'escholarship', 
+          'cdl_escholarship_editions', 
+          'cdl_escholarship_mtpo', 
+          'cdl_mcgrawhill_ebooks'
+        )
+      order by c.mnemonic, o.ark, pathname
