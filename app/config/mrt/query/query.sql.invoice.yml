@@ -180,7 +180,7 @@ queries:
         sum(average_available_gb) as average_available_gb,
         sum(daily_average_projected_gb) as daily_average_projected_gb,
         sum(size) as size,
-        avg(cost) as cost
+        sum(cost) as cost
         from (
           select
             own_name,
