@@ -1384,6 +1384,16 @@ items:
           disable: default, docker, ecs-dbsnapshot
           confmsg: This will run a job in the merritt-ops2 container
           method: post
+        - title: Run Downtime Start
+          route: /infra/ecs/tasks/launch/merritt-ops2/runDowntimeStart
+          disable: default, docker, ecs-dbsnapshot, ecs-ephemeral
+          confmsg: This will run a job in the merritt-ops2 container
+          method: post
+        - title: Run Downtime End
+          route: /infra/ecs/tasks/launch/merritt-ops2/runDowntimeEnd
+          disable: default, docker, ecs-dbsnapshot, ecs-ephemeral
+          confmsg: This will run a job in the merritt-ops2 container
+          method: post
       - title: Service Testing
         path: merritt-ops-testing
         route: /infra/ecs/tasks/launch/merritt-ops
