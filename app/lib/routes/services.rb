@@ -897,9 +897,13 @@ module Sinatra
       open_timeout: MONITOR_OPEN_TIMEOUT)
       resp = get_url_timing(url, read_timeout: read_timeout, open_timeout: open_timeout)
       state = 'SKIP'
-      unless resp[:error].empty?
-        resp[:message] = resp[:error]
-        state = 'FAIL'
+      if service == :proxy
+        resp[:message] = resp[:body]
+      else
+        unless resp[:error].empty?
+          resp[:message] = resp[:error]
+          state = 'FAIL'
+        end
       end
       state = 'PASS' if resp[:code] == 200
 
@@ -973,9 +977,6 @@ module Sinatra
           end
         end
 
-        if service == :proxy
-          resp[:message] = ""
-        end
       end
 
       {
