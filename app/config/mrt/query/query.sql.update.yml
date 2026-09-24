@@ -265,7 +265,7 @@ queries:
       where
         maint_status == 'review'
       and
-        s3key like concat('ark:/99999/test', '%')
+        s3key like 'ark:/99999/test%'
       and
         inv_node_id = (
           select

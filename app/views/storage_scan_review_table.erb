@@ -21,10 +21,6 @@
     <input type="hidden" name="idlist" value="" id="review_ids">
     <input type="submit" value="Mark Page for Review"/>
   </form>
-  <form method="POST" action="/queries-update/storage-maints/batch-flag-unittest">
-    <input type="hidden" name="node_number" value="<%= node_number %>">
-    <input type="submit" value="Mark Unit Test Artifacts for Delete"/>
-  </form>
   <% end %>
   <% if status != 'hold' %>
   <form method="POST" action="/queries-update/storage-maints/batch-update-status">
@@ -38,6 +34,12 @@
     <input type="hidden" name="node_number" value="<%= node_number %>">
     <input type="submit" value="Process Deletions" id="processdel"
       <% if storage_mgt_disabled %>disabled<% end %> class="button_red"/>
+  </form>
+  <% end %>
+  <% if status == 'review' %>
+  <form method="POST" action="/queries-update/storage-maints/batch-flag-unittest">
+    <input type="hidden" name="node_number" value="<%= node_number %>">
+    <input type="submit" value="Mark Unit Test Artifacts for Delete"/>
   </form>
   <% end %>
   <% if status.empty? %>
