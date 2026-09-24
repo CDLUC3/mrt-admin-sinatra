@@ -972,6 +972,10 @@ module Sinatra
             resp[:message] = "JSON returned for #{checkname}"
           end
         end
+
+        if service == :proxy
+          resp[:message] = ""
+        end
       end
 
       {
