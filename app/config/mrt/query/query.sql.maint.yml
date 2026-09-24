@@ -319,6 +319,7 @@ queries:
     sql: |
       {{{SCANREVSEL}}}
       {{{SCANREV}}}
+      LIMIT 5000
     parameters:
     - name: node_number
       type: integer

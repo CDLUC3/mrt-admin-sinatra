@@ -254,6 +254,30 @@ queries:
       type: integer
     - name: node_number
       type: integer
+  /queries-update/storage-maints/batch-flag-unittest:
+    update: true
+    sql: |
+      update
+        inv.inv_storage_maints
+      set
+        maint_status = 'delete',
+        note = 'unit test artifact'
+      where
+        maint_status == 'review'
+      and
+        s3key like concat('ark:/99999/test', '%')
+      and
+        inv_node_id = (
+          select
+            id
+          from
+            inv.inv_nodes
+          where
+            number = ?
+        )
+    parameters:
+    - name: node_number
+      type: integer
   /queries-update/admin/update-collection:
     update: true
     sql: |
