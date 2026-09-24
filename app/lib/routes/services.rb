@@ -20,6 +20,10 @@ module Sinatra
     STOP_ENDPOINT = 'service/stop?t=json'
     BUILD_TAG_ENDPOINT = 'static/build.content.txt'
 
+    def proxy_path
+      ENV.fetch('PROXY_PATH', '')
+    end
+
     def ui_host
       host = ENV.fetch('SVC_UI', 'ui:8086')
       host =~ /^http/ ? host : "http://#{host}"
@@ -729,6 +733,7 @@ module Sinatra
         states << check_mysql
         states << check_zk
         states << check_ldap
+        states << monitor_service_status(:proxy, :state, proxy_path) unless proxy_path.empty?
 
         ui_hosts.each do |host|
           states << monitor_service_status(:ui, :state, "#{host}/state.json")
