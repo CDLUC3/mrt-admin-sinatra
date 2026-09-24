@@ -899,6 +899,7 @@ module Sinatra
       state = 'SKIP'
       if service == :proxy
         resp[:message] = resp[:body]
+        state = 'FAIL' if resp[:code] != 200
       else
         unless resp[:error].empty?
           resp[:message] = resp[:error]
