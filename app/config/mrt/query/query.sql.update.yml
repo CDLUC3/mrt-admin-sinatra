@@ -263,7 +263,7 @@ queries:
         maint_status = 'delete',
         note = 'unit test artifact'
       where
-        maint_status == 'review'
+        maint_status = 'review'
       and
         s3key like 'ark:/99999/test%'
       and
