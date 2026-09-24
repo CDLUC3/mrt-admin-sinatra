@@ -193,6 +193,13 @@ module Sinatra
         redirect request.referrer
       end
 
+      app.post '/queries-update/storage-maints/batch-flag-unittest' do
+        UC3Query::QueryClient.client.query_update(
+          '/queries-update/storage-maints/batch-flag-unittest', request.params
+        )
+        redirect request.referrer
+      end
+
       app.post '/queries-update/audit/active-batches-clear' do
         UC3Query::QueryClient.client.query_update(request.path, request.params)
         redirect request.referrer

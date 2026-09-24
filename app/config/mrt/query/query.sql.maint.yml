@@ -323,10 +323,12 @@ queries:
     - name: node_number
       type: integer
   /ops/storage/scans/review-state:
+    description: "NOTE: a max of 5000 rows will be returned. Use the CSV download for a complete list."
     sql: |
       {{{SCANREVSEL}}}
       {{{SCANREV}}}
       and maint_status = ?
+      LIMIT 5000
     parameters:
     - name: node_number
       type: integer

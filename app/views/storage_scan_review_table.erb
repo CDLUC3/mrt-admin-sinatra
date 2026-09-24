@@ -42,6 +42,10 @@
     <input type="hidden" name="node_number" value="<%= node_number %>">
     <input type="submit" value="Download Review List as CSV"/>
   </form>
+  <form method="POST" action="/queries-update/storage-maints/batch-flag-unittest">
+    <input type="hidden" name="node_number" value="<%= node_number %>">
+    <input type="submit" value="Mark Unit Test Artifacts for Delete"/>
+  </form>
   <input id="applycsv" data="<%= node_number %>" type="button" value="Apply Review Changes from CSV"/>
   <% end %>
 </fieldset>
