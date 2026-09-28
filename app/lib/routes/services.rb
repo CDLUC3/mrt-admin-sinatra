@@ -818,7 +818,7 @@ module Sinatra
 
     def java_service_send_stop_start(service, endpoint)
       tendpoint = endpoint.dup
-      tendpoint = endpoint.gsub(/stop/, 'pause') if endpoint =~ /stop/ && service == 'replic'
+      tendpoint = endpoint.gsub('stop', 'pause') if endpoint =~ /stop/ && service == 'replic'
       service_urls(service).map do |url|
         ::JSON.parse(post_url("#{url}/#{tendpoint}"))
       end
