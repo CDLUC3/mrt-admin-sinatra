@@ -10,7 +10,7 @@ queries:
       WITH 
       fyear as
         (select concat(?,'-07-01') as start),
-      campus as (select ? as ogroup),
+      campus as (select convert(? using latin1) as ogroup),
       fyend as
         (select date_add(fyear.start, INTERVAL 1 YEAR) as end from fyear),
       fydates as (
@@ -154,7 +154,7 @@ queries:
       WITH 
       fyear as
         (select concat(?,'-07-01') as start),
-      campus as (select ? as ogroup),
+      campus as (select convert(? using latin1) as ogroup),
       fyend as
         (select date_add(fyear.start, INTERVAL 1 YEAR) as end from fyear),
       fydates as (
