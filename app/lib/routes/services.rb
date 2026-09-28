@@ -817,9 +817,10 @@ module Sinatra
     end
 
     def java_service_send_stop_start(service, endpoint)
-      endpoint.gsub!(/stop/, 'pause') if endpoint =~ /stop/ && service == 'replic'
+      tendpoint = endpoint
+      tendpoint.gsub!(/stop/, 'pause') if endpoint =~ /stop/ && service == 'replic'
       service_urls(service).map do |url|
-        ::JSON.parse(post_url("#{url}/#{endpoint}"))
+        ::JSON.parse(post_url("#{url}/#{tendpoint}"))
       end
     rescue StandardError => e
       logger.error("Error sending #{endpoint} to #{service} instances: #{e}")
