@@ -1466,7 +1466,7 @@ items:
         - title: Nuxeo Init
           route: /infra/ecs/tasks/launch/merritt-ops-batch/nuxeoInit
           confmsg: Run Nuxeo Ingests
-          disable: ecs-prd, ecs-dev
+          disable: ecs-dev
           method: post
     - title: Task Logs
       route: /ops/cloudwatch/logs/tasks
