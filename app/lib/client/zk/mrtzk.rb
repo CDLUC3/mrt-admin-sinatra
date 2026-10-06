@@ -155,6 +155,13 @@ module UC3Queue
           cssclass: 'button',
           disabled: !%w[Failed Completed].include?(status)
         }
+        batch[:actions] << {
+          value: 'Requeue Batch',
+          href: "/ops/zk/ingest/batch/requeue/#{id}",
+          post: true,
+          cssclass: 'button',
+          disabled: !%w[Failed].include?(status) || batch[:jobCount].to_i.positive?
+        }
         table.add_row(
           AdminUI::Row.make_row(
             table.columns,
