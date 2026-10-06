@@ -197,6 +197,18 @@ module Sinatra
         end
       end
 
+      app.post '/ops/zk/ingest/batch/requeue/*' do
+        id = params[:splat][0]
+        begin
+          UC3Queue::ZKClient.client.requeue_ingest_batch(id)
+          content_type :json
+          { message: "#{id} requeued" }.to_json
+        rescue StandardError => e
+          content_type :json
+          { batch: id, message: "ERROR: #{e.class}: #{e.message}" }.to_json
+        end
+      end
+
       app.post '/ops/zk/ingest/job/hold/*' do
         id = params[:splat][0]
         begin

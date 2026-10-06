@@ -743,6 +743,25 @@ module UC3Queue
       end
     end
 
+    def requeue_ingest_batch(queueid)
+      ZK.open(@zkconn, timeout: 2) do |zk|
+        batch = MerrittZK::Batch.new(queueid)
+
+        batch.load(zk)
+
+        if batch.get_processing_jobs(zk).positive? ||
+           batch.get_failed_jobs(zk).positive? ||
+           batch.get_completed_jobs(zk).positive?
+          return
+        end
+
+        batch.lock(zk)
+        batch.set_status(zk, MerrittZK::BatchState::Pending)
+
+        batch.unlock(zk)
+      end
+    end
+
     def hold_ingest_job(queueid)
       ZK.open(@zkconn, timeout: 2) do |zk|
         j = MerrittZK::Job.new(queueid)
