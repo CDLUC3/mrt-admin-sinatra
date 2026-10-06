@@ -749,9 +749,9 @@ module UC3Queue
 
         batch.load(zk)
 
-        unless batch.get_processing_jobs(zk).positive? ||
-               batch.get_failed_jobs(zk).positive? ||
-               batch.get_completed_jobs(zk).positive?
+        unless batch.get_processing_jobs(zk).length.positive? ||
+               batch.get_failed_jobs(zk).length.positive? ||
+               batch.get_completed_jobs(zk).length.positive?
           batch.lock(zk)
           batch.set_status(zk, MerrittZK::BatchState::Pending)
           batch.unlock(zk)
