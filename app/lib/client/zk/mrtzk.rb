@@ -754,6 +754,7 @@ module UC3Queue
                batch.get_completed_jobs(zk).length.positive?
           batch.lock(zk)
           batch.set_status(zk, MerrittZK::BatchState::Pending)
+          zk.delete("#{batch.path}/states") if zk.exists?("#{batch.path}/states")
           batch.unlock(zk)
         end
 
