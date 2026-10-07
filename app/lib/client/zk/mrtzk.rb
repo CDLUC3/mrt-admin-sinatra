@@ -505,7 +505,8 @@ module UC3Queue
       table
     end
 
-    def dump_node_data_table(nodedump, status, mod: false)
+    def dump_node_data_table(nodedump, status, route: nil, params: nil, mod: false)
+      edit = "\n\n[Edit Node](#{route}?zkpath=#{params['zkpath']}&mode=data&mod=true)"
       cols = [
         AdminUI::Column.new(:node, header: 'Node'),
         AdminUI::Column.new(:nodedata, header: 'Node Data'),
@@ -515,7 +516,7 @@ module UC3Queue
       table = AdminUI::FilterTable.new(
         columns: cols,
         status: status,
-        description: TDESC
+        description: TDESC + edit
       )
       nodedump.each do |row|
         row.each do |node, value|
@@ -527,13 +528,19 @@ module UC3Queue
             nodedata: JSON.pretty_generate(value)
           }
           if mod
-            data[:action] = {
+            data[:action] = []
+            data[:action] << {
               value: 'Delete',
               href: '/ops/zk/nodes/delete',
               post: true,
               cssclass: 'button',
               confmsg: "Are you sure you want to delete #{node} and any of its child nodes?",
               data: node
+            }
+            data[:action] << {
+              value: 'Edit Node',
+              href: "/ops/zk/nodes/edit?zkpath=#{node}",
+              cssclass: 'button'
             }
           end
           table.add_row(
@@ -630,7 +637,7 @@ module UC3Queue
 
       case params.fetch('mode', 'node')
       when 'data'
-        dump_node_data_table(nodedump, status, mod: params.key?('mod'))
+        dump_node_data_table(nodedump, status, mod: params.key?('mod'), route: route, params: params)
       when 'test'
         dump_node_test_table(route, nodedump, status)
       else
@@ -757,7 +764,6 @@ module UC3Queue
           zk.delete("#{batch.path}/states") if zk.exists?("#{batch.path}/states")
           batch.unlock(zk)
         end
-
       end
     end
 
@@ -905,6 +911,41 @@ module UC3Queue
       end
     rescue StandardError => e
       logger.error("Error deleting node #{path}: #{e.message}")
+    end
+
+    def get_node(path)
+      data = nil
+      ZK.open(@zkconn, timeout: 2) do |zk|
+        return nil unless zk.exists?(path)
+
+        data = zk.get(path)[0]
+        return nil if data.nil?
+
+        begin
+          data = JSON.parse(data.encode('UTF-8', invalid: :replace, undef: :replace, replace: '?'),
+            symbolize_names: true)
+          if data.is_a?(Hash)
+            data = JSON.pretty_generate(data)
+            data = data.encode('UTF-8', invalid: :replace, undef: :replace, replace: '?')
+          elsif data.is_a?(String)
+            data = data.encode('UTF-8', invalid: :replace, undef: :replace, replace: '?')
+          end
+        rescue JSON::ParserError
+          logger.error("Error parsing JSON data for node #{path}")
+        end
+      end
+      data
+    rescue StandardError => e
+      logger.error("Error getting node #{path}: #{e.message}")
+      data
+    end
+
+    def update_node(path, value)
+      ZK.open(@zkconn, timeout: 2) do |zk|
+        zk.set(path, value) if zk.exists?(path)
+      end
+    rescue StandardError => e
+      logger.error("Error updating node #{path}: #{e.message}")
     end
 
     def lock_collection(mnemonic)

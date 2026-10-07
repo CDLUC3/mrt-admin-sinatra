@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'sinatra/base'
+require 'json'
 require 'uri'
 require_relative '../client/zk/mrtzk'
 require_relative '../ui/context'
@@ -82,6 +83,36 @@ module Sinatra
       rescue StandardError => e
         content_type :json
         { message: "ERROR: #{e.class}: #{e.message}" }.to_json
+      end
+
+      app.post '/ops/zk/nodes/edit' do
+        path = request.params['zkpath']
+        value = request.params['value']
+        zk = UC3Queue::ZKClient.client
+        if path.empty?
+          content_type :json
+          { message: 'No path specified' }.to_json
+        else
+          zk.update_node(path, value)
+          redirect "/ops/zk/nodes/node-names?zkpath=#{path}&mode=data&mod=true"
+        end
+      rescue StandardError => e
+        content_type :json
+        { message: "ERROR: #{e.class}: #{e.message}" }.to_json
+      end
+
+      app.get '/ops/zk/nodes/edit' do
+        path = request.params['zkpath']
+        zk = UC3Queue::ZKClient.client
+        zk.get_node(path)
+        value = zk.get_node(path)
+        classname = value.class.to_s
+        erb :zk_node_edit, layout: :page_layout, locals: {
+          context: AdminUI::Context.new(request.path, request.params),
+          zkpath: path,
+          value: value,
+          classname: classname
+        }
       end
 
       app.get '/ops/zk/ingest/batches' do

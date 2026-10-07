@@ -1,0 +1,55 @@
+<h2>Edit Node: <%= zkpath %></h2>
+<form method="POST" action="/ops/zk/nodes/edit">
+  <input type="hidden" name="zkpath" value="<%= zkpath %>"/>
+  <input type="hidden" name="zkpath" value="<%= zkpath %>"/>
+  <input id="classname" type="hidden" name="classname" value="<%= classname %>"/>
+  <div>
+  <textarea id="valueedit" name="value" rows="20" cols="120"><%= value %></textarea>
+  </div>
+  <p id="json-validation" role="status" aria-live="polite"></p>
+  <input id="save-node" type="submit" value="Save Node" disabled/>
+</form>
+<script type="text/javascript">
+$(document).ready(function() {
+  validate();
+  $('#valueedit').on('input', function() {
+    validate();
+  });
+  $('#save-node').closest('form').on('submit', function(event) {
+    if (!validate()) {
+      event.preventDefault();
+    }
+  });
+});
+function validate() {
+  const text = $('#valueedit').val();
+  const saveButton = $('#save-node');
+  const status = $('#json-validation');
+  const classname = $('#classname').val();
+  if (classname === 'Hash') {
+  try {
+    JSON.parse(text);
+    status.text('Valid JSON');
+    saveButton.prop('disabled', false);
+    return true;
+  } catch (error) {
+    status.text(`Invalid JSON: ${error.message}`);
+    saveButton.prop('disabled', true);
+    return false;
+  }
+  } else if (classname === 'Integer') {
+    if (!Number.isInteger(Number(text))) {
+      status.text('Invalid Integer');
+      saveButton.prop('disabled', true);
+      return false;
+    }
+    status.text('Valid Integer');
+    saveButton.prop('disabled', false);
+    return true;
+  } else {
+    status.text(`String Value`);
+    saveButton.prop('disabled', false);
+    return true;
+  }
+}
+</script>
