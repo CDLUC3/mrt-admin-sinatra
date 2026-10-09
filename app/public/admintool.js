@@ -164,7 +164,9 @@ function showTotals() {
     'ytd_size_gb',
     'average_available_gb',
     'daily_average_projected_gb',
-    'file_count'
+    'file_count',
+    'total_files',
+    'object_count'
   ];
   $("tfoot tr.totals").find("td").each(function() {
     var b = false;
