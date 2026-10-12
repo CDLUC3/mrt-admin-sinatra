@@ -188,7 +188,7 @@ module UC3Resources
               stopped: date_format(task.stopped_at, convert_timezone: true),
               last_status: task.last_status,
               actions: [
-                { href: "/infra/ecs/tasks/stop/#{id}", title: 'Stop', method: 'post' }
+                { href: "/infra/ecs/tasks/stop/#{id}", value: 'Stop', method: 'post', cssclass: 'button' }
               ]
             }
           end
