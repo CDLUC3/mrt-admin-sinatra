@@ -868,10 +868,12 @@ module UC3Queue
       path = "#{snapshot_path}/#{LATEST_SNAPSHOT}"
       body = UC3S3::ConfigObjectsClient.client.get_config(path)
       File.write("/tmp/#{LATEST_SNAPSHOT}", body)
+      data = []
       @zk_hosts.each do |zkhost|
         url = "http://#{zkhost}:#{@admin_port}/commands/restore"
-        puts `curl -H #{ct} -H #{zk_auth} -POST #{url} --data-binary "@/tmp/#{LATEST_SNAPSHOT}"`
+        data << `curl -H #{ct} -H #{zk_auth} -POST #{url} --data-binary "@/tmp/#{LATEST_SNAPSHOT}"`
       end
+      data
     end
 
     def zk_stat

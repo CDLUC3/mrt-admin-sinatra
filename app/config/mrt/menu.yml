@@ -695,9 +695,9 @@ items:
         method: post
     - title: ZK Maintenance
       route: /ops/zk/maintenance
-      disable: ecs-stg, ecs-prd
+      disable: ecs-prd
     - title: ZooKeeper Stat
-      disable: ecs-stg, ecs-prd
+      disable: ecs-prd
       route: /ops/zk/stat
   - path: ldap
     title: LDAP

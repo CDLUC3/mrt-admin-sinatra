@@ -384,8 +384,9 @@ module Sinatra
       end
 
       app.post '/ops/zk/restore' do
-        UC3Queue::ZKClient.client.restore_from_snapshot
-        redirect '/ops/zk/nodes/node-names?zkpath=/&mode=node'
+        data = UC3Queue::ZKClient.client.restore_from_snapshot
+        content_type :json
+        data.to_json
       end
 
       app.get '/ops/zk/stat' do
