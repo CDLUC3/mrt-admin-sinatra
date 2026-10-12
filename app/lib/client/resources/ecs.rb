@@ -186,7 +186,10 @@ module UC3Resources
               name: task.group,
               started: date_format(task.started_at, convert_timezone: true),
               stopped: date_format(task.stopped_at, convert_timezone: true),
-              last_status: task.last_status
+              last_status: task.last_status,
+              actions: [
+                { href: "/infra/ecs/tasks/stop/#{id}", title: 'Stop', method: 'post' }
+              ]
             }
           end
         end
@@ -203,7 +206,8 @@ module UC3Resources
           AdminUI::Column.new(:id, header: 'Id'),
           AdminUI::Column.new(:last_status, header: 'Status'),
           AdminUI::Column.new(:started, header: 'Started'),
-          AdminUI::Column.new(:stopped, header: 'Stopped')
+          AdminUI::Column.new(:stopped, header: 'Stopped'),
+          AdminUI::Column.new(:actions, header: 'Actions')
         ]
       )
       return table unless enabled
@@ -408,6 +412,15 @@ module UC3Resources
       return {} if deployment.nil? || deployment.empty?
 
       deployment[0].network_configuration
+    end
+
+    def stop_task(id)
+      return unless enabled
+
+      @client.stop_task(
+        cluster: UC3::UC3Client.cluster_name,
+        task: id
+      ).to_json
     end
 
     def run_service_task(_service, label)

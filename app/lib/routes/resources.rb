@@ -112,6 +112,11 @@ module Sinatra
         redirect '/infra/ecs/tasks/running'
       end
 
+      app.post '/infra/ecs/tasks/stop/*' do |id|
+        UC3Resources::ServicesClient.new.stop_task(id)
+        redirect '/infra/ecs/tasks/running'
+      end
+
       app.post '/infra/ecs/scale-up/*' do |service|
         UC3Resources::ServicesClient.new.scale_up_service(service)
         redirect '/infra/ecs/services/state'
