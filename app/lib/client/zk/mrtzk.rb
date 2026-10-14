@@ -177,10 +177,14 @@ module UC3Queue
       return jobs(params) unless params.empty?
 
       @colls = {}
+      timing = nil
 
       if enabled
         ZK.open(@zkconn, timeout: 2) do |zk|
-          jobs = MerrittZK::Job.list_jobs_as_json(zk)
+          jobs = []
+          timing = Benchmark.realtime do
+            jobs = MerrittZK::Job.list_jobs_as_json(zk)
+          end
           jobs = [] if jobs.nil?
           jobs.each do |job|
             @colls[job[:profile]] ||= {}
@@ -199,7 +203,8 @@ module UC3Queue
           AdminUI::Column.new(:jobstatus, header: 'Job Status'),
           AdminUI::Column.new(:jobCount, header: 'Job Count', cssclass: 'int'),
           AdminUI::Column.new(:space_needed, header: 'Space Needed GB', cssclass: 'float'),
-          AdminUI::Column.new(:status, header: 'Status')
+          AdminUI::Column.new(:status, header: 'Status'),
+          AdminUI::Column.new(:timing, header: 'Timing', cssclass: 'float')
         ],
         totals: true,
         status: status
@@ -225,7 +230,8 @@ module UC3Queue
                 },
                 jobCount: job_count,
                 space_needed: space_needed,
-                status: jobstatus == 'Failed' ? 'FAIL' : 'PASS'
+                status: jobstatus == 'Failed' ? 'FAIL' : 'PASS',
+                timing: timing
               }
             )
           )
