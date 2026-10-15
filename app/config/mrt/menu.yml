@@ -30,6 +30,9 @@ items:
   - title: Batches
     route: /ops/zk/ingest/batches
     disable: ecs-dbsnapshot
+  - title: Jobs by Batch
+    route: /ops/zk/ingest/jobs-by-batch
+    disable: ecs-dbsnapshot
   - title: Jobs
     route: /ops/zk/ingest/jobs-by-collection
     disable: ecs-dbsnapshot
