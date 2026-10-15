@@ -408,6 +408,7 @@ module UC3
         skiplist += %w[
           /ops/zk/ingest/jobs-by-collection/filtered
           /ops/zk/ingest/jobs-by-collection-and-batch/filtered
+          /ops/zk/ingest/jobs-by-batch/filtered
         ]
       end
 

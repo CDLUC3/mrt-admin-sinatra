@@ -124,8 +124,7 @@ module Sinatra
 
       [
         '/ops/zk/ingest/jobs-by-collection',
-        '/ops/zk/ingest/jobs-by-collection/filtered',
-        '/ops/zk/ingest/jobs-by-collection-and-batch/filtered'
+        '/ops/zk/ingest/jobs-by-collection/filtered'
       ].each do |path|
         app.get path do
           adminui_show_table(
@@ -137,25 +136,30 @@ module Sinatra
       end
 
       [
-        '/ops/zk/ingest/jobs-by-batch',
-        '/ops/zk/ingest/jobs-by-batch/filtered'
+        '/ops/zk/ingest/jobs-by-batch'
       ].each do |path|
         app.get path do
           adminui_show_table(
             AdminUI::Context.new(request.path, request.params),
-            UC3Queue::ZKClient.client.jobs_by_batch(request.path, request.params),
+            UC3Queue::ZKClient.client.jobs_by_batch(request.path),
             erb: :jobs_table
           )
         end
       end
 
-      app.get '/ops/zk/ingest/jobs-by-collection-and-batch' do
-        adminui_show_table(
-          AdminUI::Context.new(request.path, request.params),
-          UC3Queue::ZKClient.client.jobs_by_collection_and_batch(request.path, request.params)
-        )
+      [
+        '/ops/zk/ingest/jobs-by-collection-and-batch',
+        '/ops/zk/ingest/jobs-by-collection-and-batch/filtered',
+        '/ops/zk/ingest/jobs-by-batch/filtered'
+      ].each do |path|
+        app.get path do
+          adminui_show_table(
+            AdminUI::Context.new(request.path, request.params),
+            UC3Queue::ZKClient.client.jobs_by_collection_and_batch(request.path, request.params),
+            erb: :jobs_table
+          )
+        end
       end
-
       app.post '/ops/zk/ingest/pause' do
         UC3Queue::ZKClient.client.pause_ingest
         redirect '/ops/zk/nodes/node-names?zkpath=/locks&mode=node'

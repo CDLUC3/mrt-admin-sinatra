@@ -675,12 +675,12 @@ items:
       items:
       - title: Ingest Batches
         route: /ops/zk/ingest/batches
+      - title: Jobs by Batch (fastest load)
+        route: /ops/zk/ingest/jobs-by-batch
       - title: Jobs by Collection
         route: /ops/zk/ingest/jobs-by-collection
       - title: Jobs by Collection and Batch
         route: /ops/zk/ingest/jobs-by-collection-and-batch
-      - title: Jobs by Batch (fastest load)
-        route: /ops/zk/ingest/jobs-by-batch
       - title: Ingest Queue Maintenance
         route: /ops/zk/ingest/maintenance
     - path: access-queue
