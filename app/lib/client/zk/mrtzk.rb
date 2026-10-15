@@ -388,7 +388,15 @@ module UC3Queue
       jobs = []
       if enabled
         ZK.open(@zkconn, timeout: 2) do |zk|
-          jobs = MerrittZK::Job.list_jobs_as_json(zk)
+          bid = params.fetch('bid', '')
+          if bid.empty?
+            jobs = MerrittZK::Job.list_jobs_as_json(zk)
+          else
+            batch = MerrittZK::Batch.new(bid).load(zk)
+            batch.get_all_jobs(zk).each do |job|
+              jobs << MerrittZK::Job.jobjson(zk, job)
+            end
+          end
         end
         status = 'PASS'
       else
