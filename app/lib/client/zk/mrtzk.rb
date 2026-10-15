@@ -223,7 +223,7 @@ module UC3Queue
                   },
                   jobstatus: {
                     href: "#{jcb}?bid=#{bid}&bstatus=#{jobstatus}",
-                    value: jobstatus
+                    value: "Batch Jobs #{jobstatus.capitalize}"
                   },
                   jobCount: job_count,
                   status: jobstatus == 'Failed' ? 'FAIL' : 'PASS'
