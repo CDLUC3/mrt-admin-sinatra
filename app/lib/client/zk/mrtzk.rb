@@ -173,18 +173,74 @@ module UC3Queue
       table
     end
 
+    def jobs_by_batch(route, params)
+      return batch_jobs(params) unless params.empty?
+
+      @batches = {}
+
+      if enabled
+        ZK.open(@zkconn, timeout: 2) do |zk|
+          batches = MerrittZK::Batch.list_batches_as_json(zk)
+          batches = [] if batches.nil?
+          batches.each do |batch|
+            @batches[batch[:id]] ||= {}
+            @batches[batch[:id]]['completed'] = batch[:jobCountCompleted]
+            @batches[batch[:id]]['failed'] = batch[:jobCountFailed]
+            @batches[batch[:id]]['processing'] = batch[:jobCountProcessing]
+            @batches[batch[:id]]['deleted'] = batch[:jobCountDeleted]
+          end
+        end
+        status = 'PASS'
+      else
+        status = 'ERROR'
+      end
+
+      table = AdminUI::FilterTable.new(
+        columns: [
+          AdminUI::Column.new(:bid, header: 'Batch'),
+          AdminUI::Column.new(:jobstatus, header: 'Job Status'),
+          AdminUI::Column.new(:jobCount, header: 'Job Count', cssclass: 'int'),
+          AdminUI::Column.new(:status, header: 'Status')
+        ],
+        totals: true,
+        status: status
+      )
+      @batches.keys.sort.each do |bid|
+        @batches[bid].keys.sort.each do |jobstatus|
+          job_count = @batches[bid][jobstatus]
+          next if job_count.zero?
+          table.add_row(
+            AdminUI::Row.make_row(
+              table.columns,
+              {
+                bid: {
+                  href: "/ops/zk/ingest/jobs-by-batch/filtered?bid=#{bid}",
+                  value: bid
+                },
+                jobstatus: {
+                  href: "/ops/zk/ingest/jobs-by-batch/filtered?bid=#{bid}&status=#{jobstatus}",
+                  value: jobstatus
+                },
+                jobCount: job_count,
+                status: jobstatus == 'Failed' ? 'FAIL' : 'PASS'
+              }
+            )
+          )
+        end
+      end
+
+      record_status(route, table.status)
+      table
+    end
+
     def jobs_by_collection(route, params)
       return jobs(params) unless params.empty?
 
       @colls = {}
-      timing = nil
 
       if enabled
         ZK.open(@zkconn, timeout: 2) do |zk|
-          jobs = []
-          timing = Benchmark.realtime do
-            jobs = MerrittZK::Job.list_jobs_as_json(zk)
-          end
+          jobs = MerrittZK::Job.list_jobs_as_json(zk)
           jobs = [] if jobs.nil?
           jobs.each do |job|
             @colls[job[:profile]] ||= {}
@@ -203,8 +259,7 @@ module UC3Queue
           AdminUI::Column.new(:jobstatus, header: 'Job Status'),
           AdminUI::Column.new(:jobCount, header: 'Job Count', cssclass: 'int'),
           AdminUI::Column.new(:space_needed, header: 'Space Needed GB', cssclass: 'float'),
-          AdminUI::Column.new(:status, header: 'Status'),
-          AdminUI::Column.new(:timing, header: 'Timing', cssclass: 'float')
+          AdminUI::Column.new(:status, header: 'Status')
         ],
         totals: true,
         status: status
@@ -230,8 +285,7 @@ module UC3Queue
                 },
                 jobCount: job_count,
                 space_needed: space_needed,
-                status: jobstatus == 'Failed' ? 'FAIL' : 'PASS',
-                timing: timing
+                status: jobstatus == 'Failed' ? 'FAIL' : 'PASS'
               }
             )
           )
@@ -340,6 +394,134 @@ module UC3Queue
         next unless params.fetch('profile', job[:profile]) == job[:profile]
         next unless params.fetch('status', job[:status]) == job[:status]
         next unless params.fetch('bid', job[:bid]) == job[:bid]
+
+        id = job[:id]
+        status = job[:status].to_s
+
+        job[:id] = {
+          href: "/ops/zk/nodes/node-names?zkpath=/jobs/#{job[:id]}&mode=data",
+          value: job[:id]
+        }
+        job[:bid] = {
+          href: "/ops/zk/nodes/node-names?zkpath=/batches/#{job[:bid]}&mode=data",
+          value: job[:bid]
+        }
+        job[:submissionDate] = date_format(job[:submissionDate])
+        job[:space_needed] = job[:space_needed].to_f / 1_000_000_000
+        job[:jobdata] = []
+        job[:jobdata] << job[:objectID]
+        job[:jobdata] << job[:submitter]
+        job[:jobdata] << job[:creator]
+        job[:jobdata] << job[:title]
+        job[:jobdata] << job[:filename]
+        job[:actions] = []
+
+        if %w[Failed].include?(status)
+          job[:actions] << {
+            value: 'Requeue',
+            href: "/ops/zk/ingest/job/requeue/#{id}",
+            post: true,
+            cssclass: 'button requeue_button'
+          }
+        end
+
+        if %w[Failed Completed].include?(status)
+          job[:actions] << {
+            value: 'Queue Del',
+            href: "/ops/zk/ingest/job/delete/#{id}",
+            post: true,
+            cssclass: 'button delete_button'
+          }
+        end
+
+        if %w[Pending].include?(status)
+          job[:actions] << {
+            value: 'Hold',
+            href: "/ops/zk/ingest/job/hold/#{id}",
+            post: true,
+            cssclass: 'button hold_button'
+          }
+        end
+
+        if %w[Held].include?(status)
+          job[:actions] << {
+            value: 'Release',
+            href: "/ops/zk/ingest/job/release/#{id}",
+            post: true,
+            cssclass: 'button release_button'
+          }
+        end
+
+        unless %w[Held Deleted Completed Failed].include?(status)
+          job[:actions] << {
+            value: 'Fail',
+            title: 'Force job into Failed State',
+            href: "/ops/zk/ingest/job/fail/#{id}",
+            post: true,
+            cssclass: 'button button_red fail_button',
+            confmsg: 'Be very careful when forcing a failure on a job.  Do you want to proceed?'
+          }
+        end
+
+        table.add_row(
+          AdminUI::Row.make_row(
+            table.columns,
+            job
+          )
+        )
+      end
+      table
+    end
+
+    def batch_jobs(params)
+      batch_id = params.fetch('bid', '')
+      jobstate = params.fetch('status', '')
+      jobs = []
+      if enabled
+        ZK.open(@zkconn, timeout: 2) do |zk|
+          skip = false
+          if jobstate.empty? || jobstate == 'completed'
+            MerrittZK::Batch.new(batch_id).get_completed_jobs(zk).each do |job|
+              jobs << MerrittZK::Job.jobjson(zk, job)
+            end
+          end
+          if jobstate.empty? || jobstate == 'deleted'
+            MerrittZK::Batch.new(batch_id).get_deleted_jobs(zk).each do |job|
+              jobs << MerrittZK::Job.jobjson(zk, job)
+            end
+          end
+          if jobstate.empty? || jobstate == 'failed'
+            MerrittZK::Batch.new(batch_id).get_failed_jobs(zk).each do |job|
+              jobs << MerrittZK::Job.jobjson(zk, job)
+            end
+          end
+          if jobstate.empty? || jobstate == 'processing'
+            MerrittZK::Batch.new(batch_id).get_processing_jobs(zk).each do |job|
+              jobs << MerrittZK::Job.jobjson(zk, job)
+            end
+          end
+        end
+        status = 'PASS'
+      else
+        status = 'ERROR'
+      end
+      table = AdminUI::FilterTable.new(
+        columns: [
+          AdminUI::Column.new(:bid, header: 'Batch ID'),
+          AdminUI::Column.new(:id, header: 'Job ID'),
+          AdminUI::Column.new(:status, header: 'Status'),
+          AdminUI::Column.new(:profile, header: 'Profile'),
+          AdminUI::Column.new(:submissionDate, header: 'DateTime', cssclass: 'date'),
+          AdminUI::Column.new(:type, header: 'Type'),
+          AdminUI::Column.new(:jobdata, header: 'Job Data'),
+          AdminUI::Column.new(:priority, header: 'Priority', cssclass: 'int'),
+          AdminUI::Column.new(:space_needed, header: 'Space Needed GB', cssclass: 'float'),
+          AdminUI::Column.new(:actions, header: 'Actions')
+        ],
+        status: status
+      )
+      jobs = [] if jobs.nil?
+      jobs.each do |job|
 
         id = job[:id]
         status = job[:status].to_s
