@@ -246,7 +246,7 @@ module UC3Ldap
           email: user.email,
           displayname: user.displayname,
           arkid: user.ark,
-          lastaccess: user.lastaccess,
+          lastaccess: DateTime.parse(user.lastaccess).to_time.localtime.strftime('%Y-%m-%d %H:%M:%S'),
           read_count: user.read_count,
           write_count: user.write_count,
           download_count: user.download_count,
