@@ -779,3 +779,19 @@ queries:
       type: string
     - name: filename
       type: string
+  /queries/repository/user-agents:
+    description: |
+      This report lists all user agents that have been submitted content to Merritt in the last 2 years.
+    sql: |
+      select 
+        user_agent, 
+        max(submitted), 
+        count(*) 
+      from 
+        inv.inv_ingests 
+      where 
+        submitted > date_add(now(), interval -2 YEAR) 
+      group by 
+        user_agent 
+      order by 
+        max(submitted) desc
