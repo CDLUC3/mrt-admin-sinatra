@@ -781,7 +781,7 @@ queries:
       type: string
   /queries/repository/user-agents:
     description: |
-      This report lists all user agents that have been submitted content to Merritt in the last 2 years.
+      This report lists all user agents that have submitted content to Merritt in the last 2 years. "Count" refers to the number of objects deposited.
     sql: |
       select 
         user_agent, 
