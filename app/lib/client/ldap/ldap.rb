@@ -240,13 +240,25 @@ module UC3Ldap
     def users_table_data
       arr = []
       @users.each_value do |user|
+        laccess = user.lastaccess
+        if laccess.nil? || laccess.empty?
+          laccess = ''
+        else
+          begin
+            laccess = DateTime.parse(laccess).to_time.localtime.strftime('%Y-%m-%d %H:%M:%S')
+          rescue StandardError => e
+            logger.error("LDAP: Last Access Parse Error: #{e}")
+            laccess = ''
+          end
+        end
+
         arr.append({
           uid: { value: user.uid, href: "/ldap/users/#{user.uid}" },
           unlinked: user.unlinked,
           email: user.email,
           displayname: user.displayname,
           arkid: user.ark,
-          lastaccess: DateTime.parse(user.lastaccess).to_time.localtime.strftime('%Y-%m-%d %H:%M:%S'),
+          lastaccess: laccess,
           read_count: user.read_count,
           write_count: user.write_count,
           download_count: user.download_count,
