@@ -241,14 +241,17 @@ module UC3Ldap
       arr = []
       @users.each_value do |user|
         laccess = user.lastaccess
-        if laccess.nil? || laccess.empty?
+        if laccess.nil?
           laccess = ''
         else
-          begin
-            laccess = DateTime.parse(laccess).to_time.localtime.strftime('%Y-%m-%d %H:%M:%S')
-          rescue StandardError => e
-            logger.error("LDAP: Last Access Parse Error: #{e}")
-            laccess = ''
+          laccess = laccess.to_s
+          unless laccess.empty?
+            begin
+              laccess = DateTime.parse(laccess).to_time.localtime.strftime('%Y-%m-%d %H:%M:%S')
+            rescue StandardError => e
+              logger.error("LDAP: Last Access Parse Error: #{e}")
+              laccess = ''
+            end
           end
         end
 
