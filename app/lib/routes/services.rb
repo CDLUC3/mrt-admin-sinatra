@@ -622,16 +622,7 @@ module Sinatra
                        'A lifecycle policy will expire content in this bucket.',
           profile: defprofile
         }
-        rows << {
-          bucket: ENV.fetch('S3INGEST_BUCKET', ''),
-          description: 'Ingest Bucket.' \
-                       'The Merritt Admin Tool ingests data into this bucket. ' \
-                       'A lifecycle policy will expire content in this bucket.' \
-                       'This is a VERSIONED bucket.',
-          profile: defprofile,
-          versioned: true
-        }
-
+ dd
         desc = '[Creating a merritt-ops session for this stack](/#create-ops)'
 
         table = AdminUI::FilterTable.new(
@@ -651,6 +642,7 @@ module Sinatra
                    "--query 'DeleteMarkers[].[Key, VersionId]' \\\n  " \
                    '--output text --prefix queue'
           end
+          cmd += "\n\naws s3api list-objects --bucket #{row[:bucket]}" if :profile == 'sdsc'
           row[:command] = cmd unless row[:bucket].empty?
           table.add_row(
             AdminUI::Row.make_row(
