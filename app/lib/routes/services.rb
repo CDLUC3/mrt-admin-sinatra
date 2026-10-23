@@ -622,7 +622,7 @@ module Sinatra
                        'A lifecycle policy will expire content in this bucket.',
           profile: defprofile
         }
- dd
+
         desc = '[Creating a merritt-ops session for this stack](/#create-ops)'
 
         table = AdminUI::FilterTable.new(
