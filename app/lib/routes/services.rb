@@ -642,7 +642,9 @@ module Sinatra
                    "--query 'DeleteMarkers[].[Key, VersionId]' \\\n  " \
                    '--output text --prefix queue'
           end
-          cmd += "\n\naws s3api --profile #{row[:profile]} list-objects --bucket #{row[:bucket]}" if row[:profile] == 'sdsc'
+          if row[:profile] == 'sdsc'
+            cmd += "\n\naws s3api --profile #{row[:profile]} list-objects --bucket #{row[:bucket]}"
+          end
           row[:command] = cmd unless row[:bucket].empty?
           table.add_row(
             AdminUI::Row.make_row(

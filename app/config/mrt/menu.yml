@@ -1377,7 +1377,7 @@ items:
           method: post
         - title: Redeploy ZooKeeper
           route: /infra/ecs/tasks/launch/merritt-ops2/redeployZk
-          disable: default, docker, ecs-stg, ecs-prd, ecs-dbsnapshot
+          disable: default, docker, ecs-dbsnapshot
           confmsg: This will run a job in the merritt-ops2 container
           method: post
         # the following function can be invoked by API as well as task
