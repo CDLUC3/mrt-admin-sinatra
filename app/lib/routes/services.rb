@@ -643,7 +643,8 @@ module Sinatra
                    '--output text --prefix queue'
           end
           if row[:profile] == 'sdsc'
-            cmd += "\n\naws s3api --profile #{row[:profile]} list-objects --bucket #{row[:bucket]}"
+            cmd += "\n#for SDSC, aws s3api commands may work better with minio nodes"
+            cmd += "\naws s3api --profile #{row[:profile]} list-objects --bucket #{row[:bucket]}"
           end
           row[:command] = cmd unless row[:bucket].empty?
           table.add_row(
