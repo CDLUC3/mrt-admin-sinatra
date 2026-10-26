@@ -417,6 +417,7 @@ module UC3
       if AdminUI::TopMenu.instance.skip_paths.include?('/ops/zk/nodes')
         skiplist += %w[
           /ops/zk/nodes/node-names
+          /ops/zk/nodes/edit
         ]
       end
 
