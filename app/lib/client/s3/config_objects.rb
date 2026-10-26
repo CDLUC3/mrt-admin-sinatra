@@ -467,6 +467,15 @@ module UC3S3
       { manifest: 'Not Found' }
     end
 
+    def get_ecs_release_manifest_deploy_tags(reposhort)
+      tags = []
+      tagmap = get_ecs_release_manifest.fetch('ecs-tagmap', {})
+      tagmap.fetch(reposhort, {}).each_value do |tag|
+        tags << tag
+      end
+      tags.uniq
+    end
+
     def get_ecs_release_manifest_repo_map(repo)
       get_ecs_release_manifest.fetch('ecs-tagmap', {}).fetch(repo, {})
     end
@@ -476,7 +485,8 @@ module UC3S3
     end
 
     def get_release_manifest_deploy_tags(reposhort)
-      get_ecs_release_manifest_deploy_tags(reposhort).uniq
+      # no longer have a different set of deploy tags for EC2
+      get_ecs_release_manifest_deploy_tags(reposhort)
     end
 
     def get_delete_lists
