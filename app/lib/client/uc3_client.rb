@@ -400,6 +400,7 @@ module UC3
         /ops/storage/benchmark-fixity-nodes
         /ops/storage/benchmark-fixity-audit
         /ops/storage/benchmark-fixity-access
+        /ops/zk/nodes/edit
       ]
 
       # These GET operations require specific url parameters that are not readily available for a unit test
@@ -417,7 +418,6 @@ module UC3
       if AdminUI::TopMenu.instance.skip_paths.include?('/ops/zk/nodes')
         skiplist += %w[
           /ops/zk/nodes/node-names
-          /ops/zk/nodes/edit
         ]
       end
 
