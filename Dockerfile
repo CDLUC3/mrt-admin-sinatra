@@ -8,7 +8,8 @@ FROM ${ECR_REGISTRY}/mysql-ruby-lambda
 ENV RACK_CONFIG=app/config_mrt.ru
 ENV TZ=America/Los_Angeles
 
-RUN dnf -y update && \
+RUN dnf clean all && \
+    dnf -y update && \
     dnf -y install gcc-c++ make tar patch libyaml-devel && \
     dnf clean all
 
