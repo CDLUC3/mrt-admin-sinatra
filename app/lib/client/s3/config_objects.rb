@@ -467,26 +467,6 @@ module UC3S3
       { manifest: 'Not Found' }
     end
 
-    def get_ec2_release_manifest
-      resp = @s3_client.get_object(
-        bucket: @bucket,
-        key: 'uc3/mrt/mrt-ecs-manifest/service-release-manifest.yaml'
-      )
-      YAML.safe_load(resp.body.read)
-    rescue StandardError => e
-      logger.error("Error retrieving ECS release manifest: #{e}")
-      { manifest: 'Not Found' }
-    end
-
-    def get_ecs_release_manifest_deploy_tags(reposhort)
-      tags = []
-      tagmap = get_ecs_release_manifest.fetch('ecs-tagmap', {})
-      tagmap.fetch(reposhort, {}).each_value do |tag|
-        tags << tag
-      end
-      tags.uniq
-    end
-
     def get_ecs_release_manifest_repo_map(repo)
       get_ecs_release_manifest.fetch('ecs-tagmap', {}).fetch(repo, {})
     end
@@ -495,18 +475,8 @@ module UC3S3
       get_ecs_release_manifest_repo_map(repo).fetch(UC3::UC3Client.stack_name, '')
     end
 
-    def get_ec2_release_manifest_deploy_tags(reposhort)
-      tags = []
-      %w[prd stg].each do |env|
-        tag = get_ec2_release_manifest.fetch("uc3-#{reposhort}-#{env}", '')
-        tags << tag unless tag.empty?
-      end
-      tags.uniq
-    end
-
     def get_release_manifest_deploy_tags(reposhort)
-      tags = get_ecs_release_manifest_deploy_tags(reposhort) + get_ec2_release_manifest_deploy_tags(reposhort)
-      tags.uniq
+      get_ecs_release_manifest_deploy_tags(reposhort).uniq
     end
 
     def get_delete_lists
