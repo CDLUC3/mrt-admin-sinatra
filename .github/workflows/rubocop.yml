@@ -17,6 +17,9 @@ jobs:
       with:
         ruby-version: '3.4'
         bundler-cache: true
+      env:
+        # zookeeper gem 1.5.5 bundles C code that fails to build with -Werror on newer gcc
+        CFLAGS: -Wno-error
 
     - name: 'Run Rubocop'
       run: bundle exec rubocop
