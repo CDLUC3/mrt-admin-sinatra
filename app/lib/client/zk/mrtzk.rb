@@ -657,7 +657,6 @@ module UC3Queue
       nodedump.each do |node|
         value = node.values.first
         next unless value.is_a?(Array)
-        next if value[1] == 'na' # node may be so new it has no age
 
         match = %r{^(/batches/bid[0-9]+|/jobs/jid[0-9]+)(/|$)}.match(value[0])
         ref = match ? match[1] : ''
