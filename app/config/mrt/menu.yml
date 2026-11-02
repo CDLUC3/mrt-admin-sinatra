@@ -700,7 +700,6 @@ items:
         method: post
     - title: ZK Maintenance
       route: /ops/zk/maintenance
-      disable: ecs-prd
     - title: ZooKeeper Stat
       disable: ecs-prd
       route: /ops/zk/stat
