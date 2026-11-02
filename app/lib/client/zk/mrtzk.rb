@@ -95,6 +95,7 @@ module UC3Queue
             end
           end
         end
+        metrics[:num_jobbatch_processing] = metrics[:num_jobs_processing] + metrics[:num_batches_processing]
         metrics.merge!(MerrittZK::Access.metrics(zk))
       end
       metrics
