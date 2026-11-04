@@ -240,3 +240,15 @@ queries:
           'cdl_mcgrawhill_ebooks'
         )
       order by c.mnemonic, o.ark, pathname
+  /ops/db-queue/processes:
+    sql: |
+      SELECT 
+        id, 
+        user, 
+        SUBSTRING_INDEX(host, ':', 1) as host_ip, 
+        db, 
+        command as command_state, 
+        time, 
+        state, 
+        info
+      FROM information_schema.PROCESSLIST;

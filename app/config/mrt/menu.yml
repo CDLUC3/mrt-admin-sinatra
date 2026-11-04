@@ -775,6 +775,8 @@ items:
     classes: needs-db
     breadcrumb: true
     items:
+    - title: Database Processes
+      route: /ops/db-queue/processes
     - path: replication-queue
       title: Replication Queue
       route: /ops/db-queue/replication
