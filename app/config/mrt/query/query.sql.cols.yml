@@ -50,6 +50,8 @@ columns:
       filterable: true
     host_ip:
       filterable: true
+    process_id:
+      id: true
     cost:
       cssclass: float
     size:
