@@ -6,7 +6,7 @@ require_relative '../uc3_client'
 # Scope custom code for UC3 to distinguish from 3rd party classes
 module UC3Discovery
   # Query for repository artifacts by code
-  class ServiceIps < UC3::UC3Client
+  class ServiceIpsClient < UC3::UC3Client
 
     def initialize
       @client = Aws::ServiceDiscovery::Client.new(region: UC3::UC3Client.region)
