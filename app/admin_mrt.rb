@@ -94,6 +94,8 @@ get '/clients' do
     UC3OpenSearch::OSClient.client
     logger.debug { "Init TestClient #{Time.now}" }
     UC3::TestClient.client
+    logger.debug { "Init DiscoveryClient #{Time.now}" }
+    UC3Discovery::ServiceIpsClient.client
   rescue StandardError => e
     logger.error("Error initializing clients: #{e.message}")
     logger.error(e.backtrace.join("\n"))

@@ -38,6 +38,12 @@ module UC3Query
       row
     end
 
+    def self.ip_resolver(row)
+      return row if ENV.fetch('MERRITT_ECS', 'docker') == 'docker'
+      row['service'] = UC3Discovery::ServiceIpsClient.client.service_ips.fetch(row['host_ip'], row['host_ip'])
+      row
+    end
+
     def self.obj_node_resolver(row)
       pstr = "?inv_object_id=#{row['inv_object_id']}&inv_node_id=#{row['node_id']}"
       row['description'] = [row['node_number'], row['description'], row['acceess_mode']]

@@ -246,7 +246,6 @@ queries:
         id as process_id, 
         user, 
         SUBSTRING_INDEX(host, ':', 1) as host_ip,
-        host as host,
         '' as service,
         db, 
         command as command_state, 

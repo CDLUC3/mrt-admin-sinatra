@@ -73,6 +73,17 @@ module Sinatra
         redirect "/queries/recent/ingests?date=#{Date.today.strftime('%Y-%m-%d')}"
       end
 
+      app.get '/ops/db-queue/processes' do
+        adminui_show_table(
+          AdminUI::Context.new(request.path, request.params),
+          UC3Query::QueryClient.client.query(
+            request.path,
+            request.params,
+            resolver: UC3Query::QueryResolvers.method(:ip_resolver)
+          )
+        )
+      end
+
       app.get '/queries/content/mnemonic/*' do
         if request.params.key?('mnemonic')
           result = UC3Query::QueryClient.client.query(request.path, request.params)
