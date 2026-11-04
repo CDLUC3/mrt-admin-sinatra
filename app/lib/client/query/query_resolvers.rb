@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative '../discovery/ips'
+
 # Query module
 module UC3Query
   # Resolve special query columns in table displays
