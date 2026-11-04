@@ -243,7 +243,7 @@ queries:
   /ops/db-queue/processes:
     sql: |
       SELECT 
-        id, 
+        id as process_id, 
         user, 
         SUBSTRING_INDEX(host, ':', 1) as host_ip, 
         db, 

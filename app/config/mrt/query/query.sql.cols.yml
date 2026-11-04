@@ -48,6 +48,8 @@ columns:
       link: true
     own_name:
       filterable: true
+    host_ip:
+      filterable: true
     cost:
       cssclass: float
     size:
