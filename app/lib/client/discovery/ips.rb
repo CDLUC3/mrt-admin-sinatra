@@ -35,7 +35,7 @@ module UC3Discovery
           namespace_name: "merritt-#{UC3::UC3Client.stack_name}",
           health_status: 'HEALTHY'
         ).instances.each do |instance|
-          @service_ips[service] |= []
+          @service_ips[service] ||= []
           @service_ips[service] << instance.attributes['AWS_INSTANCE_IPV4']
         end
       end
