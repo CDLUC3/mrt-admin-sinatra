@@ -8,7 +8,7 @@ module UC3Discovery
   # Query for repository artifacts by code
   class ServiceIpsClient < UC3::UC3Client
     def self.client
-      UC3::UC3Client.clients.fetch(self.class.to_s, ServicesClient.new)
+      UC3::UC3Client.clients.fetch(self.class.to_s, ServiceIpsClient.new)
     end
 
     def initialize
