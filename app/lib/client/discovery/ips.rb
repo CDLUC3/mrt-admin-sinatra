@@ -4,7 +4,7 @@ require 'aws-sdk-servicediscovery'
 require_relative '../uc3_client'
 
 # Scope custom code for UC3 to distinguish from 3rd party classes
-module Discovery
+module UC3Discovery
   # Query for repository artifacts by code
   class ServiceIps < UC3::UC3Client
 
