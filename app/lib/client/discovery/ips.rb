@@ -29,7 +29,7 @@ module UC3Discovery
       return @service_ips unless @service_ips.empty?
 
       @modified = Time.now
-      %w[ui audit replic inventory admintool].each do |service|
+      %w[ui audit replic inventory admintool merritt-ops merritt-opswrite].each do |service|
         @client.discover_instances(
           service_name: service,
           namespace_name: "merritt-#{UC3::UC3Client.stack_name}",
