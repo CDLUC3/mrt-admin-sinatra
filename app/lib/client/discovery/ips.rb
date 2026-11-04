@@ -7,6 +7,9 @@ require_relative '../uc3_client'
 module UC3Discovery
   # Query for repository artifacts by code
   class ServiceIpsClient < UC3::UC3Client
+    def self.client
+      UC3::UC3Client.clients.fetch(self.class.to_s, ServicesClient.new)
+    end
 
     def initialize
       @client = Aws::ServiceDiscovery::Client.new(region: UC3::UC3Client.region)
@@ -21,9 +24,10 @@ module UC3Discovery
       !@client.nil?
     end
 
-    def service_ips()
+    def service_ips
       @service_ips = {} if @modified && (Time.now - @modified) > 60
       return @service_ips unless @service_ips.empty?
+
       @modified = Time.now
       %w[ui audit replic inventory admintool].each do |service|
         @client.discover_instances(
@@ -37,6 +41,5 @@ module UC3Discovery
       end
       @service_ips
     end
-
   end
 end

@@ -42,8 +42,11 @@ module UC3Query
 
     def self.ip_resolver(row)
       discovery_client = UC3Discovery::ServiceIpsClient.client
-      puts "Discovery client enabled: #{discovery_client.enabled}, #{discovery_client.class}" if discovery_client.enabled
+      if discovery_client.enabled
+        puts "Discovery client enabled: #{discovery_client.enabled}, #{discovery_client.class}"
+      end
       return row if ENV.fetch('MERRITT_ECS', 'docker') == 'docker'
+
       row['service'] = UC3Discovery::ServiceIpsClient.client.service_ips.fetch(row['host_ip'], row['host_ip'])
       row
     end
