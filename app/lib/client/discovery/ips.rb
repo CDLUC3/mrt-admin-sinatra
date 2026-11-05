@@ -49,7 +49,7 @@ module UC3Discovery
       @task_ips = {} if @modified && (Time.now - @modified) > 60
       return @task_ips unless @task_ips.empty?
 
-      UC3Resources::ServicesClient.client.list_tasks_data.each do |task|
+      UC3Resources::ServicesClient.client.list_tasks_data.values.each do |task|
         ipaddr = task.fetch('ipaddr', '')
         next if ipaddr.empty?
           
