@@ -14,6 +14,7 @@ module UC3Discovery
     def initialize
       @client = Aws::ServiceDiscovery::Client.new(region: UC3::UC3Client.region)
       @service_ips = {}
+      @task_ips = {}
       @modified = nil
       super(enabled: enabled)
     rescue StandardError => e
@@ -42,6 +43,19 @@ module UC3Discovery
         end
       end
       @service_ips
+    end
+
+    def task_ips
+      @task_ips = {} if @modified && (Time.now - @modified) > 60
+      return @task_ips unless @task_ips.empty?
+
+      UC3Resources::ServicesClient.client.list_tasks_data.each do |task|
+        ipaddr = task.fetch('ipaddr', '')
+        next if ipaddr.empty?
+          
+        @task_ips[ipaddr] = task.fetch('name', '')
+      end
+      @task_ips
     end
   end
 end

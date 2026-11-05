@@ -241,6 +241,10 @@ queries:
         )
       order by c.mnemonic, o.ark, pathname
   /ops/db-queue/processes:
+    description: |
+      List of processes in the database queue, with status PASS if the user matches the current user, otherwise WARN.
+
+      Most IP addresses should map to an existing ECS service.
     sql: |
       SELECT 
         id as process_id, 

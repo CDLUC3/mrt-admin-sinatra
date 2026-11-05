@@ -44,7 +44,9 @@ module UC3Query
       discovery_client = UC3Discovery::ServiceIpsClient.client
       return row if ENV.fetch('MERRITT_ECS', 'docker') == 'docker'
 
-      row['service'] = discovery_client.service_ips.fetch(row['host_ip'], row['host_ip'])
+      service = discovery_client.service_ips.fetch(row['host_ip'], '')
+      service = discovery_client.task_ips.fetch(row['host_ip'], '') if service.empty?
+      row['service'] = service
       row
     end
 
