@@ -363,6 +363,7 @@ module UC3
       /ops/db-queue/replication/in-progress
       /ops/db-queue/replication/required
       /ops/storage/db/nodes
+      /infra/parameters
     ].freeze
 
     def initialize
