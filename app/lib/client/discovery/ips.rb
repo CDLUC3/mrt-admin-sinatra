@@ -50,11 +50,10 @@ module UC3Discovery
       return @task_ips unless @task_ips.empty?
 
       UC3Resources::ServicesClient.client.list_tasks_data.values.each do |task|
-        puts "task: #{task.inspect}"
-        ipaddr = task.fetch('ipaddr', '')
+        ipaddr = task.fetch(:ipaddr, '')
         next if ipaddr.empty?
           
-        @task_ips[ipaddr] = task.fetch('name', '')
+        @task_ips[ipaddr] = task.fetch(:name, '')
       end
       @task_ips
     end
