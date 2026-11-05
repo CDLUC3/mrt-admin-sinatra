@@ -74,6 +74,7 @@ module Sinatra
       end
 
       app.get '/ops/db-queue/processes' do
+        request.params['user'] = UC3Query::QueryClient.client.username
         adminui_show_table(
           AdminUI::Context.new(request.path, request.params),
           UC3Query::QueryClient.client.query(

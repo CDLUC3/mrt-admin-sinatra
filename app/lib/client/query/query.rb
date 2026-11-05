@@ -303,6 +303,10 @@ module UC3Query
       AdminUI::FilterTable.empty
     end
 
+    def username
+      @dbconf.fetch('username', 'unknown')
+    end
+
     attr_accessor :queries
 
     def retry_sql(sql)

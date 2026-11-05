@@ -250,6 +250,10 @@ queries:
         db, 
         command as command_state, 
         time, 
-        state, 
-        info
-      FROM information_schema.PROCESSLIST;
+        info,
+        case when user = ? then 'PASS' else 'WARN' end as status
+      FROM information_schema.PROCESSLIST
+      WHERE host != 'localhost'
+    parameters:
+    - name: user
+      type: string
