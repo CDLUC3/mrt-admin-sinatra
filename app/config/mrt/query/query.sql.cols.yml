@@ -52,6 +52,14 @@ columns:
       filterable: true
     process_id:
       id: true
+    user:
+      filterable: true
+    service:
+      filterable: true
+    db:
+      filterable: true
+    command_state:
+      filterable: true
     cost:
       cssclass: float
     size:
