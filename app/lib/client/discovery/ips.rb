@@ -55,6 +55,7 @@ module UC3Discovery
           
         @task_ips[ipaddr] = task.fetch('name', '')
       end
+      puts "task_ips: #{@task_ips.inspect}"
       @task_ips
     end
   end
