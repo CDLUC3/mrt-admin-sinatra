@@ -33,8 +33,35 @@ module UC3Resources
           AdminUI::Column.new(:key_id, header: 'Key', filterable: true),
           AdminUI::Column.new(:value, header: 'Value'),
           AdminUI::Column.new(:modified, header: 'Modified'),
-          AdminUI::Column.new(:version, header: 'Version')
-        ]
+          AdminUI::Column.new(:version, header: 'Version'),
+          AdminUI::Column.new(:status, header: 'Status', filterable: true)
+        ],
+        description: %(
+This table displays the Merritt parameters for the stack found in the SSM Parameter Store.
+
+SecureString values will not be displayed.  Their KMS key name will be displayed.
+
+There is a fair amout of logic that filters our parameters 
+
+- from other UC3 services
+- from other Merritt Stacks
+
+If a SecureString is found
+
+- WARN if it older than 90 days
+- FAIL if it older than 1 year
+- SKIP if it is a SecureString for an SSH public key or for Integration Tests
+
+To obtain the full history for a parameter named PARAMETER_NAME, run the following command: 
+
+```
+aws ssm get-parameter-history --name PARAMETER_NAME
+```
+
+```
+aws ssm get-parameter-history --name PARAMETER_NAME --with-decryption
+```
+)
       )
       return table unless enabled
 
@@ -46,14 +73,39 @@ module UC3Resources
         res = @client.get_parameters_by_path(opt)
         res.parameters.each do |param|
           path = param.name
+
+          next if path =~ /^\/uc3\/(dmp|dmsp|rams|sceptre|ops)\//
+          next if path =~ /^\/uc3\/(AccountId|CidrBlock|CodeStarConnectionArn|HostedZoneId|MainAccountId|MainAccountBackupVault)$/
+          next if path =~ /\/(BackupVaultArn|CfnServiceRoleArn)$/
+
+          if path =~ /^\/uc3\/mrt\/(prd|stg|dev)\//
+            next unless path.start_with?("/uc3/mrt/#{UC3::UC3Client.stack_name_brief}/")
+          end
+
           value = param.type == 'SecureString' ? '***' : param.value
           value = { value: "#{value[0..100]}...", title: value } if value.length > 100
+          
+          if param.type == 'SecureString'
+            if path =~ /(\/uc3\/ssh\/|\/integ-tests\/)/
+              status = 'SKIP'
+            elsif Time.now - param.last_modified_date > 60 * 60 * 24 * 365
+              status = 'FAIL'
+            elsif Time.now - param.last_modified_date > 60 * 60 * 24 * 90
+              status = 'WARN'
+            else
+              status = 'PASS'
+            end
+          else
+            status = 'PASS'
+          end
+
           params[path] = {
             path: path,
             type: param.type,
             value: value,
             modified: date_format(param.last_modified_date, convert_timezone: true),
-            version: param.version
+            version: param.version,
+            status: status
           }
         end
         next_token = res.next_token

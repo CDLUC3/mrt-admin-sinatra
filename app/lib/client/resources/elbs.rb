@@ -47,6 +47,7 @@ module UC3Resources
           AdminUI::Column.new(:scheme, header: 'Scheme', filterable: true),
           AdminUI::Column.new(:program, header: 'Program', filterable: true),
           AdminUI::Column.new(:service, header: 'Service', filterable: true),
+          AdminUI::Column.new(:environment, header: 'Environment', filterable: true),
           AdminUI::Column.new(:subservice, header: 'Subservice', filterable: true),
           AdminUI::Column.new(:tgname, header: 'TG Name'),
           AdminUI::Column.new(:listener, header: 'Listener')
@@ -57,6 +58,7 @@ module UC3Resources
           @elbs[@arns[arn]][:program] = tagdesc.tags.find { |t| t.key == 'Program' }&.value
           @elbs[@arns[arn]][:service] = tagdesc.tags.find { |t| t.key == 'Service' }&.value
           @elbs[@arns[arn]][:subservice] = tagdesc.tags.find { |t| t.key == 'Subservice' }&.value
+          @elbs[@arns[arn]][:environment] = tagdesc.tags.find { |t| t.key == 'Environment' }&.value
         end
       end
       @client.describe_target_groups.target_groups.each do |tg|
@@ -73,7 +75,9 @@ module UC3Resources
             value[:listener] << action.type
           end
         end
-        table.add_row(AdminUI::Row.make_row(table.columns, value)) if value[:service] == 'mrt'
+        if (value[:service] == 'mrt') && (value[:environment] == UC3::UC3Client.stack_name || value[:environment] == UC3::UC3Client.stack_name_brief)
+          table.add_row(AdminUI::Row.make_row(table.columns, value))
+        end
       end
       table
     end

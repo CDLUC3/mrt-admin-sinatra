@@ -183,7 +183,7 @@ module UC3Resources
 
             begin
               ipaddr = task.attachments[0].details.find { |d| d.name == 'privateIPv4Address' }&.value
-            rescue StandardError => e
+            rescue StandardError
               ipaddr = ''
             end
 
