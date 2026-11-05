@@ -181,12 +181,19 @@ module UC3Resources
           ).tasks.each do |task|
             next if task.group =~ /service:/ # skip service tasks
 
+            begin
+              ipaddr = task.attachments[0].details.find { |d| d.name == 'privateIPv4Address' }&.value
+            rescue StandardError => e
+              ipaddr = ''
+            end
+
             tasks[id] = {
               id: id,
               name: task.group,
               started: date_format(task.started_at, convert_timezone: true),
               stopped: date_format(task.stopped_at, convert_timezone: true),
               last_status: task.last_status,
+              ipaddr: ipaddr,
               actions: [
                 { href: "/infra/ecs/tasks/stop/#{id}", value: 'Stop', post: true, cssclass: 'button' }
               ]
@@ -207,6 +214,7 @@ module UC3Resources
           AdminUI::Column.new(:last_status, header: 'Status'),
           AdminUI::Column.new(:started, header: 'Started'),
           AdminUI::Column.new(:stopped, header: 'Stopped'),
+          AdminUI::Column.new(:ipaddr, header: 'IP Address'),
           AdminUI::Column.new(:actions, header: 'Actions')
         ]
       )
