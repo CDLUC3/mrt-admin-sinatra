@@ -41,7 +41,7 @@ This table displays the Merritt parameters for the stack found in the SSM Parame
 
 SecureString values will not be displayed.  Their KMS key name will be displayed.
 
-There is a fair amout of logic that filters our parameters 
+There is a fair amout of logic that filters our parameters
 
 - from other UC3 services
 - from other Merritt Stacks
@@ -52,7 +52,7 @@ If a SecureString is found
 - FAIL if it older than 1 year
 - SKIP if it is a SecureString for an SSH public key or for Integration Tests
 
-To obtain the full history for a parameter named PARAMETER_NAME, run the following command: 
+To obtain the full history for a parameter named PARAMETER_NAME, run the following command:
 
 ```
 aws ssm get-parameter-history --name PARAMETER_NAME
@@ -74,30 +74,32 @@ aws ssm get-parameter-history --name PARAMETER_NAME --with-decryption
         res.parameters.each do |param|
           path = param.name
 
-          next if path =~ /^\/uc3\/(dmp|dmsp|rams|sceptre|ops)\//
-          next if path =~ /^\/uc3\/(AccountId|CidrBlock|CodeStarConnectionArn|HostedZoneId|MainAccountId|MainAccountBackupVault)$/
-          next if path =~ /\/(BackupVaultArn|CfnServiceRoleArn)$/
+          next if path =~ %r{^/uc3/(dmp|dmsp|rams|sceptre|ops)/}
+          if path =~ %r{^/uc3/(AccountId|CidrBlock|CodeStarConnectionArn|HostedZoneId|MainAccountId|MainAccountBackupVault)$}
+            next
+          end
+          next if path =~ %r{/(BackupVaultArn|CfnServiceRoleArn)$}
 
-          if path =~ /^\/uc3\/mrt\/(prd|stg|dev)\//
-            next unless path.start_with?("/uc3/mrt/#{UC3::UC3Client.stack_name_brief}/")
+          if (path =~ %r{^/uc3/mrt/(prd|stg|dev)/}) && !path.start_with?("/uc3/mrt/#{UC3::UC3Client.stack_name_brief}/")
+            next
           end
 
           value = param.type == 'SecureString' ? '***' : param.value
           value = { value: "#{value[0..100]}...", title: value } if value.length > 100
-          
-          if param.type == 'SecureString'
-            if path =~ /(\/uc3\/ssh\/|\/integ-tests\/)/
-              status = 'SKIP'
-            elsif Time.now - param.last_modified_date > 60 * 60 * 24 * 365
-              status = 'FAIL'
-            elsif Time.now - param.last_modified_date > 60 * 60 * 24 * 90
-              status = 'WARN'
-            else
-              status = 'PASS'
-            end
-          else
-            status = 'PASS'
-          end
+
+          status = if param.type == 'SecureString'
+                     if path =~ %r{(/uc3/ssh/|/integ-tests/)}
+                       'SKIP'
+                     elsif Time.now - param.last_modified_date > 60 * 60 * 24 * 365
+                       'FAIL'
+                     elsif Time.now - param.last_modified_date > 60 * 60 * 24 * 90
+                       'WARN'
+                     else
+                       'PASS'
+                     end
+                   else
+                     'PASS'
+                   end
 
           params[path] = {
             path: path,
