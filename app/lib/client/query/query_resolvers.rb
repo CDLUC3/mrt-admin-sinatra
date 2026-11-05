@@ -45,7 +45,11 @@ module UC3Query
       return row if ENV.fetch('MERRITT_ECS', 'docker') == 'docker'
 
       service = discovery_client.service_ips.fetch(row['host_ip'], '')
-      service = discovery_client.task_ips.fetch(row['host_ip'], '') if service.empty?
+      begin
+        service = discovery_client.task_ips.fetch(row['host_ip'], row['host_ip']) if service.empty?
+      rescue StandardError => e
+        service = e.to_s
+      end
       row['service'] = service
       row
     end
