@@ -53,7 +53,7 @@ module UC3Discovery
         ipaddr = task.fetch(:ipaddr, '')
         next if ipaddr.empty?
           
-        @task_ips[ipaddr] = task.fetch(:name, '')
+        @task_ips[ipaddr] = task.fetch(:name, '').gsub(/family:/, '').gsub("mrt-task-#{UC3::UC3Client.stack_name}-", '')
       end
       @task_ips
     end
