@@ -126,6 +126,28 @@ phases:
       fi
 
     - |
+      if [[ "$BRANCHTAG" == "main" ]]
+      then
+        aws lambda update-function-code \
+          --function-name arn:aws:lambda:us-west-2:451826914157:function:uc3-mrt-admintool-img-dev \
+          --image-uri ${ECR_REGISTRY}/${REPONAME}:mainacct \
+          --output text --region us-west-2 \
+          --no-cli-pager || echo "Skip Lambda Deployment"
+
+        aws lambda update-function-code \
+          --function-name arn:aws:lambda:us-west-2:451826914157:function:uc3-mrt-admintool-img-stg \
+          --image-uri ${ECR_REGISTRY}/${REPONAME}:mainacct \
+          --output text --region us-west-2 \
+          --no-cli-pager || echo "Skip Lambda Deployment"
+
+        aws lambda update-function-code \
+          --function-name arn:aws:lambda:us-west-2:451826914157:function:uc3-mrt-admintool-img-prd \
+          --image-uri ${ECR_REGISTRY}/${REPONAME}:mainacct \
+          --output text --region us-west-2 \
+          --no-cli-pager || echo "Skip Lambda Deployment"
+      fi
+
+    - |
       mkdir -p doc api/${REPONAME}/ruby
       docker run --rm -v "$(pwd)/doc:/var/task/doc" --entrypoint /var/task/make_rdoc.sh ${ECR_REGISTRY}/${REPONAME}:ecs-dev
       cp -r doc/* api/${REPONAME}/ruby/
