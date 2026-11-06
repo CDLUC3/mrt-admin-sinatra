@@ -644,7 +644,7 @@ module Sinatra
           end
           if row[:profile] == 'sdsc'
             cmd += "\n#for SDSC, aws s3api commands may work better with minio nodes"
-            cmd += "\naws s3api --profile #{row[:profile]} list-objects --bucket #{row[:bucket]}"
+            cmd += "\naws s3api --profile #{row[:profile]} list-objects --bucket #{row[:bucket]} --prefix PATHNAME"
           end
           row[:command] = cmd unless row[:bucket].empty?
           table.add_row(

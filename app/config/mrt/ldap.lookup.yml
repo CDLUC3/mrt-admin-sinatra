@@ -83,8 +83,8 @@ ecs-stg:
 
 ecs-prd:
   admin_password: 
-    # ssm: /uc3/mrt/prd/ldap/ecs-admin-password
-    ssm: /uc3/mrt/prd/ldap/admin-password
+    ssm: /uc3/mrt/prd/ldap/ecs-admin-password
+    # ssm: /uc3/mrt/prd/ldap/admin-password
   host:
     env: HOST_LDAP
   port: 
