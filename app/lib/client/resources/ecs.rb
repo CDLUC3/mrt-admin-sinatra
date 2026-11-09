@@ -345,7 +345,7 @@ module UC3Resources
       table
     end
 
-    def retag_and_redeploy_service(service)
+    def retag_and_redeploy_service(service, count: nil)
       return unless enabled
 
       repo = case service
@@ -374,11 +374,20 @@ module UC3Resources
         # No action, just update the service without retagging
       end
 
-      @client.update_service(
-        cluster: UC3::UC3Client.cluster_name,
-        service: service,
-        force_new_deployment: true
-      ).to_json
+      if count.nil?
+        @client.update_service(
+          cluster: UC3::UC3Client.cluster_name,
+          service: service,
+          force_new_deployment: true
+        ).to_json
+      else
+        @client.update_service(
+          cluster: UC3::UC3Client.cluster_name,
+          service: service,
+          desired_count: count,
+          force_new_deployment: true
+        ).to_json
+      end
     end
 
     def redeploy_service(service)

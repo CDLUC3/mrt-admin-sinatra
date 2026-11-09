@@ -97,6 +97,18 @@ module Sinatra
         end
       end
 
+      app.post '/infra/ecs/retag-deploy/*' do |service|
+        count = request.params.fetch('count', '1').to_i
+        java_service_send_stop_start(service, STOP_ENDPOINT) if %w[inventory audit replic].include?(service)
+
+        begin
+          UC3Resources::ServicesClient.new.retag_and_redeploy_service(service, count: count)
+          redirect '/infra/ecs/services/state'
+        rescue StandardError => e
+          { message: "Error redeploying service: #{e.message}" }.to_json
+        end
+      end
+
       app.post '/infra/ecs/deploy/*' do |service|
         UC3Resources::ServicesClient.new.deploy_service(service)
         redirect '/infra/ecs/services/state'
