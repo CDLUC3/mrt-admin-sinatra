@@ -33,13 +33,13 @@ dockerlocal:
     val: 120
 ecs-dev:
   host: 
-    ssm: /uc3/mrt/ecs/billing/db-host
+    ssm: /uc3/mrt/dev/inv/db-host
   database: 
-    ssm: /uc3/mrt/ecs/billing/db-name
+    ssm: /uc3/mrt/dev/inv/db-name
   username: 
-    ssm: /uc3/mrt/ecs/billing/readwrite/db-user
+    ssm: /uc3/mrt/dev/inv/readwrite/db-user
   password: 
-    ssm: /uc3/mrt/ecs/billing/readwrite/db-password
+    ssm: /uc3/mrt/dev/inv/readwrite/db-password
   base_url:
     env: base_url
   read_timeout:
@@ -48,13 +48,13 @@ ecs-dev:
     val: 120
 ecs-dbsnapshot:
   host: 
-    ssm: /uc3/mrt/dev/billing/db-host
+    ssm: /uc3/mrt/dbsnapshot/inv/db-host
   database: 
-    ssm: /uc3/mrt/dev/billing/db-name
+    ssm: /uc3/mrt/dbsnapshot/inv/db-name
   username: 
-    ssm: /uc3/mrt/dev/billing/readwrite/db-user
+    ssm: /uc3/mrt/dbsnapshot/inv/readwrite/db-user
   password: 
-    ssm: /uc3/mrt/dev/billing/readwrite/db-password
+    ssm: /uc3/mrt/dbsnapshot/inv/readwrite/db-password
   base_url:
     env: base_url
   read_timeout:
