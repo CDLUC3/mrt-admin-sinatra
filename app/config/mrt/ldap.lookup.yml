@@ -29,7 +29,7 @@ dockerlocal:
 
 ecs-dev: &ecs-dev
   admin_password: 
-    ssm: /uc3/mrt/dev/ldap/ecs-admin-password
+    ssm: /uc3/mrt/dev/ldap/admin-password
   host:
     val: ldap
   port:
@@ -59,15 +59,11 @@ ecs-ephemeral:
 
 ecs-stg:
   admin_password: 
-    ssm: /uc3/mrt/stg/ldap/ecs-admin-password
-    # ssm: /uc3/mrt/stg/ldap/admin-password
+    ssm: /uc3/mrt/stg/ldap/admin-password
   host:
-    # val: ldap
     env: HOST_LDAP
   port: 
     val: 1636
-  # tls_ca_file:
-  #   val: /etc/pki/ca-trust/source/anchors/ldap-ca.crt
   encryption:
     val: simple_tls
   default_read:
@@ -83,14 +79,11 @@ ecs-stg:
 
 ecs-prd:
   admin_password: 
-    ssm: /uc3/mrt/prd/ldap/ecs-admin-password
-    # ssm: /uc3/mrt/prd/ldap/admin-password
+    ssm: /uc3/mrt/prd/ldap/admin-password
   host:
     env: HOST_LDAP
   port: 
     val: 1636
-  # tls_ca_file:
-  #  val: /etc/pki/ca-trust/source/anchors/ldap-ca.crt
   encryption: 
     val: simple_tls
   default_read:
