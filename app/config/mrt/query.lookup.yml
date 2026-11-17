@@ -35,7 +35,7 @@ ecs-dev:
   host: 
     ssm: /uc3/mrt/dev/inv/db-host
   database: 
-    ssm: /uc3/mrt/dev/inv/db-name
+    ssm: /uc3/mrt/dev/billing/db-name
   username: 
     ssm: /uc3/mrt/dev/inv/readwrite/db-user
   password: 
@@ -50,7 +50,7 @@ ecs-dbsnapshot:
   host: 
     ssm: /uc3/mrt/dbsnapshot/inv/db-host
   database: 
-    ssm: /uc3/mrt/dbsnapshot/inv/db-name
+    ssm: /uc3/mrt/dbsnapshot/billing/db-name
   username: 
     ssm: /uc3/mrt/dbsnapshot/inv/readwrite/db-user
   password: 
