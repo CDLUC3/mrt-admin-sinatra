@@ -701,7 +701,6 @@ items:
     - title: ZK Maintenance
       route: /ops/zk/maintenance
     - title: ZooKeeper Stat
-      disable: ecs-prd
       route: /ops/zk/stat
   - path: ldap
     title: LDAP
@@ -1508,7 +1507,7 @@ items:
     route: /ops/monitoring/service-status
 - path: resources
   title: AWS
-  disable: ecs-ephemeral, ecs-dbsnapshot, docker, default
+  disable: ecs-ephemeral, docker, default
   items:
   - title: Infrastructure Reports
     route: /infra
