@@ -109,7 +109,9 @@ end
 
 get '/favicon.ico' do
   favicon = ENV.fetch('FAVICON', '/favicon.ico')
-  send_file File.join(settings.public_folder, favicon.gsub(/^\//, 'favicons/'))
+  content_type 'image/x-icon'
+  path = File.join(settings.public_folder, favicon.gsub(/^\//, 'favicons/'))
+  send_file path, disposition: :inline
 end
 
 get '/**' do
