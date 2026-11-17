@@ -107,6 +107,11 @@ get '/clients' do
   )
 end
 
+get '/favicon.ico' do
+  favicon = ENV.fetch('FAVICON', '/favicon.ico')
+  send_file File.join(settings.public_folder, favicon.gsub(/^\//, 'favicons/'))
+end
+
 get '/**' do
   adminui_show_none(
     AdminUI::Context.new(request.path, request.params, show_formats: false)
