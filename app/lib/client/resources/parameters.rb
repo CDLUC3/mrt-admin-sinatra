@@ -75,8 +75,12 @@ aws ssm get-parameter-history --name PARAMETER_NAME --with-decryption
           path = param.name
 
           next if path =~ %r{^/uc3/(dmp|dmsp|rams|sceptre|ops)/}
-          if path =~ %r{^/uc3/(AccountId|CidrBlock|CodeStarConnectionArn|HostedZoneId|MainAccountId|MainAccountBackupVault)$}
-            next
+
+          %w[
+            AccountId CidrBlock CodeStarConnectionArn HostedZoneId MainAccountId
+            MainAccountBackupVault
+          ].each do |ignore|
+            next if path =~ %r{^/uc3/#{ignore}$}
           end
           next if path =~ %r{/(BackupVaultArn|CfnServiceRoleArn)$}
 
